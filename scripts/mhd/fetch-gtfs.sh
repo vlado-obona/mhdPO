@@ -73,11 +73,11 @@ if [ -z "$FOUND_URL" ]; then
 fi
 
 # ── 3. crawl oficiálnych stránok ─────────────────────────────────────
-extract_links() { # z HTML/JS vytiahne absolútne URL + href-y, doplní doménu
+extract_links() { # z HTML/JS vytiahne absolútne URL + href/src, doplní doménu
   local file="$1" base="$2"
   {
     grep -oiE 'https?://[^"'\''<> )]+' "$file" || true
-    grep -oiE 'href="[^"]+"' "$file" | sed -E 's/^href="//; s/"$//' \
+    grep -oiE '(href|src)="[^"]+"' "$file" | sed -E 's/^(href|src)="//; s/"$//' \
       | while read -r h; do
           case "$h" in
             http*) echo "$h" ;;
@@ -86,6 +86,25 @@ extract_links() { # z HTML/JS vytiahne absolútne URL + href-y, doplní doménu
         done || true
   } | sort -u
 }
+
+# ── 2b. open data katalóg mesta Prešov (geodatakatalog) ─────────────
+if [ -z "$FOUND_URL" ]; then
+  for cat in "https://egov.presov.sk/geodatakatalog/dpmp.csv" \
+             "https://egov.presov.sk/geodatakatalog/" \
+             "https://egov.presov.sk/geodatakatalog/index.csv"; do
+    cf="$TMP/katalog.csv"
+    log "Katalóg: $cat"
+    fetch "$cat" "$cf" || continue
+    [ -s "$cf" ] || continue
+    log "── Obsah $cat (prvých 100 riadkov) ──"
+    head -100 "$cf" | iconv -f WINDOWS-1250 -t UTF-8 2>/dev/null || head -100 "$cf"
+    log "── koniec obsahu ──"
+    while read -r u; do
+      try_url "$u" && break
+    done < <(grep -oiE 'https?://[^",;[:space:]]+' "$cf" | grep -iE 'gtfs|zip' | sort -u)
+    [ -n "$FOUND_URL" ] && break
+  done
+fi
 
 if [ -z "$FOUND_URL" ]; then
   SEEDS=(
