@@ -17,8 +17,14 @@ UA="Mozilla/5.0 (X11; Linux x86_64) MHD-Presov-planner-data-fetch (kontakt: repo
 
 log() { echo "[fetch-gtfs] $*"; }
 
+DEADLINE=$((SECONDS + 480)) # globálny limit na sieťové pokusy (8 min)
+
 fetch() { # fetch URL FILE
-  curl -sSL --max-time 90 --retry 2 -A "$UA" -o "$2" "$1" 2>/dev/null
+  if [ $SECONDS -gt $DEADLINE ]; then
+    log "(deadline — preskakujem $1)"
+    return 1
+  fi
+  curl -sSL --connect-timeout 8 --max-time 45 -A "$UA" -o "$2" "$1" 2>/dev/null
 }
 
 is_gtfs_zip() { # súbor je zip a obsahuje stops.txt + stop_times.txt
@@ -49,6 +55,25 @@ FOUND_FILE=""
 # ── 1. explicitná URL ────────────────────────────────────────────────
 if [ -n "${GTFS_URL:-}" ]; then
   try_url "$GTFS_URL" || { log "CHYBA: zadaná GTFS_URL nie je validný GTFS zip"; exit 2; }
+fi
+
+# ── 2b. open data katalóg mesta Prešov (geodatakatalog) ─────────────
+if [ -z "$FOUND_URL" ]; then
+  for cat in "https://egov.presov.sk/geodatakatalog/dpmp.csv" \
+             "https://egov.presov.sk/geodatakatalog/" \
+             "https://egov.presov.sk/geodatakatalog/index.csv"; do
+    cf="$TMP/katalog.csv"
+    log "Katalóg: $cat"
+    fetch "$cat" "$cf" || continue
+    [ -s "$cf" ] || continue
+    log "── Obsah $cat (prvých 100 riadkov) ──"
+    head -100 "$cf" | iconv -f WINDOWS-1250 -t UTF-8 2>/dev/null || head -100 "$cf"
+    log "── koniec obsahu ──"
+    while read -r u; do
+      try_url "$u" && break
+    done < <(grep -oiE 'https?://[^",;[:space:]]+' "$cf" | grep -iE 'gtfs|zip' | sort -u)
+    [ -n "$FOUND_URL" ] && break
+  done
 fi
 
 # ── 2. známe kandidátske URL ─────────────────────────────────────────
@@ -86,25 +111,6 @@ extract_links() { # z HTML/JS vytiahne absolútne URL + href/src, doplní domén
         done || true
   } | sort -u
 }
-
-# ── 2b. open data katalóg mesta Prešov (geodatakatalog) ─────────────
-if [ -z "$FOUND_URL" ]; then
-  for cat in "https://egov.presov.sk/geodatakatalog/dpmp.csv" \
-             "https://egov.presov.sk/geodatakatalog/" \
-             "https://egov.presov.sk/geodatakatalog/index.csv"; do
-    cf="$TMP/katalog.csv"
-    log "Katalóg: $cat"
-    fetch "$cat" "$cf" || continue
-    [ -s "$cf" ] || continue
-    log "── Obsah $cat (prvých 100 riadkov) ──"
-    head -100 "$cf" | iconv -f WINDOWS-1250 -t UTF-8 2>/dev/null || head -100 "$cf"
-    log "── koniec obsahu ──"
-    while read -r u; do
-      try_url "$u" && break
-    done < <(grep -oiE 'https?://[^",;[:space:]]+' "$cf" | grep -iE 'gtfs|zip' | sort -u)
-    [ -n "$FOUND_URL" ] && break
-  done
-fi
 
 if [ -z "$FOUND_URL" ]; then
   SEEDS=(
@@ -158,7 +164,7 @@ if [ -z "$FOUND_URL" ]; then
       fetch "$u" "$p" || continue
       base=$(echo "$u" | grep -oE 'https?://[^/]+')
       extract_links "$p" "$base" | grep -iE '\.zip|gtfs' | head -30 >> "$TMP/sub_links.txt" || true
-    done < <(grep -iE 'dpmp\.sk|presov\.sk|mhdpresov\.sk' "$ALL_LINKS" | grep -iE 'gtfs|opendata|otvoren|cestovn|poriad|data' | grep -viE '\.(pdf|jpg|png|zip|css)' | head -40)
+    done < <(grep -iE 'dpmp\.sk|presov\.sk|mhdpresov\.sk' "$ALL_LINKS" | grep -iE 'gtfs|opendata|otvoren|cestovn|poriad|data' | grep -viE '\.(pdf|jpg|png|zip|css)' | head -15)
     if [ -f "$TMP/sub_links.txt" ]; then
       sort -u "$TMP/sub_links.txt" | tee -a "$ALL_LINKS" | sed 's/^/[podstránka-odkaz] /'
       while read -r u; do
