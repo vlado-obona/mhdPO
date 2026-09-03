@@ -16,10 +16,11 @@ on:
         required: false
         type: string
   schedule:
-    - cron: '45 2 * * 1' # pondelok 02:45 UTC — týždenná aktualizácia dát
+    - cron: '45 2 * * *' # denne 02:45 UTC — cestovné poriadky sa môžu meniť
 
 permissions:
   contents: write
+  actions: write # spustenie deploy workflow po aktualizácii dát
 
 concurrency:
   group: mhd-gtfs-${{ github.ref }}
@@ -59,4 +60,10 @@ jobs:
           else
             git commit -m "mhd: aktualizacia GTFS dat DPMP ($(date -u +%F))"
             git push
+            # push cez GITHUB_TOKEN nespusti deploy workflow — spusti ho explicitne
+            if [ "${GITHUB_REF_NAME}" = "main" ]; then
+              gh workflow run deploy.yml --ref main || echo "Deploy sa nepodarilo spustit."
+            fi
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}

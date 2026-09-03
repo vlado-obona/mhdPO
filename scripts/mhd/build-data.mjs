@@ -89,7 +89,8 @@ for (const s of gStops) {
   const la = Number(s.stop_lat), lo = Number(s.stop_lon);
   if (!isFinite(la) || !isFinite(lo)) continue;
   stopIdx.set(s.stop_id, stops.length);
-  stops.push({ n: s.stop_name, la: +la.toFixed(6), lo: +lo.toFixed(6) });
+  // "  *" v názve = zastávka na znamenie; normalizuj medzery
+  stops.push({ n: s.stop_name.replace(/\s+/g, ' ').trim(), la: +la.toFixed(6), lo: +lo.toFixed(6) });
 }
 
 // ── linky ────────────────────────────────────────────────────────────
