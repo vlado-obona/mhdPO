@@ -1,0 +1,57 @@
+name: MHD Presov - GTFS data
+
+# Stiahne oficiálny GTFS feed MHD Prešov (DPMP), skompiluje dataset pre
+# plánovač (/mhd/) a commitne zmeny. Spúšťa sa ručne alebo týždenne
+# (cestovné poriadky sa menia — dataset treba držať aktuálny).
+on:
+  workflow_dispatch:
+    inputs:
+      gtfs_url:
+        description: 'Priama URL na GTFS zip (voliteľné — inak autodetekcia)'
+        required: false
+        type: string
+  schedule:
+    - cron: '45 2 * * 1' # pondelok 02:45 UTC — týždenná aktualizácia dát
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mhd-gtfs-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fetch-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Stiahnut GTFS feed
+        env:
+          GTFS_URL: ${{ inputs.gtfs_url }}
+        run: bash scripts/mhd/fetch-gtfs.sh
+
+      - name: Skompilovat dataset pre planovac
+        run: |
+          if [ -f scripts/mhd/build-data.mjs ]; then
+            node scripts/mhd/build-data.mjs
+          else
+            echo "build-data.mjs este neexistuje - commitujem len raw GTFS."
+          fi
+
+      - name: Commit a push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/gtfs-presov || true
+          git add -A public/mhd/data 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Ziadne zmeny v datach."
+          else
+            git commit -m "mhd: aktualizacia GTFS dat DPMP ($(date -u +%F))"
+            git push
+          fi
