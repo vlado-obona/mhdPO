@@ -57,6 +57,20 @@ if [ -n "${GTFS_URL:-}" ]; then
   try_url "$GTFS_URL" || { log "CHYBA: zadaná GTFS_URL nie je validný GTFS zip"; exit 2; }
 fi
 
+# ── 1b. národný katalóg otvorených dát (CKAN API data.gov.sk) ───────
+if [ -z "$FOUND_URL" ]; then
+  for q in "MHD%20Presov" "MHD%20Pre%C5%A1ov" "dopravn%C3%BD%20podnik%20Pre%C5%A1ov" "gtfs"; do
+    cj="$TMP/ckan.json"
+    log "CKAN data.gov.sk: q=$q"
+    fetch "https://data.gov.sk/api/3/action/package_search?q=$q&rows=30" "$cj" || continue
+    jq -r '.result.results[]? | .title as $t | .resources[]? | "\($t) | \(.format) | \(.url)"' "$cj" 2>/dev/null | head -60 | sed 's/^/[ckan] /'
+    while read -r u; do
+      try_url "$u" && break
+    done < <(jq -r '.result.results[]?.resources[]?.url' "$cj" 2>/dev/null | grep -iE 'gtfs|\.zip' | sort -u | head -10)
+    [ -n "$FOUND_URL" ] && break
+  done
+fi
+
 # ── 2b. open data katalóg mesta Prešov (geodatakatalog) ─────────────
 if [ -z "$FOUND_URL" ]; then
   for cat in "https://egov.presov.sk/GeoDataKatalog/dpmp.txt" \
@@ -128,6 +142,7 @@ if [ -z "$FOUND_URL" ]; then
     "https://www.presov.sk/cestovne-poriadky-presovskej-mhd-su-uz-aj-v-mapach-google-oznam/mid/491238/ma0/all/.html"
     "https://www.alvaria.sk/use-cases/mhd-presov/"
     "https://egov.presov.sk/Default.aspx?NavigationState=1200:0:"
+    "https://www.ubian.sk/mhd-presov"
   )
   ALL_LINKS="$TMP/links.txt"; : > "$ALL_LINKS"
   n=0
@@ -137,8 +152,9 @@ if [ -z "$FOUND_URL" ]; then
     fetch "$s" "$p" || continue
     base=$(echo "$s" | grep -oE 'https?://[^/]+')
     extract_links "$p" "$base" >> "$ALL_LINKS"
-    # zmienky o gtfs priamo v texte (kontext do logu)
-    grep -oiE '.{0,120}gtfs.{0,120}' "$p" | head -20 | sed 's/^/[zmienka] /' || true
+    # zmienky o gtfs/json/dátach priamo v texte (kontext do logu)
+    sed 's/<[^>]*>/ /g' "$p" | grep -oiE '.{0,140}(gtfs|json|otvoren[éy]{1,2} d[áa]t|open ?data).{0,140}' \
+      | head -25 | sed 's/^/[zmienka] /' || true
   done
 
   # JS bundle SPA mhdpresov.sk môžu obsahovať API URL
