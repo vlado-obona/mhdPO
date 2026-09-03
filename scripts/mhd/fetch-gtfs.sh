@@ -59,9 +59,9 @@ fi
 
 # ── 2b. open data katalóg mesta Prešov (geodatakatalog) ─────────────
 if [ -z "$FOUND_URL" ]; then
-  for cat in "https://egov.presov.sk/geodatakatalog/dpmp.csv" \
-             "https://egov.presov.sk/geodatakatalog/" \
-             "https://egov.presov.sk/geodatakatalog/index.csv"; do
+  for cat in "https://egov.presov.sk/GeoDataKatalog/dpmp.txt" \
+             "https://egov.presov.sk/GeoDataKatalog/dpmp.csv" \
+             "https://egov.presov.sk/GeoDataKatalog/"; do
     cf="$TMP/katalog.csv"
     log "Katalóg: $cat"
     fetch "$cat" "$cf" || continue
@@ -71,7 +71,12 @@ if [ -z "$FOUND_URL" ]; then
     log "── koniec obsahu ──"
     while read -r u; do
       try_url "$u" && break
-    done < <(grep -oiE 'https?://[^",;[:space:]]+' "$cf" | grep -iE 'gtfs|zip' | sort -u)
+    done < <({
+      grep -oiE 'https?://[^",;[:space:]]+' "$cf"
+      # relatívne názvy súborov v katalógu (zip/gtfs)
+      grep -oiE '[A-Za-z0-9_./-]+\.(zip|txt)' "$cf" | grep -iE 'gtfs|zip' \
+        | sed 's#^#https://egov.presov.sk/GeoDataKatalog/#'
+    } | grep -iE 'gtfs|zip' | sort -u)
     [ -n "$FOUND_URL" ] && break
   done
 fi
