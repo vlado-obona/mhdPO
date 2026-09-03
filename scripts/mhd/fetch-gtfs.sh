@@ -278,10 +278,14 @@ if [ -z "$FOUND_URL" ]; then
 fi
 
 log "✔ GTFS feed nájdený: $FOUND_URL"
+sha=$(sha256sum "$FOUND_FILE" | cut -d' ' -f1)
+if [ -f "$DEST/SOURCE.txt" ] && grep -q "sha256: $sha" "$DEST/SOURCE.txt"; then
+  log "Feed sa nezmenil (sha256 zhodná) — nechávam existujúce dáta."
+  exit 0
+fi
 rm -rf "$DEST"
 mkdir -p "$DEST"
 unzip -o -d "$DEST" "$FOUND_FILE"
-sha=$(sha256sum "$FOUND_FILE" | cut -d' ' -f1)
 {
   echo "zdroj: $FOUND_URL"
   echo "stiahnuté: $(date -u +%FT%TZ)"

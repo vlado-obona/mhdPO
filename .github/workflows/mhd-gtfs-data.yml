@@ -43,10 +43,12 @@ jobs:
 
       - name: Skompilovat dataset pre planovac
         run: |
-          if [ -f scripts/mhd/build-data.mjs ]; then
+          # dataset.json obsahuje cas generovania — kompiluj len pri zmene
+          # surovych dat, inak by kazdy beh vytvoril zbytocny commit
+          if git status --porcelain data/gtfs-presov | grep -q .; then
             node scripts/mhd/build-data.mjs
           else
-            echo "build-data.mjs este neexistuje - commitujem len raw GTFS."
+            echo "GTFS bez zmeny - dataset sa nekompiluje."
           fi
 
       - name: Commit a push
