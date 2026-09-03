@@ -4,6 +4,11 @@ name: MHD Presov - GTFS data
 # plánovač (/mhd/) a commitne zmeny. Spúšťa sa ručne alebo týždenne
 # (cestovné poriadky sa menia — dataset treba držať aktuálny).
 on:
+  push:
+    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    paths:
+      - '.github/workflows/mhd-gtfs-data.yml'
+      - 'scripts/mhd/fetch-gtfs.sh'
   workflow_dispatch:
     inputs:
       gtfs_url:
