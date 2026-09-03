@@ -64,6 +64,7 @@ if [ -z "$FOUND_URL" ]; then
       cj="$TMP/ckan.json"
       log "CKAN $base: q=$q"
       fetch "$base/api/3/action/package_search?q=$q&rows=50" "$cj" || continue
+      head -c 400 "$cj" | tr -d '\n' | sed 's/^/[ckan-raw] /'; echo
       jq -r '.result.results[]? | .title as $t | .resources[]? | "\($t) | \(.format) | \(.url)"' "$cj" 2>/dev/null | head -80 | sed 's/^/[ckan] /'
       while read -r u; do
         try_url "$u" && break
@@ -71,6 +72,56 @@ if [ -z "$FOUND_URL" ]; then
       [ -n "$FOUND_URL" ] && break 2
     done
   done
+fi
+
+# ── 1c2. transiq (komunitné GTFS zo SK, zdroj Ubian/TransData) ──────
+if [ -z "$FOUND_URL" ]; then
+  for u in "https://transiq.xhyrom.dev/gtfs/sk/mhd-presov.zip" \
+           "https://transiq.xhyrom.dev/gtfs/sk/presov.zip" \
+           "https://transiq.xhyrom.dev/gtfs/sk/mhd_presov.zip" \
+           "https://transiq.xhyrom.dev/gtfs/sk/dpmp.zip"; do
+    try_url "$u" && break
+  done
+  if [ -z "$FOUND_URL" ]; then
+    for idx in "https://transiq.xhyrom.dev/" "https://transiq.xhyrom.dev/gtfs/" "https://transiq.xhyrom.dev/gtfs/sk/" "https://transiq.xhyrom.dev/feeds"; do
+      p="$TMP/transiq.html"
+      log "transiq listing: $idx"
+      fetch "$idx" "$p" || continue
+      head -c 4000 "$p" | sed 's/^/[transiq] /'
+      echo
+    done
+  fi
+fi
+
+# ── 1d. diagnostika NAP transportdata.sk + mhdpresov.sk SPA + ubian ──
+if [ -z "$FOUND_URL" ]; then
+  for u in "https://www.transportdata.sk/" "https://www.transportdata.sk/data" "https://www.transportdata.sk/dataset" "https://www.transportdata.sk/sk/datasets"; do
+    p="$TMP/nap.html"
+    log "NAP: $u"
+    fetch "$u" "$p" || continue
+    grep -oiE '(href|src)="[^"]+"' "$p" | sed -E 's/^(href|src)="//; s/"$//' | sort -u | grep -viE '\.(css|png|jpg|svg|ico|woff)' | head -60 | sed 's/^/[nap-odkaz] /'
+  done
+  p="$TMP/spa.html"
+  if fetch "https://mhdpresov.sk/" "$p"; then
+    log "── mhdpresov.sk HTML (prvých 6000 znakov) ──"
+    head -c 6000 "$p"
+    echo
+    log "── koniec ──"
+    # JS bundle SPA — hľadaj API endpointy
+    grep -oiE '(href|src)="[^"]+\.js[^"]*"' "$p" | sed -E 's/^(href|src)="//; s/"$//' | while read -r js; do
+      case "$js" in http*) ;; /*) js="https://mhdpresov.sk$js" ;; *) js="https://mhdpresov.sk/$js" ;; esac
+      jf="$TMP/spabundle.js"
+      log "SPA bundle: $js"
+      fetch "$js" "$jf" || continue
+      grep -oiE '"(https?:)?//[^"]{5,120}"' "$jf" | sort -u | head -40 | sed 's/^/[spa-url] /'
+      grep -oiE '"/[a-z0-9_/.-]{3,80}"' "$jf" | sort -u | head -60 | sed 's/^/[spa-path] /'
+    done
+  fi
+  p="$TMP/ubian.html"
+  if fetch "https://www.ubian.sk/mhd-presov" "$p"; then
+    grep -oiE '(href|src)="[^"]+\.js[^"]*"' "$p" | sed -E 's/^(href|src)="//; s/"$//' | head -10 | sed 's/^/[ubian-js] /'
+    grep -oiE 'https?://[a-z0-9.-]*(api|gtfs)[a-z0-9.-]*\.[a-z]{2,6}[^"'\'' ]*' "$p" | sort -u | head -20 | sed 's/^/[ubian-api] /'
+  fi
 fi
 
 # ── 1c. mhdapp.sk (autor feedu pre Google) ──────────────────────────
