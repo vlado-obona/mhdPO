@@ -57,17 +57,32 @@ if [ -n "${GTFS_URL:-}" ]; then
   try_url "$GTFS_URL" || { log "CHYBA: zadaná GTFS_URL nie je validný GTFS zip"; exit 2; }
 fi
 
-# ── 1b. národný katalóg otvorených dát (CKAN API data.gov.sk) ───────
+# ── 1b. národné katalógy (NAP transportdata.sk, data.gov.sk — CKAN API) ──
 if [ -z "$FOUND_URL" ]; then
-  for q in "MHD%20Presov" "MHD%20Pre%C5%A1ov" "dopravn%C3%BD%20podnik%20Pre%C5%A1ov" "gtfs"; do
-    cj="$TMP/ckan.json"
-    log "CKAN data.gov.sk: q=$q"
-    fetch "https://data.gov.sk/api/3/action/package_search?q=$q&rows=30" "$cj" || continue
-    jq -r '.result.results[]? | .title as $t | .resources[]? | "\($t) | \(.format) | \(.url)"' "$cj" 2>/dev/null | head -60 | sed 's/^/[ckan] /'
-    while read -r u; do
-      try_url "$u" && break
-    done < <(jq -r '.result.results[]?.resources[]?.url' "$cj" 2>/dev/null | grep -iE 'gtfs|\.zip' | sort -u | head -10)
-    [ -n "$FOUND_URL" ] && break
+  for base in "https://www.transportdata.sk" "https://transportdata.sk" "https://data.gov.sk"; do
+    for q in "Presov" "MHD" "gtfs"; do
+      cj="$TMP/ckan.json"
+      log "CKAN $base: q=$q"
+      fetch "$base/api/3/action/package_search?q=$q&rows=50" "$cj" || continue
+      jq -r '.result.results[]? | .title as $t | .resources[]? | "\($t) | \(.format) | \(.url)"' "$cj" 2>/dev/null | head -80 | sed 's/^/[ckan] /'
+      while read -r u; do
+        try_url "$u" && break
+      done < <(jq -r '.result.results[]? | select((.title // "") | test("(?i)presov|prešov")) | .resources[]?.url' "$cj" 2>/dev/null | grep -iE 'gtfs|\.zip' | sort -u | head -10)
+      [ -n "$FOUND_URL" ] && break 2
+    done
+  done
+fi
+
+# ── 1c. mhdapp.sk (autor feedu pre Google) ──────────────────────────
+if [ -z "$FOUND_URL" ]; then
+  for u in "https://mhdapp.sk/" "https://mhdapp.sk/chybne-data/" "https://mhdapp.sk/gtfs.zip" "https://mhdapp.sk/gtfs/gtfs.zip"; do
+    p="$TMP/mhdapp.html"
+    log "mhdapp.sk: $u"
+    if fetch "$u" "$p" && [ -s "$p" ]; then
+      if is_gtfs_zip "$p"; then FOUND_URL="$u"; FOUND_FILE="$p"; break; fi
+      grep -oiE '(href|src)="[^"]+"' "$p" | sed -E 's/^(href|src)="//; s/"$//' | sort -u | head -60 | sed 's/^/[mhdapp-odkaz] /'
+      sed 's/<[^>]*>/ /g' "$p" | grep -oiE '.{0,140}(gtfs|zdroj|d[áa]t).{0,140}' | head -15 | sed 's/^/[mhdapp-text] /'
+    fi
   done
 fi
 
@@ -132,6 +147,15 @@ extract_links() { # z HTML/JS vytiahne absolútne URL + href/src, doplní domén
 }
 
 if [ -z "$FOUND_URL" ]; then
+  # kompletné odkazy zo stránok CP — na analýzu štruktúry pre prípadný scraper
+  for u in "https://www.dpmp.sk/cestovne-poriadky" "https://www.dpmp.sk/search"; do
+    p="$TMP/cp.html"
+    fetch "$u" "$p" || continue
+    log "── Všetky odkazy na $u ──"
+    grep -oiE '(href|src)="[^"]+"' "$p" | sed -E 's/^(href|src)="//; s/"$//' | sort -u | head -100
+    log "── koniec ──"
+  done
+
   SEEDS=(
     "https://www.dpmp.sk/"
     "https://www.dpmp.sk/sitemap.xml"
