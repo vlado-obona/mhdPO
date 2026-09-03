@@ -9,9 +9,9 @@
 // 4. Krížová kontrola s referenčnými odchodmi (napr. z realtime open data
 //    DPMP): trip s daným odchodom z prvej zastávky musí v CP existovať.
 import { readFileSync } from 'node:fs';
-import { Raptor, planJourneys } from '../../public/mhd/raptor.js';
+import { Raptor, planJourneys } from '../../mhd-app/raptor.js';
 
-const D = JSON.parse(readFileSync('public/mhd/data/dataset.json', 'utf8'));
+const D = JSON.parse(readFileSync('mhd-app/data/dataset.json', 'utf8'));
 const raptor = new Raptor(D);
 
 let failures = 0;

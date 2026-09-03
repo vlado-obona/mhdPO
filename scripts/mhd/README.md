@@ -1,8 +1,9 @@
 # MHD Prešov — plánovač spojení
 
-Webová aplikácia (PWA) na plánovanie spojení MHD Prešov s prestupmi,
-postavená na oficiálnych cestovných poriadkoch DPMP. Beží na
-`/mhd/` (súbory v `public/mhd/`).
+Samostatná webová aplikácia (PWA) na plánovanie spojení MHD Prešov
+s prestupmi, postavená na oficiálnych cestovných poriadkoch DPMP.
+Zdroj appky je v `mhd-app/`, nasadzuje sa na **https://operatorsystem.sk/mhd/**
+(nezávislé od webu auresa.sk — vlastný deploy aj secrets).
 
 ## Funkcie
 
@@ -13,9 +14,31 @@ postavená na oficiálnych cestovných poriadkoch DPMP. Beží na
   zastávkam),
 - tlačidlo 📍 nastaví štart podľa **aktuálnej polohy**,
 - dátum a čas sa **predvyplní podľa teraz** (časová zóna Europe/Bratislava),
-- nočné spoje cez polnoc, pešie prestupy medzi blízkymi zastávkami,
-- inštalovateľná **PWA pre Android** (Chrome → menu → *Pridať na plochu* /
-  *Nainštalovať aplikáciu*).
+- nočné spoje cez polnoc, pešie prestupy medzi blízkymi zastávkami.
+
+## Inštalácia do telefónu
+
+- **Android**: Chrome → `https://operatorsystem.sk/mhd/` → menu (⋮) →
+  *Pridať na plochu / Nainštalovať aplikáciu*. Alebo APK/AAB z workflowu
+  *MHD Presov - Android (TWA)* (pozri nižšie).
+- **iPhone/iPad**: Safari → `https://operatorsystem.sk/mhd/` → tlačidlo
+  **Zdieľať** (štvorec so šípkou) → **Pridať na plochu**. Appka beží
+  celoobrazovkovo s vlastnou ikonou a funguje aj offline (iOS 11.3+).
+  Distribúcia cez App Store by vyžadovala Apple Developer účet (99 USD/rok),
+  macOS build a review — na bežné používanie stačí inštalácia zo Safari.
+
+## Nasadenie (deploy)
+
+Workflow `.github/workflows/deploy-mhd.yml` nasadí `mhd-app/` cez SFTP do
+`$MHD_SFTP_PATH/mhd` na hostingu operatorsystem.sk. Vyžaduje secrets:
+
+| Secret | Význam |
+|---|---|
+| `MHD_SFTP_HOST` / `MHD_SFTP_PORT` | SFTP server hostingu (Websupport) |
+| `MHD_SFTP_USER` / `MHD_SFTP_PASS` | prihlásenie |
+| `MHD_SFTP_PATH` | webroot domény operatorsystem.sk |
+
+Spúšťa sa pri zmene `mhd-app/` na maine, ručne, a po dennej aktualizácii dát.
 
 ## Odkiaľ sú dáta a ako sa aktualizujú
 
@@ -23,8 +46,8 @@ postavená na oficiálnych cestovných poriadkoch DPMP. Beží na
   palubného/dispečerského systému DPMP; ten istý zdroj používa DPMP pre
   Google Maps), distribuovaný cez `https://transiq.xhyrom.dev/gtfs/sk/dpmp.zip`.
 - Workflow `.github/workflows/mhd-gtfs-data.yml` **denne o 02:45 UTC**
-  stiahne feed, skompiluje ho (`scripts/mhd/build-data.mjs`) do
-  `public/mhd/data/dataset.json` a pri zmene commitne + spustí deploy.
+  stiahne feed, pri zmene ho skompiluje (`scripts/mhd/build-data.mjs`) do
+  `mhd-app/data/dataset.json`, commitne a spustí deploy.
 - Ručná aktualizácia: Actions → *MHD Presov - GTFS data* → *Run workflow*
   (voliteľne s vlastnou `gtfs_url`, ak by sa zdroj presunul).
 - Surový feed je v `data/gtfs-presov/` (provenience v `SOURCE.txt`).
@@ -43,21 +66,22 @@ postavená na oficiálnych cestovných poriadkoch DPMP. Beží na
 ## Vývoj
 
 ```bash
-npm run dev            # aplikácia na http://localhost:4321/mhd/
+npx http-server mhd-app -p 8080   # alebo hociktorý statický server
 node scripts/mhd/build-data.mjs   # rekompilácia datasetu z data/gtfs-presov/
 node scripts/mhd/test-router.mjs  # validácia routera
 ```
 
-## Natívna Android aplikácia (voliteľné)
+## Android APK / Google Play (TWA)
 
-PWA sa dá zabaliť do APK/AAB pre Google Play cez
-[Bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
-(Trusted Web Activity):
+Workflow `.github/workflows/mhd-android.yml` (Bubblewrap, konfigurácia
+`android/twa-manifest.json`, package `sk.operatorsystem.mhdpresov`) vyrobí:
 
-```bash
-npx @bubblewrap/cli init --manifest https://auresa.sk/mhd/manifest.webmanifest
-npx @bubblewrap/cli build
-```
+- `app-release-signed.apk` — priama inštalácia (sideload),
+- `app-release-bundle.aab` — na nahratie do Google Play Console,
+- `assetlinks.json` — patrí na `https://operatorsystem.sk/.well-known/assetlinks.json`
+  (bez neho sa TWA otvára s lištou prehliadača).
 
-Vyžaduje nasadenú stránku na HTTPS a `assetlinks.json` (vygeneruje
-bubblewrap) v `public/.well-known/`.
+Podpisový kľúč: secrets `ANDROID_KEYSTORE_B64` + `ANDROID_KEYSTORE_PASSWORD`;
+bez nich sa vygeneruje nový a priloží do artefaktu (treba si ho uložiť —
+Play vyžaduje rovnaký kľúč pre každú aktualizáciu). Pri novej verzii zvýš
+`appVersionCode` v `android/twa-manifest.json`.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Skompiluje GTFS feed MHD Prešov (data/gtfs-presov/) do kompaktného
-// datasetu pre plánovač (public/mhd/data/dataset.json).
+// datasetu pre plánovač (mhd-app/data/dataset.json).
 //
 // Formát datasetu (indexy namiesto ID, časy v sekundách od polnoci —
 // môžu presiahnuť 24 h pri nočných spojoch):
@@ -17,7 +17,7 @@ import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 
 const SRC = 'data/gtfs-presov';
-const OUT = 'public/mhd/data';
+const OUT = 'mhd-app/data';
 const WALK_SPEED = 1.25;      // m/s — konzervatívna rýchlosť chôdze
 const MAX_TRANSFER_M = 400;   // max. vzdialenosť pešieho prestupu
 const MIN_TRANSFER_S = 120;   // minimálna rezerva na prestup

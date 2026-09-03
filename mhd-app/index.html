@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MHD Prešov — plánovač spojení</title>
+  <meta name="description" content="Plánovač spojení MHD Prešov — vyhľadávanie spojení s prestupmi podľa aktuálnych cestovných poriadkov DPMP.">
+  <meta name="theme-color" content="#0b7a3b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <!-- iPhone / iPad: inštalácia cez Zdieľať → Pridať na plochu -->
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MHD Prešov">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="app.css">
+  <meta name="robots" content="noindex">
+</head>
+<body>
+  <header class="top">
+    <h1>MHD Prešov</h1>
+    <span id="dataInfo" class="data-info" title="Platnosť cestovných poriadkov"></span>
+  </header>
+
+  <main>
+    <section class="planner" id="planner">
+      <div class="field">
+        <label for="fromInput">Odkiaľ</label>
+        <div class="input-row">
+          <input id="fromInput" type="text" placeholder="Zastávka alebo bod na mape" autocomplete="off" enterkeyhint="search">
+          <button id="geoBtn" class="icon-btn" title="Použiť moju polohu" aria-label="Použiť moju polohu">📍</button>
+        </div>
+        <div id="fromSuggest" class="suggest" hidden></div>
+      </div>
+
+      <button id="swapBtn" class="swap" title="Vymeniť smer" aria-label="Vymeniť smer">⇅</button>
+
+      <div class="field">
+        <label for="toInput">Kam</label>
+        <div class="input-row">
+          <input id="toInput" type="text" placeholder="Cieľová zastávka" autocomplete="off" enterkeyhint="search">
+        </div>
+        <div id="toSuggest" class="suggest" hidden></div>
+      </div>
+
+      <div class="when">
+        <input id="dateInput" type="date" aria-label="Dátum">
+        <input id="timeInput" type="time" aria-label="Čas">
+        <button id="nowBtn" class="ghost">Teraz</button>
+      </div>
+
+      <div class="actions">
+        <button id="searchBtn" class="primary">Vyhľadať spojenie</button>
+        <button id="mapBtn" class="ghost">Mapa</button>
+      </div>
+      <p id="status" class="status" role="status"></p>
+    </section>
+
+    <section id="mapWrap" class="map-wrap" hidden>
+      <div class="map-hint" id="mapHint">Ťukni na zastávku a zvoľ Štart alebo Cieľ</div>
+      <div id="map"></div>
+    </section>
+
+    <section id="results" class="results" hidden></section>
+  </main>
+
+  <footer class="foot">
+    <p>Hviezdička (*) v názve = zastávka na znamenie.</p>
+    <p>Dáta: oficiálne cestovné poriadky <span id="agencyName">DPMP</span> (GTFS).
+    Plánovač je informatívny — sleduj aj aktuálne výluky na
+    <a href="https://www.dpmp.sk" target="_blank" rel="noopener">dpmp.sk</a>.</p>
+  </footer>
+
+  <script src="vendor/leaflet.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
