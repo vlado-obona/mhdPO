@@ -226,6 +226,8 @@ export class Raptor {
         arr: t.t[2 * par.alightPos] + shift,
         stops: p.stops.slice(par.boardPos, par.alightPos + 1),
         times: t.t.slice(2 * par.boardPos, 2 * par.alightPos + 2).map((x) => x + shift),
+        pattern: par.pattern, day: par.day,
+        boardPos: par.boardPos, alightPos: par.alightPos,
       });
       si = p.stops[par.boardPos];
       round--;
@@ -233,6 +235,64 @@ export class Raptor {
     if (guard >= 50) return null;
     return legs.length ? legs : null;
   }
+}
+
+/**
+ * Optimalizácia čakania: posunie odchod čo najneskôr pri ZACHOVANOM príchode.
+ * RAPTOR nájde najskorší príchod, ale prvé legy môžu byť zbytočne skoré —
+ * ak ide neskorší spoj tej istej linky, ktorý prestup ešte stihne, vyberie
+ * sa ten (menej čakania doma aj na prestupe). Pracuje len so spojmi z CP.
+ */
+export function tightenJourney(raptor, journey, dateInfo) {
+  const legs = journey.legs;
+  const dayOffsets = [
+    { o: -1, ...dateInfo.prev },
+    { o: 0, num: dateInfo.num, weekday: dateInfo.weekday },
+    { o: 1, ...dateInfo.next },
+  ];
+  // spätný prechod: deadline = dokedy musí leg skončiť, aby nadväznosť ostala
+  let deadline = Infinity;
+  for (let i = legs.length - 1; i >= 0; i--) {
+    const l = legs[i];
+    if (l.type === 'walk') { if (deadline < Infinity) deadline -= l.secs; continue; }
+    if (deadline === Infinity || l.pattern == null) { deadline = l.dep; continue; } // posledná jazda určuje príchod — ostáva
+    const p = raptor.d.patterns[l.pattern];
+    let bestTrip = null, bestDep = l.dep, bestO = l.day;
+    for (const day of dayOffsets) {
+      const shift = day.o * DAY;
+      for (const trip of p.trips) {
+        const dep = trip.t[2 * l.boardPos + 1] + shift;
+        const arr = trip.t[2 * l.alightPos] + shift;
+        if (arr > deadline || dep <= bestDep) continue;
+        if (!raptor.serviceActive(trip.sv, day.num, day.weekday)) continue;
+        bestTrip = trip; bestDep = dep; bestO = day.o;
+      }
+    }
+    if (bestTrip) {
+      const shift = bestO * DAY;
+      l.dep = bestTrip.t[2 * l.boardPos + 1] + shift;
+      l.arr = bestTrip.t[2 * l.alightPos] + shift;
+      l.head = bestTrip.h;
+      l.times = bestTrip.t.slice(2 * l.boardPos, 2 * l.alightPos + 2).map((x) => x + shift);
+      l.day = bestO;
+    }
+    deadline = l.dep;
+  }
+  // pešie úseky: prvý čo najneskôr (neskorší odchod z miesta), prestupové
+  // hneď po vystúpení (čaká sa radšej pri nástupišti ďalšieho spoja)
+  for (let i = 0; i < legs.length; i++) {
+    const l = legs[i];
+    if (l.type !== 'walk') continue;
+    if (i === 0 && legs[1]) {
+      l.arr = legs[1].dep;
+      l.dep = legs[1].dep - l.secs;
+    } else if (i > 0) {
+      l.dep = legs[i - 1].arr;
+      l.arr = l.dep + l.secs;
+    }
+  }
+  journey.depTime = legs[0].dep;
+  return journey;
 }
 
 /** Viac odchodov za sebou: opakuje query s posunutým časom odchodu. */
@@ -243,6 +303,7 @@ export function planJourneys(raptor, fromStops, toStops, dateInfo, depTime, want
   for (let i = 0; i < want * 3 && out.length < want; i++) {
     const js = raptor.query(fromStops, toStops, dateInfo, t);
     if (!js.length) break;
+    for (const j of js) tightenJourney(raptor, j, dateInfo);
     // pareto výber: netriviálne alternatívy s menej prestupmi tiež ukáž
     let advanced = false;
     for (const j of js) {

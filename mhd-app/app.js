@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.2.2';
+const APP_VERSION = '1.2.3';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -318,6 +318,7 @@ function renderResults(journeys) {
       <div class="j-body"></div>`;
     const body = card.querySelector('.j-body');
 
+    let prevArr = null;
     for (const l of j.legs) {
       const div = document.createElement('div');
       div.className = 'leg';
@@ -329,10 +330,11 @@ function renderResults(journeys) {
         const r = D.routes[l.route];
         const head = l.head >= 0 ? D.heads[l.head] : (r.l || '');
         const inner = l.stops.slice(1, -1);
+        const wait = prevArr != null ? l.dep - prevArr : 0;
         div.innerHTML = `
           <div class="t">${fmtTime(l.dep)}<br><span class="muted">${fmtTime(l.arr)}</span></div>
           <div>
-            ${badge(l.route)} <span class="muted">smer ${head}</span><br>
+            ${badge(l.route)} <span class="muted">smer ${head}${wait >= 120 ? ` · ⏳ čakanie ${fmtDur(wait)}` : ''}</span><br>
             <b>${D.stops[l.from].n}</b> <button class="nav-to" title="Navigovať na nástupište" data-si="${l.from}">🧭</button> → <b>${D.stops[l.to].n}</b><br>
             ${inner.length ? `<button class="stops-toggle">${inner.length} medziľahlé zastávky ▾</button><ul hidden></ul>` : `<span class="muted">bez medziľahlých zastávok</span>`}
           </div>`;
@@ -352,6 +354,7 @@ function renderResults(journeys) {
           });
         }
       }
+      prevArr = l.arr;
       body.appendChild(div);
     }
     if (j.finalWalk > 0) {
@@ -374,6 +377,28 @@ function renderResults(journeys) {
 }
 
 let lastJourney = null;
+
+// vymaže celé vyhľadávanie — štart, cieľ, výsledky aj trasu na mape
+function clearSearch() {
+  sel.from = null;
+  sel.to = null;
+  $('fromInput').value = '';
+  $('toInput').value = '';
+  $('fromSuggest').hidden = true;
+  $('toSuggest').hidden = true;
+  const wrap = $('results');
+  wrap.innerHTML = '';
+  wrap.hidden = true;
+  lastJourney = null;
+  if (journeyLayer) journeyLayer.clearLayers();
+  stopNav();
+  const n = nowInSk();
+  $('dateInput').value = n.date;
+  $('timeInput').value = n.time;
+  setStatus('');
+  $('fromInput').focus();
+}
+
 function drawJourney(j) {
   lastJourney = j;
   if (!map) return;
@@ -425,6 +450,41 @@ async function getPosition() {
     reject,
     { enableHighAccuracy: true, timeout: 12000 },
   ));
+}
+
+// ── aktuálna poloha na mape (modrá bodka + auto-centrovanie) ────────
+let posMarker = null, posWatchHandle = null;
+
+function showPosition(la, lo) {
+  if (!map) return;
+  if (!posMarker) {
+    posMarker = L.circleMarker([la, lo], {
+      radius: 7, color: '#fff', weight: 2.5, fillColor: '#1a73e8', fillOpacity: 1,
+    }).addTo(map);
+  } else {
+    posMarker.setLatLng([la, lo]);
+  }
+}
+
+async function autoCenterMap() {
+  try {
+    const { lat, lon } = await getPosition();
+    showPosition(lat, lon);
+    // centrovať len keď nie je vykreslená trasa — tú nechceme odsunúť
+    if (!lastJourney && map) map.setView([lat, lon], 15);
+  } catch {}
+  // kým je mapa otvorená, bodka polohy sa priebežne aktualizuje
+  if (!posWatchHandle) {
+    try {
+      posWatchHandle = await watchPos((p) => {
+        showPosition(p.coords.latitude, p.coords.longitude);
+      });
+    } catch {}
+  }
+}
+
+function stopPosWatch() {
+  if (posWatchHandle) { posWatchHandle.clear(); posWatchHandle = null; }
 }
 
 async function useGeo() {
@@ -541,6 +601,7 @@ async function main() {
     if (!f) $('toInput').value = '';
   });
   $('searchBtn').addEventListener('click', search);
+  $('clearBtn').addEventListener('click', clearSearch);
   $('navClose').addEventListener('click', stopNav);
   $('navGmaps').addEventListener('click', () => {
     if (nav) openExternal(gmapsUrl(nav.lat, nav.lon));
@@ -549,8 +610,10 @@ async function main() {
   $('mapBtn').addEventListener('click', () => {
     const w = $('mapWrap');
     w.hidden = !w.hidden;
+    if (w.hidden) { stopPosWatch(); return; }
     if (!w.hidden) {
       initMap();
+      autoCenterMap();
       if (lastJourney) drawJourney(lastJourney);
       setTimeout(() => {
         map.invalidateSize();

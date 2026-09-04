@@ -12,6 +12,23 @@ Aktuálne obdobie platnosti: 9. 7. – 30. 9. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.2.3  (4. 9. 2026)
+----------------------------------------------------------------
+- Tlačidlo „✕" vedľa Mapy — vymaže celé vyhľadávanie (štart, cieľ,
+  výsledky aj trasu na mape) a nastaví aktuálny čas, takže sa dá
+  hneď hľadať znovu.
+- Mapa sa po otvorení automaticky vycentruje na aktuálnu polohu
+  (modrá bodka, priebežne sa aktualizuje). Ak je vykreslená trasa,
+  mapa ostane na trase.
+- Optimalizácia čakania: pri rovnakom príchode do cieľa sa vyberú
+  najneskoršie možné spoje — ak neskorší spoj prvej linky prestup
+  ešte stihne, netreba vyrážať tak skoro. Čakanie pri prestupe sa
+  zobrazuje v detaile spojenia („⏳ čakanie X min"); ak tam ostáva,
+  skorší prípoj podľa cestovného poriadku neexistuje.
+- Oprava: navigačná lišta (kompas) sa už nezobrazuje naprázdno
+  pri spustení aplikácie.
+
+----------------------------------------------------------------
 v1.2.2  (4. 9. 2026)
 ----------------------------------------------------------------
 - Verzia je vždy v názve aplikácie: ikona na ploche („MHD Prešov

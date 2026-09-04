@@ -83,16 +83,29 @@ for (let i = 0; i < 400 && transferTested < 25; i++) {
   const a = Math.floor(rand() * D.stops.length);
   const b = Math.floor(rand() * D.stops.length);
   if (a === b || directPairs.has(a + '_' + b)) continue;
-  const js = raptor.query(new Map([[a, 0]]), new Map([[b, 0]]), di, 8 * 3600);
+  // planJourneys zahŕňa aj optimalizáciu čakania (tightenJourney) —
+  // validujeme teda výsledok tak, ako ho dostane používateľ
+  const js = planJourneys(raptor, new Map([[a, 0]]), new Map([[b, 0]]), di, 8 * 3600, 4);
   if (!js.length) continue;
   transferTested++;
-  const j = js[js.length - 1];
-  let valid = true, prevArr = -1, prevTo = a;
-  for (const l of j.legs) {
-    if (l.dep < prevArr) { valid = false; fail(`leg začína pred príchodom predošlého (${fmt(l.dep)} < ${fmt(prevArr)})`); }
-    if (l.type === 'ride' && l.arr < l.dep) { valid = false; fail('príchod pred odchodom'); }
-    if (l.from !== prevTo) { valid = false; fail(`nenadväzujúce legy: ${D.stops[prevTo].n} ≠ ${D.stops[l.from].n}`); }
-    prevArr = l.arr; prevTo = l.to;
+  let valid = true;
+  for (const j of js) {
+    let prevArr = -1, prevTo = a;
+    for (const l of j.legs) {
+      if (l.dep < prevArr) { valid = false; fail(`leg začína pred príchodom predošlého (${fmt(l.dep)} < ${fmt(prevArr)})`); }
+      if (l.type === 'ride' && l.arr < l.dep) { valid = false; fail('príchod pred odchodom'); }
+      if (l.from !== prevTo) { valid = false; fail(`nenadväzujúce legy: ${D.stops[prevTo].n} ≠ ${D.stops[l.from].n}`); }
+      // každý ride musí zodpovedať reálnemu spoju svojho patternu v CP
+      if (l.type === 'ride' && l.pattern != null) {
+        const p = D.patterns[l.pattern];
+        const shift = l.day * 86400;
+        const real = p.trips.some((t) =>
+          t.t[2 * l.boardPos + 1] + shift === l.dep && t.t[2 * l.alightPos] + shift === l.arr &&
+          raptor.serviceActive(t.sv, l.day === 0 ? di.num : (l.day < 0 ? di.prev.num : di.next.num), l.day === 0 ? di.weekday : (l.day < 0 ? di.prev.weekday : di.next.weekday)));
+        if (!real) { valid = false; fail(`leg linky ${D.routes[p.r].s} nezodpovedá žiadnemu spoju v CP`); }
+      }
+      prevArr = l.arr; prevTo = l.to;
+    }
   }
   if (valid) transferOk++;
 }
