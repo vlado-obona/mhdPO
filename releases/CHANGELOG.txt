@@ -1,0 +1,58 @@
+MHD PREŠOV — PLÁNOVAČ SPOJENÍ
+Popis zmien jednotlivých verzií
+================================================================
+
+Súbory každej verzie:
+  mhd-presov-offline.apk        Android aplikácia (všetko zabalené vnútri)
+  mhd-presov-standalone.html    appka v jednom súbore (iPhone/PC — otvor v prehliadači)
+  mhd-presov-ios-unsigned.ipa   iOS balík (podpis cez Sideloadly/AltStore)
+
+Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS).
+Aktuálne obdobie platnosti: 9. 7. – 30. 9. 2026. Po vydaní nových
+cestovných poriadkov treba stiahnuť novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.2.1  (4. 9. 2026)
+----------------------------------------------------------------
+- Tlačidlo „🗺️ Maps" v navigačnej lište a v popupe zastávky:
+  otvorí Google Maps s pešou navigáciou na presné súradnice
+  nástupišťa (Android, iPhone aj počítač).
+
+----------------------------------------------------------------
+v1.2.0  (4. 9. 2026)
+----------------------------------------------------------------
+Pripomienky z praxe:
+- Strana cesty a smer autobusov: mapa zobrazuje každé nástupište
+  zvlášť (na správnej strane cesty) so smerovou čiarkou odchodu;
+  popup zastávky vypíše všetky linky a ich smery
+  (napr. „➤ 8 smer Sídlisko III").
+- Vlajky a farby: štart 🚩 (zelené pole), cieľ 🏁 (oranžové pole),
+  prestup 🚌 na mape; pešie úseky čiarkovane.
+- Navigačná šípka: kompasový režim k zvolenej zastávke
+  so vzdialenosťou a odhadom času pešo, aktualizované podľa GPS
+  (spúšťa sa tlačidlom 🧭 v popupe alebo v detaile spojenia).
+
+----------------------------------------------------------------
+v1.1.0  (4. 9. 2026)
+----------------------------------------------------------------
+- Funkčná poloha (📍) v Android aplikácii — natívne povolenie
+  a zistenie polohy (Capacitor Geolocation).
+- Prvá iOS verzia (mhd-presov-ios-unsigned.ipa) vrátane povolenia
+  polohy.
+- Mapa: záložný podklad zo siete trás MHD — vidno ju offline
+  aj kým sa nenačítajú OpenStreetMap dlaždice.
+
+----------------------------------------------------------------
+v1.0.0  (4. 9. 2026)
+----------------------------------------------------------------
+Prvé vydanie:
+- Vyhľadávanie spojení s prestupmi (algoritmus RAPTOR) podľa
+  oficiálnych cestovných poriadkov DPMP; nočné spoje cez polnoc,
+  pešie prestupy medzi blízkymi zastávkami.
+- Výber štartu a cieľa písaním (našepkávač) alebo ťuknutím na mape
+  (zastávka aj ľubovoľný bod).
+- Automatický dátum a čas (Europe/Bratislava), tlačidlo „Teraz".
+- Samostatná distribúcia bez väzby na web: offline APK pre Android
+  a appka v jednom HTML súbore.
+- Overenie presnosti: rekonštrukcia spojov na sekundu presne,
+  krížová kontrola s realtime open data DPMP (30/32 zhôd).
