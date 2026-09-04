@@ -12,9 +12,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Verzia release (napr. 1.0.0) — musí existovať releases/v<verzia>/'
+        description: 'Verzia release (napr. 1.1.0)'
         required: false
-        default: '1.0.0'
+        default: '1.1.0'
         type: string
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ inputs.version || '1.0.0' }}
+      VERSION: ${{ inputs.version || '1.1.0' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -45,7 +45,7 @@ jobs:
         run: |
           mkdir cap-build && cd cap-build
           npm init -y >/dev/null
-          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/geolocation@6 >/dev/null
           cat > capacitor.config.json <<EOF
           {
             "appId": "sk.mhdpresov.app",
@@ -57,6 +57,10 @@ jobs:
           cp -r ../mhd-app www
           npx cap add android
           npx cap sync android
+          # oprávnenia pre geolokáciu (Capacitor Geolocation plugin)
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n</manifest>#' "$M"
+          grep -c LOCATION "$M"
 
       - name: Ikony aplikacie
         working-directory: cap-build

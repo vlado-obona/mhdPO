@@ -1,0 +1,109 @@
+name: MHD Presov - iOS
+
+# Zostaví iOS verziu plánovača (Capacitor, macOS runner):
+#   releases/v<verzia>/mhd-presov-ios-unsigned.ipa
+# IPA je NEPODPÍSANÁ — Apple nedovolí inštaláciu bez podpisu. Do iPhonu sa
+# dostane cez Sideloadly/AltStore s bežným (aj bezplatným) Apple ID, alebo
+# cez Xcode z vygenerovaného projektu. Bez Apple Developer účtu platí podpis
+# 7 dní, s plateným účtom (99 USD/rok) 1 rok / App Store.
+on:
+  push:
+    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    paths:
+      - '.github/workflows/mhd-ios.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Verzia release (napr. 1.1.0)'
+        required: false
+        default: '1.1.0'
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mhd-ios-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-latest
+    env:
+      VERSION: ${{ inputs.version || '1.1.0' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Capacitor iOS projekt
+        run: |
+          mkdir cap-build && cd cap-build
+          npm init -y >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/ios@6 @capacitor/geolocation@6 >/dev/null
+          cat > capacitor.config.json <<EOF
+          {
+            "appId": "sk.mhdpresov.app",
+            "appName": "MHD Prešov",
+            "webDir": "www"
+          }
+          EOF
+          cp -r ../mhd-app www
+          npx cap add ios
+          npx cap sync ios
+
+      - name: Info.plist — poloha + verzia
+        working-directory: cap-build
+        run: |
+          P=ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :NSLocationWhenInUseUsageDescription string 'Poloha sa používa na nastavenie najbližšej zastávky ako štartu.'" "$P" || \
+          /usr/libexec/PlistBuddy -c "Set :NSLocationWhenInUseUsageDescription 'Poloha sa používa na nastavenie najbližšej zastávky ako štartu.'" "$P"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$P" || true
+          plutil -p "$P" | grep -E 'Location|ShortVersion'
+
+      - name: Ikony aplikacie
+        working-directory: cap-build
+        run: |
+          npm i --no-audit --no-fund -D @capacitor/assets sharp >/dev/null
+          mkdir -p assets
+          node -e "const s=require('sharp'); s('../mhd-app/icons/icon-512.png').resize(1024,1024).png().toFile('assets/logo.png').then(()=>console.log('logo ok'))"
+          npx capacitor-assets generate --ios || echo "generovanie ikon zlyhalo — ostane predvolena"
+
+      - name: Build (bez podpisu)
+        working-directory: cap-build/ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/App.xcarchive" archive \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | tail -20
+
+      - name: Zabalit IPA (nepodpisana)
+        working-directory: cap-build/ios/App
+        run: |
+          mkdir Payload
+          cp -r App.xcarchive/Products/Applications/*.app Payload/
+          zip -qry mhd-presov-ios-unsigned.ipa Payload
+          ls -la mhd-presov-ios-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mhd-presov-ios
+          path: cap-build/ios/App/mhd-presov-ios-unsigned.ipa
+          retention-days: 30
+
+      - name: Commit IPA do releases
+        run: |
+          mkdir -p "releases/v$VERSION"
+          cp cap-build/ios/App/mhd-presov-ios-unsigned.ipa "releases/v$VERSION/"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "releases/v$VERSION/mhd-presov-ios-unsigned.ipa"
+          if git diff --cached --quiet; then
+            echo "IPA bez zmeny."
+          else
+            git commit -m "mhd: iOS build v$VERSION ($(date -u +%F))"
+            git pull --rebase origin "$GITHUB_REF_NAME" || true
+            git push || (git pull --rebase origin "$GITHUB_REF_NAME" && git push)
+          fi

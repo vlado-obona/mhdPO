@@ -344,19 +344,34 @@ function drawJourney(j) {
 }
 
 // ── geolokácia ───────────────────────────────────────────────────────
-function useGeo() {
-  if (!navigator.geolocation) { setStatus('Geolokácia nie je dostupná.', true); return; }
+// V natívnej appke (Capacitor) ide poloha cez natívny plugin — webová
+// navigator.geolocation vo WebView nemá ako vypýtať oprávnenie.
+async function getPosition() {
+  const geo = window.Capacitor?.Plugins?.Geolocation;
+  if (geo) {
+    const perm = await geo.requestPermissions().catch(() => null);
+    if (perm && perm.location === 'denied') throw new Error('bez povolenia');
+    const pos = await geo.getCurrentPosition({ enableHighAccuracy: true, timeout: 12000 });
+    return { lat: pos.coords.latitude, lon: pos.coords.longitude };
+  }
+  if (!navigator.geolocation) throw new Error('nedostupná');
+  return new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(
+    (p) => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
+    reject,
+    { enableHighAccuracy: true, timeout: 12000 },
+  ));
+}
+
+async function useGeo() {
   setStatus('Zisťujem polohu…');
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const { latitude: lat, longitude: lon } = pos.coords;
-      setSel('from', { kind: 'point', lat, lon, label: 'Moja poloha' });
-      setStatus('');
-      if (map && !$('mapWrap').hidden) map.setView([lat, lon], 15);
-    },
-    () => setStatus('Polohu sa nepodarilo zistiť.', true),
-    { enableHighAccuracy: true, timeout: 10000 },
-  );
+  try {
+    const { lat, lon } = await getPosition();
+    setSel('from', { kind: 'point', lat, lon, label: 'Moja poloha' });
+    setStatus('');
+    if (map && !$('mapWrap').hidden) map.setView([lat, lon], 15);
+  } catch {
+    setStatus('Polohu sa nepodarilo zistiť (skontroluj povolenie polohy pre appku).', true);
+  }
 }
 
 // ── inicializácia ────────────────────────────────────────────────────
