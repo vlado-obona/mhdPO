@@ -206,6 +206,7 @@ function initMap() {
       mkBtn('🚩 Štart', 'b-start', () => setSel('from', { kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon }));
       mkBtn('🏁 Cieľ', 'b-end', () => setSel('to', { kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon }));
       mkBtn('🧭', 'b-nav', () => startNav(st.la, st.lo, st.n));
+      mkBtn('🗺️', 'b-gmaps', () => openExternal(gmapsUrl(st.la, st.lo)));
       return div;
     });
   });
@@ -437,6 +438,16 @@ async function useGeo() {
 // ── navigačná šípka k zastávke (kompas + GPS, vzdialenosť a odhad) ──
 let nav = null;
 
+// pešie navádzanie v Google Maps (otvorí appku / web s trasou k bodu)
+function gmapsUrl(lat, lon) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking`;
+}
+function openExternal(url) {
+  const a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
 async function watchPos(cb) {
   const geo = window.Capacitor?.Plugins?.Geolocation;
   if (geo) {
@@ -525,6 +536,9 @@ async function main() {
   });
   $('searchBtn').addEventListener('click', search);
   $('navClose').addEventListener('click', stopNav);
+  $('navGmaps').addEventListener('click', () => {
+    if (nav) openExternal(gmapsUrl(nav.lat, nav.lon));
+  });
   $('geoBtn').addEventListener('click', useGeo);
   $('mapBtn').addEventListener('click', () => {
     const w = $('mapWrap');
