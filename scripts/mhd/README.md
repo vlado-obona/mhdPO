@@ -85,3 +85,17 @@ Podpisový kľúč: secrets `ANDROID_KEYSTORE_B64` + `ANDROID_KEYSTORE_PASSWORD`
 bez nich sa vygeneruje nový a priloží do artefaktu (treba si ho uložiť —
 Play vyžaduje rovnaký kľúč pre každú aktualizáciu). Pri novej verzii zvýš
 `appVersionCode` v `android/twa-manifest.json`.
+
+## Vývojové verzie (releases/)
+
+Aplikácia sa vyvíja v tomto repe a každá verzia sa ukladá do `releases/v<verzia>/`:
+
+- `mhd-presov-standalone.html` — celá appka v jednom súbore, **bez väzby na
+  akýkoľvek web**: otvor v prehliadači z disku, pošli mailom, hoď na ľubovoľný
+  hosting. Online si mapa dotiahne OSM dlaždice, offline kreslí sieť trás MHD.
+- `mhd-presov-offline.apk` — Android aplikácia s dátami zabalenými vnútri
+  (Capacitor, workflow *MHD Presov - offline APK*) — nepotrebuje žiadnu doménu.
+- `RELEASE.md` — platnosť cestovných poriadkov a provenience danej verzie.
+
+Nová verzia: `node scripts/mhd/build-release.mjs <verzia>` + spustenie
+workflowu *MHD Presov - offline APK* s rovnakou verziou.

@@ -255,7 +255,49 @@ const dataset = {
   },
   stops, routes, services, heads, patterns, transfers,
 };
+// ── podkladová sieť trás pre mapu (zo shapes.txt, zjednodušená) ─────
+// slúži ako fallback podklad, keď sa nenačítajú OSM dlaždice (offline)
+const basemap = [];
+{
+  const shapesPath = join(SRC, 'shapes.txt');
+  if (existsSync(shapesPath)) {
+    const rows = readFileSync(shapesPath, 'utf8').split('\n');
+    const byShape = new Map();
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i].split(',');
+      if (r.length < 4) continue;
+      let a = byShape.get(r[0]);
+      if (!a) byShape.set(r[0], (a = []));
+      a[+r[3] - 1] = [+(+r[1]).toFixed(4), +(+r[2]).toFixed(4)];
+    }
+    const seg = new Set();
+    for (const pts of byShape.values()) {
+      let line = [];
+      let prev = null;
+      for (const p of pts) {
+        if (!p) continue;
+        if (prev && p[0] === prev[0] && p[1] === prev[1]) continue;
+        if (prev) {
+          const k = `${prev[0]},${prev[1]}-${p[0]},${p[1]}`;
+          const k2 = `${p[0]},${p[1]}-${prev[0]},${prev[1]}`;
+          if (seg.has(k) || seg.has(k2)) {
+            if (line.length > 1) basemap.push(line);
+            line = [p];
+            prev = p;
+            continue;
+          }
+          seg.add(k);
+        }
+        line.push(p);
+        prev = p;
+      }
+      if (line.length > 1) basemap.push(line);
+    }
+  }
+}
+
 mkdirSync(OUT, { recursive: true });
+writeFileSync(join(OUT, 'basemap.json'), JSON.stringify(basemap));
 const json = JSON.stringify(dataset);
 const hash = createHash('sha256').update(json).digest('hex').slice(0, 12);
 writeFileSync(join(OUT, 'dataset.json'), json);

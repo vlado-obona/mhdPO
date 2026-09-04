@@ -1,0 +1,132 @@
+name: MHD Presov - offline APK
+
+# Zabalí plánovač (mhd-app/) do samostatnej Android aplikácie (Capacitor):
+# web aj dáta sú VNÚTRI aplikácie — nepotrebuje žiadny hosting ani doménu.
+# Online si mapa dotiahne OSM dlaždice, offline kreslí sieť trás MHD.
+# Výsledok commitne do releases/v<verzia>/mhd-presov-offline.apk.
+on:
+  push:
+    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    paths:
+      - '.github/workflows/mhd-apk-offline.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Verzia release (napr. 1.0.0) — musí existovať releases/v<verzia>/'
+        required: false
+        default: '1.0.0'
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mhd-apk-offline-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version || '1.0.0' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Capacitor projekt
+        run: |
+          mkdir cap-build && cd cap-build
+          npm init -y >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 >/dev/null
+          cat > capacitor.config.json <<EOF
+          {
+            "appId": "sk.mhdpresov.app",
+            "appName": "MHD Prešov",
+            "webDir": "www",
+            "android": { "allowMixedContent": false }
+          }
+          EOF
+          cp -r ../mhd-app www
+          npx cap add android
+          npx cap sync android
+
+      - name: Ikony aplikacie
+        working-directory: cap-build
+        run: |
+          npm i --no-audit --no-fund -D @capacitor/assets sharp >/dev/null
+          mkdir -p assets
+          node -e "const s=require('sharp'); s('../mhd-app/icons/icon-512.png').resize(1024,1024).png().toFile('assets/logo.png').then(()=>console.log('logo ok'))"
+          npx capacitor-assets generate --android || echo "generovanie ikon zlyhalo — ostane predvolena"
+
+      - name: Verzia aplikacie
+        working-directory: cap-build/android
+        run: |
+          CODE=$(date -u +%Y%m%d)
+          sed -i "s/versionCode 1$/versionCode $CODE/" app/build.gradle
+          sed -i "s/versionName \"1.0\"$/versionName \"$VERSION\"/" app/build.gradle
+          grep -E 'versionCode|versionName' app/build.gradle
+
+      - name: Build release APK
+        working-directory: cap-build/android
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Podpis APK
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KS_PASS_SECRET: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          cd cap-build
+          if [ -n "$KS_B64" ] && [ -n "$KS_PASS_SECRET" ]; then
+            echo "$KS_B64" | base64 -d > android.keystore
+            KS_PASS="$KS_PASS_SECRET"
+            echo "Kluc zo secrets."
+          else
+            KS_PASS=$(openssl rand -hex 16)
+            keytool -genkeypair -alias android -keyalg RSA -keysize 2048 \
+              -validity 10000 -keystore android.keystore \
+              -storepass "$KS_PASS" -keypass "$KS_PASS" \
+              -dname "CN=MHD Presov, O=mhdpresov, L=Presov, C=SK"
+            echo "VYGENEROVANY NOVY KLUC (v artefakte, uloz si ho + heslo do secrets)."
+            echo "$KS_PASS" > keystore-password.txt
+          fi
+          echo "::add-mask::$KS_PASS"
+          BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          UNSIGNED=android/app/build/outputs/apk/release/app-release-unsigned.apk
+          "$BT/zipalign" -f 4 "$UNSIGNED" aligned.apk
+          "$BT/apksigner" sign --ks android.keystore --ks-key-alias android \
+            --ks-pass "pass:$KS_PASS" --key-pass "pass:$KS_PASS" \
+            --out mhd-presov-offline.apk aligned.apk
+          "$BT/apksigner" verify mhd-presov-offline.apk && echo "podpis OK"
+
+      - name: Artefakt (kluc pri prvom builde)
+        uses: actions/upload-artifact@v4
+        with:
+          name: mhd-presov-offline-apk
+          path: |
+            cap-build/mhd-presov-offline.apk
+            cap-build/android.keystore
+            cap-build/keystore-password.txt
+          retention-days: 30
+
+      - name: Commit APK do releases
+        run: |
+          mkdir -p "releases/v$VERSION"
+          cp cap-build/mhd-presov-offline.apk "releases/v$VERSION/"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "releases/v$VERSION/mhd-presov-offline.apk"
+          if git diff --cached --quiet; then
+            echo "APK bez zmeny."
+          else
+            git commit -m "mhd: offline APK v$VERSION ($(date -u +%F))"
+            git pull --rebase origin "$GITHUB_REF_NAME" || true
+            git push
+          fi

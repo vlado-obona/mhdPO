@@ -135,6 +135,16 @@ function initMap() {
   if (map) return;
   map = L.map('map', { renderer: L.canvas(), zoomControl: true });
   map.setView([48.998, 21.24], 13);
+  map.getContainer().style.background = '#eef1ee';
+  // záložný podklad: sieť trás MHD (kopíruje ulice) — pane pod dlaždicami,
+  // takže ju vidno len kým sa OSM dlaždice nenačítajú (a offline)
+  map.createPane('basemap').style.zIndex = 150; // tilePane má 200
+  const basemapRenderer = L.canvas({ pane: 'basemap' });
+  fetch('data/basemap.json').then((r) => r.ok ? r.json() : null).then((lines) => {
+    if (!lines || !map) return;
+    L.layerGroup(lines.map((l) =>
+      L.polyline(l, { pane: 'basemap', renderer: basemapRenderer, color: '#ccd6cc', weight: 3, opacity: 1, interactive: false }))).addTo(map);
+  }).catch(() => {});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
