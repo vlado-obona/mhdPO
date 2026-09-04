@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.2.3';
+const APP_VERSION = '1.2.4';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -178,14 +178,20 @@ function initMap() {
   const groupByName = new Map(groups.map((g) => [g.name, g]));
   D.stops.forEach((st, si) => {
     const dirs = (D.stopDirs && D.stopDirs[si]) || [];
-    // ticky smeru odchodu (dedup po ~15°)
-    const drawn = new Set();
-    for (const [, , brg] of dirs) {
-      const k = Math.round(brg / 15);
-      if (drawn.has(k)) continue;
-      drawn.add(k);
-      L.polyline([[st.la, st.lo], offsetPoint(st.la, st.lo, brg, 18)], {
-        color: '#0b7a3b', weight: 2.5, opacity: .85, interactive: false,
+    // jedna malá šípka v smere odchodu, rovnobežne s cestou — všetky
+    // spoje z nástupišťa idú tým istým smerom, stačí kruhový priemer azimutov
+    if (dirs.length) {
+      const r = Math.PI / 180;
+      let x = 0, y = 0;
+      for (const [, , b] of dirs) { x += Math.cos(b * r); y += Math.sin(b * r); }
+      const brg = Math.hypot(x, y) > 0.3 ? (Math.atan2(y, x) / r + 360) % 360 : dirs[0][2];
+      L.marker(offsetPoint(st.la, st.lo, brg, 16), {
+        icon: L.divIcon({
+          className: 'stop-dir',
+          html: `<span style="transform:rotate(${brg - 90}deg)">➤</span>`,
+          iconSize: [14, 14], iconAnchor: [7, 7],
+        }),
+        interactive: false, keyboard: false,
       }).addTo(markersLayer);
     }
     const mk = L.circleMarker([st.la, st.lo], {

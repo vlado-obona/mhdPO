@@ -12,6 +12,14 @@ Aktuálne obdobie platnosti: 9. 7. – 30. 9. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.2.4  (4. 9. 2026)
+----------------------------------------------------------------
+- Smer odchodu pri zastávke: namiesto čiarok jedna malá šípka ➤
+  rovnobežne s cestou, v smere jazdy autobusov z daného nástupišťa
+  (nástupištia oproti sebe majú šípky opačne). Detail liniek
+  a smerov ostáva v popupe zastávky.
+
+----------------------------------------------------------------
 v1.2.3  (4. 9. 2026)
 ----------------------------------------------------------------
 - Tlačidlo „✕" vedľa Mapy — vymaže celé vyhľadávanie (štart, cieľ,

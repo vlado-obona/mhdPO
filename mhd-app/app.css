@@ -146,6 +146,14 @@ button.ghost {
 .dir-arrow { display: inline-block; width: 1.1em; color: var(--green); font-size: .8em; margin-right: .2em; }
 .stop-popup .b-nav { background: #2b5f8a; }
 
+/* šípka smeru odchodu pri bode zastávky */
+.stop-dir { pointer-events: none; }
+.stop-dir span {
+  display: block; width: 14px; height: 14px; line-height: 14px;
+  text-align: center; font-size: 10px; color: var(--green);
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
+}
+
 /* vlajky na mape */
 .flag-icon { font-size: 22px; line-height: 1; text-shadow: 0 1px 2px rgb(0 0 0 / 35%); background: none; border: none; }
 
