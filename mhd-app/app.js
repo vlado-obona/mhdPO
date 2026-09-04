@@ -1,6 +1,10 @@
 // MHD Prešov — plánovač spojení nad oficiálnymi GTFS dátami DPMP.
 import { Raptor, planJourneys } from './raptor.js';
 
+// Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
+// ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
+const APP_VERSION = '1.2.2';
+
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
 const WALK_SPEED = 1.25; // m/s
@@ -519,6 +523,8 @@ function stopNav() {
 
 // ── inicializácia ────────────────────────────────────────────────────
 async function main() {
+  $('appVer').textContent = `v${APP_VERSION}`;
+  document.title = `MHD Prešov v${APP_VERSION} — plánovač spojení`;
   const now = nowInSk();
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;

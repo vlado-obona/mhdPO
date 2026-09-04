@@ -14,7 +14,7 @@ on:
       version:
         description: 'Verzia release (napr. 1.1.0)'
         required: false
-        default: '1.2.1'
+        default: '1.2.2'
         type: string
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ inputs.version || '1.2.1' }}
+      VERSION: ${{ inputs.version || '1.2.2' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -49,12 +49,13 @@ jobs:
           cat > capacitor.config.json <<EOF
           {
             "appId": "sk.mhdpresov.app",
-            "appName": "MHD Prešov",
+            "appName": "MHD Prešov v$VERSION",
             "webDir": "www",
             "android": { "allowMixedContent": false }
           }
           EOF
           cp -r ../mhd-app www
+          grep -q "APP_VERSION = '$VERSION'" www/app.js || { echo "::error::APP_VERSION v app.js nesedí s $VERSION"; exit 1; }
           npx cap add android
           npx cap sync android
           # oprávnenia pre geolokáciu (Capacitor Geolocation plugin)
@@ -123,10 +124,10 @@ jobs:
       - name: Commit APK do releases
         run: |
           mkdir -p "releases/v$VERSION"
-          cp cap-build/mhd-presov-offline.apk "releases/v$VERSION/"
+          cp cap-build/mhd-presov-offline.apk "releases/v$VERSION/mhd-presov-v$VERSION.apk"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "releases/v$VERSION/mhd-presov-offline.apk"
+          git add "releases/v$VERSION/mhd-presov-v$VERSION.apk"
           if git diff --cached --quiet; then
             echo "APK bez zmeny."
           else

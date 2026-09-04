@@ -23,6 +23,7 @@ body {
   padding-top: calc(.7rem + env(safe-area-inset-top));
 }
 .top h1 { font-size: 1.15rem; margin: 0; letter-spacing: .02em; }
+.app-ver { font-size: .7rem; font-weight: 400; opacity: .8; vertical-align: middle; }
 .data-info { font-size: .72rem; opacity: .85; }
 
 main { max-width: 640px; margin: 0 auto; padding: .75rem; }

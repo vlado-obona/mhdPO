@@ -33,6 +33,14 @@ const meta = JSON.parse(dataset).meta;
 
 const raptor = read('raptor.js').replace(/^export /gm, '');
 
+// verzia v app.js musí sedieť s verziou release
+{
+  const vm = read('app.js').match(/const APP_VERSION = '([^']+)'/);
+  if (!vm || vm[1] !== version) {
+    throw new Error(`APP_VERSION v app.js (${vm && vm[1]}) sa nezhoduje s ${version} — najprv uprav mhd-app/app.js`);
+  }
+}
+
 let app = read('app.js');
 app = mustReplace(app, "import { Raptor, planJourneys } from './raptor.js';\n", '', 'import');
 app = mustReplace(app,
@@ -90,7 +98,7 @@ ${app}
 `;
 
 mkdirSync(OUT, { recursive: true });
-writeFileSync(join(OUT, 'mhd-presov-standalone.html'), out);
+writeFileSync(join(OUT, `mhd-presov-v${version}.html`), out);
 writeFileSync(join(OUT, 'RELEASE.md'), `# MHD Prešov v${version}
 
 - vytvorené: ${new Date().toISOString()}
@@ -98,9 +106,9 @@ writeFileSync(join(OUT, 'RELEASE.md'), `# MHD Prešov v${version}
 - zdroj dát: ${meta.source ? meta.source.split('\n')[0] : 'data/gtfs-presov/SOURCE.txt'}
 
 Súbory:
-- mhd-presov-standalone.html — celá appka v jednom súbore, otvor v hociktorom
+- mhd-presov-v${version}.html — celá appka v jednom súbore, otvor v hociktorom
   prehliadači (aj z disku, aj offline — mapa vtedy kreslí sieť trás MHD).
-- mhd-presov-offline.apk — Android aplikácia s dátami zabalenými vnútri
+- mhd-presov-v${version}.apk — Android aplikácia s dátami zabalenými vnútri
   (pridáva ju workflow „MHD Presov - offline APK“).
 `);
-console.log(`releases/v${version}/mhd-presov-standalone.html — ${(out.length / 1048576).toFixed(2)} MB`);
+console.log(`releases/v${version}/mhd-presov-v${version}.html — ${(out.length / 1048576).toFixed(2)} MB`);

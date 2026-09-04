@@ -2,14 +2,21 @@ MHD PREŠOV — PLÁNOVAČ SPOJENÍ
 Popis zmien jednotlivých verzií
 ================================================================
 
-Súbory každej verzie:
-  mhd-presov-offline.apk        Android aplikácia (všetko zabalené vnútri)
-  mhd-presov-standalone.html    appka v jednom súbore (iPhone/PC — otvor v prehliadači)
-  mhd-presov-ios-unsigned.ipa   iOS balík (podpis cez Sideloadly/AltStore)
+Súbory každej verzie (od v1.2.2 s verziou v názve):
+  mhd-presov-vX.Y.Z.apk         Android aplikácia (všetko zabalené vnútri)
+  mhd-presov-vX.Y.Z.html        appka v jednom súbore (iPhone/PC — otvor v prehliadači)
+  mhd-presov-vX.Y.Z-ios.ipa     iOS balík (podpis cez Sideloadly/AltStore)
 
 Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS).
 Aktuálne obdobie platnosti: 9. 7. – 30. 9. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.2.2  (4. 9. 2026)
+----------------------------------------------------------------
+- Verzia je vždy v názve aplikácie: ikona na ploche („MHD Prešov
+  v1.2.2"), hlavička v aplikácii aj názvy súborov
+  (mhd-presov-v1.2.2.apk / .html / -ios.ipa).
 
 ----------------------------------------------------------------
 v1.2.1  (4. 9. 2026)
