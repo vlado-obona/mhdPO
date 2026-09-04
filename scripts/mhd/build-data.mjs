@@ -206,6 +206,33 @@ for (const t of gTrips) {
 }
 for (const p of patterns) p.trips.sort((a, b) => a.t[1] - b.t[1]);
 
+// ── smerové info zastávok (linka, smer, azimut odchodu) ─────────────
+// pre každé nástupište: ktoré linky z neho odchádzajú, kam (headsign)
+// a pod akým azimutom (kreslí sa ako šípka na mape — vidno, na ktorej
+// strane cesty nástupište je a ktorým smerom autobusy idú)
+function bearingDeg(a, b) {
+  const r = Math.PI / 180;
+  const dLon = (b.lo - a.lo) * r;
+  const y = Math.sin(dLon) * Math.cos(b.la * r);
+  const x = Math.cos(a.la * r) * Math.sin(b.la * r) -
+    Math.sin(a.la * r) * Math.cos(b.la * r) * Math.cos(dLon);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+const stopDirs = stops.map(() => []);
+{
+  const seenDir = stops.map(() => new Set());
+  for (const p of patterns) {
+    const h = p.trips[0]?.h ?? -1;
+    for (let i = 0; i < p.stops.length - 1; i++) {
+      const a = p.stops[i];
+      const key = p.r + '_' + h;
+      if (seenDir[a].has(key)) continue;
+      seenDir[a].add(key);
+      stopDirs[a].push([p.r, h, Math.round(bearingDeg(stops[a], stops[p.stops[i + 1]]))]);
+    }
+  }
+}
+
 // ── pešie prestupy ───────────────────────────────────────────────────
 const transfers = [];
 const seen = new Set();
@@ -253,7 +280,7 @@ const dataset = {
     validTo: to,
     source,
   },
-  stops, routes, services, heads, patterns, transfers,
+  stops, routes, services, heads, patterns, transfers, stopDirs,
 };
 // ── podkladová sieť trás pre mapu (zo shapes.txt, zjednodušená) ─────
 // slúži ako fallback podklad, keď sa nenačítajú OSM dlaždice (offline)

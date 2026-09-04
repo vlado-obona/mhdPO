@@ -133,6 +133,45 @@ button.ghost {
 .foot a { color: var(--green); }
 
 .marker-label { font-size: .7rem; font-weight: 600; text-shadow: 0 0 3px #fff; }
+
+/* farebné odlíšenie štart/cieľ vo formulári */
+.field.from .input-row input { border-left: 4px solid var(--green); }
+.field.to .input-row input { border-left: 4px solid #b3541e; }
+
+/* smery liniek v popupe zastávky */
+.stop-popup .dirs { text-align: left; margin: .2rem 0 .5rem; font-size: .8rem; display: grid; gap: .2rem; max-height: 9rem; overflow-y: auto; }
+.stop-popup .dirs.muted { color: var(--muted); }
+.dir-arrow { display: inline-block; width: 1.1em; color: var(--green); font-size: .8em; margin-right: .2em; }
+.stop-popup .b-nav { background: #2b5f8a; }
+
+/* vlajky na mape */
+.flag-icon { font-size: 22px; line-height: 1; text-shadow: 0 1px 2px rgb(0 0 0 / 35%); background: none; border: none; }
+
+/* tlačidlo navigácie v detaile spojenia */
+.nav-to { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 0 .3rem; cursor: pointer; font-size: .85rem; }
+
+/* navigačná lišta (kompas k zastávke) */
+.nav-bar {
+  position: fixed; left: .75rem; right: .75rem; z-index: 1200;
+  bottom: calc(.75rem + env(safe-area-inset-bottom));
+  display: flex; align-items: center; gap: .8rem;
+  background: var(--green); color: #fff; border-radius: 14px;
+  padding: .6rem .9rem; box-shadow: 0 4px 16px rgb(0 0 0 / 30%);
+  max-width: 600px; margin: 0 auto;
+}
+.nav-arrow {
+  font-size: 1.9rem; line-height: 1; width: 2.4rem; height: 2.4rem;
+  display: flex; align-items: center; justify-content: center;
+  background: rgb(255 255 255 / 18%); border-radius: 50%;
+  transition: transform .3s ease;
+}
+.nav-info { display: flex; flex-direction: column; min-width: 0; }
+.nav-info b { font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-info span { font-size: .8rem; opacity: .9; }
+.nav-close {
+  margin-left: auto; background: none; border: 0; color: #fff;
+  font-size: 1.1rem; cursor: pointer; padding: .3rem;
+}
 @media (min-width: 700px) {
   main { display: block; }
   #map { height: 70vh; }

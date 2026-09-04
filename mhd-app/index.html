@@ -26,8 +26,8 @@
 
   <main>
     <section class="planner" id="planner">
-      <div class="field">
-        <label for="fromInput">Odkiaľ</label>
+      <div class="field from">
+        <label for="fromInput">🚩 Odkiaľ</label>
         <div class="input-row">
           <input id="fromInput" type="text" placeholder="Zastávka alebo bod na mape" autocomplete="off" enterkeyhint="search">
           <button id="geoBtn" class="icon-btn" title="Použiť moju polohu" aria-label="Použiť moju polohu">📍</button>
@@ -37,8 +37,8 @@
 
       <button id="swapBtn" class="swap" title="Vymeniť smer" aria-label="Vymeniť smer">⇅</button>
 
-      <div class="field">
-        <label for="toInput">Kam</label>
+      <div class="field to">
+        <label for="toInput">🏁 Kam</label>
         <div class="input-row">
           <input id="toInput" type="text" placeholder="Cieľová zastávka" autocomplete="off" enterkeyhint="search">
         </div>
@@ -65,6 +65,15 @@
 
     <section id="results" class="results" hidden></section>
   </main>
+
+  <div id="navBar" class="nav-bar" hidden>
+    <div id="navArrow" class="nav-arrow" aria-hidden="true">⬆</div>
+    <div class="nav-info">
+      <b id="navTarget"></b>
+      <span id="navDist"></span>
+    </div>
+    <button id="navClose" class="nav-close" aria-label="Ukončiť navigáciu">✕</button>
+  </div>
 
   <footer class="foot">
     <p>Hviezdička (*) v názve = zastávka na znamenie.</p>

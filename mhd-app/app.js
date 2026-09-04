@@ -22,6 +22,23 @@ function haversine(la1, lo1, la2, lo2) {
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
+function bearingTo(la1, lo1, la2, lo2) {
+  const r = Math.PI / 180;
+  const dLon = (lo2 - lo1) * r;
+  const y = Math.sin(dLon) * Math.cos(la2 * r);
+  const x = Math.cos(la1 * r) * Math.sin(la2 * r) -
+    Math.sin(la1 * r) * Math.cos(la2 * r) * Math.cos(dLon);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+function offsetPoint(la, lo, brg, meters) {
+  const r = Math.PI / 180;
+  return [
+    la + Math.cos(brg * r) * meters / 111320,
+    lo + Math.sin(brg * r) * meters / (111320 * Math.cos(la * r)),
+  ];
+}
+
 function fmtTime(secs) {
   secs = Math.round(secs);
   const h = Math.floor(secs / 3600) % 24, m = Math.floor((secs % 3600) / 60);
@@ -152,14 +169,33 @@ function initMap() {
   markersLayer = L.layerGroup().addTo(map);
   journeyLayer = L.layerGroup().addTo(map);
 
-  for (const g of groups) {
-    const mk = L.circleMarker([g.lat, g.lon], {
+  // každé nástupište zvlášť (sú na správnej strane cesty) + smerová
+  // šípka podľa azimutu odchodu autobusov
+  const groupByName = new Map(groups.map((g) => [g.name, g]));
+  D.stops.forEach((st, si) => {
+    const dirs = (D.stopDirs && D.stopDirs[si]) || [];
+    // ticky smeru odchodu (dedup po ~15°)
+    const drawn = new Set();
+    for (const [, , brg] of dirs) {
+      const k = Math.round(brg / 15);
+      if (drawn.has(k)) continue;
+      drawn.add(k);
+      L.polyline([[st.la, st.lo], offsetPoint(st.la, st.lo, brg, 18)], {
+        color: '#0b7a3b', weight: 2.5, opacity: .85, interactive: false,
+      }).addTo(markersLayer);
+    }
+    const mk = L.circleMarker([st.la, st.lo], {
       radius: 6, color: '#0b7a3b', weight: 2, fillColor: '#fff', fillOpacity: .9,
     }).addTo(markersLayer);
     mk.bindPopup(() => {
+      const g = groupByName.get(st.n);
       const div = document.createElement('div');
       div.className = 'stop-popup';
-      div.innerHTML = `<b>${g.name}</b><div class="btns"></div>`;
+      const dirHtml = dirs.length
+        ? `<div class="dirs">${dirs.map(([r, h, brg]) =>
+            `<div><span class="dir-arrow" style="transform:rotate(${brg - 90}deg)">➤</span>${badge(r)} smer ${h >= 0 ? D.heads[h] : '?'}</div>`).join('')}</div>`
+        : '<div class="dirs muted">výstupné nástupište</div>';
+      div.innerHTML = `<b>${st.n}</b>${dirHtml}<div class="btns"></div>`;
       const btns = div.querySelector('.btns');
       const mkBtn = (label, cls, cb) => {
         const b = document.createElement('button');
@@ -167,11 +203,12 @@ function initMap() {
         b.addEventListener('click', () => { cb(); map.closePopup(); });
         btns.appendChild(b);
       };
-      mkBtn('Štart', 'b-start', () => setSel('from', { kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon }));
-      mkBtn('Cieľ', 'b-end', () => setSel('to', { kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon }));
+      mkBtn('🚩 Štart', 'b-start', () => setSel('from', { kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon }));
+      mkBtn('🏁 Cieľ', 'b-end', () => setSel('to', { kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon }));
+      mkBtn('🧭', 'b-nav', () => startNav(st.la, st.lo, st.n));
       return div;
     });
-  }
+  });
   // ťuknutie mimo zastávky = vlastný bod (najbližšie zastávky pešo)
   map.on('click', (e) => {
     const { lat, lng } = e.latlng;
@@ -291,9 +328,14 @@ function renderResults(journeys) {
           <div class="t">${fmtTime(l.dep)}<br><span class="muted">${fmtTime(l.arr)}</span></div>
           <div>
             ${badge(l.route)} <span class="muted">smer ${head}</span><br>
-            <b>${D.stops[l.from].n}</b> → <b>${D.stops[l.to].n}</b><br>
+            <b>${D.stops[l.from].n}</b> <button class="nav-to" title="Navigovať na nástupište" data-si="${l.from}">🧭</button> → <b>${D.stops[l.to].n}</b><br>
             ${inner.length ? `<button class="stops-toggle">${inner.length} medziľahlé zastávky ▾</button><ul hidden></ul>` : `<span class="muted">bez medziľahlých zastávok</span>`}
           </div>`;
+        const navBtn = div.querySelector('.nav-to');
+        if (navBtn) navBtn.addEventListener('click', () => {
+          const st = D.stops[+navBtn.dataset.si];
+          startNav(st.la, st.lo, st.n);
+        });
         const tog = div.querySelector('.stops-toggle');
         if (tog) {
           const ul = div.querySelector('ul');
@@ -332,13 +374,31 @@ function drawJourney(j) {
   if (!map) return;
   journeyLayer.clearLayers();
   const all = [];
+  const flag = (latlng, emoji, cls) => L.marker(latlng, {
+    icon: L.divIcon({ className: `flag-icon ${cls}`, html: emoji, iconSize: [28, 28], iconAnchor: [5, 24] }),
+    interactive: false,
+  }).addTo(journeyLayer);
+  const coord = (si) => [D.stops[si].la, D.stops[si].lo];
+
+  const rides = j.legs.filter((l) => l.type === 'ride');
   for (const l of j.legs) {
-    if (l.type !== 'ride') continue;
-    const pts = l.stops.map((si) => [D.stops[si].la, D.stops[si].lo]);
+    if (l.type === 'walk') {
+      L.polyline([coord(l.from), coord(l.to)], {
+        color: '#8a8f8a', weight: 3, dashArray: '4 7', opacity: .9,
+      }).addTo(journeyLayer);
+      continue;
+    }
+    const pts = l.stops.map(coord);
     all.push(...pts);
     L.polyline(pts, { color: '#0b7a3b', weight: 5, opacity: .85 }).addTo(journeyLayer);
-    L.circleMarker(pts[0], { radius: 7, color: '#0b7a3b', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(journeyLayer);
-    L.circleMarker(pts[pts.length - 1], { radius: 7, color: '#b3541e', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(journeyLayer);
+    L.circleMarker(pts[0], { radius: 6, color: '#0b7a3b', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(journeyLayer);
+    L.circleMarker(pts[pts.length - 1], { radius: 6, color: '#b3541e', fillColor: '#fff', fillOpacity: 1, weight: 3 }).addTo(journeyLayer);
+  }
+  // vlajky: štart 🚩, cieľ 🏁, prestupy 🚌
+  if (rides.length) {
+    flag(coord(j.legs[0].from), '🚩', 'flag-start');
+    flag(coord(rides[rides.length - 1].to), '🏁', 'flag-end');
+    for (let i = 1; i < rides.length; i++) flag(coord(rides[i].from), '🚌', 'flag-transfer');
   }
   if (all.length && !$('mapWrap').hidden) map.fitBounds(L.latLngBounds(all).pad(0.2));
 }
@@ -374,6 +434,78 @@ async function useGeo() {
   }
 }
 
+// ── navigačná šípka k zastávke (kompas + GPS, vzdialenosť a odhad) ──
+let nav = null;
+
+async function watchPos(cb) {
+  const geo = window.Capacitor?.Plugins?.Geolocation;
+  if (geo) {
+    await geo.requestPermissions().catch(() => {});
+    const id = await geo.watchPosition({ enableHighAccuracy: true }, (pos) => { if (pos) cb(pos); });
+    return { clear: () => geo.clearWatch({ id }) };
+  }
+  if (!navigator.geolocation) throw new Error('nedostupná');
+  const id = navigator.geolocation.watchPosition(cb,
+    () => { $('navDist').textContent = 'poloha nedostupná — povoľ polohu'; },
+    { enableHighAccuracy: true, maximumAge: 2000 });
+  return { clear: () => navigator.geolocation.clearWatch(id) };
+}
+
+function onHeading(e) {
+  if (!nav) return;
+  const h = (e.webkitCompassHeading != null) ? e.webkitCompassHeading
+    : (e.alpha != null ? 360 - e.alpha : null);
+  if (h != null) { nav.heading = h; renderNavArrow(); }
+}
+
+async function startNav(lat, lon, label) {
+  stopNav();
+  nav = { lat, lon, label, heading: null, cur: null, watch: null };
+  $('navTarget').textContent = label;
+  $('navDist').textContent = 'zisťujem polohu…';
+  $('navBar').hidden = false;
+  const DOE = window.DeviceOrientationEvent;
+  if (DOE && typeof DOE.requestPermission === 'function') {
+    // iOS: kompas vyžaduje povolenie v používateľskom geste
+    DOE.requestPermission().then((s) => {
+      if (s === 'granted') window.addEventListener('deviceorientation', onHeading);
+    }).catch(() => {});
+  } else if (DOE) {
+    window.addEventListener('deviceorientationabsolute', onHeading);
+    window.addEventListener('deviceorientation', onHeading);
+  }
+  try {
+    nav.watch = await watchPos((p) => {
+      if (!nav) return;
+      nav.cur = { la: p.coords.latitude, lo: p.coords.longitude };
+      renderNavArrow();
+    });
+  } catch {
+    $('navDist').textContent = 'geolokácia nie je dostupná';
+  }
+}
+
+function renderNavArrow() {
+  if (!nav || !nav.cur) return;
+  const d = haversine(nav.cur.la, nav.cur.lo, nav.lat, nav.lon);
+  const brg = bearingTo(nav.cur.la, nav.cur.lo, nav.lat, nav.lon);
+  const rot = nav.heading == null ? brg : (brg - nav.heading + 360) % 360;
+  $('navArrow').style.transform = `rotate(${rot}deg)`;
+  const mins = Math.max(1, Math.round(d / WALK_SPEED / 60));
+  $('navDist').textContent = d < 25
+    ? 'si na mieste 🎯'
+    : `${d < 1000 ? Math.round(d) + ' m' : (d / 1000).toFixed(1) + ' km'} · ~${mins} min pešo${nav.heading == null ? ' · šípka voči severu' : ''}`;
+}
+
+function stopNav() {
+  if (!nav) return;
+  if (nav.watch) nav.watch.clear();
+  window.removeEventListener('deviceorientation', onHeading);
+  window.removeEventListener('deviceorientationabsolute', onHeading);
+  nav = null;
+  $('navBar').hidden = true;
+}
+
 // ── inicializácia ────────────────────────────────────────────────────
 async function main() {
   const now = nowInSk();
@@ -392,6 +524,7 @@ async function main() {
     if (!f) $('toInput').value = '';
   });
   $('searchBtn').addEventListener('click', search);
+  $('navClose').addEventListener('click', stopNav);
   $('geoBtn').addEventListener('click', useGeo);
   $('mapBtn').addEventListener('click', () => {
     const w = $('mapWrap');
