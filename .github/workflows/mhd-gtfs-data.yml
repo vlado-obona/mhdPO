@@ -1,8 +1,10 @@
 name: MHD Presov - GTFS data
 
 # Stiahne oficiálny GTFS feed MHD Prešov (DPMP), skompiluje dataset pre
-# plánovač (/mhd/) a commitne zmeny. Spúšťa sa ručne alebo týždenne
+# plánovač (/mhd/) a commitne zmeny. Spúšťa sa ručne alebo denne
 # (cestovné poriadky sa menia — dataset treba držať aktuálny).
+# Aktuálne obdobie platnosti CP končí 30. 9. 2026 — pri zmene feedu
+# treba vydať novú verziu appky (releases/).
 on:
   push:
     branches: [claude/presov-mhd-planner-app-xnl2ew]
