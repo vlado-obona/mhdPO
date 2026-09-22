@@ -1,3 +1,3 @@
 zdroj: https://transiq.xhyrom.dev/gtfs/sk/dpmp.zip
-stiahnuté: 2026-09-03T18:30:23Z
-sha256: 30609d744eebd03af4d8e6d339c24d5d908d63e15b6f77ee0ab03d33751f09c2
+stiahnuté: 2026-09-22T12:40:38Z
+sha256: 547518800cebbf6940a3cccc50175c61cd6057561097544b7f6970e3d0874b0b
