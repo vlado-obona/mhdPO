@@ -12,6 +12,17 @@ Aktuálne obdobie platnosti: 9. 7. – 30. 9. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.2.5  (22. 9. 2026)
+----------------------------------------------------------------
+- Aktualizované cestovné poriadky: nový GTFS feed DPMP (č. 1382,
+  obdobie 1. 9. – 30. 9. 2026) opravil niektoré septembrové časy —
+  krížová kontrola s reálnymi odchodmi vozidiel DPMP je teraz
+  32/32 (predtým 30/32).
+- Poznámka: platnosť CP stále končí 30. 9. 2026 — októbrové
+  cestovné poriadky DPMP zatiaľ nezverejnil; po ich vydaní vyjde
+  ďalšia verzia aplikácie.
+
+----------------------------------------------------------------
 v1.2.4  (4. 9. 2026)
 ----------------------------------------------------------------
 - Smer odchodu pri zastávke: namiesto čiarok jedna malá šípka ➤

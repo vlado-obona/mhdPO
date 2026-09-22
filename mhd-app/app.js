@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.2.4';
+const APP_VERSION = '1.2.5';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');

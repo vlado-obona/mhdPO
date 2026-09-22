@@ -47,6 +47,9 @@ for (let i = 0; i < 60; i++) {
   const trip = trips[Math.floor(rand() * trips.length)];
   if (!trip || trip.t[1] > 86400) continue; // nočné cez polnoc testujeme zvlášť
   const from = p.stops[0], to = p.stops[p.stops.length - 1];
+  // okružné linky a dvojice, kde je cieľ na dochôdzkovú vzdialenosť,
+  // router korektne rieši pešo — jazdu nemá zmysel rekonštruovať
+  if (from === to || raptor.foot[from].some(([t]) => t === to)) continue;
   const dep = trip.t[1];
   const js = raptor.query(new Map([[from, 0]]), new Map([[to, 0]]), di, dep - 60);
   if (!js.length) {
