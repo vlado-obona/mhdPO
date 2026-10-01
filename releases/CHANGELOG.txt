@@ -13,6 +13,32 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.3.2  (1. 10. 2026)
+----------------------------------------------------------------
+- Tlačidlo „🎫 Kúpiť lístok DPMP“ (hlavná obrazovka) a „🎫 Lístok“
+  v navigácii. Ponúkne všetky oficiálne spôsoby kúpy podľa dpmp.sk:
+  • SMS lístok jedným ťuknutím — otvorí správy s predvyplnenou SMS
+    na 1144: I. pásmo 1,50 € / celá sieť („2“) 1,60 €, 60 min,
+    prestupný (len Orange, Telekom, O2, 4ka; v mobile ho treba mať
+    už pri nástupe),
+  • platba kartou / mobilom / hodinkami na validátore „Platba kartou“
+    (60 min 1,05 € / 1,20 €, denný strop = cena 24-hod. lístka),
+  • virtuálny lístok v aplikáciách uvedených na dpmp.sk (UBIAN,
+    MHD Prešov APP, iMHD Prešov), národný lístok Cyril a e-shop
+    Ubian na predplatné — odkazy rovno do Google Play / App Store.
+- Appka odporučí správny lístok pre naplánovanú cestu: ak trasa ide
+  aj do II. tarifného pásma, upozorní na celosieťový lístok (pásma
+  zastávok z dát DPMP, overené proti tlačeným cestovným poriadkom).
+- Navigácia v Google Maps (v1.3.1) — opravy z kontroly:
+  • ak sa z Google Maps vrátiš do appky až v autobuse, appka
+    rozpozná jazdu (už nehlási „spoj ti ušiel“) a upozorní na výstup,
+  • Google Maps sa ponúka len pri chôdzi k zastávke a do cieľa
+    (nie keď už čakáš na zastávke),
+  • vo webovej verzii (HTML) appka raz upozorní, že kým je v pozadí,
+    upozornenie na výstup nepríde,
+  • notifikácie zo starej cesty sa po reštarte appky zrušia.
+
+----------------------------------------------------------------
 v1.3.1  (1. 10. 2026)
 ----------------------------------------------------------------
 - Navigácia v Google Maps z režimu cesty: kým ideš pešo k nástupnej
@@ -20,8 +46,8 @@ v1.3.1  (1. 10. 2026)
   v hornej polovici alebo na zelenú lištu „🗺️ Maps ›“ — otvorí sa
   Google Maps s pešou navigáciou priamo k správnemu nástupišťu.
   Po príchode na zastávku sa vráť do appky: rozpozná nástup a pred
-  výstupom upozorní (kým je v popredí Google Maps, upozornenie na
-  výstup zaručí systémová notifikácia podľa cestovného poriadku).
+  výstupom upozorní (kým je v popredí Google Maps, v Android/iPhone
+  appke príde systémová notifikácia podľa cestovného poriadku).
 - Počas jazdy autobusom ťuknutie na mapu nič neotvorí; posúvanie
   a približovanie mapy prstami funguje ako doteraz (dvojité ťuknutie
   už mapu nepribližuje).

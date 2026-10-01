@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.3.1';
+const APP_VERSION = '1.3.2';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -726,11 +726,13 @@ function attachLongPress(el, onTap, onLong) {
 // prekrytia (dialóg, režim cesty, upozornenie): fokus dnu, pozadie inert,
 // Späť/Escape zatvorí vždy len to najvrchnejšie
 let focusBack = [];
+let popSilently = 0; // history.back() po zatvorení dialógu tlačidlom — nie je to „Späť“ používateľa
 function setInertBehind() {
-  const dlg = !$('favDlg').hidden, tr = !$('trip').hidden, al = !$('tripAlert').hidden;
-  for (const el of document.querySelectorAll('body > header, body > main, body > footer')) el.inert = dlg || tr || al;
-  $('trip').inert = al;
+  const dlg = !$('favDlg').hidden, tk = !$('tktDlg').hidden, tr = !$('trip').hidden, al = !$('tripAlert').hidden;
+  for (const el of document.querySelectorAll('body > header, body > main, body > footer')) el.inert = dlg || tk || tr || al;
+  $('trip').inert = al || tk;
   $('favDlg').inert = al || tr;
+  $('tktDlg').inert = al;
 }
 function layerOpened(focusEl) {
   focusBack.push(document.activeElement);
@@ -764,7 +766,7 @@ function closeFavDlg(fromHistory = false) {
   $('favDlg').hidden = true;
   favEdit = null;
   layerClosed();
-  if (!fromHistory) { try { if (history.state && history.state.fav) history.back(); } catch {} }
+  if (!fromHistory) { try { if (history.state && history.state.fav) { popSilently++; history.back(); } } catch {} }
 }
 
 function renderFavIcons() {
@@ -803,6 +805,66 @@ function saveFavDlg() {
   saveFavs();
   renderFavs();
   closeFavDlg();
+}
+
+// ── lístok DPMP ──────────────────────────────────────────────────────
+// Údaje z oficiálnych stránok DPMP (data/dpmp-info: sms-listok, aplikacie,
+// cyril, ceny-listkov, navod-na-zakupenie-listka-kartou; stav k 1. 10. 2026).
+const platformIs = (p) => window.Capacitor?.getPlatform?.() === p
+  || (p === 'ios' ? /iPhone|iPad|iPod/.test(navigator.userAgent) : /Android/.test(navigator.userAgent));
+// SMS na 1144: I. pásmo = „akékoľvek písmeno“, celosieťový = „2“
+const smsHref = (body) => `sms:1144${platformIs('ios') ? '&' : '?'}body=${encodeURIComponent(body)}`;
+const TKT_APPS = [
+  { n: 'UBIAN', play: 'https://play.google.com/store/apps/details?id=eu.ubian', ios: 'https://itunes.apple.com/us/app/apple-store/id1216229926' },
+  { n: 'MHD Prešov APP', play: 'https://play.google.com/store/apps/details?id=com.nolimit.sk.mhdpresov', ios: 'https://itunes.apple.com/us/app/apple-store/id1070714404' },
+  { n: 'iMHD Prešov', play: 'https://play.google.com/store/apps/details?id=com.backbone', ios: 'https://apps.apple.com/sk/app/imhd-sk/id595180826' },
+];
+const TKT_CYRIL = { n: 'Cyril', play: 'https://play.google.com/store/apps/details?id=sk.cyril', ios: 'https://apps.apple.com/sk/app/cyril/id6779543827' };
+
+function appLinks(apps) {
+  const links = [];
+  for (const a of apps) {
+    if (platformIs('android')) links.push([a.n, a.play]);
+    else if (platformIs('ios')) links.push([a.n, a.ios]);
+    else links.push([`${a.n} · Google Play`, a.play], [`${a.n} · App Store`, a.ios]);
+  }
+  return links.map(([n, h]) => `<a class="tkt-app" href="${h}" target="_blank" rel="noopener">${esc(n)} ›</a>`).join('');
+}
+
+// aký lístok na danú cestu: pásmo (GTFS zone_id) a dĺžka jazdy
+function ticketAdvice(j) {
+  const rides = j ? j.legs.filter((l) => l.type === 'ride') : [];
+  if (!rides.length) return null;
+  let z2 = null;
+  for (const l of rides) { const si = l.stops.find((x) => D.stops[x].z === 2); if (si != null) { z2 = D.stops[si].n; break; } }
+  return { zone2: z2, mins: Math.round((rides.at(-1).arr - rides[0].dep) / 60) };
+}
+
+function openTktDlg(j) {
+  $('tktSms1').href = smsHref('A');
+  $('tktSms2').href = smsHref('2');
+  $('tktApps').innerHTML = appLinks(TKT_APPS);
+  $('tktCyril').innerHTML = appLinks([TKT_CYRIL]);
+  const adv = ticketAdvice(j);
+  $('tktSms1').classList.toggle('rec', !!adv && !adv.zone2);
+  $('tktSms2').classList.toggle('rec', !!adv && !!adv.zone2);
+  if (adv) {
+    let h = adv.zone2
+      ? `Na túto cestu potrebuješ <b>celosieťový</b> lístok — trasa ide aj do II. tarifného pásma (${esc(adv.zone2)}). Pri platbe kartou zvoľ na validátore celosieťový lístok.`
+      : 'Na túto cestu stačí lístok pre <b>I. tarifné pásmo</b>.';
+    if (adv.mins > 60) h += ` Jazda trvá ${adv.mins} min — jeden 60-min. SMS lístok nestačí na celú cestu.`;
+    $('tktRec').innerHTML = h;
+  }
+  $('tktRec').hidden = !adv;
+  $('tktDlg').hidden = false;
+  try { history.pushState({ tkt: 1 }, ''); } catch {}
+  layerOpened($('tktClose'));
+}
+function closeTktDlg(fromHistory = false) {
+  if ($('tktDlg').hidden) return;
+  $('tktDlg').hidden = true;
+  layerClosed();
+  if (!fromHistory) { try { if (history.state && history.state.tkt) { popSilently++; history.back(); } } catch {} }
 }
 
 // ── zvuk, vibrácie, displej ─────────────────────────────────────────
@@ -1026,6 +1088,7 @@ async function startTrip(i) {
   stopNav();
   stopPosWatch();
   if (trip) endTrip(true);
+  cancelAllTripNotifs();
   const t = trip = {
     fav: f, dest: resolveTarget(f.target), phase: 'locating', pos: null, good: null, ref: null,
     journeys: [], jIdx: 0, j: null, rides: [], ri: 0, prog: 0, delay: 0,
@@ -1185,6 +1248,12 @@ function evaluateTrip() {
       const pr = routeProgress(r.stops, g.la, g.lo, 0, Math.min(n - 1, 3));
       onRoute = pr.d < 120 && pr.p > 0.02;
       if (onRoute && (t.speedAvg > 2.5 || pr.p >= 0.9)) { boardRide(pr.p); return; }
+      // po návrate do appky (napr. z Google Maps) môže už sedieť v autobuse ďalej
+      // na trase — nástup, ak je na trase linky a autobus tam podľa CP už mohol byť
+      if (!onRoute && now >= r.dep - 60) {
+        const far = routeProgress(r.stops, g.la, g.lo, 0, n - 1);
+        if (far.d < 120 && far.p >= 1 && schedAt(r, far.p) <= now + 180) { boardRide(far.p); return; }
+      }
     }
     // zmeškaný spoj — rozhodnúť až keď to platí dlhšie (jeden skok GPS nestačí)
     const key = `${t.ri}@${r.dep}`;
@@ -1426,6 +1495,13 @@ async function cancelTripNotif(k) {
   try { await LN.cancel({ notifications: [{ id: TRIP_NOTIF_BASE + k }] }); } catch {}
 }
 
+// všetky notifikácie režimu cesty (aj z cesty, ktorú systém ukončil s appkou)
+function cancelAllTripNotifs() {
+  const LN = window.Capacitor?.Plugins?.LocalNotifications;
+  if (!LN) return;
+  LN.cancel({ notifications: Array.from({ length: 10 }, (_, k) => ({ id: TRIP_NOTIF_BASE + k })) }).catch(() => {});
+}
+
 async function cancelTripNotifs(t = trip) {
   const LN = window.Capacitor?.Plugins?.LocalNotifications;
   if (!LN || !t || !t.notifAt.size) return;
@@ -1590,9 +1666,16 @@ function updateTripUser() {
 let gmapsAt = 0;
 function tripGmaps() {
   const t = trip;
-  if (!t || !['toStop', 'wait', 'final'].includes(t.phase)) return;
+  if (!t || !['toStop', 'final'].includes(t.phase)) return;
   const tg = tripTarget();
   if (!tg || Date.now() - gmapsAt < 1500) return;
+  // bez systémových notifikácií (web, alebo nepovolené) upozornenie na výstup
+  // príde len pri otvorenej appke — povedať to raz za cestu
+  const canNotify = !!window.Capacitor?.Plugins?.LocalNotifications && t.notifOk;
+  if (!canNotify && t.phase === 'toStop' && !t.gmapsWarned) {
+    t.gmapsWarned = true;
+    if (!confirm('Otvorím navigáciu v Google Maps.\n\nKým bude appka MHD v pozadí, upozornenie na výstup nepríde — po príchode na zastávku sa sem vráť (appka rozpozná nástup).')) return;
+  }
   gmapsAt = Date.now();
   openExternal(gmapsUrl(tg.la, tg.lo, true));
 }
@@ -1603,8 +1686,10 @@ function renderTripNav() {
   const tg = tripTarget();
   const walking = t.phase === 'toStop' || t.phase === 'wait' || t.phase === 'final';
   $('tripNav').hidden = !(t.pos && tg && walking);
-  $('tripGmHint').hidden = !(tg && walking);
-  $('tripMap').classList.toggle('gm-tap', !!(tg && walking));
+  const gm = !!tg && (t.phase === 'toStop' || t.phase === 'final');
+  $('tripGmHint').hidden = !gm;
+  $('tripMap').classList.toggle('gm-tap', gm);
+  $('tripNav').classList.toggle('gm-tap', gm);
   if ($('tripNav').hidden) return;
   const d = haversine(t.pos.la, t.pos.lo, tg.la, tg.lo);
   const brg = bearingTo(t.pos.la, t.pos.lo, tg.la, tg.lo);
@@ -1794,6 +1879,9 @@ async function main() {
   attachSuggest($('fromInput'), $('fromSuggest'), (v) => { sel.from = v; });
   attachSuggest($('toInput'), $('toSuggest'), (v) => { sel.to = v; });
 
+  // notifikácie z cesty, ktorú systém ukončil spolu s appkou, sú neplatné
+  cancelAllTripNotifs();
+
   // rýchle ciele
   loadFavs();
   renderFavs();
@@ -1830,6 +1918,16 @@ async function main() {
   // režim cesty
   $('tripClose').addEventListener('click', () => endTrip());
   $('taOk').addEventListener('click', dismissAlert);
+  // lístok
+  $('tktBtn').addEventListener('click', () => openTktDlg($('results').hidden ? null : lastJourney));
+  $('tripTkt').addEventListener('click', () => openTktDlg(trip?.j || null));
+  $('tktClose').addEventListener('click', () => closeTktDlg());
+  let tktDown = null;
+  $('tktDlg').addEventListener('pointerdown', (e) => { tktDown = e.target; });
+  $('tktDlg').addEventListener('click', (e) => {
+    if (e.target === $('tktDlg') && tktDown === $('tktDlg')) closeTktDlg();
+    tktDown = null;
+  });
   $('tripNav').addEventListener('click', tripGmaps);
   $('tripNav').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tripGmaps(); } });
   $('tripRecenter').addEventListener('click', () => {
@@ -1871,16 +1969,19 @@ async function main() {
     planFromHere('Prepočítané z tvojej aktuálnej polohy.');
   });
   window.addEventListener('popstate', () => {
+    if (popSilently) { popSilently--; return; }
     // Späť zatvorí len najvrchnejšiu vrstvu
     if (!$('tripAlert').hidden) {
       dismissAlert();
       if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
-    } else if (!$('favDlg').hidden) closeFavDlg(true);
+    } else if (!$('tktDlg').hidden) closeTktDlg(true);
+    else if (!$('favDlg').hidden) closeFavDlg(true);
     else if (trip) endTrip(true);
   });
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (!$('tripAlert').hidden) dismissAlert();
+    else if (!$('tktDlg').hidden) closeTktDlg();
     else if (!$('favDlg').hidden) closeFavDlg();
     else if (trip) endTrip();
     else return;
@@ -1895,6 +1996,7 @@ async function main() {
   if (CapApp) {
     CapApp.addListener('backButton', ({ canGoBack }) => {
       if (!$('tripAlert').hidden) dismissAlert();
+      else if (!$('tktDlg').hidden) closeTktDlg();
       else if (!$('favDlg').hidden) closeFavDlg();
       else if (trip) endTrip();
       else if (canGoBack) history.back();

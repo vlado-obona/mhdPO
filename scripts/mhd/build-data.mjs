@@ -5,7 +5,7 @@
 // Formát datasetu (indexy namiesto ID, časy v sekundách od polnoci —
 // môžu presiahnuť 24 h pri nočných spojoch):
 //   meta      – provenience, platnosť feedu
-//   stops     – [{n, la, lo}]                     (index = stopIdx)
+//   stops     – [{n, la, lo, z?}]                 (index = stopIdx; z=2 = II. tarifné pásmo)
 //   routes    – [{s, l, c, tc}]                   (index = routeIdx)
 //   services  – [{d, from, to, add, rem}]         (d = bitmask po–ne, bit0 = pondelok)
 //   heads     – deduplikované headsigny
@@ -100,7 +100,10 @@ for (const s of gStops) {
   if (!isFinite(la) || !isFinite(lo)) continue;
   stopIdx.set(s.stop_id, stops.length);
   // "  *" v názve = zastávka na znamenie; normalizuj medzery
-  stops.push({ n: s.stop_name.replace(/\s+/g, ' ').trim(), la: +la.toFixed(6), lo: +lo.toFixed(6) });
+  const st = { n: s.stop_name.replace(/\s+/g, ' ').trim(), la: +la.toFixed(6), lo: +lo.toFixed(6) };
+  // tarifné pásmo (GTFS zone_id; overené proti PDF CP DPMP) — ukladá sa len II.
+  if (s.zone_id === '2') st.z = 2;
+  stops.push(st);
 }
 
 // ── linky ────────────────────────────────────────────────────────────

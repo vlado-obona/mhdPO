@@ -237,6 +237,35 @@ button.ghost {
 .dlg-actions .primary { flex: 0 1 auto; }
 .ghost.danger { color: #b3261e; margin-right: auto; }
 
+/* ── lístok ───────────────────────────────────────────────────── */
+.tkt-btn {
+  display: flex; align-items: baseline; justify-content: center; gap: .5rem; flex-wrap: wrap;
+  width: 100%; margin: 0 0 .9rem; padding: .75rem 1rem; border: 2px solid #b3261e; border-radius: 14px;
+  background: #fff; color: #b3261e; font-size: 1.05rem; font-weight: 800; cursor: pointer;
+}
+.tkt-btn span { font-size: .75rem; font-weight: 600; color: #6b3b38; }
+.tkt-btn:active { transform: scale(.99); }
+.tkt-head { display: flex; align-items: center; gap: .5rem; }
+.tkt-head h2 { margin: 0; flex: 1; }
+.dlg-box.tkt h3 { font-size: .95rem; margin: 1rem 0 .35rem; }
+.dlg-box.tkt h3 small { font-weight: 500; color: var(--muted); font-size: .78rem; }
+.tkt-rec { margin: .6rem 0 0; padding: .55rem .7rem; border-radius: 10px; background: #eaf4ec; border-left: 4px solid var(--green); font-size: .9rem; }
+.tkt-row { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.tkt-sms {
+  display: flex; flex-direction: column; align-items: center; gap: .1rem; padding: .7rem .4rem; border-radius: 12px;
+  background: #0a6e35; color: #fff; text-decoration: none; font-weight: 700; font-size: .95rem; text-align: center;
+}
+.tkt-sms b { font-size: 1.35rem; }
+.tkt-sms small { font-weight: 500; font-size: .75rem; }
+.tkt-sms.rec { outline: 3px solid #f2b705; outline-offset: 2px; }
+.tkt-note { font-size: .82rem; line-height: 1.45; margin: .4rem 0 0; color: #333; }
+.tkt-apps { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .45rem; }
+.tkt-app {
+  display: inline-block; padding: .45rem .7rem; border-radius: 999px; border: 1px solid var(--line);
+  background: #f6f8f6; color: #0a5a2c; font-weight: 700; font-size: .85rem; text-decoration: none;
+}
+.tkt-src { font-size: .72rem; color: var(--muted); margin: 1rem 0 0; }
+
 /* ── režim cesty ──────────────────────────────────────────────── */
 body.trip-open { overflow: hidden; }
 .trip {
@@ -251,7 +280,8 @@ body.trip-open { overflow: hidden; }
   display: flex; align-items: center; gap: .7rem; padding: .55rem .8rem;
   background: var(--green); color: #fff; border-radius: 14px; box-shadow: 0 3px 12px rgb(0 0 0 / 30%);
 }
-.trip-nav { cursor: pointer; }
+.trip-nav.gm-tap { cursor: pointer; }
+.trip-nav:not(.gm-tap) .trip-gm { display: none; }
 .trip-nav .nav-info { flex: 1 1 auto; }
 .trip-gm {
   flex: none; margin-left: auto; padding: .3rem .55rem; border-radius: 999px;

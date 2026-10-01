@@ -30,6 +30,7 @@
       <button id="fav1" class="fav fav-b" type="button"><span class="fav-ico"></span><span class="fav-lbl"></span><span class="fav-sub"></span></button>
     </section>
     <p class="fav-hint">Ťuknutím ťa appka navedie do cieľa · podržaním nastavíš cieľ a názov</p>
+    <button id="tktBtn" class="tkt-btn" type="button">🎫 Kúpiť lístok DPMP <span>SMS · karta · aplikácia</span></button>
 
     <section class="planner" id="planner">
       <div class="field from">
@@ -107,6 +108,39 @@
     </div>
   </div>
 
+  <div id="tktDlg" class="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="tktTitle">
+    <div class="dlg-box tkt">
+      <div class="tkt-head">
+        <h2 id="tktTitle">🎫 Lístok MHD Prešov</h2>
+        <button id="tktClose" class="trip-close" type="button" aria-label="Zavrieť">✕</button>
+      </div>
+      <p id="tktRec" class="tkt-rec" hidden></p>
+
+      <h3>📱 SMS lístok <small>60 min · prestupný</small></h3>
+      <div class="tkt-row">
+        <a id="tktSms1" class="tkt-sms" href="sms:1144">I. pásmo<b>1,50 €</b><small>SMS na 1144</small></a>
+        <a id="tktSms2" class="tkt-sms" href="sms:1144">Celá sieť<b>1,60 €</b><small>SMS „2“ na 1144</small></a>
+      </div>
+      <p class="tkt-note">Lístok príde do ~1,5 min — v mobile ho musíš mať <b>už pri nástupe</b>. Platí 60 min od doručenia. Len Orange, Telekom, O2 a 4ka; zľavnený SMS lístok neexistuje.</p>
+
+      <h3>💳 Kartou alebo mobilom vo vozidle</h3>
+      <p class="tkt-note">Pri <b>každom</b> nástupe (aj pri prestupe) prilož bezkontaktnú kartu, mobil (Google Pay, Apple Pay) alebo hodinky k validátoru <b>„Platba kartou“</b>. 60 min: <b>1,05 €</b> I. pásmo / <b>1,20 €</b> celá sieť; za deň zaplatíš najviac cenu 24-hod. lístka (4,50 € / 5,00 €). Celú sieť si zvolíš na validátore: „Iný lístok pre mňa“ → lístok → „zaplatiť“ → priložiť kartu. Ak ideš kratšie ako 20 min bez prestupu, pri výstupe prilož kartu znova — zaúčtuje sa 20-min. lístok (0,85 € / 1,00 €).</p>
+
+      <h3>📲 Virtuálny lístok v aplikácii</h3>
+      <p class="tkt-note">Kúp <b>pred nástupom</b> — platí 30 s po zaplatení, cena ako pri karte. Aplikácie uvedené na dpmp.sk (produkty tretích strán):</p>
+      <div class="tkt-apps" id="tktApps"></div>
+
+      <h3>🇸🇰 Cyril — národný lístok (NICL)</h3>
+      <p class="tkt-note">Platí vo vozidlách s nálepkou CYRIL pri predných dverách.</p>
+      <div class="tkt-apps" id="tktCyril"></div>
+
+      <h3>🗓️ Predplatný lístok (PCL)</h3>
+      <div class="tkt-apps"><a class="tkt-app" href="https://eshop.ubian.sk" target="_blank" rel="noopener">e-shop Ubian (na čipovú kartu) ›</a></div>
+
+      <p class="tkt-src">Údaje a ceny podľa <a href="https://www.dpmp.sk/ceny-listkov" target="_blank" rel="noopener">dpmp.sk</a> (ceny platné od 1. 1. 2026, overené 1. 10. 2026). Zľavy a podrobnosti upravuje Tarifa MHD v Prešove.</p>
+    </div>
+  </div>
+
   <div id="trip" class="trip" hidden role="dialog" aria-modal="true" aria-label="Navigácia do cieľa">
     <div class="trip-top">
       <div id="tripMap" class="trip-map"></div>
@@ -131,6 +165,7 @@
         <button id="tripBoard" class="ghost" type="button">🚌 Už som nastúpil</button>
         <button id="tripAlt" class="ghost" type="button" hidden>⇄ Iný spoj</button>
         <button id="tripReplan" class="ghost" type="button">🔄 Prepočítať</button>
+        <button id="tripTkt" class="ghost" type="button">🎫 Lístok</button>
       </div>
       <p class="trip-note" id="tripNote">Časy podľa cestovného poriadku · polohu v autobuse určuje GPS · upozornenie príde na zastávke pred výstupom</p>
     </div>
