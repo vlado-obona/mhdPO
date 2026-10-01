@@ -110,10 +110,12 @@
   <div id="trip" class="trip" hidden role="dialog" aria-modal="true" aria-label="Navigácia do cieľa">
     <div class="trip-top">
       <div id="tripMap" class="trip-map"></div>
-      <div id="tripNav" class="trip-nav" hidden>
+      <div id="tripNav" class="trip-nav" hidden role="button" tabindex="0" aria-label="Navigovať pešo v Google Maps">
         <div id="tripArrow" class="nav-arrow" aria-hidden="true">⬆</div>
         <div class="nav-info"><b id="tripNavTitle"></b><span id="tripNavSub"></span></div>
+        <span class="trip-gm" aria-hidden="true">🗺️ Maps ›</span>
       </div>
+      <div id="tripGmHint" class="trip-gm-hint" hidden aria-hidden="true">ťukni na mapu → navigácia v Google Maps</div>
       <button id="tripRecenter" class="trip-recenter" type="button" hidden aria-label="Sledovať moju polohu">◎</button>
     </div>
     <div class="trip-bottom">

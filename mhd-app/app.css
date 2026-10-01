@@ -251,6 +251,19 @@ body.trip-open { overflow: hidden; }
   display: flex; align-items: center; gap: .7rem; padding: .55rem .8rem;
   background: var(--green); color: #fff; border-radius: 14px; box-shadow: 0 3px 12px rgb(0 0 0 / 30%);
 }
+.trip-nav { cursor: pointer; }
+.trip-nav .nav-info { flex: 1 1 auto; }
+.trip-gm {
+  flex: none; margin-left: auto; padding: .3rem .55rem; border-radius: 999px;
+  background: #fff; color: #0a6e35; font-size: .8rem; font-weight: 800; white-space: nowrap;
+}
+.trip-gm-hint {
+  position: absolute; z-index: 600; left: calc(.6rem + env(safe-area-inset-left)); bottom: 1.6rem;
+  max-width: calc(100% - 5rem); padding: .3rem .6rem; border-radius: 999px; pointer-events: none;
+  background: rgb(255 255 255 / 92%); color: #1b1f1b; font-size: .75rem; font-weight: 600;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 25%);
+}
+.trip-map.gm-tap { cursor: pointer; }
 .trip-recenter {
   position: absolute; z-index: 600; right: calc(.7rem + env(safe-area-inset-right)); bottom: 1.4rem; width: 2.8rem; height: 2.8rem;
   border-radius: 50%; border: 0; background: #fff; font-size: 1.4rem; cursor: pointer;

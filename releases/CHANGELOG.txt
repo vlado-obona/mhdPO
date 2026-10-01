@@ -13,6 +13,21 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.3.1  (1. 10. 2026)
+----------------------------------------------------------------
+- Navigácia v Google Maps z režimu cesty: kým ideš pešo k nástupnej
+  zastávke (alebo z poslednej zastávky do cieľa), ťukni na mapu
+  v hornej polovici alebo na zelenú lištu „🗺️ Maps ›“ — otvorí sa
+  Google Maps s pešou navigáciou priamo k správnemu nástupišťu.
+  Po príchode na zastávku sa vráť do appky: rozpozná nástup a pred
+  výstupom upozorní (kým je v popredí Google Maps, upozornenie na
+  výstup zaručí systémová notifikácia podľa cestovného poriadku).
+- Počas jazdy autobusom ťuknutie na mapu nič neotvorí; posúvanie
+  a približovanie mapy prstami funguje ako doteraz (dvojité ťuknutie
+  už mapu nepribližuje).
+- Cestovné poriadky bez zmeny (platnosť 1. – 28. 10. 2026).
+
+----------------------------------------------------------------
 v1.3.0  (1. 10. 2026)
 ----------------------------------------------------------------
 NOVÉ CESTOVNÉ PORIADKY OD 1. 10. 2026

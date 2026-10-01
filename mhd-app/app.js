@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.3.1';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -548,9 +548,10 @@ async function useGeo() {
 // ── navigačná šípka k zastávke (kompas + GPS, vzdialenosť a odhad) ──
 let nav = null;
 
-// pešie navádzanie v Google Maps (otvorí appku / web s trasou k bodu)
-function gmapsUrl(lat, lon) {
-  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking`;
+// pešie navádzanie v Google Maps (otvorí appku / web s trasou k bodu);
+// navigate = rovno spustiť navigáciu (inak len náhľad trasy)
+function gmapsUrl(lat, lon, navigate = false) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=walking${navigate ? '&dir_action=navigate' : ''}`;
 }
 function openExternal(url) {
   const a = document.createElement('a');
@@ -1461,7 +1462,9 @@ function openTripUi() {
   document.body.classList.add('trip-open');
   try { history.pushState({ trip: 1 }, ''); } catch {}
   if (!tripMap) {
-    tripMap = L.map('tripMap', { renderer: L.canvas(), zoomControl: false });
+    // dvojklik nezoomuje — ťuknutie na mapu spúšťa navigáciu v Google Maps
+    tripMap = L.map('tripMap', { renderer: L.canvas(), zoomControl: false, doubleClickZoom: false });
+    tripMap.on('click', tripGmaps);
     tripMap.setView([48.998, 21.24], 14);
     addBaseLayers(tripMap);
     tripLayer = L.layerGroup().addTo(tripMap);
@@ -1583,12 +1586,25 @@ function updateTripUser() {
   }
 }
 
+// pešia časť cesty (k nástupišťu / do cieľa) → navigácia v Google Maps
+let gmapsAt = 0;
+function tripGmaps() {
+  const t = trip;
+  if (!t || !['toStop', 'wait', 'final'].includes(t.phase)) return;
+  const tg = tripTarget();
+  if (!tg || Date.now() - gmapsAt < 1500) return;
+  gmapsAt = Date.now();
+  openExternal(gmapsUrl(tg.la, tg.lo, true));
+}
+
 function renderTripNav() {
   const t = trip;
   if (!t) return;
   const tg = tripTarget();
   const walking = t.phase === 'toStop' || t.phase === 'wait' || t.phase === 'final';
   $('tripNav').hidden = !(t.pos && tg && walking);
+  $('tripGmHint').hidden = !(tg && walking);
+  $('tripMap').classList.toggle('gm-tap', !!(tg && walking));
   if ($('tripNav').hidden) return;
   const d = haversine(t.pos.la, t.pos.lo, tg.la, tg.lo);
   const brg = bearingTo(t.pos.la, t.pos.lo, tg.la, tg.lo);
@@ -1814,6 +1830,8 @@ async function main() {
   // režim cesty
   $('tripClose').addEventListener('click', () => endTrip());
   $('taOk').addEventListener('click', dismissAlert);
+  $('tripNav').addEventListener('click', tripGmaps);
+  $('tripNav').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tripGmaps(); } });
   $('tripRecenter').addEventListener('click', () => {
     if (!trip) return;
     trip.follow = true; $('tripRecenter').hidden = true; updateTripUser();
