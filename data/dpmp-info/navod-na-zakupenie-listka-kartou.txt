@@ -1,0 +1,185 @@
+Dopravný podnik Mesta Prešov Návod na kúpu elektronického cestovného lístka platobnou kartou vo vozidle MHD
+<!--
+-->
+window.consentStore = window.consentStore || {};
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+function setConsents(operacia = 'default') {
+if (consentStore) {
+gtag('consent',operacia,consentStore);
+}
+}
+:root {
+--cc-btn-primary-bg: #DB2017;
+}
+if (!consentStore.functionality_storage) {
+consentStore = {
+'ad_storage': 'denied',
+'ad_user_data': 'denied',
+'ad_personalization': 'denied',
+'analytics_storage': 'denied',
+'functionality_storage': 'granted',
+'personalization_storage': 'granted',
+'security_storage': 'granted'
+};
+}
+setConsents('default');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FC69QS7193');
+gtag('config', 'AW-629130799');
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '847430268281545');
+fbq('track', 'PageView');
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=847430268281545&ev=PageView&noscript=1"
+/>
+window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+window._adftrack.push({
+HttpHost: 'track.adform.net',
+pm: 2077769,
+divider: encodeURIComponent('|'),
+pagename: encodeURIComponent('Presov_MHD_homepage')
+});
+(function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+Dispečing: 
+ 051/7470 204
+Dispečing: 
+ 051/7470 204
+Linkové vedenie
+Trasy liniek
+Trasy školských spojov
+Schéma siete
+Nočná doprava
+Bezbariérová doprava
+Cestovné poriadky
+Vyhľadanie spojenia
+Ako sa dostať...
+Predpisy a tarifa
+Návod na kúpu cestovného lístka platobnou kartou
+eCL- kúpa platobnou kartou vo vozidle
+Daňový doklad a výpis jázd
+ Sme zapojení do systému NICL
+Straty a nálezy
+Prepravný poriadok
+Tarifa
+Ceny lístkov
+SMS lístok
+SMS - daňový doklad
+PCL cez internet
+Predajné miesta
+Tlačivá a dokumenty
+Dopravný podnik
+Reklamné a iné služby
+Aktuálne informácie
+Informácie z podniku
+POMOC Ukrajine
+ДОПОМОЖІТЬ Україні
+Majetok na predaj
+Verejné obstarávanie
+Povinné zverejňovanie
+História
+Najčastejšie otázky
+Výročné správy, závierky, správy audítora
+Etický kódex
+Organizačný poriadok
+Stanovy
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+Ochrana osobných údajov
+Pravidlá používania súborov cookies
+Privátna zóna
+Kontakt
+Kontakt
+Návod na kúpu elektronického cestovného lístka platobnou kartou vo vozidle MHD
+Instructions in English
+Vo vozidlách MHD možno platiť za cestovanie platobnou kartou len na validátoroch označených „Platba kartou“. 
+Validátor na platby kartou 
+Podporované platobné systémy 
+jednorazové (60 min.) a 24 hod. elektronické cestovné lístky (ďalej len „cestovný lístok“) si môžete kúpiť prostredníctvom všetkých zariadení a platobných metód s podporou NFC (Near Field Communication) – bezkontaktnou platobnou kartou (VISA, MasterCard, Maestro), ako aj cez Google Pay, Apple Pay, smart hodinkami alebo platobným prsteňom.
+Pri platbe platobnou kartou alebo iným platobným prostriedkom (napr. mobilom, smart hodinkami, prsteňom a pod.) bude zablokovaná suma, ktorej výška závisí od pravidiel kartovej spoločnosti. 
+Na posúdenie platnosti cestovného lístka sa nevzťahuje čas prepravy uvedený v cestovných poriadkoch dopravcu z nástupnej do cieľovej zastávky.
+Dodržiavajte tieto pravidlá
+1. POVINNÝ CHECK - IN
+Pri každom nástupe do vozidla, vrátane prestupov, je nutné priložiť platobnú kartu k validátoru (okrem prípadu, keď je v platnosti 24-hodinový lístok). Ak ste si zakúpili celosieťový, zľavnený cestovný lístok, lístok pre spolucestujúceho, batožinu alebo psa, je nutné pri každom prestupe najprv zvoliť na validátore potrebný lístok a až potom priložiť kartu.
+Dôvod: Systém platby kartou vám vypočíta optimálne cestovné a zaručuje, že vždy budete mať počas cestovania platný cestovný lístok. Pri prestupe vám umožní docestovať až na konečnú zastávku za cenu 60 min. cestovného lístka.
+Pri prejazde vozidla do II. tarifného pásma
+ (ak si cestujúci kúpil cestovný lístok bez voľby konkrétneho lístka len priložením platobnej karty k validátoru v I. tarifnom pásme) 
+je cestujúci povinný až po opustení hraničnej zastávky vozidlom
+ (po zaznení zvukového ohlásenia o zmene tarifného pásma vo vozidle 
+alebo
+ po zobrazení prvej zastávky v II. tarifnom pásme na validátore) 
+opäť priložiť platobnú kartu k validátoru. 
+Ak ste si zakúpili zľavnený cestovný lístok v 1. pásme, je nutné najprv zvoliť zľavnený cestovný lístok a následne priložiť kartu.
+Cestujúcemu bude v takom prípade účtovaná výlučne cena cestovného za celosieťový cestovný lístok.
+Ak cestujúci nepriloží platobnú kartu k validátoru, jeho cestovný lístok bude stále platný len pre I. tarifné pásmo.
+2. NEPOVINNÝ CHECK - OUT
+Pri výstupe priložte platobnú kartu k validátoru (check-out) v prípade, že ste cestovali kratšie ako 20 minút a v ceste už nebudete pokračovať prestupom do iného vozidla. Kartu priložte až vtedy, keď vozidlo prichádza do vašej cieľovej zastávky. Ak cestujete dlhšie (viac ako jednu zastávku), CHECK OUT môžete urobiť kedykoľvek počas jazdy. Včasným priložením karty urýchlite výstup sebe aj ostatným cestujúcim. 
+Dôvod: Systém platby kartou vám pri odhlásení z vozidla do 20 minút od nástupu zaúčtuje iba 20 min. cestovný lístok (nie 60 min. cestovný lístok). Ak však budete v ceste pokračovať, check-out nemá zmysel, pretože systém uplatní v prospech cestujúceho vhodnejší spôsob optimalizácie ceny.
+Kupujem cestovný lístok pre seba
+Priložte platobnú kartu k validátoru a počkajte na potvrdzovací tón. Pri jazde vozidla v II. tarifnom pásme (dopravcom obsluhované obce pri Prešove) je validátor nastavený na predaj celosieťového cestovného lístka. Postup nákupu je rovnaký ako v I. tarifnom pásme.
+Kupujem zľavnený cestovný lístok pre seba
+Na úvodnej obrazovke validátora stlačte tlačidlo pre zľavnený cestovný lístok a priložte platobnú kartu k validátoru. Počkajte na potvrdzovací tón. Pri jazde vozidla v II. tarifnom pásme (dopravcom obsluhované obce pri Prešove) je validátor nastavený na predaj celosieťového cestovného lístka. Postup nákupu je rovnaký ako v I. tarifnom pásme.
+Kupujem celosieťový alebo 24-hodinový cestovný lístok
+Na úvodnej obrazovke validátora stlačte tlačidlo „Iný lístok pre mňa“ a zvoľte príslušný cestovný lístok. Stlačte tlačidlo „zaplatiť“ a priložte platobnú kartu k validátoru. Počkajte na potvrdzovací tón. 
+Po kúpe 24 hod. cestovného lístka v čase jeho platnosti nemáte povinnosť prikladať platobnú kartu k validátoru v prípade ďalších nástupov do vozidla.
+ Ak to však urobíte, systém vám nezaúčtuje nič navyše. Zaplatíte len za 24 hod. cestovný lístok.
+Kupujem cestovný lístok pre spolucestujúcich, na prepravu batožiny alebo psa
+Na úvodnej obrazovke validátora stlačte tlačidlo „Lístky pre spolucestujúcich/batožinu/psa“. Zvoľte príslušný cestovný lístok. Opakovaným stlačením tlačidla pridávate počet cestovných lístkov. (Ak sa pomýlite v počte zvolených cestovných lístkov, pokračujte v stláčaní. Po stlačení tlačidla s počtom 5 cestovných lístkov sa opäť objaví voľba 1 cestovný lístok.) Stlačte tlačidlo „zaplatiť“ a priložte platobnú kartu k validátoru. Počkajte na potvrdzovací tón. 
+Chcem zistiť platnosť cestovného lístka
+Na úvodnej obrazovke validátora stlačte tlačidlo „Informácie o lístku“ a priložte platobnú kartu k validátoru. Zobrazí sa vám obrazovka s informáciou o kúpených cestovných lístkoch.
+Systém optimalizácie cestovného
+Priloženie platobnej karty k validátoru neznamená vykonanie platby z vašej platobnej karty. Systém len zaznamenáva informácie o tom, že ste nastúpili do vozidla alebo vystúpili z vozidla opätovným priložením platobnej karty k validátoru pri výstupe. Na konci kalendárneho dňa systém vyhodnotí vaše jazdy a spracuje ich podľa nasledujúcich 
+pravidiel optimalizácie:
+Pri viacerých jazdách pri lístku rovnakého druhu začatých v rámci jednej hodiny (napríklad od 16:32 hod. do 17:32 hod.) bude účtovaná cena len za jeden 60 min. cestovný lístok.
+Ak cestujúci pokračuje v ceste prestupom do iného vozidla do 60-tich minút od kúpy lístka v prvom vozidle, lístok platí až do konečnej zastávky vozidla, do ktorého prestúpil. Táto optimalizácia ceny platí aj pre lístky pre spolucestujúcich a lístky na prepravu batožiny a psa (ak je pri oboch jazdách zvolený rovnaký počet lístkov jedného druhu).
+Ak cestujúci označí výstup z vozidla a na najbližšej zastávke z vozidla nevystúpi, musí si kúpiť lístok rovnakého druhu priložením platobnej karty k validátoru hneď pri výjazde vozidla zo zastávky. V takom prípade mu nebudú účtované dva lístky, ale iba jeden.
+Pri viacerých jazdách v rámci jedného kalendárneho dňa bude účtovaná cena maximálne v hodnote 24 hod. cestovného lístka.
+Pri prejazde vozidla do II. tarifného pásma
+ (ak si cestujúci kúpil cestovný lístok bez voľby konkrétneho lístka len priložením platobnej karty k validátoru v I. tarifnom pásme) 
+je cestujúci povinný až po opustení hraničnej zastávky vozidlom
+ (po zaznení zvukového ohlásenia o zmene tarifného pásma vo vozidle 
+alebo
+ po zobrazení prvej zastávky v II. tarifnom pásme na validátore) 
+opäť priložiť platobnú kartu k validátoru.
+Cestujúcemu bude v takom prípade účtovaná výlučne cena cestovného za celosieťový cestovný lístok.
+Ak cestujúci nepriloží platobnú kartu k validátoru, jeho cestovný lístok bude stále platný len pre I. tarifné pásmo.
+Ak máte platný 24 hod. cestovný lístok, ale napriek tomu budete prikladať pri nástupoch do vozidla platobnú kartu k validátoru, systém vyúčtuje iba 24 hod. cestovný lístok (s výnimkou, ak priložíte kartu k validátoru po 23. hodine platnosti 24 hod. cestovného lístka).
+Aby optimalizácia prebehla korektne, je nevyhnutné, aby boli všetky platby počas jedného dňa (od 0:00 hod. do 23:59 hod.) uskutočnené tým istým platobným prostriedkom (napr. platobnou kartou, mobilom, smart hodinkami alebo prsteňom).
+Otázky a odpovede
+1. Prečo mám prikladať kartu k validátoru (urobiť check-in) pri každom nástupe, keď mi lístok platí 60 minút od kúpy?
+Táto povinnosť cestujúceho je stanovená preto, aby bola možná optimalizácia v prospech cestujúceho a aby sa nemohlo stať, že cestujúci bude mať neplatný lístok. Ak povinný check-in neurobíte, pri z vyžiadaní informácie o lístku vás validátor informuje, že nemáte platný lístok pre toto vozidlo. 
+2. Prečo je v ponuke aj 24 hod. cestovný lístok, ak optimalizujete cestovné a cestujúci za daný deň zaplatí maximálne cenu 24 hod. cestovného lístka?
+Cestovné sa optimalizuje v rámci jedného kalendárneho dňa (od 0:00 do 23:59). 24 hod. cestovný lístok platí 24 hodín od momentu kúpy (napríklad od 13:42 hod. do 13:42 hod. nasledujúceho dňa).
+3. Prečo informačný systém vozidla upozorňuje cestujúcich, aby si pri prechode do iného tarifného pásma skontrolovali platnosť cestovného dokladu?
+Výzva je adresovaná tým cestujúcim, ktorí pôvodne nezamýšľali cestovať až do II. tarifného pásma. Preto si pri nástupe v I. tarifnom pásme nezvolili celosieťový cestovný lístok, ale iba priložili platobnú kartu k validátoru na nákup cestovného lístka v I. pásme. V takom prípade sa musia opätovným priložením zaevidovať, že sú stále vo vozidle. Systém im vyúčtuje namiesto cestovného lístka pre I. tarifné pásmo cestovný lístok celosieťový. Ak takýto cestujúci platobnú kartu k validátoru napriek výzve nepriloží, bude cestovať bez platného cestovného lístka a bude povinný zaplatiť sankčnú úhradu.
+4. Ako dlho platia cestovné lístky pre spolucestujúcich?
+Cestovné lístky pre spolucestujúcich majú platnosť zhodnú s platnosťou lístka pre cestujúceho (s výnimkou, ak má cestujúci 24 hod. cestovný lístok a kupuje 60 minútové lístky pre spolucestujúcich) . Platia len do vystúpenia platcu z vozidla. Ak by spolucestujúci vo vozidle zostali aj po vystúpení platcu, budú cestovať bez platného cestovného lístka a budú povinní zaplatiť sankčnú úhradu. Platba za cestovné lístky pre spolucestujúcich sa neoptimalizuje v rámci kalendárneho dňa. Dôležité je, aby platca nezabudol zvoliť lístky pre spolucestujúcich pri každom nástupe do vozidla. Najprv priloží kartu pre nákup cestovného lístka pre seba (bez výberu alebo výberom z ponuky) , potom zvolí cestovné lístky pre spolucestujúcich, stlačí tlačidlo zaplatiť a priloží kartu pre potvrdenie kúpy. Ak tak neurobí, spolucestujúci budú cestovať bez platného cestovného lístka.
+5. Ako dlho platia cestovné lístky na prepravu batožiny a psa?
+Platnosť týchto cestovných lístkov je 60 minút v prípade kombinácie s 24-hodinovýn lístkom. Po uplynutí času musíte kúpiť tieto cestovné lístky znovu. V prípade kombinácie s iným typom lístka pre cestujúceho alebo spolucestujúceho je platnosť zhodná s platnosťou tohto lístka. Podmienkou je, aby cestujúci pri prestupe tieto lístky znovu označil. 
+6. Koľko cestovných lístkov môžem kúpiť jednou platobnou kartou?
+Maximálny počet cestovných lístkov kúpených pre spolucestujúcich je 5. Výška celkovej platby za nákup cestovného pri jednom nákupe v jednom vozidle platobnou kartou resp. jedným iným platobným prostriedkom (napr. mobilom, platobnou kartou, smart hodinkami a pod.) je obmedzená na 16 EUR. Obmedzenie súvisí s pravidlami bánk pre offline platby a následne zúčtované platby v doprave.
+7. Kde môžem získať účtovný doklad k zaplatenému cestovnému?
+Na internetovskej stránke 
+https://www.dpmp.sk/kontrola-jazd
+. Doklad získate po zadaní čísla vašej bankovej transakcie. Kód platby je uvedený v názve transakcie DPPR*kód platby. 
+8. Nemôžem používať rozdielne platobné prostriedky? Napríklad pri nástupe platbu smartfónom a pri výstupe z vozidla sa odhlásim hodinkami?
+Nie. V takom prípade by systém vyhodnotil, že si kupujete cestovný lístok dvakrát. Systém nemôže spojiť rozdielne platobné prostriedky, okrem iného preto, že pre bezpečnosť platieb sa identifikačné kódy niektorých platobných prostriedkov menia. Odporúčame preto, aby ste pri viacerých cestách v jeden kalendárny deň používali jeden platobný prostriedok. Vtedy vám systém optimalizuje denné cestovné na cenu maximálne 24 hod. cestovného lístka.
+9. Čo mám urobiť, ak mám kúpený 24 hodinový cestovný lístok pre prvé pásmo a omylom prejdem do II. pásma?
+24-hodinový eCL pre I. tarifné pásmo nie je platným cestovným dokladom pre II. tarifné pásmo. Preto je cestujúci povinný pri prechode vozidla do II. tarifného pásma vykonať check-in pre nákup 60 minútového eCL celosieťového. Cestujúci je povinný tak urobiť po zmene úvodnej obrazovky na validátore a zvukovom ozname o zmene tarifného pásma.
+Návod platbu kartou v MHD
+Návod platbu kartou v MHD
+Cestovné poriadky
+Trasy liniek a schémy
+Ceny lístkov
+SMS Lístok
+APPky do mobilu
+Projekty EÚ
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.

@@ -1,0 +1,495 @@
+Dopravný podnik Mesta Prešov TARIFA MHD PREŠOV
+<!--
+-->
+window.consentStore = window.consentStore || {};
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+function setConsents(operacia = 'default') {
+if (consentStore) {
+gtag('consent',operacia,consentStore);
+}
+}
+:root {
+--cc-btn-primary-bg: #DB2017;
+}
+if (!consentStore.functionality_storage) {
+consentStore = {
+'ad_storage': 'denied',
+'ad_user_data': 'denied',
+'ad_personalization': 'denied',
+'analytics_storage': 'denied',
+'functionality_storage': 'granted',
+'personalization_storage': 'granted',
+'security_storage': 'granted'
+};
+}
+setConsents('default');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FC69QS7193');
+gtag('config', 'AW-629130799');
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '847430268281545');
+fbq('track', 'PageView');
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=847430268281545&ev=PageView&noscript=1"
+/>
+window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+window._adftrack.push({
+HttpHost: 'track.adform.net',
+pm: 2077769,
+divider: encodeURIComponent('|'),
+pagename: encodeURIComponent('Presov_MHD_homepage')
+});
+(function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+Dispečing: 
+ 051/7470 204
+Dispečing: 
+ 051/7470 204
+Linkové vedenie
+Trasy liniek
+Trasy školských spojov
+Schéma siete
+Nočná doprava
+Bezbariérová doprava
+Cestovné poriadky
+Vyhľadanie spojenia
+Ako sa dostať...
+Predpisy a tarifa
+Návod na kúpu cestovného lístka platobnou kartou
+eCL- kúpa platobnou kartou vo vozidle
+Daňový doklad a výpis jázd
+ Sme zapojení do systému NICL
+Straty a nálezy
+Prepravný poriadok
+Tarifa
+Ceny lístkov
+SMS lístok
+SMS - daňový doklad
+PCL cez internet
+Predajné miesta
+Tlačivá a dokumenty
+Dopravný podnik
+Reklamné a iné služby
+Aktuálne informácie
+Informácie z podniku
+POMOC Ukrajine
+ДОПОМОЖІТЬ Україні
+Majetok na predaj
+Verejné obstarávanie
+Povinné zverejňovanie
+História
+Najčastejšie otázky
+Výročné správy, závierky, správy audítora
+Etický kódex
+Organizačný poriadok
+Stanovy
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+Ochrana osobných údajov
+Pravidlá používania súborov cookies
+Privátna zóna
+Kontakt
+Kontakt
+TARIFA MHD PREŠOV
+Základné informácie z TARIFYPRAVIDELNEJ MESTSKEJ DOPRAVY
+V ZÁUJMOVOM ÚZEMÍ MESTA PREŠOV platnej od 15. 9. 2026
+1. BEZPLATNÁ PREPRAVA
+Nárok na bezplatnú prepravu majú:
+1.1
+ deti do 6. roku veku bez ohľadu na štátne občianstvo,
+1.2
+ seniori – občania Slovenskej republiky (ďalej len „SR“) nad 70 rokov,
+1.3
+ občania SR – držitelia preukazu ŤZP alebo ŤZP-S, ktorí sú na invalidnom vozíku alebo sú nevidiaci s bielou palicou alebo s vodiacim psom (nevidiacim sa rozumie osoba s preukazom s označením nevidiaci – blind), preprava vodiaceho psa nepodlieha spoplatneniu
+1.4
+ sprievodca držiteľa preukazu ŤZP-S,
+1.5
+ cudzinci s udeleným povolením na pobyt s trvalým pobytom v meste Prešov alebo v obci Ľubotice, a to:
+- seniori nad 70. rokov veku,
+- držitelia preukazu ŤZP alebo ŤZP-S, ktorí sú na invalidnom vozíku alebo nevidiaci s bielou palicou alebo s vodiacim psom, preprava vodiaceho psa vozíka nepodlieha spoplatneniu
+1.6
+ sprievod dieťaťa do 6. roku veku, ktorý je zákonným zástupcom dieťaťa s trvalým pobytom 
+v meste Prešov a ktorý sprevádza minimálne jedno dieťa s trvalým pobytom v meste Prešov do 6. roku veku vo vozidle MHD. 
+2. ZĽAVNENÁ PREPRAVA
+Nárok na prepravu za zľavnený JCL, eCL, vCL alebo za zľavnený PCL a majú:
+2.1
+ deti od 6. do 18. roku veku bez ohľadu na štátne občianstvo,
+2.2
+ žiaci a študenti odo všetkých stupňov denného štúdia do dovŕšenia 26. roku veku, sú cestujúci, ktorí sú žiakmi základnej školy, žiakmi dennej formy štúdia strednej školy, žiakmi dennej formy štúdia stredných škôl pre žiakov so špeciálno-vzdelávacími potrebami alebo študentmi všetkých stupňov dennej formy štúdia na vysokej škole, od 1. septembra príslušného kalendárneho roka, v ktorom školský rok alebo akademický rok začína, do 30. septembra príslušného kalendárneho roka, v ktorom školský rok alebo akademický rok končí, vrátane žiakov a študentov končiacich ročníkov.
+2.3
+ občania SR – žiaci a študenti odo dňa dovŕšenia 18. roku veku do dovŕšenia 26. roku veku študujúci v zahraničí, ktorých štúdium sa považuje za ekvivalent štúdia na školách zriadených v SR, v dennej forme štúdia do získania vysokoškolského vzdelania druhého stupňa, najneskôr do dovŕšenia 26. roku veku,
+2.4
+ občania SR
+- seniori - osoby odo dňa dovŕšenia 63. roku veku
+ - osoby mladšie ako 63 rokov veku, ktoré sú poberateľom predčasného starobného 
+ dôchodku
+- príjemcovia invalidných dôchodkov (ak pre dlhodobo nepriaznivý zdravotný stav je pokles ich schopnosti vykonávať zárobkovú činnosť viac ako 50 % v porovnaní so zdravými fyzickými osobami),
+2.5
+ občania SR a cudzinci s udeleným povolením na pobyt – držitelia preukazu ŤZP alebo ŤZP-S s trvalým pobytom v meste Prešov alebo v obci Ľubotice, ak spĺňajú podmienky stanovené Mestom Prešov alebo obcou Ľubotice, a to:
+- nebol im poskytnutý peňažných príspevok na kúpu osobného motorového vozidla alebo peňažný príspevok na úpravu osobného motorového vozidla,
+- nie sú poberateľmi peňažného príspevku na prepravu alebo peňažného príspevku na zvýšené výdavky súvisiace so zabezpečením prevádzky osobného motorového vozidla,
+- príjem občana SR alebo cudzinca s udeleným povolením na pobyt – držiteľa preukazu ŤZP alebo ŤZP-S a fyzických osôb, ktoré sú s občanom SR alebo cudzincom s udeleným povolením na pobyt spoločne posudzované, nepresahuje 350,00 € na osobu, za príjem sa na účely poskytnutia osobitnej zľavy na cestovné nepovažuje prídavok na dieťa,
+2.6
+ občania SR – držitelia preukazu ŤZP alebo ŤZP-S,
+2.7 
+cudzinci s udeleným povolením na pobyt s trvalým pobytom v meste Prešov alebo v obci Ľubotice, a to: 
+ - seniori – osoby odo dňa dovŕšenia 63. roku veku,
+ - príjemcovia invalidných dôchodkov (ak pre ich dlhodobo nepriaznivý zdravotný stav je pokles ich schopnosti vykonávať zárobkovú činnosť viac ako 50 % v porovnaní so zdravými fyzickými osobami),
+- držitelia preukazu ŤZP alebo ŤZP-S.
+2.8 
+občania SR a cudzinci s udeleným povolením na pobyt s trvalým pobytom v meste Prešov alebo v obci Ľubotice, ak sú držiteľmi zlatej alebo diamantovej plakety prof. MUDr. Jana Janského alebo držiteľmi Kňazovického medaily.
+2.9 
+deti a žiaci do 10. rokov veku spolu s ich sprievodom, pričom deti a žiaci musia spĺňať tieto podmienky:
+- navštevujú materskú školu alebo plnia povinnú školskú dochádzku v základnej škole v meste Prešov,
+- majú trvalý pobyt v meste Prešov,
+- žijú v sociálne znevýhodnenom prostredí alebo žijú v rodine, ktorá je poberateľom dávky v hmotnej núdzi,
+- nachádza sa v zozname detí a žiakov, ktorý pre tento účel vydá príslušný odborný útvar Mestského úradu Prešov,
+- zúčastňujú sa predprimárneho vzdelávania a základného vzdelávania, o čom spätne mesačne príslušný odborný útvar Mestského úradu Prešov informuje dopravcu. V prípade neospravedlnenej neúčasti na vzdelávaní alebo zneužití karty dieťaťa bude nárok na osobitne zľavnené cestovné zrušený. V priebehu školského roka môže byť vydaný maximálne 1 ks duplikátu cestovného lístka. Osobitne zľavnené cestovné môže byť využité v týchto kombináciách:
+- dieťa/žiak + sprievodca,
+- samostatne žiak,
+- samostatne sprievodca na cestu zo školy a do školy, pričom použije čipovú kartu dieťaťa/žiaka,
+- platí iba v dňoch školského vyučovania, neplatí na nočných spojoch.
+2.10 
+občania SR s trvalým pobytom v meste Prešov alebo v obci Ľubotice – znížený PCL (tzv. rezidentská zľava) obyčajný alebo zľavnený trojmesačný PCL alebo ročný obyčajný PCL v zmysle podmienok uvádzaných ďalej v Tarife.
+2.11
+ oprávnené osoby s trvalým pobytom v meste Prešov alebo v obci Ľubotice:
+1. poškodená osoba, následne manžel/manželka alebo deti, odškodnené podľa zákona č. 119/1990 Zb. o súdnej rehabilitácii, zákona č. 319/1991 Zb. o zmiernení niektorých majetkových a iných krívd a o pôsobnosti orgánov štátnej správy SR v oblasti mimosúdnych rehabilitácií, zákona č. 219/2006 Z. z. o protikomunistickom odboji, ktorí sú zároveň držiteľmi platných preukazov týchto organizácií:
+- Svetové združenie bývalých politických väzňov (SZBPV),
+- Konfederácia politických väzňov Slovenska (KPVS),
+(oprávnená osoba musí byť uvedená aktuálnom zozname oprávnených osôb predkladanom vyššie uvedenými organizáciami)
+- Ústav pamäti národa (držiteľ preukazu veterána, vojnového veterána 
+in memoriam
+ protikomunistického odboja), 
+2. účastník národného boja za oslobodenie, ktorého práva prechádzajú na manžela alebo manželku, deti manželské i nemanželské a osvojencov, druha alebo družku, na rodičov, na súrodencov a to vždy len na jednu osobu v poradí ako nasledujú, ktorý je držiteľom osvedčenia účastníka národného boja za oslobodenie podľa zákona č. 255/1946 Zb. o príslušníkoch československej armády a o niektorých iných účastníkov národného boja za oslobodenie, vydaného Ústavom pamäti národa.
+2.12 
+občania SR a cudzinci s udeleným povolením na pobyt s trvalým pobytom v meste Prešov alebo v obci Ľubotice – PCL ročný Evidenčný 18 zľavnený od dovŕšenia 6. roku veku do dovŕšenia 17. roku veku alebo PCL zľavnený trojmesačný Evidenčný 18 od dovŕšenia 17. roku veku do dovŕšenia 18. roku veku. Podľa podmienok tohto bodu nárok na 3-mesačný PCL Evidenčný 18 sa zachováva aj vtedy, ak začiatok časovej platnosti PCL vznikol po dovŕšení 17. roku veku a jeho časová platnosť skončí po dovŕšení 18. roku veku v zmysle podmienok uvádzaných ďalej v Tarife.
+2.13
+ občania SR a cudzinci s udeleným povolením na pobyt s trvalým pobytom v meste Prešov alebo v obci Ľubotice – PCL ročný Evidenčný senior zľavnený od dovŕšenia 62. roku veku do dovŕšenia 70. roku veku. Podľa podmienok tohto bodu nárok na ročný PCL Evidenčný senior sa zachováva aj vtedy, ak začiatok časovej platnosti PCL vznikol po dovŕšení 69. roku veku a jeho časová platnosť skončí po dovŕšení 70. roku veku v zmysle podmienok uvádzaných ďalej v Tarife.
+3. PREUKAZOVANIE NÁROKU NA BEZPLATNÚ PREPRAVU
+Nárok na bezplatnú prepravu preukazujú oprávnené osoby týmito dokladmi:
+3.1
+ občianskym preukazom alebo platným cestovným dokladom u osôb podľa bodu 1.2,
+3.2
+ preukazom ŤZP, ŤZP-S alebo dokladom totožnosti s informáciou o ťažkom zdravotnom postihnutí, prípadne odkázanosti na sprievodcu u osôb podľa bodu 1.3,
+3.3
+ preukazom ŤZP-S u osôb podľa bodov 1.4,
+3.4
+ platným dokladom totožnosti, platným preukazom vydaným dopravcom alebo iným hodnoverným dokladom, ktorý obsahuje a) aktuálnu fotografiu dieťaťa, b) meno a priezvisko dieťaťa, c) dátum narodenia dieťaťa– u osôb podľa bodu 1.1 (preukazuje sprevádzajúca osoba v prípade pochybností o veku dieťaťa),
+3.5
+ Povolením na pobyt vo forme identifikačnej karty alebo dokladom o povolení na pobyt vo forme nálepky nalepenej do ich cestovného dokladu u osôb podľa bodu 1.5; ak cudzincovi s udeleným povolením na pobyt vzniká nárok na bezplatnú prepravu na základe preukazu ŤZP alebo ŤZP-S, preukazuje nárok na bezplatnú prepravu vyššie uvedenými dokladmi spolu so svojím preukazom ŤZP alebo ŤZP-S,
+3.6
+ BČK, v ktorej je vyznačený podtyp „sprievod“ s platnosťou do dovŕšenia 6. roku veku dieťaťa vrátane platného originálneho dokladu dieťaťa, z ktorého je zrejmý vek dieťaťa podľa bodu 1.6.
+BČK vydá dopravca na základe dokladov preukazujúcich nárok na bezplatnú prepravu: 
+vyplnenej žiadanky o vydanie BČK, v ktorej zákonný zástupca uvedie
+Meno a priezvisko žiadateľa 
+Dátum narodenia
+Adresa trvalého bydliska
+Vlastnoručný podpis zákonného zástupcu
+Skutočnosti uvedené v žiadanke sa overia na základe predloženia občianskeho preukazu zákonného zástupcu a rodného listu dieťaťa.
+Fotografiu na BČK je možné vyhotoviť priamo v predajni cestovných lístkov na ul. Weberova 2 v Prešove, inak je potrebná fotografia s rozmermi 3 x 3,5 cm nie staršia ako 1 rok, ktorá zodpovedá súčasnej podobe žiadateľa. 
+4. PREUKAZOVANIE NÁROKU NA ZĽAVNENÚ PR
+EPRAVU A PODMIENKY VYDANIA BČK A KL
+Nárok na prepravu za zľavnené cestovné preukazujú:
+- žiaci alebo študenti dennej formy štúdia (článok 2, časť 2, bod 2.2, 2.3) 
+- platným preukazom študenta s aktivovanou dopravnou časťou
+- medzinárodným preukazom študenta denného štúdia vo fyzickej alebo elektronickej forme
+- platným preukazom akceptovaným dopravcom 
+- platným preukazom vydaným dopravcom, ktorý obsahuje a) aktuálnu fotografiu žiaka alebo študenta, b) meno a priezvisko žiaka alebo študenta, c) dátum narodenia žiaka alebo študenta, d) dátum platnosti, ktorý je jediným rozhodujúcim dátumom pri posudzovaní nároku na zľavu.
+- občania SR s trvalým pobytom v meste Prešov alebo v obci Ľubotice (článok 2, časť 2, body 2.10, 2.12, 2.13) bezkontaktnou čipovou kartou, ktorú vystaví dopravca alebo iný emitent BČK zapojený do systému TransCard,
+- ostatné oprávnené osoby, (článok 2, časť 2, body 2.1, 2.4 – 2.9, 2.11) KL alebo BČK, ktoré vystaví dopravca.
+BČK alebo KL vydá dopravca na základe dokladov preukazujúcich nárok na zľavu: 
+vyplnenej žiadanky o vydanie BČK alebo KL, v ktorej žiadateľ (resp. zákonný zástupca) uvedie
+Meno a priezvisko žiadateľa 
+Dátum narodenia
+Adresa trvalého bydliska
+Vlastnoručný podpis žiadateľa (resp. zákonného zástupcu)
+Skutočnosti uvedené v žiadanke sa overia na základe predloženia občianskeho preukazu žiadateľa/zákonného zástupcu alebo Povolenia na pobyt.
+Fotografiu na BČK je možné vyhotoviť priamo v predajni cestovných lístkov na ul. Weberova 2 v Prešove, inak je potrebná fotografia s rozmermi 3 x 3,5 cm nie staršia ako 1 rok, ktorá zodpovedá súčasnej podobe žiadateľa.
+Nárok na zľavnenú prepravu preukazujú predložením:
+4.1
+ osoby uvedené v bode 2.1 (deti vo veku od 6.-18.roku veku) 
+- nemajú povinnosť predkladať potvrdenie o návšteve školy na preukázanie nároku na zľavu
+4.2
+ osoby uvedené v bode 2.2 (žiaci a študenti všetkých stupňov denného štúdia do dovŕšenia 26. roku veku) 
+- potvrdenia o návšteve školy, že žiadateľ je žiakom/študentom dennej formy štúdia na príslušnej škole. Nárok na zľavnené cestovné platí od 1. septembra príslušného kalendárneho roka a končí 30.09 nasledujúceho roka
+4.3
+ žiaci a študenti študujúci v zahraničí, ktorých škola vydáva BČK, ale nie je zapojená do systému TransCard, bode 2.3: 
+- potvrdenia o návšteve školy potvrdené školou, ktorú navštevujú, ak je potvrdenie vystavené v cudzom jazyku, predložia aj jeho úradne overený preklad a potvrdenia o rovnocennosti zahraničného štúdia so štúdiom v SR. (Následne predkladajú potvrdenie o návšteve školy 1-krát ročne na začiatku akademického roka v období od 20. 8. príslušného roka, na základe ktorého sa predĺži časová platnosť KL alebo dopravcom vystavenej BČK na ďalší akademický rok pre nárok na zľavnené cestovné.),
+- BČK s vizuálne kontrolovateľnou platnosťou,
+4.4 
+osoby uvedené v bode 2.4:
+- potvrdenia Slovenskej pošty, prípadne fotokópie aktuálneho rozhodnutia o poberaní predčasného starobného alebo invalidného dôchodku zo Sociálnej poisťovne, (invalidní dôchodcovia predkladajú potvrdenie o poberanom invalidnom dôchodku 1-krát ročne v priebehu mesiaca január príslušného roka, na základe ktorého sa predĺži platnosť KL alebo BČK o jeden rok pre nárok na zľavnené cestovné) pre osoby mladšie ako 63 rokov veku
+4.5
+ osoby uvedené v bode 2.5:
+- preukazu ŤZP, ŤZP-S alebo dokladom totožnosti s informáciou o ťažkom zdravotnom postihnutí, prípadne odkázanosti na sprievodcu, 
+- potvrdenia Mestského úradu v Prešove alebo obce Ľubotice o svojom mesačnom (prípadne priemernom mesačnom) príjme, ktorý nepresahuje 400,00 € (na základe, ktorého sa každoročne predĺži platnosť BČK o jeden rok pre nárok na zľavnené cestovné). Potvrdenie o splnení podmienok na účely poskytnutia osobitnej zľavy na cestovné vydá občanovi SR alebo cudzincovi s udeleným „Povolením na pobyt“ – držiteľovi preukazu ŤZP alebo ŤZP-S Mestský úrad v Prešove – Odbor sociálnych služieb – oddelenie starostlivosti o zdravotne postihnutých a seniorov na základe písomnej žiadosti občana SR alebo cudzinca s udeleným „Povolením na pobyt“. Podmienkou na poskytnutie osobitnej zľavy na cestovnom MHD v I. tarifnom pásme pre občanov s ŤZP alebo ŤZP-S s trvalým pobytom v meste Prešov je, aby si žiadateľ uplatnil všetky zákonné nároky, ktoré mu garantuje štát, a ktoré ovplyvňujú výšku jeho príjmu a príjmu spoločne posudzovaných osôb.
+4.6
+ osoby uvedené v bode 2.6 pre vystavenie BČK:
+- preukazu ŤZP, ŤZP-S alebo dokladom totožnosti s informáciou o ťažkom zdravotnom postihnutí, prípadne odkázanosti na sprievodcu,
+4.7
+ osoby uvedené v bode 2.7 pre vystavenie BČK alebo KL:
+- potvrdenia Slovenskej pošty, prípadne fotokópie aktuálneho rozhodnutia o invalidného dôchodku, (invalidní dôchodcovia predkladajú potvrdenie o poberanom invalidnom dôchodku 1-krát ročne v priebehu mesiaca január príslušného roka, na základe ktorého sa predĺži platnosť KL alebo BČK o jeden rok pre nárok na zľavnené cestovné
+- preukazu ŤZP, ŤZP-S alebo dokladom totožnosti s informáciou o ťažkom zdravotnom postihnutí, prípadne odkázanosti na sprievodcu ak im vzniká nárok na zľavnené cestovné z dôvodu držiteľa tohto preukazu.
+4.8
+ osoby uvedené v bode 2.8 pre vystavenie BČK:
+- potvrdenia Slovenského červeného kríža – Územného spolku Prešov, o splnení podmienok na uplatnenie zľavy – udelenej plakety
+4.9
+ osoby uvedené v bode 2.9 pre vystavenie BČK
+- zoznamu detí a žiakov, ktorý pre tento účel vydá Mestský úrad v Prešove – Odbor sociálnych služieb.
+4.10
+ osoby uvedené v bode 2.10 pre vystavenie BČK:
+- trvalý pobyt uvedený v meste Prešov alebo obci Ľubotice
+4.11 
+osoby uvedené v bode 2.11 pre vystavenie BČK
+- platného preukazu SZBPV alebo KPVS alebo Preukazu veterána, vojnového veterána 
+in memoriam
+ alebo Osvedčenia účastníka národného boja za oslobodenie podľa Zákona č. 255/1946 Zb. o príslušníkoch československej armády a o niektorých iných účastníkov národného boja za oslobodenie,
+- trvalým pobytom v meste Prešov alebo v obci Ľubotice,
+- menného zoznamu oprávnených osôb vydaných organizáciou SZBPV alebo KPVS.
+4.12 
+osoby uvedené v bode 2.12 a bode 2.13 pre vystavenie BČK:
+- trvalý pobyt uvedený v meste Prešov alebo obci Ľubotice
+Pri vystavení BČK alebo KL pre žiakov a študentov stredných a vysokých škôl (článok 2, časť 2, body 2.2, 2.3), oprávnených na cestovanie za zľavnené cestovné, dopravca uvedie platnosť BČK alebo KL na začiatku školského a akademického roka od 1. 9. bežného roka do 30. 9. nasledujúceho roka
+Ak žiak alebo študent požiada o vystavenie BČK alebo KL počas prebiehajúceho školského alebo akademického roka, platnosť BČK alebo KL sa uvedie odo dňa požiadania a splnenia podmienok pre priznanie nároku na zľavnené cestovné. Platnosť „do“ sa uvedie do 30.09. pre prebiehajúci školský a akademický rok.
+5. OSTATNÉ TARIFNÉ PODMIENKY
+Dopravca uvedie na zastávkových cestovných poriadkoch čas prepravy z nástupnej do cieľovej zastávky, ako aj tarifné pásmo. Tieto údaje sú záväzné pre posúdenie platnosti cestovného lístka na jednu cestu v papierovej forme (bez prestupu) pri prepravnej kontrole .
+Cestujúci je povinný označiť si cestovný lístok v papierovej forme (JCL) pri prvom nástupe do vozidla MHD, pri prestupe si JCL neoznačuje. Do času platnosti JCL sa započítava aj čas prerušenia cesty. Platnosť JCL končí uplynutím príslušného času. 
+Na posúdenie platnosti JCL s prestupom sa nevzťahuje čas prepravy uvedený v cestovných poriadkoch dopravcu z nástupnej do cieľovej zastávky. Ak počas jazdy skončí čas platnosti JCL, je cestujúci povinný označiť si ďalší cestovný lístok.
+Cestujúci vykoná označenie JCL vsunutím cestovného lístka v smere šípky lícnou stranou nahor do otvoru označovacieho zariadenia. Označenie sa uskutoční automaticky v priebehu 1 sekundy, pri ktorom sa vytlačí na cestovný lístok: číslo zastávky MHD, dátum a čas označenia, evidenčné číslo vozidla.
+Dopravca má zavedený nákup elektronického cestovného lístka prostredníctvom ľubovoľnej bezkontaktnej platobnej karty EMV, ako aj služby Google Pay, Apple Pay alebo iným platobným prostriedkom – smart hodinkami, platobným prsteňom. Cestujúci je povinný kúpiť si cestovný lístok v príslušnej hodnote podľa tarify bezprostredne po nastúpení do vozidla, priložením EMV karty k symbolu bezkontaktnej platby na validátore (check-in) umiestneného vo vozidle. Časová splatnosť eCL začína plynúť od momentu jeho zakúpenia vykonaním check-in a končí uplynutím poslednej minúty jeho platnosti. Do času platnosti eCL sa započítava aj čas prerušenia cesty.
+Dopravca má zavedený nákup virtuálneho cestovného lístka na jednu cestu prostredníctvom mobilného zariadenia v mobilných aplikáciách prevádzkovateľov uvedených na webovom sídle dopravcu (www.dpmp.sk). Cestujúci je povinný zakúpiť si cestovný lístok prostredníctvom mobilnej aplikácie pred prepravou mimo vozidla MHD a dokončiť proces zakúpenia pred nástupom do vozidla, pričom časová platnosť lístka začína aktiváciou – uskutočnením nákupu cestovného lístka, realizáciou platby v aplikácii na mobilnom zariadení a následným uplynutím ochrannej doby 30 sekúnd, po uplynutí ktorej sa cestovný lístok aktivuje. Cestujúci je oprávnený nastúpiť do vozidla len s platným cestovným lístkom v mobilnom zariadení. 
+6. DRUHY CESTOVNÝCH LÍSTKOV A CENY CESTOVNÉHO
+CESTOVNÝ LÍSTOK NA JEDNU CESTU (JCL, eCL a vCL) v EUR
+Druh JCL s časovou platnosťou
+I. tarifné pásmo
+papierový JCL
+Celosieťový
+papierový JCL
+I. tarifné pásmo
+elektronický a virtuálny eCL a vCL
+Celosieťový
+elektronický a virtuálny eCL a vCL
+obyčajné
+zľavnené
+obyčajné
+zľavnené
+obyčajné
+zľavnené
+obyčajné
+zľavnené
+20 minút
+1,00
+0,50
+1,10
+0,70
+0,85
+0,45
+1,00
+0,65
+60 minút
+1,20
+0,60
+1,30
+0,80
+1,05
+0,55
+1,20
+0,75
+SMS CL 60 minút
+1
+1,50
+-
+1,60
+-
+-
+-
+-
+-
+24 - hodinový
+5,00
+-
+5,50
+-
+4,50
+-
+5,00
+-
+60 minút prepravné za psa
+1,00
+-
+1,00
+-
+1,00
+-
+1,00
+-
+60 minút prepravné za batožinu
+1,00
+-
+1,00
+-
+1,00
+-
+1,00
+-
+ČASOVÝ PREDPLATNÝ CESTOVNÝ LÍSTOK (PCL) v €
+Druh PCL s časovou platnosťou
+I. tarifné pásmo
+Celosieťový
+Osobitne zľavnený 
+2
+obyčajné
+zľavnené
+obyčajné
+zľavnené
+obyčajné
+zľavnené
+7 - dňový
+19,00
+-
+21,00
+-
+-
+-
+mesačný
+32,00
+19,00
+36,00
+22,00
+-
+5,00
+3 - mesačný
+75,00
+49,00
+87,00
+55,00
+-
+10,00
+3 - mesačný - znížený 
+3
+65,00
+39,00
+- 
+- 
+-
+- 
+ročný
+219,00
+-
+270,00
+-
+-
+20,00
+ročný - znížený 
+3
+198,00
+-
+- 
+-
+-
+- 
+ročný cestovný lístok - politickí väzni a veteráni
+-
+-
+- 
+-
+-
+1,00
+3-mesačný Evidenčný 18
+-
+-
+-
+-
+-
+1,00
+Ročný Evidenčný 18
+-
+-
+-
+-
+-
+1,00
+Ročný Evidenčný senior
+-
+-
+-
+-
+-
+1,00
+7. HRANIČNÉ ZASTÁVKY PRI CESTOVANÍ DO A Z OBCÍ
+(vymedzujúce hranice prvého tarifného pásma)
+Obec
+HRANIČNÁ ZASTÁVKA I.TP
+Bzenov
+Chatky
+Dulova Ves
+Zlatobanská
+Fintice
+Za traťou
+Haniska
+Čistička
+Malý Šariš
+Rázc. Cemjata
+Ruská Nová Ves
+Záhradky
+Teriakovce zo smeru Solivar
+Soľnobanská
+Teriakovce zo smeru Šalgovík
+Labutia
+Vyšná Šebastová a Podhradík
+Herlianska
+Veľký Šariš, Kanaš
+Dúbrava
+Záborské
+Logistické centrum
+8. ÚHRADY V €
+Za dodatočné preukázanie PCL
+5,00 €
+Za dodatočné preukázanie dokladu na zľavnenú prepravu
+5,00 €
+Úhrada za cestovanie bez platného cestovného lístka:
+a) v hotovosti pri kontrole cestovných lístkov
+50,00 €
+b) v hotovosti - v pokladnici dopravcu do 5 kalendárnych dní
+60,00 €
+- na faktúru
+80,00 €
+Úhrada za nezaplatenie prepravného za prepravu batožiny
+5,00 €
+Úhrada za nezaplatenie prepravného za prepravu psa
+5,00 €
+Vysvetlivky:
+1) Kúpa SMS CL
+pre I. tarifné pásmo zaslaním SMS na číslo 1144 v tvare: akékoľvek písmeno (neuvádzať znaky), -
+pre celosieťový SMS CL zaslaním SMS na číslo 1144 v tvare: 2 (číslica dva) 
+2) Osobitne zľavnené PCL platia len v I. tarifnom pásme pre osoby s trvalým pobytom v meste Prešov alebo v obci Ľubotice a cudzincov s udeleným Povolením na pobyt s trvalým pobytom v meste Prešov alebo v obci Ľubotice: 
+pre držiteľa zlatej alebo diamantovej Janského plakety alebo Kňazovického medaily, 
+pre deti/žiakov do 10. rokov veku a ich sprievodcu s trvalým pobytom v meste Prešov, nachádzajúcich sa v zozname detí a žiakov, ktorý vydá Mestský úrad Prešov (PCL len mesačné),
+oprávnená osoba s trvalým pobytom v meste Prešov alebo v obci Ľubotice, držiteľ platného preukazu SZBPV alebo KPVS alebo Preukazu veterána, vojnového veterána 
+in memoriam
+ protikomunistického odboja alebo Osvedčenia účastníka národného boja za oslobodenie (PCL len ročné á 1,00 €), 
+PCL 3-mesačný Evidenčný 18 – občania SR od dovŕšenia 17. roku veku do dovŕšenia 18. roku veku s trvalým pobytom v meste Prešov alebo v obci Ľubotice (PCL platí len v I. tarifnom pásme),
+PCL ročný Evidenčný 18 – občania SR od dovŕšenia 6. roku veku do dovŕšenia 17. roku veku s trvalým pobytom v meste Prešov alebo v obci Ľubotice (PCL platí len v I. tarifnom pásme),
+PCL ročný Evidenčný senior – občania SR od dovŕšenia 62. roku veku do dovŕšenia 70. roku veku s trvalým pobytom v meste Prešov alebo v obci Ľubotice (PCL platí len v I. tarifnom pásme).
+3) Znížené PCL (rezidentské PCL) platia len v I. tarifnom pásme
+Občania SR s trvalým pobytom v meste Prešov alebo v obci Ľubotice
+Úplné znenie tarify si môžete stiahnuť vo formáte pdf (
+tarifa.pdf
+)
+Návod platbu kartou v MHD
+Návod platbu kartou v MHD
+Cestovné poriadky
+Trasy liniek a schémy
+Ceny lístkov
+SMS Lístok
+APPky do mobilu
+Projekty EÚ
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.

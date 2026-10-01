@@ -1,0 +1,155 @@
+Dopravný podnik Mesta Prešov SMS lístok
+<!--
+-->
+window.consentStore = window.consentStore || {};
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+function setConsents(operacia = 'default') {
+if (consentStore) {
+gtag('consent',operacia,consentStore);
+}
+}
+:root {
+--cc-btn-primary-bg: #DB2017;
+}
+if (!consentStore.functionality_storage) {
+consentStore = {
+'ad_storage': 'denied',
+'ad_user_data': 'denied',
+'ad_personalization': 'denied',
+'analytics_storage': 'denied',
+'functionality_storage': 'granted',
+'personalization_storage': 'granted',
+'security_storage': 'granted'
+};
+}
+setConsents('default');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FC69QS7193');
+gtag('config', 'AW-629130799');
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '847430268281545');
+fbq('track', 'PageView');
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=847430268281545&ev=PageView&noscript=1"
+/>
+window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+window._adftrack.push({
+HttpHost: 'track.adform.net',
+pm: 2077769,
+divider: encodeURIComponent('|'),
+pagename: encodeURIComponent('Presov_MHD_homepage')
+});
+(function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+Dispečing: 
+ 051/7470 204
+Dispečing: 
+ 051/7470 204
+Linkové vedenie
+Trasy liniek
+Trasy školských spojov
+Schéma siete
+Nočná doprava
+Bezbariérová doprava
+Cestovné poriadky
+Vyhľadanie spojenia
+Ako sa dostať...
+Predpisy a tarifa
+Návod na kúpu cestovného lístka platobnou kartou
+eCL- kúpa platobnou kartou vo vozidle
+Daňový doklad a výpis jázd
+ Sme zapojení do systému NICL
+Straty a nálezy
+Prepravný poriadok
+Tarifa
+Ceny lístkov
+SMS lístok
+SMS - daňový doklad
+PCL cez internet
+Predajné miesta
+Tlačivá a dokumenty
+Dopravný podnik
+Reklamné a iné služby
+Aktuálne informácie
+Informácie z podniku
+POMOC Ukrajine
+ДОПОМОЖІТЬ Україні
+Majetok na predaj
+Verejné obstarávanie
+Povinné zverejňovanie
+História
+Najčastejšie otázky
+Výročné správy, závierky, správy audítora
+Etický kódex
+Organizačný poriadok
+Stanovy
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+Ochrana osobných údajov
+Pravidlá používania súborov cookies
+Privátna zóna
+Kontakt
+Kontakt
+Predchádzajúca
+Ďalšia
+SMS lístok
+Dopravca od 1.8.2011 ponúka službu predaja SMS cestovného lístka (ďalej len SMS lístok) zakúpeného prostredníctvom mobilného telekomunikačného zariadenia (ďalej len mobilný telefón) vo forme SMS.
+Služba je prístupná pre všetkých zákazníkov v sieťach Orange Slovensko, a.s., Slovak Telecom, a.s., (T-Mobile, T-com), O2 Slovakia, s.r.o. a SWAN MOBIL (4-ka).
+SMS lístok je prestupný, platí pre I. tarifné pásmo alebo v celej sieti MHD Prešov na všetkých linkách, vrátane nočných spojov.
+Doba platnosti SMS lístka je 60 minút. Platí len v čase, na ktorý bol vystavený. Na posúdenie platnosti SMS lístka sa nevzťahuje čas prepravy uvedený v cestovných poriadkoch dopravcu z nástupnej do cieľovej zastávky.
+SMS lístok pre I. tarifné pásmo si cestujúci zakúpi zaslaním SMS na číslo 1144 v tvare: 
+akékoľvek písmeno (neuvádzať znak), SMS lístok celosieťový si cestujúci zakúpi zaslaním SMS na číslo 1144 v tvare: 2 (číslica dva). V časovom úseku približne do 1,5 minúty obdrží SMS lístok na svoj mobilný telefón, tento časový údaj je orientačný. Na displeji mobilu sa zobrazí SMS lístok v nasledovnom tvare pre:
+SMS pre I.tarifné pásmo
+DPMP a.s.
+SMS pre I. TP prestupný CL 1,50 EUR
+Platnosť od (napr.: 01-01-2025 od 08:10 hod. do 09:10 hod., t. j. dátum a čas od – do)
+29dp6a7w (kód)
+alebo v tvare
+SMS celosieťový (I. tarifné pásmo a II. tarifné pásmo):
+DPMP a.s.
+SMS celosieťový prestupný CL 1,60 EUR
+Platnosť od (napr.: 01-01-2025 od 08:10 hod. do 09:10 hod., t. j. dátum a čas od – do)
+29dp6a7w (kód)
+Doručením SMS lístka začína jeho časová platnosť. Ak nebude možné doručiť SMS lístok do 5 minút, cestujúci o tom dostane zdarma nasledovnú informatívnu SMS správu v znení:
+„DPMP a.s. Vasa poziadavka o cestovny listok bola oneskorene prijata do systemu. Ak este stale mate zaujem o cestovny listok, poslite poziadavku este raz“.
+Cestujúci je povinný nastúpiť do vozidla MHD už s platným SMS lístkom vo svojom mobilnom telefóne. Kúpou SMS lístka cestujúci dobrovoľne súhlasí s podmienkami jeho používania a je povinný v prípade prepravnej kontroly predložiť svoj mobilný telefón pracovníkovi prepravnej kontroly alebo inej oprávnenej osobe a reálnym spôsobom umožniť overenie všetkých potrebných náležitostí o jeho platnosti (obsah a pôvod SMS lístka). Zároveň cestujúci poskytne pri kontrole maximálnu súčinnosť k overeniu platnosti SMS lístka. Ak cestujúci nesplní tieto podmienky alebo časť z nich, je pri kontrole považovaný za cestujúceho bez platného cestovného lístka.Ak prepravný kontrolór zistí, že kód SMS lístka je neplatný, cestujúci je považovaný zacestujúceho bez platného cestovného lístka.
+Prostredníctvom jedného mobilného telefónu je možné zakúpiť i viac SMS lístkov, ich počet bude zodpovedať počtu zaslaných samostatných SMS na číslo 1144. Pri prepravnej kontrole je cestujúci povinný preukázať sa všetkými platnými SMS lístkami a označiť osoby, pre ktoré sú určené SMS lístky, pokiaľ tak neurobí, budú sa títo cestujúci považovať za cestujúcich bez platného cestovného lístka. SMS lístok je možné použiť aj ako prepravné za prepravu psa alebo batožiny.
+SMS lístok je neplatný ak:
+nenastala jeho doba platnosti
+uplynula jeho doba platnosti,
+neobsahuje správny kód odosielateľa,
+nebol zaslaný priamo zmluvným zabezpečovateľom SMS lístkov,
+bol akokoľvek upravovaný alebo preposlaný z iného ako originálneho zdroja zabezpečovateľa služby, alebo bol pozmenený jeho obsah,
+nie je možné overiť jeho platnosť na strane cestujúceho.
+nebol zakúpený pre dané tarifné pásmo
+SMS CL nebude doručený, ak:
+nebudú vyhovujúce podmienky na realizáciu služby (nedostatočný signál, a pod.),
+platba za SMS lístok prekročí výšku limitu na predplatenej karte, t.j. na karte nie je dostatočný limit,
+je MSISDN zákazníka zaradené do skupiny, podľa kritérií jednotlivého mobilného operátora, ktorým nie je umožnené využívať službu,
+prekročí celkový finančný objem objednávok (transakcií) uskutočnených v rámci jedného zúčtovacieho obdobia, pre jedno telefónne číslo, ktorý je maximálne spolu 150,00 € s DPH, využitím ktorejkoľvek služby alebo kúpou nemobilného tovaru cez mobilný telefón (t.j. nie len služby alebo tovar od DPMP) v rámci systému Služieb SMS platby.
+Dopravca a mobilní operátori si vyhradzujú právo odmietnuť predaj SMS lístka v prípade hrubého porušenia tarifných podmienok a postupu pri predaji SMS lístka.
+Bonusový kredit poskytnutý zákazníkovi príslušným mobilným operátorom nie je možné použiť na nákup SMS lístka.
+Zľavnený cestovný lístok vo forme SMS sa neposkytuje.
+Dodatočné preukázanie sa SMS lístkom sa neakceptuje.
+Daňový doklad pre SMS cestovné lístky zakúpené do 12. 11. 2024 (vrátane) - 
+http://smscl.dpmp.sk/
+Daňový doklad pre SMS cestovné lístky zakúpené od 13. 11. 2024 - 
+https://mhd.mediatex.sk/customer/sign-in
+Návod platbu kartou v MHD
+Návod platbu kartou v MHD
+Cestovné poriadky
+Trasy liniek a schémy
+Ceny lístkov
+SMS Lístok
+APPky do mobilu
+Projekty EÚ
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.

@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sk" lang="sk">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>SMS Cestovný Lístok</title>
+<link href="_css/reset.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="_css/960.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="_css/mainStyle.css" type="text/css" rel="stylesheet" media="screen" />
+<link href="_css/printStyle.css" type="text/css" rel="stylesheet" media="print" />
+<link href="_css/pdaStyle.css" type="text/css" rel="stylesheet" media="handheld" />
+<script language="javascript" type="text/javascript">
+  <!--
+
+var quote=new Array();
+  quote[0]='Pre SMS prestupný celosieťový cestovný lístok 40min.';  
+  quote[1]='pošlite prázdnu SMS na číslo 1144.';
+  quote[2]='Platí aj pre nočné spoje. Cena lístka je 0,60€.';  
+  quote[3]='';
+  quote[4]='Pre informácie o SMS cestovnom lístku';
+  quote[5]='v MHD v Prešove pošlite SMS v tvare INFO';
+  quote[6]='na číslo 1144. Obdržíte dve SMS správy.';
+  quote[7]='';
+
+var speed=5000;  
+var q=0;
+
+function showQuote() {
+
+     document.getElementById("mobile").innerHTML=quote[q];
+     q++;
+if(q==quote.length) {
+     q=0;
+  }
+}
+setInterval('showQuote()',speed);
+  //-->
+</script>
+</head>
+
+<body id="pr"><div id="wrapper" class="container_16">
+<!--=================HEADER START==============-->
+
+<div id="header" class="grid_16">
+
+<div class="grid_3 alpha prefix_1">
+<a href="http://www.dpmp.sk"><img src="_images/logo.png" alt="logo" width="120" height="80" /></a>
+<div class="clear">&nbsp;</div>
+<p class="large"><span class="colorOne xxlarge">SMS</span><br />
+Cestovný Lístok
+</p>
+</div>
+
+<div id="menuTop" class="grid_8">
+<p class="xlarge">Vytlačte si<br />
+<span class="colorOne">Daňový Doklad</span></p>
+<div class="clear">&nbsp;</div>
+
+<div id="menu">
+<form name="_tickets" method="POST" action="index.php">
+<input id="menu01" type="submit" name="" value="Prihlasenie" />
+<input id="menu02" type="submit" disabled="true" name="_tickets_submit" value="Cestovné Lístky" />
+<input id="menu03" type="submit" disabled="true" name="_invoices_submit" value="Daňové doklady" />
+<input id="menu04" type="submit" disabled="true" name="_logout_submit" value="Odhlásenie" />
+</form>
+</div>
+</div>
+
+<div class="grid_3 omega suffix_1">
+<div id="mobile"></div>
+</div>
+
+<div class="clear">&nbsp;</div>
+
+</div>
+
+<div class="clear">&nbsp;</div>
+<!--=================HEADER END==============-->
+
+<!--=================CONTENT START==============-->
+
+<div id="content" class="grid_16">
+
+<!--====LEFT COLUMN START====-->
+
+<div class="grid_3 alpha prefix_1">
+<div id="leftColumnTop">Vysvetlivky</div>
+<div id="leftColumnBody">Zadajte vaše telefónne číslo v tvare <span class="colorOne">+4219XXYYYYYY</span> a 8-miestny overovací kód z vášho lístka, napríklad <span class="colorOne">q1ms62on</span>.</div>
+</div>
+
+<!--====LEFT COLUMN END====-->
+
+<!--====MAIN COLUMN START====-->
+
+<div id="mainColumn" class="grid_8">
+<div id="login">
+<form name="_login" method="POST" action="index.php">
+<table>
+<tr><td colspan="2" align="center"><h1>SMS Lístky</h1></td></tr>
+<tr><td colspan="2" align="center"></td></tr>
+<tr><td>Telefónne číslo : </td><td><input type="text" maxlength=16 name="_login_name" value="" /></td></tr>
+<tr><td>Overovací kód : </td><td><input type="text" maxlength=16 name="_login_password" value="" /></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" id="_login_submit" name="_login_submit" value="Prihlásiť sa" /></td></tr>
+</table>
+</form>
+</div>
+</div>
+
+<!--====MAIN COLUMN END====-->
+
+
+<!--====RIGHT COLUMN START====-->
+
+<div class="grid_3 omega suffix_1">
+<div id="rightColumnTop"><img src="_images/appTop.png" alt="tiop" /></div>
+<div id="rightColumnBody">SMS Cestovný Lístok Šetrí Čas a Peniaze
+<img src="_images/appBot.png" alt="bot" />
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+<!--====RIGHT COLUMN END====-->
+
+</div>
+<div class="clear">&nbsp;</div>
+<!--=================CONTENT END==============-->
+
+<!--=================FOOTER START==============-->
+
+<div id="footer" class="grid_16">
+Technicky prevádzku predaja SMS cestovných lístkov pre DPMP a.s. zabezpečuje spoločnosť Mediatex s.r.o.
+</div>
+
+<!--=================FOOTER END==============-->
+</div>
+</body>
+</html>

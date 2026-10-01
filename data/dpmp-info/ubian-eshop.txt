@@ -1,0 +1,794 @@
+ {
+ "@context": "https://schema.org",
+ "@type": "WebSite",
+ "name": "Ubain.sk",
+ "url": "https://www.ubian.sk"
+ }
+ Cestovné poriadky a plánovač ciest - CP Ubian.sk
+ #map-sidebar aside.connection-results-ad {
+ background-image: url(/docs/web_ubian_380x130.png?v=1);
+ }
+ var ubian_navigation_results_banner_url = "\/mhd-listok#new";
+ <body
+ class="navigation ">
+Dočasné obmedzenie služieb Ubian
+V sobotu 3. októbra od 8:00 do 20:00 prebehne plánovaná technická údržba e-shopu. Počas tohto času nemusia byť niektoré služby dostupné. Ospravedlňujeme sa za prípadné nepríjemnosti a ďakujeme za pochopenie.
+×
+ Zavrieť
+Prejsť na obsah
+Cestovné poriadky
+Dobiť kredit
+Kúpiť lístok
+Nová karta
+Preukaz žiaka/učiteľa
+Prihlásiť sa
+0,00
+€
+0
+ <a href="/login" title="Prihlásiť sa"
+ class="mobile-login-button"><span
+ class="icon icon-profile ib">
+Cestovné poriadky
+Dobiť kredit
+Kúpiť lístok
+Nová karta
+Preukaz žiaka/učiteľa
+Čo je UBIAN?
+Ako nakupovať
+Meškania vlakov
+Virtuálna karta
+MHD lístok
+Parkovanie
+Preukaz študenta
+Spolupráca
+Pomoc a podpora
+GDPR
+ Kliknite pre načítanie mapy UBIAN
+Vycentrovať na aktuálnu polohu
+Priblížiť
+Oddialiť
+Späť
+Zastávky
+Poloha vozidiel
+Bikesharing
+Spoje
+Odchody
+Mapa
+Vyberte typ dopravy
+×
+ <div
+ class="js-transport-type-filter transport-type-field">
+ Vlaky
+ /
+ Autobusy
+ /
+ MHD
+ Vlaky
+ /
+ Autobusy
+ Autobusy
+ /
+ MHD
+ Vlaky
+ /
+ MHD
+ Vlaky
+ Autobusy
+ MHD
+ Banská Bystrica
+ MHD
+ Bardejov
+ MHD
+ Bratislava
+ MHD
+ Bratislava + IDS BK
+ MHD
+ Bánovce nad Bebravou
+ MHD
+ Dolný Kubín
+ MHD
+ Dunajská Streda
+ MHD
+ Galanta
+ MHD
+ Hlohovec
+ MHD
+ Humenné
+ MHD
+ Kežmarok
+ MHD
+ Komárno
+ MHD
+ Košice
+ MHD
+ Kysucké Nové Mesto
+ MHD
+ Levice
+ MHD
+ Levoča
+ MHD
+ Liptovský Mikuláš
+ MHD
+ Lučenec
+ MHD
+ Martin
+ MHD
+ Michalovce
+ MHD
+ Nitra
+ MHD
+ Nové Mesto nad Váhom
+ MHD
+ Nové Zámky
+ MHD
+ Partizánske
+ MHD
+ Piešťany
+ MHD
+ Poprad
+ MHD
+ Považská Bystrica
+ MHD
+ Prešov
+ MHD
+ Prievidza
+ MHD
+ Púchov
+ MHD
+ Rimavská Sobota
+ MHD
+ Rožňava
+ MHD
+ Ružomberok
+ MHD
+ Senica
+ MHD
+ Sereď
+ MHD
+ Skalica
+ MHD
+ Spišská Nová Ves
+ MHD
+ Stará Ľubovňa
+ MHD
+ Svit
+ MHD
+ Trenčín
+ MHD
+ Trnava
+ MHD
+ Vranov nad Topľou
+ MHD
+ Vráble
+ MHD
+ Zvolen
+ MHD
+ Čadca
+ MHD
+ Šahy
+ MHD
+ Šaľa
+ MHD
+ Štúrovo
+ MHD
+ Šurany
+ MHD
+ Žiar nad Hronom
+ MHD
+ Žilina
+ <div
+ class="widget-input hidden-unfocused widget-ac with-separator">
+Štart:
+-->
+ <div
+ class="widget-input hidden-unfocused widget-ac">
+Cieľ:
+-->
+Vymeniť štart a cieľ
+Odchod:
+-->
+Teraz
+Priamy spoj
+Odchod
+Príchod
+Teraz
+Hotovo
+ Vyhľadať
+ AI agent
+UBIAN - cestovné poriadky a vyhľadávanie spojov.
+ <div
+ class="search-subwidgets">
+Najbližšie odchody
+ Vyhľadať spojenie s AI agentom
+BETA
+ <div
+ class="widget-search-quicklist hidden-unfocused js-search-quicklist js-search-widget search-subwidget">
+-->
+Posledné
+Obľúbené
+Zobraziť viac
+Zobraziť menej
+Kredit na kartu
+Časový lístok na kartu
+Nová dopravná karta
+Nový preukaz žiaka
+Obľúbené
+Posledné
+Vyberte typ dopravy
+×
+ <div
+ class="js-transport-type-filter transport-type-field">
+ Vlaky
+ /
+ Autobusy
+ /
+ MHD
+ Vlaky
+ /
+ Autobusy
+ Autobusy
+ /
+ MHD
+ Vlaky
+ /
+ MHD
+ Vlaky
+ Autobusy
+ MHD
+ Banská Bystrica
+ MHD
+ Bardejov
+ MHD
+ Bratislava
+ MHD
+ Bratislava + IDS BK
+ MHD
+ Bánovce nad Bebravou
+ MHD
+ Dolný Kubín
+ MHD
+ Dunajská Streda
+ MHD
+ Galanta
+ MHD
+ Hlohovec
+ MHD
+ Humenné
+ MHD
+ Kežmarok
+ MHD
+ Komárno
+ MHD
+ Košice
+ MHD
+ Kysucké Nové Mesto
+ MHD
+ Levice
+ MHD
+ Levoča
+ MHD
+ Liptovský Mikuláš
+ MHD
+ Lučenec
+ MHD
+ Martin
+ MHD
+ Michalovce
+ MHD
+ Nitra
+ MHD
+ Nové Mesto nad Váhom
+ MHD
+ Nové Zámky
+ MHD
+ Partizánske
+ MHD
+ Piešťany
+ MHD
+ Poprad
+ MHD
+ Považská Bystrica
+ MHD
+ Prešov
+ MHD
+ Prievidza
+ MHD
+ Púchov
+ MHD
+ Rimavská Sobota
+ MHD
+ Rožňava
+ MHD
+ Ružomberok
+ MHD
+ Senica
+ MHD
+ Sereď
+ MHD
+ Skalica
+ MHD
+ Spišská Nová Ves
+ MHD
+ Stará Ľubovňa
+ MHD
+ Svit
+ MHD
+ Trenčín
+ MHD
+ Trnava
+ MHD
+ Vranov nad Topľou
+ MHD
+ Vráble
+ MHD
+ Zvolen
+ MHD
+ Čadca
+ MHD
+ Šahy
+ MHD
+ Šaľa
+ MHD
+ Štúrovo
+ MHD
+ Šurany
+ MHD
+ Žiar nad Hronom
+ MHD
+ Žilina
+Teraz
+Odchod
+Príchod
+Teraz
+Hotovo
+Vyhľadať
+Obľúbené
+Posledné
+Posledné
+Obľúbené
+Zobraziť viac
+Zobraziť menej
+←
+ Odchody zo zastávky
+ Podľa odchodu
+ Podľa čísla
+Zobraziť na mape
+Vyhľadať trasu sem
+←
+ Odchody zo zastávky
+←
+Detail linky %lineNo
+←
+Smer 
+*
+ -->
+Odchod:
+Dnes
+Zajtra
+←
+ Detail spojenia
+{{ubian.translate('AIAgent.Chat.Title')}}
+BETA
+ {{ubian.translate('AI.Loading')}}
+{{ubian.translate('AIAgent.NoPersonalData')}}
+{{ubian.translate('AIAgent.Rating.Title')}}
+{{ubian.translate('AIAgent.Rating.Prompt')}}
+Excellent
+Good
+Poor
+{{ubian.translate('AIAgent.Rating.InputLabel')}}
+{{ubian.translate('Button.Close')}}
+{{ubian.translate('Button.aiAgent.send')}}
+ {{#icontext}}
+ {{.}}
+ {{/icontext}}
+{{{title}}}
+X
+ {{{content}}}
+ {{#button}}
+{{.}}
+ {{/button}}
+ {{#button_secondary}}
+{{.}}
+ {{/button_secondary}}
+ {{#connections}}
+{{timeTableTrip.timeTableLine.line}}
+ {{#timeTableTrip.timeTableLine.ezIsTrain}}
+Vlak {{timeTableTrip.timeTableLine.line}}
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+{{destinationName}}
+{{#showPlatforms}}
+, nást. {{#platformName}}{{.}}{{/platformName}}{{^platformName}}{{platformNumber}}{{/platformName}}
+{{/showPlatforms}}
+{{departure}}
+ {{#delayMinutes}}
+{{delay}}
+ {{/delayMinutes}}
+ {{/connections}}
+ {{#showStopType}}
+{{stopType}}
+ {{/showStopType}}
+ {{#date}}
+{{date}}
+ {{/date}}
+ {{#tripStops}}
+ {{{tripStopName}}}
+ {{departure}}
+ {{/tripStops}}
+{{labelEstimatedDelay}}
+ {{estimatedDelay}}
+ {{#messages}}
+ Správa z dispečingu:
+ {{.}}
+ {{/messages}}
+{{#licenseNumber}}EČV: {{.}}{{/licenseNumber}}
+ {{#timeTableTrip.wifi}}
+ {{/timeTableTrip.wifi}}
+ {{#timeTableTrip.bicycle}}
+ {{/timeTableTrip.bicycle}}
+ {{#timeTableTrip.lowFloor}}
+ {{/timeTableTrip.lowFloor}}
+ Hodnotiť
+ Zobraziť CP
+ Obľúbené
+ {{#related}}
+ {{#prev}}
+ Predchádzajúci
+ {{/prev}}
+ {{#next}}
+ Nasledujúci
+ {{/next}}
+ {{/related}}
+ <div
+ class="line-header line-type-{{timeTableTrip.timeTableLine.lineType}} line-type-{{timeTableTrip.timeTableLine.ezLineType}} {{#timeTableTrip.timeTableLine.ezIsUrban}}line-type-urban{{/timeTableTrip.timeTableLine.ezIsUrban}}">
+ {{#timeTableTrip.timeTableLine.ezIsTrain}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{timeTableTrip.timeTableLine.lineName}}
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+ {{#timeTableTrip.timeTableLine.ezIsUrban}}
+ {{vehicleTypeGeneric}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{/timeTableTrip.timeTableLine.ezIsUrban}}
+ {{#timeTableTrip.timeTableLine.ezIsBus}}
+ {{busLineName}}
+ {{/timeTableTrip.timeTableLine.ezIsBus}}
+ Smer
+ {{destination}}
+×
+{{dateTime}}
+ {{#remarks}}
+{{.}}
+ {{/remarks}}
+ <div
+ class="line-header line-type-{{timeTableTrip.timeTableLine.lineType}} line-type-{{timeTableTrip.timeTableLine.ezLineType}} {{#timeTableTrip.timeTableLine.ezIsUrban}}line-type-urban{{/timeTableTrip.timeTableLine.ezIsUrban}}">
+ {{#timeTableTrip.timeTableLine.ezIsTrain}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{timeTableTrip.timeTableLine.lineName}}
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+ {{#timeTableTrip.timeTableLine.ezIsUrban}}
+ {{vehicleType}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{/timeTableTrip.timeTableLine.ezIsUrban}}
+ {{#timeTableTrip.timeTableLine.ezIsBus}}
+ {{busLineName}}
+ {{/timeTableTrip.timeTableLine.ezIsBus}}
+ Smer
+ {{timeTableTrip.destination}}
+ {{^noDelay}}
+ Odhadované meškanie
+ {{delayMinutes}}
+ min.
+ {{/noDelay}}
+ {{#timeTableTrip}}
+ {{#canceled}}
+ Spoj bol zrušený.
+ {{/canceled}}
+ {{/timeTableTrip}}
+ {{#timeTableTrip.wifi}}
+ {{/timeTableTrip.wifi}}
+ {{#timeTableTrip.bicycle}}
+ {{/timeTableTrip.bicycle}}
+ {{#timeTableTrip.lowFloor}}
+ {{/timeTableTrip.lowFloor}}
+ {{#date}}
+{{date}}
+ {{/date}}
+ {{#tripStops}}
+{{{tripStopName}}}
+{{departure}}
+>
+ {{/tripStops}}
+{{labelEstimatedDelay}}
+ {{estimatedDelay}}
+-->
+ {{#messages}}
+ Správa z dispečingu:
+ {{.}}
+ {{/messages}}
+ Hodnotiť
+ Zobraziť CP
+ Obľúbené
+ {{#related}}
+ {{#prev}}
+ Predchádzajúci
+ {{/prev}}
+ {{#next}}
+ Nasledujúci
+ {{/next}}
+ {{/related}}
+ {{#passingLines}}
+{{#lines}}
+{{.}}
+{{/lines}}
+ {{/passingLines}}
+ {{#connections}}
+ {{#timeTableTrip.timeTableLine.ezIsTrain}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{timeTableTrip.timeTableLine.lineName}}
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+ {{#timeTableTrip.timeTableLine.ezIsUrban}}
+ {{vehicleType}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{/timeTableTrip.timeTableLine.ezIsUrban}}
+ {{#timeTableTrip.timeTableLine.ezIsBus}}
+ {{busLineName}}
+ {{/timeTableTrip.timeTableLine.ezIsBus}}
+ {{#showPlatforms}}
+,
+ nást.
+ {{#platformName}}{{.}}{{/platformName}}{{^platformName}}{{platformNumber}}{{/platformName}}
+ {{/showPlatforms}}
+ Smer
+ {{destinationName}}
+{{departure}}
+ {{#timeTableTrip}}
+ {{#canceled}}
+Spoj bol zrušený.
+ {{/canceled}}
+ {{^canceled}}
+ {{#delayMinutes}}
+{{delay}}
+ {{/delayMinutes}}
+ {{/canceled}}
+ {{/timeTableTrip}}
+ {{/connections}}
+Hod.
+Min.
+ {{#list}}
+{{hour}}
+ {{#departures}}
+ {{plannedDepartureTime.m}}
+ {{#tripRemarks}}
+i
+ {{/tripRemarks}}
+ {{/departures}}
+ {{/list}}
+ {{#stops}}
+{{stopRawName}}
+{{transferLines}}{{region}}
+ {{/stops}}
+ {{#connections}}
+{{timeTableTrip.timeTableLine.line}}
+{{destinationName}}
+{{#showPlatforms}}
+, nást. {{ platformNumber }}
+{{/showPlatforms}}
+{{#timeTableTrip.timeTableLine.ezIsTrain}}{{timeTableTrip.timeTableLine.line}}, {{/timeTableTrip.timeTableLine.ezIsTrain}}{{timeTableTrip.operatorName}}
+{{departure}}
+ {{#delayMinutes}}
+{{delay}}
+ {{/delayMinutes}}
+ {{/connections}}
+ {{#showStopType}}
+{{stopType}}
+ {{/showStopType}}
+ {{#lines}}
+{{#ezIsUrban}}{{line}}{{/ezIsUrban}}
+{{^ezIsUrban}}{{line}} {{/ezIsUrban}}{{lineName}}
+ {{/lines}}
+ {{#connections}}
+{{#fromStr}}{{.}}{{/fromStr}}{{^fromStr}}Aktuálna poloha{{/fromStr}} → {{#toStr}}{{.}}{{/toStr}}{{^toStr}}Aktuálna poloha{{/toStr}}
+{{#fromStr}}{{.}}{{/fromStr}}{{^fromStr}}Aktuálna poloha{{/fromStr}}
+{{#toStr}}{{.}}{{/toStr}}{{^toStr}}Aktuálna poloha{{/toStr}}
+ {{/connections}}
+ {{#connections}}
+Spoj s časom začiatku 
+{{formatStartTime}}
+{{formatTotalTime}}
+🔗
+ {{#parts}}
+ {{#isLine}}
+ <div
+ class="line-header line-type-{{timeTableTrip.timeTableLine.lineType}} line-type-{{timeTableTrip.timeTableLine.ezLineType}} {{#timeTableTrip.timeTableLine.ezIsUrban}}line-type-urban{{/timeTableTrip.timeTableLine.ezIsUrban}}">
+ {{#timeTableTrip.timeTableLine.ezIsTrain}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{timeTableTrip.timeTableLine.lineName}}
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+ {{#timeTableTrip.timeTableLine.ezIsUrban}}
+ {{vehicleType}}
+ {{timeTableTrip.timeTableLine.line}}
+ {{/timeTableTrip.timeTableLine.ezIsUrban}}
+ {{#timeTableTrip.timeTableLine.ezIsBus}}
+ {{busLineName}}
+ {{/timeTableTrip.timeTableLine.ezIsBus}}
+>
+ {{#timeTableTrip.tripSigns}}
+ {{#symbols}}
+ {{#existsImageSign}}
+ {{/existsImageSign}}
+ {{^existsImageSign}}
+ {{#signSymbol}}
+ {{sign}}
+ {{/signSymbol}}
+ {{/existsImageSign}}
+ {{/symbols}}
+ {{/timeTableTrip.tripSigns}}
+ {{#timeTableTrip}}
+ {{#canceled}}
+ Spoj bol zrušený.
+ {{/canceled}}
+ {{^canceled}}
+ Odhadované meškanie
+ {{delayMinutes}}
+ min.
+ {{/canceled}}
+ {{/timeTableTrip}}
+ {{#timeTableTrip.wifi}}
+ {{/timeTableTrip.wifi}}
+ {{#timeTableTrip.bicycle}}
+ {{/timeTableTrip.bicycle}}
+ {{#timeTableTrip.lowFloor}}
+ {{/timeTableTrip.lowFloor}}
+ Odchod: 
+{{formatTimeFrom}}
+ Zastávka: 
+{{{originStopName}}}
+ Príchod: 
+{{formatTimeTo}}
+ Zastávka: 
+{{{destinationStopName}}}
+ Dopravca: 
+ {{timeTableTrip.operatorName}}
+ Cena: 
+ {{#plateNumber}}
+ {{#timeTableTrip.timeTableLine.ezIsTrain}}
+ Vlak
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+ {{^ timeTableTrip.timeTableLine.ezIsTrain}}
+ EČV: 
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+ {{/plateNumber}}
+ <div class="col-sm-9 col-md-12 plate-number"
+ data-number="{{plateNumber}}">
+ {{^timeTableTrip.timeTableLine.ezIsTrain}}
+ Číslo spoja:
+ {{timeTableTrip.trip}}
+ {{/timeTableTrip.timeTableLine.ezIsTrain}}
+ {{#zones}}
+ Zóny:
+ {{zones}}
+ {{/zones}}
+ <!-- 
+ {{#timeTableTrip.messages}}
+ Správa z dispečingu:
+ {{.}}
+ {{/timeTableTrip.messages}}
+ -->
+ {{/isLine}}
+ {{^ isLine}}
+ {{walkingTransferDescription}}
+ {{/isLine}}
+ {{#ticketPurchase}}
+ Kúpiť lístok na vlak
+ {{/ticketPurchase}}
+ {{/parts}}
+ Zobraziť na mape
+ Zobraziť detail
+{{/connections}}
+{{title}}
+×
+-->
+ {{# favourite}}
+{{favourite.prompt}}
+Áno
+Nie
+ {{/ favourite }}
+ {{permalink.desc}}
+{{permalink.link}}
+Hodnotenie spoja
+ Zvoľte, ako ste boli spokojní so spojom:
+Hodnotenie vodiča
+★
+★
+★
+★
+★
+Hodnotenie vozidla
+★
+★
+★
+★
+★
+Hodnotenie dostupnosti
+★
+★
+★
+★
+★
+ Pripomienky, sťažnosti alebo návrhy k spoju:
+ Ak požadujete odpoveď, zadajte vašu e-mailovú adresu:
+Odoslať hodnotenie
+Zavrieť
+ Vozidlá:
+0
+ Priblíženie:
+Čo je UBIAN?
+Ako nakupovať
+Meškania vlakov
+Virtuálna karta
+MHD lístok
+Parkovanie
+Preukaz študenta
+Spolupráca
+Pomoc a podpora
+GDPR
+Odhlásenie
+Skutočne si prajete odhlásiť sa z aplikácie Ubian?
+Zrušiť
+Odhlásiť
+ __ubian_assets_version = 'mucwh8wa';
+ __ubian_azet_cookie_enabled = false;
+__ubian_password_regex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$/;
+__ubian_branding = "UBIAN";
+ cssVars();
+ var version = String('1').toLowerCase();
+ if (!version.includes('dpb') && !version.includes('bid') && !version.includes('dpmk'))
+ {
+(function() {let chatbotScript = document.createElement('script'); chatbotScript.setAttribute('src', 'https://chatbot.ui42.sk/chatbot_transdata_sk_script'); document.body.appendChild(chatbotScript); })();
+ }
+ window.fbAsyncInit = function () {
+ FB.init({appId: '149801765699439', xfbml: true, version: 'v2.12'});
+ FB.AppEvents.logPageView();
+ };
+ (function (d, s, id) {
+ var js,
+ fjs = d.getElementsByTagName(s)[0];
+ if (d.getElementById(id)) {
+ return;
+ }
+ js = d.createElement(s);
+ js.id = id;
+ js.src = "//connect.facebook.net/en_US/sdk.js";
+ js.defer = true;
+ js.async = true;
+ fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
+ var ubian_nav = ubian_nav || {};
+// google-map dependent scripts
+ubian_nav.scripts = [];
+ubian_nav.scripts.push('/assets/js/vendor/markerAnimate.js?v=mucwh8wa');
+ubian_nav.scripts.push('/assets/js/vendor/markerclusterer.js?v=mucwh8wa');
+ubian_nav.scripts.push('/assets/js/vendor/infobox.js?v=mucwh8wa');
+ubian_nav.scripts.push('/assets/js/vendor/map-tooltip.js?v=mucwh8wa');
+// configuration
+ubian_nav.assetsUrlPrefix = '/assets/img/navigation/desktop/png/';
+ubian_nav.staticTimetablesUrl = "http:\/\/cp.ubian.sk\/default.aspx?LineID=--lineid--&Direction=--direction--";
+ubian_nav.lineTypes = {"URBAN":1,"SUBURBAN":2,"REMOTE":3,"INTERNATIONAL":4,"TRAIN_FAST1":20,"TRAIN_FAST2":21,"TRAIN_FAST3":22,"TRAIN_FAST4":23,"TRAIN_FAST5":24,"TRAIN_FAST6":25,"TRAIN_FAST7":26,"TRAIN_FAST8":27,"TRAIN_FAST9":28,"TRAIN_FAST10":29,"TRAIN_FAST11":30,"TRAIN_PERSONAL":31};
+ubian_nav.isMobileClient = false;
+ubian_nav.flags = {"allowConnectionSearch":true,"allowRidesharing":true};
+// options
+ubian_nav.options = {
+vehiclesZoom: 14,
+stopsZoom: 13,
+clusterMaxZoom: 18,
+clusterGridSize: 75,
+clusterMinimumSize: 5,
+stopsUpdateDelay: 500,
+stopsTooltipZoom: 23,
+mapDefaultZoom: 8,
+mapDefaultZoomWithPosition: 15,
+mapDefaultLat: 48.56360345776,
+mapDefaultLng: 19.586768554688
+};
+ubian_nav.forceState = {}
+;

@@ -1,0 +1,132 @@
+Dopravný podnik Mesta Prešov Národný integrovaný cestovný lístok - CYRIL
+<!--
+-->
+window.consentStore = window.consentStore || {};
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+function setConsents(operacia = 'default') {
+if (consentStore) {
+gtag('consent',operacia,consentStore);
+}
+}
+:root {
+--cc-btn-primary-bg: #DB2017;
+}
+if (!consentStore.functionality_storage) {
+consentStore = {
+'ad_storage': 'denied',
+'ad_user_data': 'denied',
+'ad_personalization': 'denied',
+'analytics_storage': 'denied',
+'functionality_storage': 'granted',
+'personalization_storage': 'granted',
+'security_storage': 'granted'
+};
+}
+setConsents('default');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FC69QS7193');
+gtag('config', 'AW-629130799');
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '847430268281545');
+fbq('track', 'PageView');
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=847430268281545&ev=PageView&noscript=1"
+/>
+window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+window._adftrack.push({
+HttpHost: 'track.adform.net',
+pm: 2077769,
+divider: encodeURIComponent('|'),
+pagename: encodeURIComponent('Presov_MHD_homepage')
+});
+(function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+Dispečing: 
+ 051/7470 204
+Dispečing: 
+ 051/7470 204
+Linkové vedenie
+Trasy liniek
+Trasy školských spojov
+Schéma siete
+Nočná doprava
+Bezbariérová doprava
+Cestovné poriadky
+Vyhľadanie spojenia
+Ako sa dostať...
+Predpisy a tarifa
+Návod na kúpu cestovného lístka platobnou kartou
+eCL- kúpa platobnou kartou vo vozidle
+Daňový doklad a výpis jázd
+ Sme zapojení do systému NICL
+Straty a nálezy
+Prepravný poriadok
+Tarifa
+Ceny lístkov
+SMS lístok
+SMS - daňový doklad
+PCL cez internet
+Predajné miesta
+Tlačivá a dokumenty
+Dopravný podnik
+Reklamné a iné služby
+Aktuálne informácie
+Informácie z podniku
+POMOC Ukrajine
+ДОПОМОЖІТЬ Україні
+Majetok na predaj
+Verejné obstarávanie
+Povinné zverejňovanie
+História
+Najčastejšie otázky
+Výročné správy, závierky, správy audítora
+Etický kódex
+Organizačný poriadok
+Stanovy
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+Ochrana osobných údajov
+Pravidlá používania súborov cookies
+Privátna zóna
+Kontakt
+Kontakt
+Národný integrovaný cestovný lístok - CYRIL
+Dopravný podnik mesta Prešov
+, akciová spoločnosť je zapojena do systému 
+Národný integrovaný cestovný lístok (NICL)
+, ktorý umožňuje cestujúcim zaplatiť za cestu vo verejnej osobnej doprave na Slovensku jednotným spôsobom.
+Cestovný doklad NICL platí aj v našich vozidlách – sú označené nálepkou 
+CYRIL 
+na bočnom skle pri predných dverách.
+Cestovné doklady NICL si cestujúci kúpi v mobilnej aplikácii Cyril, ktorá je dostupná v 
+Google Play
+ a v 
+App Store
+.
+Systém Národný integrovaný cestovný lístok je financovaný Európskou úniou z prostriedkov 
+Plánu obnovy a odolnosti Slovenskej republiky
+.
+Viac informácií: 
+Jedna aplikácia pre všetky typy verejnej osobnej dopravy
+ | 
+Cyril 
+| 
+Domov | Plán Obnovy
+Návod platbu kartou v MHD
+Návod platbu kartou v MHD
+Cestovné poriadky
+Trasy liniek a schémy
+Ceny lístkov
+SMS Lístok
+APPky do mobilu
+Projekty EÚ
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.

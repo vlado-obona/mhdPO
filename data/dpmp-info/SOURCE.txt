@@ -1,0 +1,11 @@
+stiahnute: 2026-10-01T18:20:48Z
+b260fdd0e3bca7865c35da2a78f45d73c81c299e538a1b23450a1a274f6a5ee8  data/dpmp-info/aplikacie.html
+b1110bb12af151f0d9bc3d5cf4ee4f0526d9e8c018fc79706891caaf1e3c707b  data/dpmp-info/ceny-listkov.html
+00bdad31408a520859a326cba813aba496064af79eb485e23cbb7e8422be88d7  data/dpmp-info/cyril.html
+0cdf6e448233957a430367ecb1eaf592616c5b412e5a9ee2672830d5759d7359  data/dpmp-info/kontrola-jazd.html
+cd2806e21def9547213a28db5332750b61eed7243e88a2a940c191b8def587a2  data/dpmp-info/navod-na-zakupenie-listka-kartou.html
+f82d4912aed374bd2869ed194b0fd17e5205f7736e22e4954a88b2fe40247ef0  data/dpmp-info/sms-listok.html
+be85040bb773f6858977ecb163d28c70dfbc39db6022bc6de5bff8746b385ef9  data/dpmp-info/smscl.html
+a10c88d25870b2043413393c3684caa4d44d8f6dfce800b5737adadd4498bc47  data/dpmp-info/tarifa.html
+ee6c2e42113c18bd2bb765d56d13656563beab6ed0d1687a47eb0dd2b933a97e  data/dpmp-info/ubian-eshop.html
+40ed4b7b798affcc04882625099bdfcfb0d23a766347071ea215db4c30213e48  data/dpmp-info/pipni-a-cestuj.pdf

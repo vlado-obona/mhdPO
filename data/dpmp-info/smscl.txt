@@ -1,0 +1,148 @@
+
+
+
+
+SMS Cestovný Lístok
+
+
+
+
+
+
+
+ <!--
+
+var quote=new Array();
+ quote[0]='Pre SMS prestupný celosieťový cestovný lístok 40min.'; 
+ quote[1]='pošlite prázdnu SMS na číslo 1144.';
+ quote[2]='Platí aj pre nočné spoje. Cena lístka je 0,60€.'; 
+ quote[3]='';
+ quote[4]='Pre informácie o SMS cestovnom lístku';
+ quote[5]='v MHD v Prešove pošlite SMS v tvare INFO';
+ quote[6]='na číslo 1144. Obdržíte dve SMS správy.';
+ quote[7]='';
+
+var speed=5000; 
+var q=0;
+
+function showQuote() {
+
+ document.getElementById("mobile").innerHTML=quote[q];
+ q++;
+if(q==quote.length) {
+ q=0;
+ }
+}
+setInterval('showQuote()',speed);
+ //-->
+
+
+
+
+
+
+
+
+
+
+
+SMS
+
+Cestovný Lístok
+
+
+
+
+Vytlačte si
+
+Daňový Doklad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Vysvetlivky
+
+Zadajte vaše telefónne číslo v tvare 
++4219XXYYYYYY
+ a 8-miestny overovací kód z vášho lístka, napríklad 
+q1ms62on
+.
+
+
+
+
+
+
+
+
+
+
+
+SMS Lístky
+
+
+Telefónne číslo : 
+
+Overovací kód : 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SMS Cestovný Lístok Šetrí Čas a Peniaze
+
+
+
+
+
+
+
+
+
+
+
+
+
+Technicky prevádzku predaja SMS cestovných lístkov pre DPMP a.s. zabezpečuje spoločnosť Mediatex s.r.o.
+
+
+
+
+
+
