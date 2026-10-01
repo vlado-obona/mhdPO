@@ -72,11 +72,12 @@ for (let i = 0; i < 60; i++) {
   }
   reconstructed++;
   // ak zvolil presne tento spoj, over časovú zhodu
-  const leg = js.map((j) => j.legs.find((l) => l.type === 'ride' && l.dep === dep && l.from === from)).find(Boolean);
+  const pIdx = D.patterns.indexOf(p);
+  const leg = js.map((j) => j.legs.find((l) => l.type === 'ride' && l.pattern === pIdx && l.dep === dep && l.from === from)).find(Boolean);
   if (leg) {
     const pos = p.stops.indexOf(leg.to);
     if (leg.arr === trip.t[2 * pos] && leg.dep === trip.t[1]) exact++;
-    else fail(`nesúlad časov legu na linke ${D.routes[p.r].s}`);
+    else fail(`nesúlad časov legu na linke ${D.routes[p.r].s}: ${D.stops[from].n} ${fmt(dep)} → ${D.stops[to].n}; leg ${D.routes[leg.route].s} → ${D.stops[leg.to].n} ${fmt(leg.arr)} (CP ${pos >= 0 ? fmt(trip.t[2 * pos]) : "mimo patternu"})`);
   }
 }
 ok(`rekonštrukcia spojov: ${reconstructed} OK, z toho ${exact} presných zhôd časov`);
@@ -197,6 +198,23 @@ if ((D.meta.patches || []).some((p) => p.id === 'dpmp-2026-10-01')) {
     && D.stops[p.stops.at(-1)].n === 'Trojica' && p.trips.some((t) => t.t[1] === hm('7:00') && raptor.serviceActive(t.sv, di.num, di.weekday)));
   if (!t14) { bad++; fail('CP 1.10.: linka 14 o 7:00 zo Záborského nekončí na Trojici'); }
   if (!bad) ok(`zmeny CP od 1.10.2026: všetkých ${expect.reduce((a, e) => a + e[2].length + e[3].length, 0) + 1} kontrol sedí`);
+
+  // „zostaň sedieť“: nadväzujúce spoje z oznamu sa plánujú ako jeden autobus
+  const grp = (n) => new Map(D.stops.map((s, i) => [s, i]).filter(([s]) => s.n === n).map(([, i]) => [i, 0]));
+  const seat = [
+    ['Dulova Ves', 'Ľubotice *', '6:15', ['44', '28']],
+    ['Bzenov', 'Záborské', '16:55', ['18', '14']],
+    ['Surdok', 'Ľubotice *', '6:55', ['41', '13']],
+    ['Karpatská', 'Poliklinika', '14:45', ['32A', '32']],
+  ];
+  for (const [a, b, t, lines] of seat) {
+    const js = planJourneys(raptor, grp(a), grp(b), di, hm(t), 4);
+    const hit = js.find((j) => j.legs.some((l) => l.type === 'stay')
+      && j.legs.filter((l) => l.type === 'ride').map((l) => D.routes[l.route].s).join('>') === lines.join('>'));
+    if (!hit) { bad++; fail(`zostaň sedieť ${a} → ${b} (${lines.join('→')}) sa nenašlo`); continue; }
+    if (hit.transfers !== 0) { bad++; fail(`zostaň sedieť ${a} → ${b}: počíta sa ako ${hit.transfers} prestup`); }
+  }
+  if (!bad) ok(`zostaň sedieť (44→28, 18→14, 41→13, 32A→32): ${seat.length}/${seat.length}, bez prestupu`);
 }
 
 // ── 5: nočné spoje cez polnoc ───────────────────────────────────────

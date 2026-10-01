@@ -363,11 +363,16 @@ function renderResults(journeys) {
         div.innerHTML = `
           <div class="t">${fmtTime(l.dep)}</div>
           <div><span class="badge walk">pešo</span> ${fmtDur(l.secs)} — na zastávku <b>${D.stops[l.to].n}</b></div>`;
+      } else if (l.type === 'stay') {
+        const nx = j.legs[j.legs.indexOf(l) + 1];
+        div.innerHTML = `
+          <div class="t">${fmtTime(l.dep)}</div>
+          <div><span class="badge walk">🔄</span> <b>zostaň sedieť</b> — autobus pokračuje ako linka ${nx ? badge(nx.route) : ''}</div>`;
       } else {
         const r = D.routes[l.route];
         const head = l.head >= 0 ? D.heads[l.head] : (r.l || '');
         const inner = l.stops.slice(1, -1);
-        const wait = prevArr != null ? l.dep - prevArr : 0;
+        const wait = prevArr != null && j.legs[j.legs.indexOf(l) - 1]?.type !== 'stay' ? l.dep - prevArr : 0;
         div.innerHTML = `
           <div class="t">${fmtTime(l.dep)}<br><span class="muted">${fmtTime(l.arr)}</span></div>
           <div>
@@ -455,6 +460,7 @@ function drawJourney(j) {
       }).addTo(journeyLayer);
       continue;
     }
+    if (l.type !== 'ride') continue;
     const pts = l.stops.map(coord);
     all.push(...pts);
     L.polyline(pts, { color: '#0b7a3b', weight: 5, opacity: .85 }).addTo(journeyLayer);
@@ -465,7 +471,10 @@ function drawJourney(j) {
   if (rides.length) {
     flag(coord(j.legs[0].from), '🚩', 'flag-start');
     flag(coord(rides[rides.length - 1].to), '🏁', 'flag-end');
-    for (let i = 1; i < rides.length; i++) flag(coord(rides[i].from), '🚌', 'flag-transfer');
+    for (let i = 1; i < rides.length; i++) {
+      const before = j.legs[j.legs.indexOf(rides[i]) - 1];
+      if (before?.type !== 'stay') flag(coord(rides[i].from), '🚌', 'flag-transfer');
+    }
   }
   if (all.length && !$('mapWrap').hidden) map.fitBounds(L.latLngBounds(all).pad(0.2));
 }
@@ -685,7 +694,8 @@ function renderFavs() {
   });
 }
 
-// ťuknutie = akcia, podržanie (650 ms) = nastavenie
+// ťuknutie = akcia, podržanie (650 ms) = nastavenie; z klávesnice
+// nastavenie cez kláves Menu alebo Shift+F10
 function attachLongPress(el, onTap, onLong) {
   let timer = null, fired = false, sx = 0, sy = 0;
   const cancel = () => { clearTimeout(timer); timer = null; el.classList.remove('pressing'); };
@@ -698,12 +708,38 @@ function attachLongPress(el, onTap, onLong) {
   el.addEventListener('pointermove', (e) => {
     if (timer && Math.hypot(e.clientX - sx, e.clientY - sy) > 12) cancel();
   });
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => el.addEventListener(ev, cancel));
+  ['pointerleave', 'pointercancel'].forEach((ev) => el.addEventListener(ev, cancel));
+  // po podržaní nesmie prísť „klik“ (dopadol by na pozadie otvoreného dialógu)
+  el.addEventListener('pointerup', () => { cancel(); if (fired) setTimeout(() => { fired = false; }, 500); });
+  el.addEventListener('touchend', (e) => { if (fired) e.preventDefault(); });
   el.addEventListener('contextmenu', (e) => e.preventDefault());
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10')) { e.preventDefault(); onLong(); }
+  });
   el.addEventListener('click', (e) => {
     if (fired) { e.preventDefault(); fired = false; return; }
     onTap();
   });
+}
+
+// prekrytia (dialóg, režim cesty, upozornenie): fokus dnu, pozadie inert,
+// Späť/Escape zatvorí vždy len to najvrchnejšie
+let focusBack = [];
+function setInertBehind() {
+  const dlg = !$('favDlg').hidden, tr = !$('trip').hidden, al = !$('tripAlert').hidden;
+  for (const el of document.querySelectorAll('body > header, body > main, body > footer')) el.inert = dlg || tr || al;
+  $('trip').inert = al;
+  $('favDlg').inert = al || tr;
+}
+function layerOpened(focusEl) {
+  focusBack.push(document.activeElement);
+  setInertBehind();
+  setTimeout(() => focusEl?.focus({ preventScroll: true }), 30);
+}
+function layerClosed() {
+  setInertBehind();
+  const el = focusBack.pop();
+  if (el && el.isConnected && !el.closest('[inert]')) el.focus({ preventScroll: true });
 }
 
 function openFavDlg(i) {
@@ -718,8 +754,17 @@ function openFavDlg(i) {
   $('favDel').hidden = !f.target;
   $('favFromTo').hidden = !sel.to;
   $('favDlg').hidden = false;
+  try { history.pushState({ fav: 1 }, ''); } catch {}
+  layerOpened($('favName'));
 }
-function closeFavDlg() { $('favDlg').hidden = true; favEdit = null; }
+// fromHistory: zatvára ho tlačidlo Späť (záznam v histórii už nie je)
+function closeFavDlg(fromHistory = false) {
+  if ($('favDlg').hidden) return;
+  $('favDlg').hidden = true;
+  favEdit = null;
+  layerClosed();
+  if (!fromHistory) { try { if (history.state && history.state.fav) history.back(); } catch {} }
+}
 
 function renderFavIcons() {
   const box = $('favIcons');
@@ -881,7 +926,9 @@ const TRIP_NOTIF_BASE = 7300;
 const NOTIF_CHANNEL = 'mhd-vystup';
 const GOOD_ACC = 150;      // m — horšia presnosť sa na postup jazdy nepoužije
 const GPS_STALE = 45000;   // ms — dlhšie bez dobrej polohy = odhad podľa CP
-let trip = null, tripMap = null, tripLayer = null, tripUserLayer = null;
+// programové posuny mapy (Leaflet animovaný zoom spúšťa „zoomstart“ až v ďalšom snímku)
+let trip = null, tripMap = null, tripLayer = null, tripUserLayer = null, tripMapAutoUntil = 0;
+const tripMapAuto = () => { tripMapAutoUntil = Date.now() + 900; };
 
 const tripNowSecs = () => trip.t0Secs + (Date.now() - trip.t0Epoch) / 1000;
 const tripEpoch = (secs) => trip.t0Epoch + (secs - trip.t0Secs) * 1000;
@@ -981,7 +1028,7 @@ async function startTrip(i) {
   const t = trip = {
     fav: f, dest: resolveTarget(f.target), phase: 'locating', pos: null, good: null, ref: null,
     journeys: [], jIdx: 0, j: null, rides: [], ri: 0, prog: 0, delay: 0,
-    alerted: new Set(), alertTimer: null, follow: true, speedAvg: 0,
+    alerted: new Set(), seated: new Set(), alertTimer: null, follow: true, speedAvg: 0,
     missNote: null, missSince: null, replanned: new Set(), notifAt: new Map(),
     t0Epoch: Date.now(), t0Secs: nowSecsSk(),
   };
@@ -1077,6 +1124,9 @@ function useJourney(k) {
   t.jIdx = k;
   t.j = t.journeys[k];
   t.rides = t.j.legs.filter((l) => l.type === 'ride');
+  // jazda k, po ktorej sa sedí ďalej (autobus pokračuje ako iná linka)
+  t.seated = new Set();
+  t.j.legs.forEach((l, i) => { if (l.type === 'stay') t.seated.add(t.rides.indexOf(t.j.legs[i - 1])); });
   t.ri = 0; t.prog = 0; t.delay = 0; t.walkOnly = false;
   t.alerted = new Set();
   t.missNote = null; t.missSince = null;
@@ -1176,7 +1226,7 @@ function evaluateTrip() {
   const ex = D.stops[r.to];
   const dExit = g ? haversine(g.la, g.lo, ex.la, ex.lo) : Infinity;
   const done = t.prog >= n - 1 - 0.08 || dExit < 35 || (!g && now - Math.max(0, t.delay) > r.arr + 180);
-  if (!t.alerted.has(t.ri) && t.prog >= n - 2 - 0.12) exitAlert(done);
+  if (!t.alerted.has(t.ri) && !t.seated.has(t.ri) && t.prog >= n - 2 - 0.12) exitAlert(done);
   if (done) alight(true);
 }
 
@@ -1201,8 +1251,11 @@ function alight(keepAlert = false) {
   cancelTripNotif(t.ri);
   t.alerted.add(t.ri);
   if (t.ri < t.rides.length - 1) {
-    t.ri += 1; t.prog = 0; t.delay = 0; t.phase = 'toStop'; t.follow = true;
+    const stay = t.seated.has(t.ri);
+    t.ri += 1; t.prog = 0; t.follow = true;
     t.missNote = null; t.missSince = null;
+    // ten istý autobus pokračuje ako iná linka — meškanie ostáva
+    if (stay) { t.phase = 'ride'; buzz([60]); } else { t.delay = 0; t.phase = 'toStop'; }
     renderTrip();
     evaluateTrip();
   } else if (t.dest.kind === 'point' && t.j.finalWalk > 30) {
@@ -1249,7 +1302,10 @@ function exitAlert(atStop = false) {
   }
   $('taTitle').textContent = title;
   $('taSub').textContent = sub;
-  $('tripAlert').hidden = false;
+  if ($('tripAlert').hidden) {
+    $('tripAlert').hidden = false;
+    layerOpened($('taOk'));
+  }
   // aplikácia v pozadí: overlay nikto nevidí → systémová notifikácia hneď
   if (pageHidden()) notifyNow(k, title, `${exitName}${next ? ' — prestup' : ''}`);
   else cancelTripNotif(k);
@@ -1268,7 +1324,7 @@ function exitAlert(atStop = false) {
 }
 
 function dismissAlert() {
-  $('tripAlert').hidden = true;
+  if (!$('tripAlert').hidden) { $('tripAlert').hidden = true; layerClosed(); }
   if (trip && trip.alertTimer) { clearTimeout(trip.alertTimer); trip.alertTimer = null; }
   stopSpeech();
   try { if (navigator.audioSession) navigator.audioSession.type = 'auto'; } catch {}
@@ -1319,7 +1375,7 @@ async function scheduleTripNotifs() {
   await cancelTripNotifs();
   const list = [];
   t.rides.forEach((r, k) => {
-    if (k < t.ri || t.alerted.has(k)) return;
+    if (k < t.ri || t.alerted.has(k) || t.seated.has(k)) return;
     let at = notifDue(t, k);
     if (at < Date.now() + 5000) return;
     // na obrazovke upozorní GPS — notifikácia je len poistka na neskôr
@@ -1395,7 +1451,9 @@ function onTripVisible() {
 const iosWeb = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.Capacitor?.isNativePlatform?.();
 
 function openTripUi() {
+  const wasHidden = $('trip').hidden;
   $('trip').hidden = false;
+  if (wasHidden) layerOpened($('tripClose'));
   if (iosWeb) {
     $('tripNote').innerHTML = '<b>iPhone:</b> nechaj appku otvorenú a displej zapnutý — pri zamknutom displeji upozornenie na výstup nepríde. '
       + '(Nastavenia → Displej a jas → Automatické zamknutie: Nikdy, počas cesty.)';
@@ -1408,7 +1466,11 @@ function openTripUi() {
     addBaseLayers(tripMap);
     tripLayer = L.layerGroup().addTo(tripMap);
     tripUserLayer = L.layerGroup().addTo(tripMap);
-    tripMap.on('dragstart', () => { if (trip) { trip.follow = false; $('tripRecenter').hidden = false; } });
+    const stopFollow = () => {
+      if (trip && Date.now() > tripMapAutoUntil) { trip.follow = false; $('tripRecenter').hidden = false; }
+    };
+    tripMap.on('dragstart', stopFollow);
+    tripMap.on('zoomstart', stopFollow);
   }
   tripLayer.clearLayers();
   tripUserLayer.clearLayers();
@@ -1428,6 +1490,7 @@ function endTrip(silent) {
   compassStop();
   $('trip').hidden = true;
   document.body.classList.remove('trip-open');
+  layerClosed();
   // modrá bodka na hlavnej mape sa počas cesty neaktualizovala
   if (map && !$('mapWrap').hidden) autoCenterMap();
   if (!silent) { try { if (history.state && history.state.trip) history.back(); } catch {} }
@@ -1467,7 +1530,7 @@ function drawTripJourney() {
     // úvodný peší úsek kreslí updateTripUser priamo od polohy k nástupišťu
     const firstRide = t.j.legs.findIndex((l) => l.type === 'ride');
     t.j.legs.forEach((l, li) => {
-      if (li < firstRide) return;
+      if (li < firstRide || l.type === 'stay') return;
       if (l.type === 'walk') {
         L.polyline([coord(l.from), coord(l.to)], { color: '#6b716b', weight: 4, dashArray: '4 8' }).addTo(tripLayer);
         prev = coord(l.to);
@@ -1487,11 +1550,12 @@ function drawTripJourney() {
       L.polyline([prev, [t.dest.lat, t.dest.lon]], { color: '#6b716b', weight: 4, dashArray: '4 8' }).addTo(tripLayer);
     }
     t.rides.forEach((r, k) => {
-      flag(coord(r.from), k === 0 ? '🚏' : '🔁', 'flag-transfer');
+      if (!t.seated.has(k - 1)) flag(coord(r.from), k === 0 ? '🚏' : '🔁', 'flag-transfer');
     });
   }
   pts.push([t.dest.lat, t.dest.lon]);
   flag([t.dest.lat, t.dest.lon], '🏁', 'flag-end');
+  tripMapAuto();
   if (pts.length > 1) tripMap.fitBounds(L.latLngBounds(pts).pad(0.15));
   else tripMap.setView(pts[0], 16);
   updateTripUser();
@@ -1509,6 +1573,7 @@ function updateTripUser() {
     L.polyline([ll, [tg.la, tg.lo]], { color: '#1a73e8', weight: 2, dashArray: '2 6', interactive: false }).addTo(tripUserLayer);
   }
   if (!t.follow) return;
+  tripMapAuto();
   if (t.phase === 'ride') {
     tripMap.setView(ll, Math.max(tripMap.getZoom(), 15), { animate: true });
   } else if (tg && t.phase !== 'done') {
@@ -1554,6 +1619,8 @@ function countdown(secs) {
 function renderTrip() {
   const t = trip;
   if (!t) return;
+  const key = `${t.phase}|${t.ri}|${t.jIdx}`;
+  if (key !== t.phaseKey) { t.phaseKey = key; t.phaseAt = Date.now(); }
   $('tripDestName').textContent = `${t.fav.icon} ${t.fav.label}`;
   $('tripDestSub').textContent = targetLabel(t.dest);
   const legs = $('tripLegs');
@@ -1566,7 +1633,7 @@ function renderTrip() {
       const n = r.stops.length - 1;
       div.innerHTML = `
         <div class="t">${fmtTime(r.dep)}<br><span class="muted">${fmtTime(r.arr)}</span></div>
-        <div>${rideBadge(r)}<br>
+        <div>${t.seated.has(k - 1) ? '<span class="muted">🔄 zostaň sedieť, pokračuje ako</span> ' : ''}${rideBadge(r)}<br>
           <b>${esc(D.stops[r.from].n)}</b> → <b>${esc(D.stops[r.to].n)}</b>
           <span class="muted">· ${stopsWord(n)}</span></div>`;
       legs.appendChild(div);
@@ -1621,6 +1688,12 @@ function renderTripLive() {
       const nextK = Math.min(n - 1, Math.floor(t.prog + 0.12) + 1);
       const left = n - 1 - Math.floor(t.prog + 0.12);
       main = `🚌 Ideš linkou ${rideBadge(r)}`;
+      if (t.seated.has(t.ri)) {
+        const nx = t.rides[t.ri + 1];
+        sub = `Ďalšia zastávka: <b>${esc(D.stops[r.stops[nextK]].n)}</b><br>`
+          + `🔄 Zostaň sedieť — na zastávke <b>${esc(D.stops[r.to].n)}</b> autobus pokračuje ako linka ${badge(nx.route)}`;
+        break;
+      }
       sub = `Ďalšia zastávka: <b>${esc(D.stops[r.stops[nextK]].n)}</b><br>`
         + `${t.ri < t.rides.length - 1 ? 'Prestupuješ' : 'Vystupuješ'}: <b>${esc(D.stops[r.to].n)}</b> · `
         + `${left <= 1 ? '<span class="hurry">NA ĎALŠEJ</span>' : `o ${stopsWord(left)}`} (${fmtTime(r.arr)} podľa CP)`;
@@ -1637,8 +1710,16 @@ function renderTripLive() {
   if (t.info && t.phase !== 'done') sub += `${sub ? '<br>' : ''}<span class="muted">${esc(t.info)}</span>`;
   if (t.gpsErr) sub += `${sub ? '<br>' : ''}<span class="late">GPS signál nedostupný — povoľ polohu.</span>`;
   const box = $('tripNow');
-  box.className = `trip-now ${cls}`;
-  box.innerHTML = `<div class="tn-main">${main}</div>${sub ? `<div class="tn-sub">${sub}</div>` : ''}`;
+  const html = `<div class="tn-main">${main}</div>${sub ? `<div class="tn-sub">${sub}</div>` : ''}`;
+  if (box.dataset.html !== html) {
+    box.dataset.html = html;
+    box.className = `trip-now ${cls}`;
+    box.innerHTML = html;
+  }
+  // čítačka obrazovky: len pri zmene pokynu (nie každú sekundu odpočet)
+  let sr = box.querySelector('.tn-main')?.textContent || '';
+  if (t.phase === 'ride') sr += `. ${box.querySelector('.tn-sub')?.textContent.split('Vystupuješ')[0].split('Prestupuješ')[0] || ''}`;
+  if ($('tripSr').textContent !== sr) $('tripSr').textContent = sr;
 }
 
 // ── inicializácia ────────────────────────────────────────────────────
@@ -1703,7 +1784,7 @@ async function main() {
   [0, 1].forEach((i) => attachLongPress($(`fav${i}`), () => startTrip(i), () => openFavDlg(i)));
   attachSuggest($('favStop'), $('favSuggest'), (v) => setFavTargetFrom(v));
   $('favSave').addEventListener('click', saveFavDlg);
-  $('favCancel').addEventListener('click', closeFavDlg);
+  $('favCancel').addEventListener('click', () => closeFavDlg());
   $('favDel').addEventListener('click', () => {
     if (!favEdit) return;
     favs[favEdit.i] = { ...favs[favEdit.i], target: null };
@@ -1722,7 +1803,13 @@ async function main() {
       $('favMsg').classList.add('err');
     }
   });
-  $('favDlg').addEventListener('click', (e) => { if (e.target === $('favDlg')) closeFavDlg(); });
+  // pozadie dialógu zatvára len ťuknutie, ktoré naň aj začalo (nie dotyk z podržania)
+  let dlgDown = null;
+  $('favDlg').addEventListener('pointerdown', (e) => { dlgDown = e.target; });
+  $('favDlg').addEventListener('click', (e) => {
+    if (e.target === $('favDlg') && dlgDown === $('favDlg')) closeFavDlg();
+    dlgDown = null;
+  });
 
   // režim cesty
   $('tripClose').addEventListener('click', () => endTrip());
@@ -1732,8 +1819,16 @@ async function main() {
     trip.follow = true; $('tripRecenter').hidden = true; updateTripUser();
   });
   $('tripBoard').addEventListener('click', () => {
-    if (!trip) return;
-    if (trip.phase === 'ride') alight(); else boardRide(0);
+    const t = trip;
+    if (!t) return;
+    // to isté tlačidlo mení význam — dvojité ťuknutie nesmie preskočiť jazdu
+    if (Date.now() - (t.phaseAt || 0) < 1500) return;
+    if (t.phase === 'ride') {
+      const r = t.rides[t.ri];
+      if (t.prog < r.stops.length - 2 - 0.12
+        && !confirm(`Naozaj si už vystúpil? Do zastávky ${D.stops[r.to].n} ostáva ešte ${stopsWord(r.stops.length - 1 - Math.floor(t.prog))}.`)) return;
+      alight();
+    } else boardRide(0);
   });
   $('tripAlt').addEventListener('click', () => {
     if (!trip || !trip.journeys.length) return;
@@ -1758,8 +1853,20 @@ async function main() {
     planFromHere('Prepočítané z tvojej aktuálnej polohy.');
   });
   window.addEventListener('popstate', () => {
-    if (trip) endTrip(true);
+    // Späť zatvorí len najvrchnejšiu vrstvu
+    if (!$('tripAlert').hidden) {
+      dismissAlert();
+      if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
+    } else if (!$('favDlg').hidden) closeFavDlg(true);
+    else if (trip) endTrip(true);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!$('tripAlert').hidden) dismissAlert();
     else if (!$('favDlg').hidden) closeFavDlg();
+    else if (trip) endTrip();
+    else return;
+    e.preventDefault();
   });
   document.addEventListener('visibilitychange', () => {
     if (pageHidden()) onTripHidden(); else onTripVisible();

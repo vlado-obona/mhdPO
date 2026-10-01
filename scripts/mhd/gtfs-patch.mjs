@@ -42,7 +42,13 @@ export function applyPatches(t, dir = 'data/gtfs-patches') {
       for (const date of dates) if (!have.has(date)) t.calendarDates.push({ service_id, date, exception_type: '1' });
     }
     if (p.validTo) for (const c of t.calendar) if (c.end_date < p.validTo) c.end_date = p.validTo;
-    applied.push({ id: p.id, title: p.title, validFrom: p.validFrom, validTo: p.validTo, trips: (p.addTrips || []).length, removed: (p.removeTrips || []).length });
+    // spoj pokračuje ako iná linka („zostaň sedieť“) — GTFS ich má rozdelené
+    const have = new Set(t.trips.map((x) => x.trip_id));
+    for (const l of p.links || []) {
+      if (!have.has(l.from) || !have.has(l.to)) throw new Error(`${f}: väzba ${l.from} → ${l.to} na neexistujúci spoj`);
+      t.links.push([l.from, l.to]);
+    }
+    applied.push({ id: p.id, title: p.title, validFrom: p.validFrom, validTo: p.validTo, trips: (p.addTrips || []).length, removed: (p.removeTrips || []).length, links: (p.links || []).length });
   }
   return applied;
 }

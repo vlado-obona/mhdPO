@@ -82,9 +82,10 @@ const tables = {
   feedInfo: gFeedInfo, stops: gStops,
   trips: load('trips.txt'), stopTimes: load('stop_times.txt'),
   calendar: load('calendar.txt', false), calendarDates: load('calendar_dates.txt', false),
+  links: [],
 };
 const patches = applyPatches(tables);
-for (const p of patches) console.log(`oprava ${p.id}: ${p.title} (spoje ${p.trips}, odstránené ${p.removed})`);
+for (const p of patches) console.log(`oprava ${p.id}: ${p.title} (spoje ${p.trips}, odstránené ${p.removed}, väzby ${p.links})`);
 const gTrips = tables.trips;
 const gStopTimes = tables.stopTimes;
 const gCal = tables.calendar;
@@ -171,6 +172,7 @@ function headFor(h) {
 
 const patIdx = new Map();
 const patterns = [];
+const tripObj = new Map(); // trip_id → { p, trip } (pre väzby „zostaň sedieť“)
 let tripCount = 0, anomalies = 0;
 
 for (const t of gTrips) {
@@ -209,11 +211,21 @@ for (const t of gTrips) {
       }
     }
   } else {
-    p.trips.push({ sv, h, t: base });
+    const obj = { sv, h, t: base };
+    p.trips.push(obj);
+    tripObj.set(t.trip_id, { pi: patIdx.get(key), trip: obj });
     tripCount++;
   }
 }
 for (const p of patterns) p.trips.sort((a, b) => a.t[1] - b.t[1]);
+
+// väzby „zostaň sedieť“: [pattern, index spoja, pattern pokračovania, index spoja]
+const links = [];
+for (const [a, b] of tables.links) {
+  const A = tripObj.get(a), B = tripObj.get(b);
+  if (!A || !B) throw new Error(`väzba ${a} → ${b}: spoj nie je v datasete`);
+  links.push([A.pi, patterns[A.pi].trips.indexOf(A.trip), B.pi, patterns[B.pi].trips.indexOf(B.trip)]);
+}
 
 // ── smerové info zastávok (linka, smer, azimut odchodu) ─────────────
 // pre každé nástupište: ktoré linky z neho odchádzajú, kam (headsign)
@@ -290,7 +302,7 @@ const dataset = {
     source,
     patches: patches.map(({ id, title, validFrom, validTo }) => ({ id, title, validFrom, validTo })),
   },
-  stops, routes, services, heads, patterns, transfers, stopDirs,
+  stops, routes, services, heads, patterns, transfers, stopDirs, links,
 };
 // ── podkladová sieť trás pre mapu (zo shapes.txt, zjednodušená) ─────
 // slúži ako fallback podklad, keď sa nenačítajú OSM dlaždice (offline)
@@ -340,7 +352,7 @@ const hash = createHash('sha256').update(json).digest('hex').slice(0, 12);
 writeFileSync(join(OUT, 'dataset.json'), json);
 writeFileSync(join(OUT, 'version.json'), JSON.stringify({ v: hash, generated: dataset.meta.generated }));
 
-console.log(`zastávky: ${stops.length}, linky: ${routes.length}, patterns: ${patterns.length}, spoje: ${tripCount}, prestupy: ${transfers.length}`);
+console.log(`zastávky: ${stops.length}, linky: ${routes.length}, patterns: ${patterns.length}, spoje: ${tripCount}, prestupy: ${transfers.length}, väzby: ${links.length}`);
 console.log(`platnosť feedu: ${dataset.meta.validFrom}–${dataset.meta.validTo}, verzia: ${hash}`);
 if (anomalies) console.warn(`⚠ vyradené nekonzistentné tripy: ${anomalies}`);
 console.log(`dataset.json: ${(json.length / 1048576).toFixed(2)} MB`);

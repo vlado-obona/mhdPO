@@ -7,9 +7,82 @@ Súbory každej verzie (od v1.2.2 s verziou v názve):
   mhd-presov-vX.Y.Z.html        appka v jednom súbore (iPhone/PC — otvor v prehliadači)
   mhd-presov-vX.Y.Z-ios.ipa     iOS balík (podpis cez Sideloadly/AltStore)
 
-Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS).
-Aktuálne obdobie platnosti: 9. 7. – 30. 9. 2026. Po vydaní nových
+Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS),
+od v1.3.0 doplnené o zmeny vyhlásené DPMP (oznam + linkové CP v PDF).
+Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.3.0  (1. 10. 2026)
+----------------------------------------------------------------
+NOVÉ CESTOVNÉ PORIADKY OD 1. 10. 2026
+- Podľa oznamu DPMP „Zmeny v cestovných poriadkoch 23 spojov MHD –
+  od 1. októbra 2026“ a oficiálnych linkových CP DPMP (PDF,
+  aktualizácia k 1. 10. 2026). Všetko platí v školských dňoch:
+  • obnovených 23 spojov:
+      17  5:32 zo Sídliska III, 14:01 zo Širpa
+      28  6:38 z DJZ do Ľubotíc, 6:53 z Ľubotíc (z Trojice ďalej
+          ako linka 32 o 7:10)
+      32  7:56 zo Sibírskej; 7:10 a 12:42 z Trojice; 14:57, 15:37,
+          15:57, 16:37 z Okružnej
+      32A 12:46, 13:26, 14:46, 15:26, 15:46, 16:26, 16:46
+      34  14:25, 15:55 zo Sídliska III; 15:03, 16:33 z Pod Šalgovíkom
+      39  7:45 zo Sídliska III do Lomnickej
+  • predĺžené: 32 o 12:57 a 13:37 už z Okružnej (doteraz z Trojice);
+    14 o 7:00 zo Záborského až na Trojicu;
+    44 o 6:20 z Dulovej Vsi cez Čierny most na DJZ, ďalej ako 28
+  • posuny: 21 z Trojice 7:50 → 7:56; 29 zo Sídliska III 7:15,
+    7:43, 8:15 → 7:03, 7:18, 8:03 a od Nemocnice 7:33, 8:33 →
+    7:21, 8:21; 33 z Delne 18:40 → 18:05
+  • 34 o 16:03 z Pod Šalgovíkom ide podľa nového CP cez Levočskú
+    (cez Clementisovu teraz ide obnovený spoj 16:33)
+- „Zostaň sedieť“: keď autobus pokračuje ako iná linka (oznam DPMP:
+  44→28, 18→14, 41→13, 28→32; podľa CP aj 32A→32 na Okružnej a
+  32→28/45/18 na DJZ), plánovač to ponúkne ako jeden spoj bez
+  prestupu a v navigácii nepríde upozornenie na výstup.
+- Ako to je urobené: DPMP zatiaľ nevydal nové strojové dáta (GTFS).
+  Appka berie septembrové GTFS (č. 1382) a doplní do neho LEN zmeny
+  z oznamu, s časmi z oficiálneho PDF. Nový spoj je vždy kópia
+  existujúceho spoja rovnakého variantu trasy (zastávky aj jazdné
+  doby z GTFS) posunutá na čas z PDF; každý je automaticky overený
+  proti PDF a celé overenie prešlo aj nezávislou kontrolou
+  oproti obrázkom strán PDF. Keď DPMP vydá nové GTFS, prejde sa naň.
+- Platnosť 1. – 28. 10. 2026. Vo štvrtok a piatok 29. – 30. 10. sú
+  jesenné prázdniny — vtedy platí prázdninový CP, ktorý v dátach nie
+  je; pred nimi vyjde nová verzia. Na neskorší dátum appka vypíše
+  jasnú hlášku (nie prázdny výsledok).
+- Spoje mimo oznamu ostávajú podľa GTFS. Drobné rozdiely GTFS ↔ PDF
+  (napr. 17 o 7:27 v GTFS / 7:28 v PDF, niektoré jazdné doby pri
+  zachádzkach o 1–3 min) sú v GTFS dlhodobo a appka ich nemení.
+
+RÝCHLE CIELE + REŽIM CESTY
+- Na hlavnej obrazovke dve veľké tlačidlá vedľa seba (napr. 🏠 Domov
+  a 🏫 Škola). Podržaním (~0,7 s; z klávesnice Shift+F10) sa nastaví
+  cieľová zastávka alebo aktuálna poloha, názov a ikona.
+- Ťuknutím appka zistí polohu, nájde najlepšie spojenie (najskorší
+  príchod; pri rozdiele do 2 min menej prestupov a chôdze) a otvorí
+  navigáciu cez celú obrazovku:
+  • horná polovica: mapa s tvojou polohou, šípka a vzdialenosť
+    k nástupnej zastávke; počas jazdy mapa sleduje autobus,
+  • dolná polovica: čo robiť (choď / čakaj / ideš linkou…), odpočet
+    do odchodu, či to stíhaš, ďalšia zastávka, koľko zastávok ostáva,
+    prehľad spojov a prestupov.
+- Nástup sa rozpozná sám z pohybu po trase linky — aj keď autobus
+  mešká. Ak spoj ujde, appka nájde ďalšie spojenie.
+- Na PREDPOSLEDNEJ zastávke pred výstupom alebo prestupom: blikajúce
+  upozornenie cez celú obrazovku, pípanie, vibrácie a hlas (slovensky,
+  ak ho telefón má): „VYSTUPUJ / PRESTUP na ďalšej zastávke“.
+- Pri výpadku GPS appka odhaduje polohu podľa CP posunutého o zistené
+  meškanie; nepresné polohy ignoruje.
+- Android: upozornenie príde aj pri zhasnutom displeji (systémová
+  notifikácia s presným časom), displej počas cesty nezhasína,
+  tlačidlo Späť zatvorí upozornenie / dialóg / navigáciu.
+- iPhone (HTML v Safari): upozornenie funguje, kým je appka otvorená
+  a displej zapnutý (zamknutý displej zastaví webovú appku).
+- Obmedzenie: DPMP nezverejňuje polohy autobusov — meškanie appka
+  zisťuje len z GPS tvojho telefónu počas jazdy.
+- Ďalej: čitateľnejšie farby tlačidiel, klávesnica a čítačka obrazovky
+  v dialógoch, Späť v prehliadači zatvára len najvrchnejšie okno.
 
 ----------------------------------------------------------------
 v1.2.5  (22. 9. 2026)

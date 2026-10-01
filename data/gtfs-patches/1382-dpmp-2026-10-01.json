@@ -56,6 +56,7 @@
   "1382_247",
   "1382_7428",
   "1382_2570",
+  "1382_609",
   "1382_6975",
   "1382_1175",
   "1382_7244",
@@ -301,7 +302,7 @@
    "trip_headsign": "Na Hlavnej",
    "direction_id": "1",
    "shape_id": "259403",
-   "note": "obnovený spoj v školských dňoch (oznam DPMP 1.10.2026); z Trojice ďalej ako linka 32 (7:10); vzor 1382_1190",
+   "note": "obnovený spoj v školských dňoch (oznam DPMP 1.10.2026); z Trojice ďalej ako linka 32 (7:10); vzor 1382_1190, po Trojica",
    "stop_times": [
     [
      "334",
@@ -367,11 +368,6 @@
      "215",
      "07:09:00",
      "07:09:00"
-    ],
-    [
-     "216",
-     "07:11:00",
-     "07:11:00"
     ]
    ]
   },
@@ -1968,6 +1964,77 @@
    ]
   },
   {
+   "trip_id": "1382_609",
+   "route_id": "44",
+   "service_id": "1382_PD",
+   "trip_headsign": "Divadlo J. Záborského",
+   "direction_id": "0",
+   "shape_id": "259534",
+   "note": "oznam DPMP: 6:20 Dulova Ves – Čierny most – DJZ, ďalej ako linka 28 (Kpt. Nálepku neobsluhuje — PDF „C po Čierny most“)",
+   "stop_times": [
+    [
+     "635",
+     "06:20:00",
+     "06:20:00"
+    ],
+    [
+     "633",
+     "06:21:00",
+     "06:21:00"
+    ],
+    [
+     "631",
+     "06:23:00",
+     "06:23:00"
+    ],
+    [
+     "617",
+     "06:26:00",
+     "06:26:00"
+    ],
+    [
+     "629",
+     "06:27:00",
+     "06:27:00"
+    ],
+    [
+     "52",
+     "06:28:00",
+     "06:28:00"
+    ],
+    [
+     "51",
+     "06:29:00",
+     "06:29:00"
+    ],
+    [
+     "44",
+     "06:30:00",
+     "06:30:00"
+    ],
+    [
+     "484",
+     "06:32:00",
+     "06:32:00"
+    ],
+    [
+     "417",
+     "06:33:00",
+     "06:33:00"
+    ],
+    [
+     "4",
+     "06:35:00",
+     "06:35:00"
+    ],
+    [
+     "601",
+     "06:37:00",
+     "06:37:00"
+    ]
+   ]
+  },
+  {
    "trip_id": "1382_6975",
    "route_id": "14",
    "service_id": "1382_PD",
@@ -2556,11 +2623,253 @@
    ]
   }
  ],
+ "links": [
+  {
+   "from": "1382_609",
+   "to": "dpmp1026_28_638_J_3",
+   "note": "oznam DPMP: linka 44 (6:20) ďalej ako linka 28 do Ľubotíc"
+  },
+  {
+   "from": "1382_6632",
+   "to": "1382_6780",
+   "note": "oznam DPMP: linka 18 (17:01 Bzenov) ďalej ako linka 14 do Záborského"
+  },
+  {
+   "from": "1382_542",
+   "to": "1382_6758",
+   "note": "oznam DPMP: linka 41 (7:00 Surdok) ďalej ako linka 13 do Ľubotíc"
+  },
+  {
+   "from": "dpmp1026_28_653_H_4",
+   "to": "dpmp1026_32_710_A_6",
+   "note": "oznam DPMP: linka 28 (6:53 Ľubotice) z Trojice ďalej ako linka 32"
+  },
+  {
+   "from": "1382_244",
+   "to": "1382_7209",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_3196",
+   "to": "1382_7432",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_3706",
+   "to": "1382_3713",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_3707",
+   "to": "1382_3719",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_3708",
+   "to": "1382_3715",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_3710",
+   "to": "1382_3716",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_3711",
+   "to": "1382_3717",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_3712",
+   "to": "1382_3718",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_375",
+   "to": "1382_266",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7211",
+   "to": "1382_7212",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7213",
+   "to": "1382_7214",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7215",
+   "to": "1382_7216",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7217",
+   "to": "1382_7218",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7219",
+   "to": "1382_7220",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7221",
+   "to": "1382_7222",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7223",
+   "to": "1382_7228",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7229",
+   "to": "1382_7230",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7404",
+   "to": "1382_7405",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "dpmp1026_32A_1246_14",
+   "to": "dpmp1026_32_1257_12",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "dpmp1026_32A_1326_15",
+   "to": "dpmp1026_32_1337_13",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "dpmp1026_32A_1446_16",
+   "to": "dpmp1026_32_1457_8",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "dpmp1026_32A_1526_17",
+   "to": "dpmp1026_32_1537_9",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "dpmp1026_32A_1546_18",
+   "to": "dpmp1026_32_1557_10",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "dpmp1026_32A_1626_19",
+   "to": "dpmp1026_32_1637_11",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "dpmp1026_32A_1646_20",
+   "to": "1382_320",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1382_7098",
+   "to": "1382_7099",
+   "note": "PDF linky 32: E ďalej ako linka 28 do Ľubotíc"
+  },
+  {
+   "from": "1382_7102",
+   "to": "1382_7103",
+   "note": "PDF linky 32: E ďalej ako linka 28 do Ľubotíc"
+  },
+  {
+   "from": "1382_455",
+   "to": "1382_397",
+   "note": "PDF linky 32: F ďalej ako linka 45 do V. Šariša"
+  },
+  {
+   "from": "1382_10009",
+   "to": "1382_2015",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_10011",
+   "to": "1382_2011",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_10013",
+   "to": "1382_8506",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_10014",
+   "to": "1382_2013",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_10015",
+   "to": "1382_8508",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_10016",
+   "to": "1382_2020",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1203",
+   "to": "1382_8528",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1230",
+   "to": "1382_8540",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1317",
+   "to": "1382_2019",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1908",
+   "to": "1382_3400",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1915",
+   "to": "1382_8520",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1935",
+   "to": "1382_8532",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1949",
+   "to": "1382_8516",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_1960",
+   "to": "1382_8524",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_2025",
+   "to": "1382_8536",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1382_9632",
+   "to": "1382_2008",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  }
+ ],
  "summary": [
   "+ 17  Širpo            5:32 (vzor 1382_7203)",
   "+ 17  Sídlisko III     14:01 (nová trasa zo zastávok GTFS)",
   "+ 28  Ľubotice         6:38J (vzor 1382_7103)",
-  "+ 28  Delňa            6:53H (vzor 1382_1190)",
+  "+ 28  Delňa            6:53H (vzor 1382_1190, po Trojica)",
   "+ 32  Trojica          7:56 (vzor 1382_7081)",
   "+ 32  Sibírska         7:10A (vzor 1382_421)",
   "+ 32  Sibírska         12:42A (vzor 1382_421)",
@@ -2583,6 +2892,7 @@
   "+ 34  Sídlisko III     16:33C (vzor 1382_7428)",
   "+ 34  Sídlisko III     16:03 (vzor 1382_3192)",
   "+ 39  Švábska          7:45 (vzor 1382_7282)",
+  "~ 44  Kpt. Nálepku     6:20CF → DJZ 6:37 namiesto Kpt. Nálepku (1382_609)",
   "~ 14  Kanaš            7:00T (nahradený 1382_6975)",
   "~ 21  Fintice          7:50 → 7:56B (1382_1175)",
   "~ 29  Nemocnica        7:15 → 7:03 (1382_7244)",
@@ -2590,6 +2900,7 @@
   "~ 29  Nemocnica        8:15 → 8:03 (1382_7246)",
   "~ 29  Sídlisko III     7:33 → 7:21 (1382_7245)",
   "~ 29  Sídlisko III     8:33 → 8:21 (1382_7247)",
-  "~ 33  Širpo            18:40 → 18:05A (1382_7450)"
+  "~ 33  Širpo            18:40 → 18:05A (1382_7450)",
+  "= väzby „zostaň sedieť“: 48 (oznam 4, 32A→32 25, 32→28/45/18 19)"
  ]
 }

@@ -24,6 +24,11 @@ export class Raptor {
       this.foot[b].push([a, s]);
     }
     this._svcCache = new Map();
+    // „zostaň sedieť“: spoj pokračuje ako iná linka (v GTFS dva spoje)
+    this.cont = new Map();
+    for (const [pi, ti, pi2, ti2] of dataset.links || []) {
+      this.cont.set(dataset.patterns[pi].trips[ti], { pi: pi2, trip: dataset.patterns[pi2].trips[ti2] });
+    }
   }
 
   // je service aktívny v daný dátum (číslo YYYYMMDD)?
@@ -111,6 +116,21 @@ export class Raptor {
               };
               marked.add(si);
             }
+            // na konečnej spoja, ktorý pokračuje ako iná linka: cestujúci sedí
+            // ďalej → je na začiatku nadväzujúceho spoja bez prestupového času
+            if (pos === p.stops.length - 1 && this.cont.size) {
+              const c = this.cont.get(onTrip.trip);
+              const s2 = c && this.d.patterns[c.pi].stops[0];
+              if (c && a < arr[s2] && a < best[s2] && a <= depTime + HORIZON) {
+                arr[s2] = a;
+                best[s2] = a;
+                parent[s2] = {
+                  type: 'stay', pattern: pi, trip: onTrip.trip, day: onTrip.o,
+                  boardPos: onTrip.boardPos, alightPos: pos,
+                };
+                marked.add(s2);
+              }
+            }
             // skorší príchod na si umožňuje skorší nástup ďalej
             const reach = prev[si];
             if (reach < a - 0.5) {
@@ -184,7 +204,8 @@ export class Raptor {
         depTime: legs[0].dep,
         arrTime: bestT,
         finalWalk: bestWalk,
-        transfers: legs.filter((l) => l.type === 'ride').length - 1,
+        // sedenie v tom istom autobuse (iné číslo linky) nie je prestup
+        transfers: legs.filter((l) => l.type === 'ride').length - 1 - legs.filter((l) => l.type === 'stay').length,
         legs,
       });
     }
@@ -212,10 +233,14 @@ export class Raptor {
         // chôdza neminie kolo — parent v tom istom kole
         continue;
       }
-      // ride
+      // ride (pri „stay“ jazda, po ktorej cestujúci ostáva sedieť)
       const p = this.d.patterns[par.pattern];
       const t = par.trip;
       const shift = par.day * DAY;
+      if (par.type === 'stay') {
+        const a = t.t[2 * par.alightPos] + shift;
+        legs.unshift({ type: 'stay', from: p.stops[par.alightPos], to: si, secs: 0, dep: a, arr: a });
+      }
       legs.unshift({
         type: 'ride',
         route: p.r,
@@ -250,12 +275,16 @@ export function tightenJourney(raptor, journey, dateInfo) {
     { o: 0, num: dateInfo.num, weekday: dateInfo.weekday },
     { o: 1, ...dateInfo.next },
   ];
+  // jazdy spojené „zostaň sedieť“ sú konkrétne dva spoje — tie sa nemenia
+  const locked = new Set();
+  legs.forEach((l, i) => { if (l.type === 'stay') { locked.add(i - 1); locked.add(i + 1); } });
   // spätný prechod: deadline = dokedy musí leg skončiť, aby nadväznosť ostala
   let deadline = Infinity;
   for (let i = legs.length - 1; i >= 0; i--) {
     const l = legs[i];
     if (l.type === 'walk') { if (deadline < Infinity) deadline -= l.secs; continue; }
-    if (deadline === Infinity || l.pattern == null) { deadline = l.dep; continue; } // posledná jazda určuje príchod — ostáva
+    if (l.type === 'stay') continue;
+    if (deadline === Infinity || l.pattern == null || locked.has(i)) { deadline = l.dep; continue; } // posledná jazda určuje príchod — ostáva
     const p = raptor.d.patterns[l.pattern];
     let bestTrip = null, bestDep = l.dep, bestO = l.day;
     for (const day of dayOffsets) {

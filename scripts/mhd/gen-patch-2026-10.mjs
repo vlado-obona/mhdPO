@@ -116,17 +116,24 @@ function verify(b, flags, T, rows, tmpl) {
 
 // nový spoj = kópia vzoru posunutá tak, aby odchod z kotvy bol T
 let seq = 0;
-function cloneTrip({ line, smer, time, flags = '', tmpl, why, headsign }) {
+function cloneTrip({ line, smer, time, flags = '', tmpl, why, headsign, cutAfter }) {
   const b = block(line, smer);
   const T = at(time);
   const src = ST.get(tmpl);
   if (!src) throw new Error(`vzor ${tmpl} neexistuje`);
   const delta = T - sec(src[0].departure_time);
-  const rows = shifted(tmpl, delta);
-  const dev = verify(b, flags, T, rows, { trip: tmpl });
+  let rows = shifted(tmpl, delta);
+  if (cutAfter) {
+    const k = rows.findIndex(([sid]) => stops.get(sid).stop_name === cutAfter);
+    if (k < 1) throw new Error(`${tmpl}: zastávka ${cutAfter} nie je v spoji`);
+    rows = rows.slice(0, k + 1);
+    rows[k][2] = rows[k][1];
+  }
+  let dev = verify(b, flags, T, rows, cutAfter ? null : { trip: tmpl });
   const id = `dpmp1026_${line}_${time.replace(':', '')}${flags ? '_' + flags : ''}_${++seq}`;
-  addTrips.push({ trip_id: id, ...tripRow(trips.get(tmpl)), ...(headsign ? { trip_headsign: headsign } : {}), note: `${why}; vzor ${tmpl}`, stop_times: rows });
-  log.push(`+ ${line.padEnd(3)} ${smer.padEnd(16)} ${time}${flags} (vzor ${tmpl}${dev.length ? `, odchýlky ako vzor: ${dev.join(' ')}` : ''})`);
+  addTrips.push({ trip_id: id, ...tripRow(trips.get(tmpl)), ...(headsign ? { trip_headsign: headsign } : {}), note: `${why}; vzor ${tmpl}${cutAfter ? `, po ${cutAfter}` : ''}`, stop_times: rows });
+  log.push(`+ ${line.padEnd(3)} ${smer.padEnd(16)} ${time}${flags} (vzor ${tmpl}${cutAfter ? `, po ${cutAfter}` : ''}${dev.length ? `, odchýlky ako vzor: ${dev.join(' ')}` : ''})`);
+  return id;
 }
 // posun existujúceho spoja na nový odchod (zmena časov podľa oznamu)
 function shiftTrip({ line, smer, tid, from, to, flags = '', why }) {
@@ -177,12 +184,14 @@ explicitTrip({ line: '17', smer: 'Sídlisko III', time: '14:01', why: OBN, heads
   stopIds: ['343', '344', '345', '346', '341', '342', '214', '156', '157', '188', '189', '190', '191', '192', '430'] });
 
 // ── linka 28 ────────────────────────────────────────────────────────
-cloneTrip({ line: '28', smer: 'Ľubotice', time: '6:38', flags: 'J', tmpl: '1382_7103', why: `${OBN}; nadväzuje na linku 44 o 6:20` });
-cloneTrip({ line: '28', smer: 'Delňa', time: '6:53', flags: 'H', tmpl: '1382_1190', why: `${OBN}; z Trojice ďalej ako linka 32 (7:10)` });
+const t28_638 = cloneTrip({ line: '28', smer: 'Ľubotice', time: '6:38', flags: 'J', tmpl: '1382_7103', why: `${OBN}; nadväzuje na linku 44 o 6:20` });
+// oznam: „Ľubotice – Trojica (ďalej ako linka 32)“ → po Trojicu, ďalej spoj 32 o 7:10 z Trojice
+// (rovnako GTFS rieši 5:55H → 32 6:11A: linka 28 končí na Trojici)
+const t28_653 = cloneTrip({ line: '28', smer: 'Delňa', time: '6:53', flags: 'H', tmpl: '1382_1190', cutAfter: 'Trojica', why: `${OBN}; z Trojice ďalej ako linka 32 (7:10)` });
 
 // ── linka 32 ────────────────────────────────────────────────────────
 cloneTrip({ line: '32', smer: 'Trojica', time: '7:56', tmpl: '1382_7081', why: OBN });
-cloneTrip({ line: '32', smer: 'Sibírska', time: '7:10', flags: 'A', tmpl: '1382_421', why: OBN });
+const t32_710 = cloneTrip({ line: '32', smer: 'Sibírska', time: '7:10', flags: 'A', tmpl: '1382_421', why: OBN });
 cloneTrip({ line: '32', smer: 'Sibírska', time: '12:42', flags: 'A', tmpl: '1382_421', why: OBN });
 for (const t of ['14:57', '15:37', '15:57', '16:37']) cloneTrip({ line: '32', smer: 'Sibírska', time: t, tmpl: '1382_7228', why: OBN });
 // predĺžené spoje 12:57 a 13:37: doteraz z Trojice (13:02, 13:42), od 1.10. už z Okružnej
@@ -206,6 +215,31 @@ removeTrips.push('1382_7428');
 cloneTrip({ line: '39', smer: 'Švábska', time: '7:45', tmpl: '1382_7282', why: `${OBN}; nahrádza čiastkový spoj 1382_2570 (Žel. stanica 8:03 → Lomnická)` });
 removeTrips.push('1382_2570');
 
+// ── linka 44: spoj 6:20 z Dulovej Vsi cez Čierny most na DJZ, ďalej ako 28 ──
+// oznam: „Spoj o 6:20 (Dulova Ves – Čierny most – DJZ) ďalej pokračuje ako linka 28
+// do Ľubotíc“; PDF 6:20CF (C po Čierny most, F ďalej ako linka 28). Doteraz končil
+// na Kpt. Nálepku. Úsek Čierny most → DJZ podľa súrodeneckého spoja 5:32CBE (1382_534:
+// Čierny most 5:40 → DJZ[601] 5:42, ďalej ako linka 41) — rovnaké nástupište a jazdná doba.
+{
+  const b = block('44', 'Kpt. Nálepku');
+  const src = ST.get('1382_609');
+  const sib = ST.get('1382_534');
+  const cmS = sib.findIndex((r) => stops.get(r.stop_id).stop_name === 'Čierny most');
+  const run = sec(sib[cmS + 1].arrival_time) - sec(sib[cmS].departure_time);
+  if (stops.get(sib[cmS + 1].stop_id).stop_name !== 'Divadlo J. Záborského' || run !== 120) throw new Error('44: vzor úseku Čierny most → DJZ sa zmenil');
+  const cm = src.findIndex((r) => stops.get(r.stop_id).stop_name === 'Čierny most');
+  if (cm < 0 || hm(sec(src[0].departure_time)) !== '6:20') throw new Error('44: spoj 1382_609 sa zmenil');
+  const rows = src.slice(0, cm + 1).map((r) => [r.stop_id, r.arrival_time, r.departure_time]);
+  const tCM = sec(src[cm].departure_time);
+  rows.push([sib[cmS + 1].stop_id, hms(tCM + run), hms(tCM + run)]);
+  verify(b, 'CF', at('6:20'), rows, { trip: '1382_609' });
+  removeTrips.push('1382_609');
+  addTrips.push({ trip_id: '1382_609', ...tripRow(trips.get('1382_609')), trip_headsign: 'Divadlo J. Záborského',
+    note: 'oznam DPMP: 6:20 Dulova Ves – Čierny most – DJZ, ďalej ako linka 28 (Kpt. Nálepku neobsluhuje — PDF „C po Čierny most“)',
+    stop_times: rows });
+  log.push(`~ 44  Kpt. Nálepku     6:20CF → DJZ ${hm(tCM + run)} namiesto Kpt. Nálepku (1382_609)`);
+}
+
 // ── časové posuny a zmeny trás ──────────────────────────────────────
 // 14: spoj 7:00 zo Záborského predĺžený po Trojicu (namiesto Kpt. Nálepku)
 explicitTrip({ line: '14', smer: 'Kanaš', time: '7:00', flags: 'T', base: '1382_6975', replace: '1382_6975', headsign: 'Trojica',
@@ -228,9 +262,67 @@ for (let d = 1; d <= 28; d++) {
   addDates[key].push(`202610${String(d).padStart(2, '0')}`);
 }
 
+// ── väzby „zostaň sedieť“: spoj pokračuje ako iná linka (GTFS ich má rozdelené) ──
+// len doložené: oznam DPMP (novo nadväzujúce spoje) a poznámky v PDF platných od 1.10.
+const finalTrips = new Map([...trips.keys()].filter((id) => !removeTrips.includes(id)).map((id) => [id, {
+  route: trips.get(id).route_id, svc: trips.get(id).service_id,
+  st: ST.get(id).map((r) => [r.stop_id, r.arrival_time, r.departure_time]),
+}]));
+for (const t of addTrips) finalTrips.set(t.trip_id, { route: t.route_id, svc: t.service_id, st: t.stop_times });
+const ll = (sid) => [Number(stops.get(sid).stop_lat), Number(stops.get(sid).stop_lon)];
+function dist(a, b) {
+  const [la1, lo1] = ll(a), [la2, lo2] = ll(b), r = Math.PI / 180;
+  const x = (lo2 - lo1) * r * Math.cos(((la1 + la2) / 2) * r), y = (la2 - la1) * r;
+  return Math.hypot(x, y) * 6371000;
+}
+const links = [];
+function link(from, to, why) {
+  const A = finalTrips.get(from), B = finalTrips.get(to);
+  if (!A || !B) throw new Error(`väzba ${from} → ${to}: spoj neexistuje`);
+  const [aStop, aArr] = A.st.at(-1), [bStop, , bDep] = B.st[0];
+  const gap = sec(bDep) - sec(aArr), d = dist(aStop, bStop);
+  if (A.svc !== B.svc || gap < 0 || gap > 180 || d > 60) throw new Error(`väzba ${from} → ${to}: nesedí (${A.svc}/${B.svc}, ${gap} s, ${Math.round(d)} m)`);
+  links.push({ from, to, note: why });
+}
+// pokračovanie podľa linky a času: koniec spoja linky X na zastávke ≈ začiatok spoja linky Y
+function linkAll(fromRoute, toRoute, why, filter = () => true) {
+  let n = 0;
+  for (const [id, A] of finalTrips) {
+    if (A.route !== fromRoute || !filter(id, A)) continue;
+    const [aStop, aArr] = A.st.at(-1);
+    const cands = [...finalTrips].filter(([, B]) => B.route === toRoute && B.svc === A.svc
+      && sec(B.st[0][2]) - sec(aArr) >= 0 && sec(B.st[0][2]) - sec(aArr) <= 180 && dist(aStop, B.st[0][0]) <= 60);
+    if (cands.length === 1) { link(id, cands[0][0], why); n++; }
+    else if (cands.length > 1) throw new Error(`${fromRoute} ${id}: viac pokračovaní`);
+  }
+  return n;
+}
+link('1382_609', t28_638, 'oznam DPMP: linka 44 (6:20) ďalej ako linka 28 do Ľubotíc');
+link('1382_6632', '1382_6780', 'oznam DPMP: linka 18 (17:01 Bzenov) ďalej ako linka 14 do Záborského');
+link('1382_542', '1382_6758', 'oznam DPMP: linka 41 (7:00 Surdok) ďalej ako linka 13 do Ľubotíc');
+link(t28_653, t32_710, 'oznam DPMP: linka 28 (6:53 Ľubotice) z Trojice ďalej ako linka 32');
+const n32A = linkAll('32A', '32', 'PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“');
+// PDF linky 32 smer Trojica: E ďalej ako linka 28 do Ľubotíc, F ďalej ako linka 45, D ďalej ako linka 18
+// — len odchody, ktoré majú v PDF (stĺpec školský deň / víkend) príslušné písmeno
+const b32 = block('32', 'Trojica');
+const flagged = (letter) => (id, A) => {
+  const col = A.svc.endsWith('_PD') ? 'school' : 'weekend';
+  const T = sec(A.st[0][2]);
+  return /Divadlo J\. Záborského/.test(stops.get(A.st.at(-1)[0]).stop_name)
+    && b32.deps[col].some((d) => d.h * 3600 + d.m * 60 === T && d.flags.includes(letter));
+};
+const n32 = linkAll('32', '28', 'PDF linky 32: E ďalej ako linka 28 do Ľubotíc', flagged('E'))
+  + linkAll('32', '45', 'PDF linky 32: F ďalej ako linka 45 do V. Šariša', flagged('F'))
+  + linkAll('32', '18', 'PDF linky 32: D ďalej ako linka 18', flagged('D'));
+// kontrola úplnosti: každé písmeno E/F/D v PDF má väzbu
+const want32 = ['school', 'weekend'].reduce((a, c) => a + b32.deps[c].filter((d) => /[DEF]/.test(d.flags)).length * (c === 'weekend' ? 2 : 1), 0);
+if (n32 !== want32) throw new Error(`32: väzieb ${n32}, v PDF ${want32}`);
+log.push(`= väzby „zostaň sedieť“: ${links.length} (oznam 4, 32A→32 ${n32A}, 32→28/45/18 ${n32})`);
+
 // kontrola: každý odstránený spoj, ktorý sa nenahrádza rovnakým ID, je naozaj v GTFS
 for (const t of removeTrips) if (!trips.has(t)) throw new Error(`odstraňovaný spoj ${t} nie je v GTFS`);
-const restored = log.filter((l) => l.startsWith('+')).length;
+const restored = addTrips.filter((t) => t.note.startsWith(OBN)).length;
+if (restored !== 23) throw new Error(`obnovených spojov ${restored}, oznam hovorí o 23`);
 
 const patch = {
   id: 'dpmp-2026-10-01',
@@ -249,10 +341,11 @@ const patch = {
   calendar: { addDates, removeBefore: '20261001' },
   removeTrips: [...new Set(removeTrips)],
   addTrips,
+  links,
   summary: log,
 };
 mkdirSync('data/gtfs-patches', { recursive: true });
 writeFileSync(OUT, JSON.stringify(patch, null, 1) + '\n');
 console.log(log.join('\n'));
-console.log(`\nnové spoje: ${restored}, odstránené/nahradené: ${patch.removeTrips.length}, spolu zapísaných: ${addTrips.length}`);
+console.log(`\nobnovené spoje: ${restored}, odstránené/nahradené: ${patch.removeTrips.length}, spolu zapísaných: ${addTrips.length}, väzieb: ${links.length}`);
 console.log(`PD ${addDates['1382_PD'].length} dní, SO ${addDates['1382_SO'].length}, NE ${addDates['1382_NE'].length} → ${OUT}`);
