@@ -16,7 +16,7 @@ on:
       version:
         description: 'Verzia release (napr. 1.1.0)'
         required: false
-        default: '1.3.1'
+        default: '1.3.2'
         type: string
 
 permissions:
@@ -30,7 +30,7 @@ jobs:
   build:
     runs-on: macos-latest
     env:
-      VERSION: ${{ inputs.version || '1.3.1' }}
+      VERSION: ${{ inputs.version || '1.3.2' }}
     steps:
       - uses: actions/checkout@v4
 

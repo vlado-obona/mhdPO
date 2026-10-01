@@ -118,16 +118,18 @@
 
       <h3>📱 SMS lístok <small>60 min · prestupný</small></h3>
       <div class="tkt-row">
-        <a id="tktSms1" class="tkt-sms" href="sms:1144">I. pásmo<b>1,50 €</b><small>SMS na 1144</small></a>
+        <a id="tktSms1" class="tkt-sms" href="sms:1144">I. pásmo<b>1,50 €</b><small>SMS s ľubovoľným písmenom (napr. A) na 1144</small></a>
         <a id="tktSms2" class="tkt-sms" href="sms:1144">Celá sieť<b>1,60 €</b><small>SMS „2“ na 1144</small></a>
       </div>
       <p class="tkt-note">Lístok príde do ~1,5 min — v mobile ho musíš mať <b>už pri nástupe</b>. Platí 60 min od doručenia. Len Orange, Telekom, O2 a 4ka; zľavnený SMS lístok neexistuje.</p>
 
       <h3>💳 Kartou alebo mobilom vo vozidle</h3>
-      <p class="tkt-note">Pri <b>každom</b> nástupe (aj pri prestupe) prilož bezkontaktnú kartu, mobil (Google Pay, Apple Pay) alebo hodinky k validátoru <b>„Platba kartou“</b>. 60 min: <b>1,05 €</b> I. pásmo / <b>1,20 €</b> celá sieť; za deň zaplatíš najviac cenu 24-hod. lístka (4,50 € / 5,00 €). Celú sieť si zvolíš na validátore: „Iný lístok pre mňa“ → lístok → „zaplatiť“ → priložiť kartu. Ak ideš kratšie ako 20 min bez prestupu, pri výstupe prilož kartu znova — zaúčtuje sa 20-min. lístok (0,85 € / 1,00 €).</p>
+      <p class="tkt-note">Pri <b>každom</b> nástupe (aj pri prestupe) prilož bezkontaktnú kartu, mobil (Google Pay, Apple Pay) alebo hodinky k validátoru <b>„Platba kartou“</b>. 60 min: <b>1,05 €</b> I. pásmo / <b>1,20 €</b> celá sieť. Za deň (0:00 – 23:59) zaplatíš najviac cenu 24-hod. lístka (4,50 € / 5,00 €), ak celý deň platíš <b>tým istým</b> prostriedkom (tá istá karta, mobil alebo hodinky).</p>
+      <p class="tkt-note"><b>Celá sieť:</b> pri <b>každom</b> nástupe aj prestupe najprv na validátore zvoľ „Iný lístok pre mňa“ → lístok → „zaplatiť“ a až potom prilož kartu. Ak si v I. pásme len priložil kartu, po prejazde hraničnej zastávky (hlásenie o zmene pásma) ju prilož znova — inak lístok platí len pre I. pásmo.</p>
+      <p class="tkt-note">Ak ideš kratšie ako 20 min bez prestupu, pri výstupe prilož kartu znova — zaúčtuje sa 20-min. lístok (0,85 € / 1,00 €).</p>
 
       <h3>📲 Virtuálny lístok v aplikácii</h3>
-      <p class="tkt-note">Kúp <b>pred nástupom</b> — platí 30 s po zaplatení, cena ako pri karte. Aplikácie uvedené na dpmp.sk (produkty tretích strán):</p>
+      <p class="tkt-note">Kúp <b>pred nástupom</b> — lístok začne platiť až 30 s po zaplatení (ochranná doba). Aplikácie uvedené na dpmp.sk (produkty tretích strán):</p>
       <div class="tkt-apps" id="tktApps"></div>
 
       <h3>🇸🇰 Cyril — národný lístok (NICL)</h3>
@@ -141,13 +143,24 @@
     </div>
   </div>
 
+  <div id="gmDlg" class="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="gmTitle">
+    <div class="dlg-box">
+      <h2 id="gmTitle">🗺️ Navigácia v Google Maps</h2>
+      <p class="tkt-note">Kým bude appka MHD v pozadí, <b>upozornenie na výstup nepríde</b>. Po príchode na zastávku sa sem vráť — appka rozpozná nástup a pred výstupom ťa upozorní.</p>
+      <div class="dlg-actions">
+        <button id="gmCancel" class="ghost" type="button">Zrušiť</button>
+        <a id="gmGo" class="primary gm-go" href="#" target="_blank" rel="noopener">Otvoriť Google Maps</a>
+      </div>
+    </div>
+  </div>
+
   <div id="trip" class="trip" hidden role="dialog" aria-modal="true" aria-label="Navigácia do cieľa">
     <div class="trip-top">
       <div id="tripMap" class="trip-map"></div>
-      <div id="tripNav" class="trip-nav" hidden role="button" tabindex="0" aria-label="Navigovať pešo v Google Maps">
+      <div id="tripNav" class="trip-nav" hidden>
         <div id="tripArrow" class="nav-arrow" aria-hidden="true">⬆</div>
         <div class="nav-info"><b id="tripNavTitle"></b><span id="tripNavSub"></span></div>
-        <span class="trip-gm" aria-hidden="true">🗺️ Maps ›</span>
+        <button id="tripGm" class="trip-gm" type="button" aria-label="Navigovať pešo v Google Maps">🗺️ Maps</button>
       </div>
       <div id="tripGmHint" class="trip-gm-hint" hidden aria-hidden="true">ťukni na mapu → navigácia v Google Maps</div>
       <button id="tripRecenter" class="trip-recenter" type="button" hidden aria-label="Sledovať moju polohu">◎</button>

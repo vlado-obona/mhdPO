@@ -16,27 +16,34 @@ cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 v1.3.2  (1. 10. 2026)
 ----------------------------------------------------------------
 - Tlačidlo „🎫 Kúpiť lístok DPMP“ (hlavná obrazovka) a „🎫 Lístok“
-  v navigácii. Ponúkne všetky oficiálne spôsoby kúpy podľa dpmp.sk:
+  v navigácii. Ponúkne oficiálne spôsoby kúpy podľa dpmp.sk:
   • SMS lístok jedným ťuknutím — otvorí správy s predvyplnenou SMS
-    na 1144: I. pásmo 1,50 € / celá sieť („2“) 1,60 €, 60 min,
-    prestupný (len Orange, Telekom, O2, 4ka; v mobile ho treba mať
-    už pri nástupe),
+    na 1144: I. pásmo (ľubovoľné písmeno) 1,50 € / celá sieť („2“)
+    1,60 €, 60 min, prestupný. Len Orange, Telekom, O2, 4ka; lístok
+    príde do ~1,5 min a v mobile ho treba mať už pri nástupe.
   • platba kartou / mobilom / hodinkami na validátore „Platba kartou“
-    (60 min 1,05 € / 1,20 €, denný strop = cena 24-hod. lístka),
+    (60 min 1,05 € / 1,20 €; za deň najviac cena 24-hod. lístka, ak
+    celý deň platíš tým istým prostriedkom). Celosieťový lístok treba
+    na validátore zvoliť pri KAŽDOM nástupe aj prestupe.
   • virtuálny lístok v aplikáciách uvedených na dpmp.sk (UBIAN,
-    MHD Prešov APP, iMHD Prešov), národný lístok Cyril a e-shop
-    Ubian na predplatné — odkazy rovno do Google Play / App Store.
-- Appka odporučí správny lístok pre naplánovanú cestu: ak trasa ide
-  aj do II. tarifného pásma, upozorní na celosieťový lístok (pásma
+    MHD Prešov APP, iMHD Prešov) — platí 30 s po zaplatení; národný
+    lístok Cyril; e-shop Ubian na predplatné. Odkazy rovno do
+    Google Play / App Store.
+- Odporúčanie lístka pre naplánovanú cestu: ak trasa ide aj do
+  II. tarifného pásma, appka upozorní na celosieťový lístok (pásma
   zastávok z dát DPMP, overené proti tlačeným cestovným poriadkom).
-- Navigácia v Google Maps (v1.3.1) — opravy z kontroly:
-  • ak sa z Google Maps vrátiš do appky až v autobuse, appka
-    rozpozná jazdu (už nehlási „spoj ti ušiel“) a upozorní na výstup,
-  • Google Maps sa ponúka len pri chôdzi k zastávke a do cieľa
-    (nie keď už čakáš na zastávke),
-  • vo webovej verzii (HTML) appka raz upozorní, že kým je v pozadí,
-    upozornenie na výstup nepríde,
-  • notifikácie zo starej cesty sa po reštarte appky zrušia.
+- Navigácia v Google Maps (v1.3.1) — opravy z nezávislej kontroly:
+  • ak sa z Google Maps vrátiš do appky až v autobuse, appka rozpozná
+    jazdu (už nehlási „spoj ti ušiel“) a upozorní pred výstupom;
+    kto spoj zmeškal a stojí na neskoršej zastávke, dostane nové
+    spojenie,
+  • Google Maps len pri chôdzi k zastávke a do cieľa (nie pri čakaní
+    na zastávke), nie omylom pri dvojťuknutí ani pri posúvaní mapy,
+  • vo webovej verzii (HTML) appka pred otvorením Google Maps raz
+    upozorní, že kým je v pozadí, upozornenie na výstup nepríde,
+  • zelená lišta: tlačidlo „🗺️ Maps“, názov zastávky sa už neoreže,
+  • upozornenie na výstup ostane nastavené, aj keď systém appku
+    v pozadí ukončí; po skončení cesty sa staré notifikácie zrušia.
 
 ----------------------------------------------------------------
 v1.3.1  (1. 10. 2026)

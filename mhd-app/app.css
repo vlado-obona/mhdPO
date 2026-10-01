@@ -217,12 +217,18 @@ button.ghost {
 /* ── dialóg nastavenia cieľa ──────────────────────────────────── */
 .dlg {
   position: fixed; inset: 0; z-index: 2500; background: rgb(0 0 0 / 45%);
-  display: flex; align-items: flex-end; justify-content: center; padding: .75rem;
+  display: flex; flex-direction: column; align-items: center; padding: .75rem;
+  padding-top: calc(.75rem + env(safe-area-inset-top)); overflow-y: auto;
 }
+/* margin-top:auto = pri spodnom okraji; vysoký obsah sa posúva, horný okraj (✕) sa neoreže */
 .dlg-box {
+  margin-top: auto; flex: none;
   background: var(--card); border-radius: 16px; width: 100%; max-width: 520px;
   padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)); box-shadow: 0 8px 30px rgb(0 0 0 / 30%);
-  max-height: 92vh; overflow-y: auto;
+}
+a.gm-go {
+  display: inline-flex; align-items: center; text-decoration: none; background: var(--green); color: #fff;
+  padding: .7rem 1rem; font-size: 1rem; font-weight: 600; border-radius: 8px;
 }
 .dlg-box h2 { margin: 0 0 .6rem; font-size: 1.1rem; }
 .dlg-box label { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: .6rem 0 .2rem; }
@@ -283,9 +289,11 @@ body.trip-open { overflow: hidden; }
 .trip-nav.gm-tap { cursor: pointer; }
 .trip-nav:not(.gm-tap) .trip-gm { display: none; }
 .trip-nav .nav-info { flex: 1 1 auto; }
+/* v lište s tlačidlom Maps sa názov zastávky zalomí, nie oreže */
+.trip-nav .nav-info b { white-space: normal; overflow-wrap: anywhere; line-height: 1.2; }
 .trip-gm {
-  flex: none; margin-left: auto; padding: .3rem .55rem; border-radius: 999px;
-  background: #fff; color: #0a6e35; font-size: .8rem; font-weight: 800; white-space: nowrap;
+  flex: none; margin-left: auto; padding: .3rem .5rem; border: 0; border-radius: 999px;
+  background: #fff; color: #0a6e35; font-size: .75rem; font-weight: 800; white-space: nowrap; cursor: pointer;
 }
 .trip-gm-hint {
   position: absolute; z-index: 600; left: calc(.6rem + env(safe-area-inset-left)); bottom: 1.6rem;
