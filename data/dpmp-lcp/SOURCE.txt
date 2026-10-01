@@ -1,0 +1,4 @@
+40177fa841d3eb9860c9c76db0478f28f8da17e69636e340fd8feea65151c073  data/dpmp-lcp/LCP-2026-10-01.pdf
+zdroj: https://www.dpmp.sk/_uploads/files/349a31950d.pdf
+oznam: https://www.dpmp.sk/news-zmeny-v-cestovnych-poriadkoch-23-spojov-mhd-od-1-oktobra-2026-1519.html
+stiahnute: 2026-10-01T16:58:09Z

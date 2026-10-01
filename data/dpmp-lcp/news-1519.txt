@@ -1,0 +1,386 @@
+Dopravný podnik Mesta Prešov 
+<!--
+-->
+window.consentStore = window.consentStore || {};
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+function setConsents(operacia = 'default') {
+if (consentStore) {
+gtag('consent',operacia,consentStore);
+}
+}
+:root {
+--cc-btn-primary-bg: #DB2017;
+}
+if (!consentStore.functionality_storage) {
+consentStore = {
+'ad_storage': 'denied',
+'ad_user_data': 'denied',
+'ad_personalization': 'denied',
+'analytics_storage': 'denied',
+'functionality_storage': 'granted',
+'personalization_storage': 'granted',
+'security_storage': 'granted'
+};
+}
+setConsents('default');
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FC69QS7193');
+gtag('config', 'AW-629130799');
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '847430268281545');
+fbq('track', 'PageView');
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=847430268281545&ev=PageView&noscript=1"
+/>
+window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+window._adftrack.push({
+HttpHost: 'track.adform.net',
+pm: 2077769,
+divider: encodeURIComponent('|'),
+pagename: encodeURIComponent('Presov_MHD_homepage')
+});
+(function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+Dispečing: 
+ 051/7470 204
+Dispečing: 
+ 051/7470 204
+Linkové vedenie
+Trasy liniek
+Trasy školských spojov
+Schéma siete
+Nočná doprava
+Bezbariérová doprava
+Cestovné poriadky
+Vyhľadanie spojenia
+Ako sa dostať...
+Predpisy a tarifa
+Návod na kúpu cestovného lístka platobnou kartou
+eCL- kúpa platobnou kartou vo vozidle
+Daňový doklad a výpis jázd
+ Sme zapojení do systému NICL
+Straty a nálezy
+Prepravný poriadok
+Tarifa
+Ceny lístkov
+SMS lístok
+SMS - daňový doklad
+PCL cez internet
+Predajné miesta
+Tlačivá a dokumenty
+Dopravný podnik
+Reklamné a iné služby
+Aktuálne informácie
+Informácie z podniku
+POMOC Ukrajine
+ДОПОМОЖІТЬ Україні
+Majetok na predaj
+Verejné obstarávanie
+Povinné zverejňovanie
+História
+Najčastejšie otázky
+Výročné správy, závierky, správy audítora
+Etický kódex
+Organizačný poriadok
+Stanovy
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+Ochrana osobných údajov
+Pravidlá používania súborov cookies
+Privátna zóna
+Kontakt
+Kontakt
+Zmeny v cestovných poriadkoch 23 spojov MHD - od 1. októbra 2026
+V&aacute;žen&iacute; cestuj&uacute;ci,
+
+
+Od 1. okt&oacute;bra 2026 platia upraven&eacute; cestovn&eacute; poriadky niektor&yacute;ch liniek MHD. Obnovuje sa 23 spojov, ktor&eacute; v &scaron;kolsk&yacute;ch dňoch neprem&aacute;vali od 15. janu&aacute;ra 2024.
+
+
+Prehľad obnoven&yacute;ch spojov
+
+
+
+
+
+
+Linka
+
+
+
+Smer
+
+
+
+Obnoven&eacute; odchody
+
+
+
+
+
+
+
+17
+
+
+
+S&iacute;dlisko III &ndash; &Scaron;irpo
+
+
+
+5:32
+
+
+
+
+
+
+&Scaron;irpo &ndash; S&iacute;dlisko III
+
+
+
+14:01
+
+
+
+
+
+28
+
+
+
+DJZ &ndash; Ľubotice
+
+
+
+6:38
+
+
+
+
+
+
+Ľubotice &ndash; Trojica 
+(ďalej ako linka 32)
+
+
+
+6:53
+
+
+
+
+
+32
+
+
+
+Sib&iacute;rska &ndash; Trojica
+
+
+
+7:56
+
+
+
+
+
+
+Okružn&aacute; &ndash; Sib&iacute;rska
+
+
+
+14:57, 15:37, 15:57, 16:37 
+(a predĺžen&eacute; spoje 12:57, 13:37)
+
+
+
+
+
+
+Trojica &ndash; Sib&iacute;rska
+
+
+
+7:10, 12:42
+
+
+
+
+
+32A
+
+
+
+Sib&iacute;rska &ndash; Okružn&aacute;
+
+
+
+12:46, 13:26, 14:46, 15:26, 15:46, 16:26, 16:46
+
+
+
+
+
+34
+
+
+
+S&iacute;dlisko III &ndash; Pod &Scaron;algov&iacute;kom
+
+
+
+14:25, 15:55
+
+
+
+
+
+
+Pod &Scaron;algov&iacute;kom &ndash; S&iacute;dlisko III
+
+
+
+15:03, 16:33
+
+
+
+
+
+39
+
+
+
+S&iacute;dlisko III &ndash; Lomnick&aacute;
+
+
+
+7:45
+
+
+
+
+
+
+
+
+Časov&eacute; posuny a zmeny tr&aacute;s odchodov
+
+
+U niektor&yacute;ch spojov doch&aacute;dza k časov&eacute;mu posunu odchodov alebo predĺženiu trasy:
+
+
+
+Linka 14:
+ Spoj v &scaron;kolsk&yacute;ch dňoch o 7:00 zo Z&aacute;borsk&eacute;ho je predĺžen&yacute; po zast&aacute;vku Trojica.
+
+Linka 21:
+ Spoj v &scaron;kolsk&yacute;ch dňoch od Trojice sa pos&uacute;va zo 7:50 na 
+7:56
+ (po Dopravn&yacute; podnik).
+
+Linka 29:
+ Posuny odchodov v pracovn&yacute;ch dňoch:
+
+
+Zo S&iacute;dliska III: zo 7:15, 7:43, 8:15 na 
+7:03, 7:18, 8:03
+
+Od Nemocnice: zo 7:33, 8:33 na 
+7:21, 8:21
+
+
+
+Linka 33:
+ Spoj v &scaron;kolsk&yacute;ch dňoch z Delne sa pos&uacute;va z 18:40 na 
+18:05
+.
+
+
+
+Novo nadv&auml;zuj&uacute;ce spoje (&scaron;kolsk&eacute; pracovn&eacute; dni)
+
+
+
+Linka 44 
+&rarr;
+ Linka 28:
+ Spoj o 6:20 (Dulova Ves &ndash; Čierny most &ndash; DJZ) ďalej pokračuje ako linka 28 do Ľubot&iacute;c.
+
+Linka 41 
+&rarr;
+ Linka 13:
+ Spoj o 7:00 (Surdok &ndash; Veľk&aacute; po&scaron;ta) ďalej pokračuje ako linka 13 do Ľubot&iacute;c.
+
+Linka 18 
+&rarr;
+ Linka 14:
+ Spoj o 17:01 (Bzenov &ndash; Veľk&aacute; po&scaron;ta) ďalej pokračuje ako linka 14 do Z&aacute;borsk&eacute;ho.
+
+
+
+
+
+OZNAM na stiahnutie: 
+oznam1102026.pdf
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cestovne poriadky jednotlivych liniek v PDF: 
+L14.pdf
+, 
+L17.pdf
+, 
+L21.pdf
+, 
+L28.pdf
+, 
+L29.pdf
+, 
+L32.pdf
+, 
+L32A.pdf
+, 
+L33.pdf
+, 
+L34.pdf
+, 
+L39.pdf
+, 
+L44.pdf
+
+Návod platbu kartou v MHD
+Návod platbu kartou v MHD
+Cestovné poriadky
+Trasy liniek a schémy
+Ceny lístkov
+SMS Lístok
+APPky do mobilu
+Projekty EÚ
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.
+Copyright © 2005-2025 DPMP a.s. Všetky práva vyhradené.
