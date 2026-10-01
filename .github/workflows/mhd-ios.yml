@@ -16,7 +16,7 @@ on:
       version:
         description: 'Verzia release (napr. 1.1.0)'
         required: false
-        default: '1.2.5'
+        default: '1.3.0'
         type: string
 
 permissions:
@@ -30,7 +30,7 @@ jobs:
   build:
     runs-on: macos-latest
     env:
-      VERSION: ${{ inputs.version || '1.2.5' }}
+      VERSION: ${{ inputs.version || '1.3.0' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -42,7 +42,7 @@ jobs:
         run: |
           mkdir cap-build && cd cap-build
           npm init -y >/dev/null
-          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/ios@6 @capacitor/geolocation@6 >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/ios@6 @capacitor/geolocation@6 @capacitor/local-notifications@6.1.3 @capacitor/haptics@6.0.3 @capacitor/app@6.0.3 @capacitor-community/keep-awake@5.0.1 @capacitor-community/text-to-speech@4.1.1 >/dev/null
           cat > capacitor.config.json <<EOF
           {
             "appId": "sk.mhdpresov.app",
@@ -59,8 +59,8 @@ jobs:
         working-directory: cap-build
         run: |
           P=ios/App/App/Info.plist
-          /usr/libexec/PlistBuddy -c "Add :NSLocationWhenInUseUsageDescription string 'Poloha sa používa na nastavenie najbližšej zastávky ako štartu.'" "$P" || \
-          /usr/libexec/PlistBuddy -c "Set :NSLocationWhenInUseUsageDescription 'Poloha sa používa na nastavenie najbližšej zastávky ako štartu.'" "$P"
+          /usr/libexec/PlistBuddy -c "Add :NSLocationWhenInUseUsageDescription string 'Poloha sa používa na nájdenie najbližšej zastávky a na navigáciu počas cesty (upozornenie pred výstupom).'" "$P" || \
+          /usr/libexec/PlistBuddy -c "Set :NSLocationWhenInUseUsageDescription 'Poloha sa používa na nájdenie najbližšej zastávky a na navigáciu počas cesty (upozornenie pred výstupom).'" "$P"
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$P" || true
           /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string 'MHD Prešov v$VERSION'" "$P" || \
           /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName 'MHD Prešov v$VERSION'" "$P" || true

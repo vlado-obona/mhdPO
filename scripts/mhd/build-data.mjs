@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
+import { applyPatches } from './gtfs-patch.mjs';
 
 const SRC = 'data/gtfs-presov';
 const OUT = 'mhd-app/data';
@@ -73,13 +74,21 @@ function haversine(la1, lo1, la2, lo2) {
 const agency = load('agency.txt');
 const gStops = load('stops.txt');
 const gRoutes = load('routes.txt');
-const gTrips = load('trips.txt');
-const gStopTimes = load('stop_times.txt');
-const gCal = load('calendar.txt', false);
-const gCalDates = load('calendar_dates.txt', false);
 const gFreq = load('frequencies.txt', false);
 const gTransfers = load('transfers.txt', false);
 const gFeedInfo = load('feed_info.txt', false);
+// zmeny CP vyhlásené DPMP, ktoré ešte nie sú v publikovanom feede (data/gtfs-patches/)
+const tables = {
+  feedInfo: gFeedInfo, stops: gStops,
+  trips: load('trips.txt'), stopTimes: load('stop_times.txt'),
+  calendar: load('calendar.txt', false), calendarDates: load('calendar_dates.txt', false),
+};
+const patches = applyPatches(tables);
+for (const p of patches) console.log(`oprava ${p.id}: ${p.title} (spoje ${p.trips}, odstránené ${p.removed})`);
+const gTrips = tables.trips;
+const gStopTimes = tables.stopTimes;
+const gCal = tables.calendar;
+const gCalDates = tables.calendarDates;
 
 // ── zastávky (len fyzické: location_type 0/prázdne) ─────────────────
 const stopIdx = new Map();
@@ -279,6 +288,7 @@ const dataset = {
     validFrom: isFinite(from) ? from : 0,
     validTo: to,
     source,
+    patches: patches.map(({ id, title, validFrom, validTo }) => ({ id, title, validFrom, validTo })),
   },
   stops, routes, services, heads, patterns, transfers, stopDirs,
 };

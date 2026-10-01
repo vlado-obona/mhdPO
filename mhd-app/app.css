@@ -188,6 +188,123 @@ button.ghost {
   font-size: 1.1rem; cursor: pointer; padding: .3rem;
 }
 .stop-popup .b-gmaps { background: #4273b8; padding: .35rem .5rem; }
+/* ── rýchle ciele ─────────────────────────────────────────────── */
+.favs { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.fav {
+  position: relative; overflow: hidden; min-height: 6.2rem; border: 0; border-radius: 18px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1rem;
+  padding: .6rem .5rem; color: #fff; cursor: pointer; font: inherit; text-align: center;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 18%);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.fav-a { background: linear-gradient(145deg, #0b7a3b, #17a656); }
+.fav-b { background: linear-gradient(145deg, #1d5aa6, #3487dd); }
+.fav:active { transform: scale(.98); }
+.fav-ico { font-size: 1.9rem; line-height: 1.1; }
+.fav-lbl { font-size: 1.25rem; font-weight: 800; letter-spacing: .01em; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fav-sub { font-size: .75rem; opacity: .92; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fav.unset { outline: 2px dashed rgb(255 255 255 / 70%); outline-offset: -7px; }
+.fav.unset .fav-sub { font-weight: 700; }
+/* indikátor podržania — pás sa plní 650 ms */
+.fav::after {
+  content: ''; position: absolute; left: 0; bottom: 0; height: 5px; width: 0;
+  background: rgb(255 255 255 / 85%);
+}
+.fav.pressing::after { width: 100%; transition: width .65s linear; }
+.fav-hint { margin: .35rem 0 .75rem; text-align: center; font-size: .75rem; color: var(--muted); }
+
+/* ── dialóg nastavenia cieľa ──────────────────────────────────── */
+.dlg {
+  position: fixed; inset: 0; z-index: 2500; background: rgb(0 0 0 / 45%);
+  display: flex; align-items: flex-end; justify-content: center; padding: .75rem;
+}
+.dlg-box {
+  background: var(--card); border-radius: 16px; width: 100%; max-width: 520px;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)); box-shadow: 0 8px 30px rgb(0 0 0 / 30%);
+  max-height: 92vh; overflow-y: auto;
+}
+.dlg-box h2 { margin: 0 0 .6rem; font-size: 1.1rem; }
+.dlg-box label { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: .6rem 0 .2rem; }
+.dlg-box > input, .dlg-box .input-row input {
+  width: 100%; font-size: 1rem; padding: .55rem .7rem; border: 1px solid var(--line); border-radius: 8px;
+}
+.fav-icons { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
+.fav-icons button { font-size: 1.3rem; width: 2.6rem; height: 2.6rem; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+.fav-icons button.on { border: 2px solid var(--green); background: #eaf4ec; }
+.dlg-alt { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+.dlg-actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: .4rem; }
+.dlg-actions .primary { flex: 0 1 auto; }
+.ghost.danger { color: #b3261e; margin-right: auto; }
+
+/* ── režim cesty ──────────────────────────────────────────────── */
+body.trip-open { overflow: hidden; }
+.trip {
+  position: fixed; inset: 0; z-index: 2000; background: var(--bg);
+  display: flex; flex-direction: column; height: 100vh; height: 100dvh;
+}
+.trip-top { position: relative; flex: 1 1 50%; min-height: 0; }
+.trip-map { position: absolute; inset: 0; }
+.trip-nav {
+  position: absolute; z-index: 600; left: .6rem; right: .6rem; top: calc(.6rem + env(safe-area-inset-top));
+  display: flex; align-items: center; gap: .7rem; padding: .55rem .8rem;
+  background: var(--green); color: #fff; border-radius: 14px; box-shadow: 0 3px 12px rgb(0 0 0 / 30%);
+}
+.trip-recenter {
+  position: absolute; z-index: 600; right: .7rem; bottom: .7rem; width: 2.8rem; height: 2.8rem;
+  border-radius: 50%; border: 0; background: #fff; font-size: 1.4rem; cursor: pointer;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+}
+.trip-bottom {
+  flex: 1 1 50%; min-height: 0; overflow-y: auto; background: var(--card);
+  border-radius: 18px 18px 0 0; box-shadow: 0 -3px 12px rgb(0 0 0 / 12%); margin-top: -14px; z-index: 700;
+  padding: .8rem .9rem calc(.8rem + env(safe-area-inset-bottom));
+}
+.trip-head { display: flex; align-items: flex-start; gap: .5rem; }
+.trip-dest { display: flex; flex-direction: column; min-width: 0; }
+.trip-dest b { font-size: 1.05rem; }
+.trip-dest span { font-size: .8rem; color: var(--muted); }
+.trip-close { margin-left: auto; border: 0; background: #eef1ee; border-radius: 50%; width: 2.4rem; height: 2.4rem; font-size: 1.1rem; cursor: pointer; flex: none; }
+.trip-now { margin: .6rem 0 .3rem; padding: .7rem .8rem; border-radius: 12px; background: #eaf4ec; border-left: 5px solid var(--green); }
+.trip-now.hurry { background: #fff4e0; border-left-color: #e08600; }
+.trip-now.warn { background: #fdecea; border-left-color: #b3261e; }
+.trip-now.ok { background: #e6f6ec; }
+.tn-main { font-size: 1.15rem; font-weight: 700; line-height: 1.35; }
+.tn-sub { font-size: .9rem; margin-top: .3rem; line-height: 1.45; }
+.tn-sub .ok { color: #0b7a3b; font-weight: 600; }
+.tn-sub .hurry { color: #b05f00; font-weight: 700; }
+.tn-sub .late { color: #b3261e; font-weight: 700; }
+.tn-sub .muted { color: var(--muted); }
+.trip-summary { font-size: .8rem; color: var(--muted); margin: .2rem 0 .3rem; }
+.tleg { display: grid; grid-template-columns: 3.2rem 1fr; gap: .1rem .6rem; padding: .4rem 0; font-size: .9rem; border-top: 1px dashed var(--line); }
+.tleg .t { font-variant-numeric: tabular-nums; font-weight: 600; }
+.tleg .muted { color: var(--muted); font-size: .82rem; }
+.tleg.done { opacity: .45; }
+.tleg.cur { background: #f3faf5; border-radius: 8px; }
+.trip-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.trip-actions button { flex: 1 1 auto; }
+.trip-note { font-size: .7rem; color: var(--muted); margin: .6rem 0 0; }
+
+/* ── výrazné upozornenie na výstup/prestup ────────────────────── */
+.trip-alert {
+  position: fixed; inset: 0; z-index: 3000; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1rem; padding: 1.5rem; text-align: center;
+  color: #fff; animation: ta-flash .8s steps(2, jump-none) infinite;
+}
+.ta-icon { font-size: 4rem; animation: ta-shake .5s ease-in-out infinite; }
+.ta-title { font-size: 2rem; font-weight: 900; line-height: 1.15; text-transform: uppercase; }
+.ta-sub { font-size: 1.25rem; font-weight: 600; max-width: 30rem; line-height: 1.4; }
+.ta-ok {
+  margin-top: 1rem; font-size: 1.2rem; font-weight: 800; padding: .9rem 2rem;
+  border: 0; border-radius: 14px; background: #fff; color: #b3261e; cursor: pointer;
+}
+@keyframes ta-flash { 0% { background: #c62828; } 100% { background: #e65100; } }
+@keyframes ta-shake { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .trip-alert { animation: none; background: #c62828; }
+  .ta-icon { animation: none; }
+}
+
 @media (min-width: 700px) {
   main { display: block; }
   #map { height: 70vh; }

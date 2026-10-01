@@ -25,6 +25,12 @@
   </header>
 
   <main>
+    <section class="favs" aria-label="Rýchle ciele">
+      <button id="fav0" class="fav fav-a" type="button"><span class="fav-ico"></span><span class="fav-lbl"></span><span class="fav-sub"></span></button>
+      <button id="fav1" class="fav fav-b" type="button"><span class="fav-ico"></span><span class="fav-lbl"></span><span class="fav-sub"></span></button>
+    </section>
+    <p class="fav-hint">Ťuknutím ťa appka navedie do cieľa · podržaním nastavíš cieľ a názov</p>
+
     <section class="planner" id="planner">
       <div class="field from">
         <label for="fromInput">🚩 Odkiaľ</label>
@@ -75,6 +81,63 @@
     </div>
     <button id="navGmaps" class="nav-gmaps" title="Navigovať v Google Maps">🗺️ Maps</button>
     <button id="navClose" class="nav-close" aria-label="Ukončiť navigáciu">✕</button>
+  </div>
+
+  <div id="favDlg" class="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="favDlgTitle">
+    <div class="dlg-box">
+      <h2 id="favDlgTitle">Nastaviť rýchly cieľ</h2>
+      <label for="favName">Názov tlačidla</label>
+      <input id="favName" type="text" maxlength="18" placeholder="napr. Domov, Škola" autocomplete="off">
+      <div id="favIcons" class="fav-icons" role="group" aria-label="Ikona"></div>
+      <label for="favStop">Cieľová zastávka</label>
+      <div class="field">
+        <div class="input-row"><input id="favStop" type="text" placeholder="Začni písať názov zastávky" autocomplete="off"></div>
+        <div id="favSuggest" class="suggest" hidden></div>
+      </div>
+      <div class="dlg-alt">
+        <button id="favHere" class="ghost" type="button">📍 Moja aktuálna poloha</button>
+        <button id="favFromTo" class="ghost" type="button" hidden>🏁 Cieľ z vyhľadávania</button>
+      </div>
+      <p id="favMsg" class="status" role="status"></p>
+      <div class="dlg-actions">
+        <button id="favDel" class="ghost danger" type="button">Vymazať</button>
+        <button id="favCancel" class="ghost" type="button">Zrušiť</button>
+        <button id="favSave" class="primary" type="button">Uložiť</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="trip" class="trip" hidden role="dialog" aria-modal="true" aria-label="Navigácia do cieľa">
+    <div class="trip-top">
+      <div id="tripMap" class="trip-map"></div>
+      <div id="tripNav" class="trip-nav" hidden>
+        <div id="tripArrow" class="nav-arrow" aria-hidden="true">⬆</div>
+        <div class="nav-info"><b id="tripNavTitle"></b><span id="tripNavSub"></span></div>
+      </div>
+      <button id="tripRecenter" class="trip-recenter" type="button" hidden aria-label="Sledovať moju polohu">◎</button>
+    </div>
+    <div class="trip-bottom">
+      <div class="trip-head">
+        <div class="trip-dest"><b id="tripDestName"></b><span id="tripDestSub"></span></div>
+        <button id="tripClose" class="trip-close" type="button" aria-label="Ukončiť navigáciu">✕</button>
+      </div>
+      <div id="tripNow" class="trip-now" aria-live="polite"></div>
+      <div id="tripSummary" class="trip-summary"></div>
+      <div id="tripLegs" class="trip-legs"></div>
+      <div class="trip-actions">
+        <button id="tripBoard" class="ghost" type="button">🚌 Už som nastúpil</button>
+        <button id="tripAlt" class="ghost" type="button" hidden>⇄ Iný spoj</button>
+        <button id="tripReplan" class="ghost" type="button">🔄 Prepočítať</button>
+      </div>
+      <p class="trip-note" id="tripNote">Časy podľa cestovného poriadku · polohu v autobuse určuje GPS · upozornenie príde na zastávke pred výstupom</p>
+    </div>
+  </div>
+
+  <div id="tripAlert" class="trip-alert" hidden role="alertdialog" aria-labelledby="taTitle" aria-describedby="taSub">
+    <div class="ta-icon" aria-hidden="true">🔔</div>
+    <div id="taTitle" class="ta-title"></div>
+    <div id="taSub" class="ta-sub"></div>
+    <button id="taOk" class="ta-ok" type="button">OK, rozumiem</button>
   </div>
 
   <footer class="foot">

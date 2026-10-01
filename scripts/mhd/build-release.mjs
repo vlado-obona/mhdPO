@@ -52,8 +52,8 @@ app = mustReplace(app,
   `  D = window.__DATASET__;`,
   'načítanie datasetu');
 app = mustReplace(app,
-  `  fetch('data/basemap.json').then((r) => r.ok ? r.json() : null).then((lines) => {`,
-  `  Promise.resolve(window.__BASEMAP__).then((lines) => {`,
+  `fetch('data/basemap.json').then((r) => r.ok ? r.json() : null).catch(() => null)`,
+  `Promise.resolve(window.__BASEMAP__ || null)`,
   'načítanie basemapy');
 app = mustReplace(app,
   `  if ('serviceWorker' in navigator) {
@@ -104,6 +104,7 @@ writeFileSync(join(OUT, 'RELEASE.md'), `# MHD Prešov v${version}
 - vytvorené: ${new Date().toISOString()}
 - cestovné poriadky: ${meta.validFrom}–${meta.validTo} (${meta.agency})
 - zdroj dát: ${meta.source ? meta.source.split('\n')[0] : 'data/gtfs-presov/SOURCE.txt'}
+${(meta.patches || []).map((p) => `- úprava podľa DPMP: ${p.title} (${p.validFrom}–${p.validTo}, data/gtfs-patches/)`).join('\n')}
 
 Súbory:
 - mhd-presov-v${version}.html — celá appka v jednom súbore, otvor v hociktorom

@@ -29,7 +29,15 @@ function dateInfoFor(dateStr) {
 }
 const fmt = (s) => `${Math.floor(s / 3600)}:${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
-const TEST_DATE = '2026-09-04'; // piatok — pracovný deň v období 1383
+// testovacie dni v rámci platnosti datasetu (prvý piatok / streda od začiatku)
+function firstWeekday(fromNum, jsDay) {
+  const y = Math.floor(fromNum / 1e4), m = Math.floor(fromNum / 100) % 100, d = fromNum % 100;
+  for (let k = 0; k < 7; k++) {
+    const dt = new Date(Date.UTC(y, m - 1, d + k));
+    if (dt.getUTCDay() === jsDay) return dt.toISOString().slice(0, 10);
+  }
+}
+const TEST_DATE = firstWeekday(D.meta.validFrom, 5); // piatok — pracovný deň
 const di = dateInfoFor(TEST_DATE);
 
 // ── 1+2: rekonštrukcia náhodných spojov ─────────────────────────────
@@ -127,7 +135,8 @@ const observed = [
   ['13', '20:07'], ['8', '20:15'], ['38', '20:08'], ['1', '20:05'],
   ['1', '20:02'], ['4', '20:10'], ['24', '20:06'], ['21', '20:12'],
 ];
-const wedDi = dateInfoFor('2026-09-03');
+// (večerné spoje 19:45–20:15 sa zmenou CP od 1.10.2026 nemenili)
+const wedDi = dateInfoFor(firstWeekday(D.meta.validFrom, 3));
 const startsByRoute = new Map();
 D.patterns.forEach((p) => {
   const short = D.routes[p.r].s;
@@ -150,6 +159,45 @@ const ratio = matched / observed.length;
 console.log(`krížová kontrola live odchodov: ${matched}/${observed.length} (${(ratio * 100).toFixed(0)} %)`);
 if (misses.length) console.log(`  nenájdené: ${misses.join(', ')}`);
 if (ratio < 0.85) fail('krížová kontrola pod 85 % — dataset nemusí byť aktuálny');
+
+// ── 4b: zmeny CP od 1.10.2026 (oprava data/gtfs-patches) ────────────
+if ((D.meta.patches || []).some((p) => p.id === 'dpmp-2026-10-01')) {
+  const deps = (line, stop, d) => {
+    const set = new Set();
+    for (const p of D.patterns) {
+      if (D.routes[p.r].s !== line) continue;
+      p.stops.forEach((si, k) => {
+        if (D.stops[si].n !== stop || k === p.stops.length - 1) return;
+        for (const t of p.trips) if (raptor.serviceActive(t.sv, d.num, d.weekday)) set.add(t.t[2 * k + 1]);
+      });
+    }
+    return set;
+  };
+  const hm = (s) => { const [h, m] = s.split(':').map(Number); return h * 3600 + m * 60; };
+  // [linka, zastávka, má byť, nemá byť] — oznam DPMP „Zmeny … 23 spojov MHD - od 1. októbra 2026“
+  const expect = [
+    ['17', 'Sídlisko III', ['5:32'], []], ['17', 'Širpo', ['14:01'], []],
+    ['28', 'Divadlo J. Záborského', ['6:38'], []], ['28', 'Ľubotice *', ['6:53'], []],
+    ['32', 'Sibírska', ['7:56'], []], ['32', 'Trojica', ['7:10', '12:42'], []],
+    ['32', 'Okružná *', ['12:57', '13:37', '14:57', '15:37', '15:57', '16:37'], []],
+    ['32A', 'Sibírska', ['12:46', '13:26', '14:46', '15:26', '15:46', '16:26', '16:46'], []],
+    ['34', 'Sídlisko III', ['14:25', '15:55'], []], ['34', 'Pod Šalgovíkom', ['15:03', '16:33'], []],
+    ['39', 'Sídlisko III', ['7:45'], []],
+    ['21', 'Trojica', ['7:56'], ['7:50']], ['33', 'Delňa', ['18:05'], ['18:40']],
+    ['29', 'Sídlisko III', ['7:03', '7:18', '8:03'], ['7:15', '7:43', '8:15']],
+    ['29', 'Fakultná nemocnica', ['7:21', '8:21'], ['7:33', '8:33']],
+  ];
+  let bad = 0;
+  for (const [line, stop, yes, no] of expect) {
+    const s = deps(line, stop, di);
+    for (const t of yes) if (!s.has(hm(t))) { bad++; fail(`CP 1.10.: linka ${line} ${stop} chýba ${t}`); }
+    for (const t of no) if (s.has(hm(t))) { bad++; fail(`CP 1.10.: linka ${line} ${stop} ešte má ${t}`); }
+  }
+  const t14 = [...D.patterns].some((p) => D.routes[p.r].s === '14' && D.stops[p.stops[0]].n === 'Záborské'
+    && D.stops[p.stops.at(-1)].n === 'Trojica' && p.trips.some((t) => t.t[1] === hm('7:00') && raptor.serviceActive(t.sv, di.num, di.weekday)));
+  if (!t14) { bad++; fail('CP 1.10.: linka 14 o 7:00 zo Záborského nekončí na Trojici'); }
+  if (!bad) ok(`zmeny CP od 1.10.2026: všetkých ${expect.reduce((a, e) => a + e[2].length + e[3].length, 0) + 1} kontrol sedí`);
+}
 
 // ── 5: nočné spoje cez polnoc ───────────────────────────────────────
 const nightPat = D.patterns.filter((p) => ['N1', 'N2'].includes(D.routes[p.r].s));

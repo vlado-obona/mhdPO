@@ -14,7 +14,7 @@ on:
       version:
         description: 'Verzia release (napr. 1.1.0)'
         required: false
-        default: '1.2.5'
+        default: '1.3.0'
         type: string
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ inputs.version || '1.2.5' }}
+      VERSION: ${{ inputs.version || '1.3.0' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -45,7 +45,7 @@ jobs:
         run: |
           mkdir cap-build && cd cap-build
           npm init -y >/dev/null
-          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/geolocation@6 >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/geolocation@6 @capacitor/local-notifications@6.1.3 @capacitor/haptics@6.0.3 @capacitor/app@6.0.3 @capacitor-community/keep-awake@5.0.1 @capacitor-community/text-to-speech@4.1.1 >/dev/null
           cat > capacitor.config.json <<EOF
           {
             "appId": "sk.mhdpresov.app",
@@ -58,10 +58,12 @@ jobs:
           grep -q "APP_VERSION = '$VERSION'" www/app.js || { echo "::error::APP_VERSION v app.js nesedí s $VERSION"; exit 1; }
           npx cap add android
           npx cap sync android
-          # oprávnenia pre geolokáciu (Capacitor Geolocation plugin)
+          # oprávnenia: geolokácia (Capacitor Geolocation) + presné upozornenie na výstup
+          # (LocalNotifications „at“ — bez exact alarm by Android 12+ mohol oznámenie oneskoriť)
           M=android/app/src/main/AndroidManifest.xml
-          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n</manifest>#' "$M"
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />\n</manifest>#' "$M"
           grep -c LOCATION "$M"
+          grep -c EXACT_ALARM "$M"
 
       - name: Ikony aplikacie
         working-directory: cap-build
