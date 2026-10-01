@@ -1,0 +1,56 @@
+name: MHD Presov - DPMP info o listkoch
+
+# Stiahne oficiálne stránky DPMP o kúpe cestovných lístkov (SMS lístok,
+# aplikácie, platba kartou, ceny, e-shop PCL) do data/dpmp-info/, aby sa
+# údaje v appke dali overiť proti zdroju (sandbox na dpmp.sk nedosiahne).
+on:
+  push:
+    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    paths:
+      - '.github/workflows/mhd-dpmp-info.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stiahnut stranky DPMP o listkoch
+        run: |
+          set +e
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36"
+          c() {
+            for n in 1 2 3 4 5; do
+              curl -sSL -A "$UA" --connect-timeout 20 --max-time 120 "$@" && return 0
+              echo "  pokus $n zlyhal, cakam" >&2; sleep $((n*6))
+            done; return 1
+          }
+          dp() { c -o "$2" "https://www.dpmp.sk$1" || c -o "$2" "https://dpmp.sk$1" || c -o "$2" "http://www.dpmp.sk$1"; }
+          totxt() { sed 's/<script.*<\/script>//g; s/<style.*<\/style>//g; s/<br[^>]*>/\n/gi; s/<[^>]*>/\n/g' "$1" | sed 's/&nbsp;/ /g' | python3 -c 'import html,sys; print(html.unescape(sys.stdin.read()))' | tr -s ' \t' ' ' | grep -v '^ *$' > "${1%.html}.txt"; }
+          which pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
+          OUT=data/dpmp-info; mkdir -p $OUT
+          for p in sms-listok aplikacie ceny-listkov tarifa navod-na-zakupenie-listka-kartou kontrola-jazd cyril; do
+            dp "/$p" "$OUT/$p.html" && totxt "$OUT/$p.html"
+            echo "===== $p"; grep -oiE 'href="[^"]+"' "$OUT/$p.html" | grep -viE 'dpmp\.sk/?"|#|javascript|facebook|instagram|youtube|\.css|\.ico' | sort -u | head -80
+          done
+          c -o "$OUT/pipni-a-cestuj.pdf" "https://www.dpmp.sk/images/manual/Pipni%20a%20cestuj.pdf" && pdftotext -layout "$OUT/pipni-a-cestuj.pdf" "$OUT/pipni-a-cestuj.txt"
+          c -o "$OUT/smscl.html" "http://smscl.dpmp.sk/" && totxt "$OUT/smscl.html"
+          c -o "$OUT/ubian-eshop.html" "https://eshop.ubian.sk" && totxt "$OUT/ubian-eshop.html"
+          {
+            echo "stiahnute: $(date -u +%FT%TZ)"
+            for f in $OUT/*.html $OUT/*.pdf; do echo "$(sha256sum "$f")"; done
+          } > $OUT/SOURCE.txt
+          ls -la $OUT
+          echo "===== sms-listok (text)"; head -150 $OUT/sms-listok.txt
+          echo "===== aplikacie (text)"; head -150 $OUT/aplikacie.txt
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          [ -s data/dpmp-info/sms-listok.txt ] || { echo "::error::sms-listok sa nestiahol"; exit 1; }
+          git add data/dpmp-info
+          git commit -m "mhd: oficialne stranky DPMP o kupe listkov" || exit 0
+          for n in 1 2 3; do git pull --rebase origin "$GITHUB_REF_NAME" && git push && break; sleep 5; done
