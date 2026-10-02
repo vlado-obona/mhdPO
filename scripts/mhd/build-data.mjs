@@ -17,6 +17,7 @@ import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { applyPatches } from './gtfs-patch.mjs';
 import { buildPlaces } from './places.mjs';
+import { buildMapbase } from './mapbase.mjs';
 
 const SRC = 'data/gtfs-presov';
 const OUT = 'mhd-app/data';
@@ -360,6 +361,15 @@ if (pl) {
   const st = pl.stat;
   console.log(`miesta OSM: ${st.kept} (z ${st.pois}; bez kategórie ${st.noCat}, ďaleko od MHD ${st.far}, duplicity ${st.dup}), ulice: ${st.streets}, adresy: ${st.addr}, ${(pj.length / 1024).toFixed(0)} kB`);
 } else console.warn('⚠ data/osm-places chýba — vyhľadávanie miest nebude k dispozícii');
+// ── offline podklad mapy z OpenStreetMap (ulice, voda, parky, lesy) ──
+const mb = buildMapbase();
+if (mb) {
+  const mj = JSON.stringify(mb.mapbase);
+  dataset.meta.mapbaseV = createHash('sha256').update(mj).digest('hex').slice(0, 12);
+  writeFileSync(join(OUT, 'mapbase.json'), mj);
+  const st = mb.stat;
+  console.log(`mapa OSM: ulice ${st.streets}, toky ${st.ways}, plochy ${st.areas} (malé vynechané ${st.droppedSmall}), bodov ${st.points}, ${(mj.length / 1024).toFixed(0)} kB`);
+} else console.warn('⚠ data/osm-places/streets.json chýba — mapa bude len so sieťou liniek');
 const json = JSON.stringify(dataset);
 const hash = createHash('sha256').update(json).digest('hex').slice(0, 12);
 writeFileSync(join(OUT, 'dataset.json'), json);

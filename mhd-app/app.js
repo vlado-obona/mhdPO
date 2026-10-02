@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.4.1';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -276,21 +276,211 @@ function loadBasemap() {
   return basemapLines;
 }
 
-// OSM dlaždice + záložný podklad: sieť trás MHD (kopíruje ulice) v pane pod
-// dlaždicami, takže ju vidno len kým sa dlaždice nenačítajú (a offline)
+// ── offline mapa ─────────────────────────────────────────────────────
+// Podklad sa kreslí z dát v appke (OpenStreetMap: ulice, voda, parky, lesy
+// + sieť liniek MHD) — žiadne online dlaždice, mapa nerobí sieťové
+// požiadavky a funguje bez internetu. Popisy (zastávky, miesta, ulice) sa
+// prepočítavajú pri každom posune/priblížení a neprekrývajú sa.
+let mapbaseP = null;
+function loadMapbase() {
+  if (!mapbaseP) {
+    mapbaseP = fetch(`data/mapbase.json${D?.meta?.mapbaseV ? `?v=${D.meta.mapbaseV}` : ''}`)
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      .then((M) => (M ? prepMapbase(M) : null));
+  }
+  return mapbaseP;
+}
+const decLine = (f) => {
+  const out = [];
+  for (let i = 0, a = 0, o = 0; i < f.length; i += 2) { a += f[i]; o += f[i + 1]; out.push([a / 1e5, o / 1e5]); }
+  return out;
+};
+function lineLen(p) {
+  let s = 0;
+  for (let i = 1; i < p.length; i++) s += haversine(p[i - 1][0], p[i - 1][1], p[i][0], p[i][1]);
+  return s;
+}
+function prepMapbase(M) {
+  const nm = (i) => (i >= 0 ? M.n[i] : '');
+  const streets = M.s.map(([c, n, f]) => ({ c, n: nm(n), p: decLine(f) }));
+  const waters = M.w.map(([c, n, f]) => ({ c, n: nm(n), p: decLine(f) }));
+  const areas = M.a.map(([c, ...rs]) => ({ c, r: rs.map(decLine) }));
+  // popis ulice: v polovici jej najdlhšieho úseku
+  const best = new Map();
+  for (const s of [...streets, ...waters]) {
+    if (!s.n || s.c === 'f' || s.c === 'v') continue;
+    const L0 = lineLen(s.p);
+    const b = best.get(s.n);
+    if (!b || L0 > b.L) best.set(s.n, { L: L0, s });
+  }
+  const streetLabels = [];
+  for (const [n, { L: L0, s }] of best) {
+    let half = L0 / 2, i = 1;
+    for (; i < s.p.length - 1; i++) {
+      const d = haversine(s.p[i - 1][0], s.p[i - 1][1], s.p[i][0], s.p[i][1]);
+      if (d >= half) break;
+      half -= d;
+    }
+    const a = s.p[i - 1], b = s.p[i];
+    streetLabels.push({ n, c: s.c, L: L0, a, b, la: (a[0] + b[0]) / 2, lo: (a[1] + b[1]) / 2 });
+  }
+  return { streets, waters, areas, streetLabels };
+}
+
+const MB_AREA = { forest: '#c5ddb0', grass: '#d6ebc2', park: '#c4e8bc', pitch: '#b3e0cc', cemetery: '#bfd6c0', water: '#a9d3e3' };
+// trieda ulice: [farba, šírka pri priblížení 16, od priblíženia]
+const MB_ST = {
+  m: ['#eda55e', 7, 11], p: ['#f5cd70', 6, 11], s: ['#f8df98', 5.5, 12], t: ['#fff', 5, 12],
+  r: ['#fff', 3.6, 13], w: ['#e9e3f0', 4, 14], v: ['#fff', 2.2, 15], f: ['#d9826b', 1.2, 16],
+};
+const MB_ORDER = ['f', 'v', 'w', 'r', 't', 's', 'p', 'm'];
+const MB_BG = '#f3efe6';
+
 function addBaseLayers(m) {
-  m.getContainer().style.background = '#eef1ee';
-  m.createPane('basemap').style.zIndex = 150; // tilePane má 200
-  const renderer = L.canvas({ pane: 'basemap' });
-  loadBasemap().then((lines) => {
-    if (!lines) return;
-    L.layerGroup(lines.map((l) =>
-      L.polyline(l, { pane: 'basemap', renderer, color: '#ccd6cc', weight: 3, opacity: 1, interactive: false }))).addTo(m);
+  m.getContainer().style.background = MB_BG;
+  m.attributionControl.setPrefix(false);
+  m.attributionControl.addAttribution('© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">prispievatelia OpenStreetMap</a>');
+  m.createPane('basemap').style.zIndex = 150;
+  const lp = m.createPane('maplabels');
+  lp.style.zIndex = 450; lp.style.pointerEvents = 'none';
+  const renderer = L.canvas({ pane: 'basemap', padding: 0.3 });
+  const labelLayer = L.layerGroup().addTo(m);
+  Promise.all([loadMapbase(), loadBasemap()]).then(([M, lines]) => {
+    const busLines = () => lines && L.layerGroup(lines.map((l) =>
+      L.polyline(l, { pane: 'basemap', renderer, color: '#0b7a3b', weight: 2, opacity: 0.35, interactive: false })));
+    if (!M) { // bez podkladu aspoň sieť liniek (ako doteraz)
+      if (lines) busLines().addTo(m);
+      return;
+    }
+    const opt = { pane: 'basemap', renderer, interactive: false };
+    L.layerGroup(M.areas.map((a) =>
+      L.polygon(a.r, { ...opt, stroke: false, fillColor: MB_AREA[a.c], fillOpacity: 1 }))).addTo(m);
+    const waters = M.waters.map((w) => [w.c, L.polyline(w.p, { ...opt, color: MB_AREA.water, lineCap: 'round' })]);
+    L.layerGroup(waters.map(([, l]) => l)).addTo(m);
+    const cas = {}, fill = {};
+    for (const c of MB_ORDER) cas[c] = L.layerGroup();
+    for (const c of MB_ORDER) fill[c] = L.layerGroup();
+    for (const s of M.streets) {
+      const [col] = MB_ST[s.c];
+      if (s.c !== 'f') cas[s.c].addLayer(L.polyline(s.p, { ...opt, color: '#c8c0b0', lineCap: 'round', lineJoin: 'round' }));
+      fill[s.c].addLayer(L.polyline(s.p, { ...opt, color: col, lineCap: 'round', lineJoin: 'round', dashArray: s.c === 'f' ? '3 3' : null }));
+    }
+    const bus = busLines();
+    const restyle = () => {
+      const z = m.getZoom(), k = Math.min(1.6, Math.max(0.45, 2 ** (z - 16)));
+      for (const [c, l] of waters) l.setStyle({ weight: Math.max(1, (c === 'R' ? 7 : 2.5) * k) });
+      for (const c of MB_ORDER) {
+        const [, w, minZ] = MB_ST[c];
+        const on = z >= minZ;
+        const wt = Math.max(1, w * k);
+        for (const [g, extra] of [[cas[c], 1.6], [fill[c], 0]]) {
+          if (on && !m.hasLayer(g)) g.addTo(m);
+          if (!on && m.hasLayer(g)) m.removeLayer(g);
+          if (on) g.eachLayer((l) => l.setStyle({ weight: c === 'f' ? wt : wt + extra }));
+        }
+      }
+      // poradie: plochy → obrysy ciest → výplne → linky MHD
+      for (const c of MB_ORDER) if (m.hasLayer(cas[c])) cas[c].eachLayer((l) => l.bringToFront());
+      for (const c of MB_ORDER) if (m.hasLayer(fill[c])) fill[c].eachLayer((l) => l.bringToFront());
+      if (bus) { if (!m.hasLayer(bus)) bus.addTo(m); bus.eachLayer((l) => { l.setStyle({ weight: z >= 16 ? 2.5 : 2 }); l.bringToFront(); }); }
+    };
+    restyle();
+    m.on('zoomend', restyle);
+    const relabel = () => drawMapLabels(m, M, labelLayer);
+    m.on('moveend', relabel);
+    relabel();
+    loadPlaces().then(relabel);
   });
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(m);
+}
+
+// popisy: dôležitejšie prvé, prekrývajúce sa (aj so zastávkami a šípkami) vynechať
+function drawMapLabels(m, M, layer) {
+  layer.clearLayers();
+  const z = m.getZoom();
+  if (z < 13) return;
+  const bounds = m.getBounds().pad(0.05);
+  const size = m.getSize();
+  const placed = [];
+  const hit = (r) => placed.some((q) => r.x < q.x + q.w && q.x < r.x + r.w && r.y < q.y + q.h && q.y < r.y + r.h);
+  const tw = (t, px) => t.length * px * 0.56 + 6;
+  const put = (la, lo, w, h, html, dx = 0, dy = 0, center = true) => {
+    const pt = m.latLngToContainerPoint([la, lo]);
+    const r = center ? { x: pt.x - w / 2 + dx, y: pt.y - h / 2 + dy, w, h } : { x: pt.x + dx, y: pt.y + dy, w, h };
+    if (r.x < -w || r.y < -h || r.x > size.x || r.y > size.y || hit(r)) return false;
+    placed.push(r);
+    L.marker([la, lo], {
+      pane: 'maplabels', interactive: false, keyboard: false,
+      icon: L.divIcon({ className: 'map-lbl', iconSize: [0, 0], html: `<div style="transform:translate(${center ? `calc(-50% + ${dx}px),calc(-50% + ${dy}px)` : `${dx}px,${dy}px`})">${html}</div>` }),
+    }).addTo(layer);
+    return true;
+  };
+  // zastávky a ich smerové šípky sú prekážky — popis ich nesmie zakryť
+  const vis = [];
+  D.stops.forEach((s, i) => { if (bounds.contains([s.la, s.lo])) vis.push(i); });
+  for (const i of (z >= 15 ? vis : [])) { // pri malom priblížení by zastávky vytlačili všetky popisy
+    const pt = m.latLngToContainerPoint([D.stops[i].la, D.stops[i].lo]);
+    placed.push({ x: pt.x - 9, y: pt.y - 9, w: 18, h: 18 });
+    const b = stopBearing(i);
+    if (b != null) {
+      const q = m.latLngToContainerPoint(offsetPoint(D.stops[i].la, D.stops[i].lo, b, 20));
+      placed.push({ x: q.x - 9, y: q.y - 9, w: 18, h: 18 });
+    }
+  }
+  // 1) názvy zastávok (raz na skupinu nástupíšť)
+  if (z >= 16) {
+    const seen = new Set();
+    for (const i of vis) {
+      const s = D.stops[i];
+      if (seen.has(s.n)) continue;
+      if (put(s.la, s.lo, tw(s.n, 11), 14, `<span class="ml-stop">${esc(s.n)}</span>`, 10, -7, false)) seen.add(s.n);
+    }
+  }
+  // 2) časti mesta, dôležité miesta
+  if (places) {
+    const PRI = { 'časť mesta': 0, 'námestie': 1, 'železničná stanica': 1, 'autobusová stanica': 1, 'obchodné centrum': 2, 'nemocnica': 2,
+      'kostol': 3, 'vysoká škola': 4, 'divadlo': 4, 'kúpalisko': 4, 'park': 5, 'múzeum': 6, 'úrad': 6, 'škola': 7, 'potraviny': 7 };
+    const MINZ = { 'časť mesta': 13, 'železničná stanica': 14, 'autobusová stanica': 14, 'obchodné centrum': 14, 'nemocnica': 14,
+      'námestie': 15, 'kostol': 15, 'kúpalisko': 15, 'vysoká škola': 16, 'divadlo': 16, 'park': 16, 'múzeum': 17, 'úrad': 17, 'škola': 17, 'potraviny': 17 };
+    const cand = [];
+    for (const it of places.items) {
+      const [cat, icon] = places.cats[it.c];
+      if (!(cat in PRI) || z < MINZ[cat] || !bounds.contains([it.la, it.lo])) continue;
+      if (cat === 'časť mesta' && (z >= 16 || /^Prešov \d/.test(it.name))) continue;
+      cand.push([PRI[cat], cat, icon, it]);
+    }
+    cand.sort((a, b) => a[0] - b[0]);
+    for (const [, cat, icon, it] of cand) {
+      if (cat === 'časť mesta') put(it.la, it.lo, tw(it.name, 13) * 1.2, 16, `<span class="ml-area">${esc(it.name)}</span>`);
+      else put(it.la, it.lo, Math.max(24, tw(it.name, 11)), 30, `<span class="ml-poi"><b>${icon}</b>${esc(it.name)}</span>`);
+    }
+  }
+  // 3) názvy ulíc a tokov pozdĺž cesty
+  if (z >= 15) {
+    const major = (c) => 'mpsRS'.includes(c);
+    const sl = M.streetLabels.filter((l) => (z >= 16 || major(l.c)) && bounds.contains([l.la, l.lo]))
+      .sort((a, b) => (major(b.c) - major(a.c)) || b.L - a.L);
+    for (const l of sl) {
+      const a = m.latLngToContainerPoint(l.a), b = m.latLngToContainerPoint(l.b);
+      const W = tw(l.n, 11);
+      if (l.L * (2 ** (z - 16)) / 1.57 < W * 1.1) continue; // ulica je na popis pri tomto priblížení krátka (1,57 m/px pri z16)
+      let ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+      if (ang > 90) ang -= 180;
+      if (ang < -90) ang += 180;
+      const r = ang * Math.PI / 180;
+      const w = Math.abs(W * Math.cos(r)) + 12 * Math.abs(Math.sin(r)), h = Math.abs(W * Math.sin(r)) + 12 * Math.abs(Math.cos(r));
+      put(l.la, l.lo, w, h, `<span class="ml-street${'RS'.includes(l.c) ? ' ml-water' : ''}" style="transform:rotate(${ang.toFixed(1)}deg)">${esc(l.n)}</span>`);
+    }
+  }
+}
+
+// prevládajúci smer odchodu z nástupišťa (kruhový priemer azimutov spojov)
+function stopBearing(si) {
+  const dirs = (D.stopDirs && D.stopDirs[si]) || [];
+  if (!dirs.length) return null;
+  const r = Math.PI / 180;
+  let x = 0, y = 0;
+  for (const [, , b] of dirs) { x += Math.cos(b * r); y += Math.sin(b * r); }
+  return Math.hypot(x, y) > 0.3 ? (Math.atan2(y, x) / r + 360) % 360 : dirs[0][2];
 }
 
 function initMap() {
@@ -306,18 +496,15 @@ function initMap() {
   const groupByName = new Map(groups.map((g) => [g.name, g]));
   D.stops.forEach((st, si) => {
     const dirs = (D.stopDirs && D.stopDirs[si]) || [];
-    // jedna malá šípka v smere odchodu, rovnobežne s cestou — všetky
-    // spoje z nástupišťa idú tým istým smerom, stačí kruhový priemer azimutov
-    if (dirs.length) {
-      const r = Math.PI / 180;
-      let x = 0, y = 0;
-      for (const [, , b] of dirs) { x += Math.cos(b * r); y += Math.sin(b * r); }
-      const brg = Math.hypot(x, y) > 0.3 ? (Math.atan2(y, x) / r + 360) % 360 : dirs[0][2];
-      L.marker(offsetPoint(st.la, st.lo, brg, 16), {
+    // šípka v smere odchodu autobusov, rovnobežne s cestou — všetky spoje
+    // z nástupišťa idú tým istým smerom (kruhový priemer azimutov)
+    const brg = stopBearing(si);
+    if (brg != null) {
+      L.marker(offsetPoint(st.la, st.lo, brg, 20), {
         icon: L.divIcon({
           className: 'stop-dir',
           html: `<span style="transform:rotate(${brg - 90}deg)">➤</span>`,
-          iconSize: [14, 14], iconAnchor: [7, 7],
+          iconSize: [18, 18], iconAnchor: [9, 9],
         }),
         interactive: false, keyboard: false,
       }).addTo(markersLayer);

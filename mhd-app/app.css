@@ -149,8 +149,8 @@ button.ghost {
 /* šípka smeru odchodu pri bode zastávky */
 .stop-dir { pointer-events: none; }
 .stop-dir span {
-  display: block; width: 14px; height: 14px; line-height: 14px;
-  text-align: center; font-size: 10px; color: var(--green);
+  display: block; width: 18px; height: 18px; line-height: 18px;
+  text-align: center; font-size: 17px; color: var(--green);
   text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff;
 }
 
@@ -373,3 +373,14 @@ body.trip-open { overflow: hidden; }
   main { display: block; }
   #map { height: 70vh; }
 }
+
+/* offline mapa — popisy (zastávky, miesta, ulice) */
+.map-lbl { pointer-events: none; }
+.map-lbl > div { position: absolute; white-space: nowrap; }
+.map-lbl span { display: inline-block; text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #fff; }
+.ml-stop { font: 700 11px/1 system-ui, sans-serif; color: #08562a; }
+.ml-poi { font: 600 11px/1.15 system-ui, sans-serif; color: #2b2b2b; text-align: center; }
+.ml-poi b { display: block; font-size: 15px; }
+.ml-area { font: 700 12px/1 system-ui, sans-serif; color: #6b5f80; letter-spacing: .07em; text-transform: uppercase; }
+.ml-street { font: 600 11px/1 system-ui, sans-serif; color: #5a5650; }
+.ml-water { color: #3d7fa3; font-style: italic; }

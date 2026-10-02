@@ -28,7 +28,7 @@
 <main>
 <div class="card">
 <h1>Zásady ochrany súkromia</h1>
-<p class="muted">Aplikácia <b>Odkiaľ Kam – MHD Prešov</b> (Android, iOS, web) · platné od 2. 10. 2026</p>
+<p class="muted">Aplikácia <b>Odkiaľ Kam – MHD Prešov</b> (Android, iOS, web) · platné od 2. 10. 2026 (verzia appky 1.4.1)</p>
 
 <h2>Kto aplikáciu prevádzkuje</h2>
 <p>BEDEKA, s.r.o., Hlavná 2894/47, 080 01 Prešov, Slovensko, IČO 47735511.<br>
@@ -66,10 +66,12 @@ alebo vymazaním jej údajov.</p>
 push notifikácie ani žiadnu notifikačnú službu tretej strany.</p>
 
 <h2>Mapa a internet</h2>
-<p>Aplikácia funguje offline. Ak je telefón pripojený na internet, mapa si načítava mapové dlaždice zo serverov
-<a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a>. Ako pri každom načítaní
-stránky, server OpenStreetMap vidí IP adresu telefónu a výrez mapy, ktorý sa zobrazuje — riadi sa
-<a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">zásadami ochrany súkromia OpenStreetMap Foundation</a>.
+<p>Aplikácia pre Android a iOS <b>nekomunikuje so žiadnym serverom</b>: cestovné poriadky, miesta aj mapa
+(ulice, rieky, parky — z dát OpenStreetMap) sú uložené priamo v aplikácii a mapa sa kreslí v telefóne.
+Funguje aj bez internetu.</p>
+<p>Webovú verziu na adrese vlado-obona.github.io doručuje služba GitHub Pages (GitHub, Inc.). Ako pri
+každej webovej stránke, server pri jej načítaní vidí IP adresu zariadenia — riadi sa
+<a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">zásadami ochrany súkromia GitHub</a>.
 My k týmto údajom nemáme prístup.</p>
 
 <h2>Odkazy na iné aplikácie</h2>
@@ -82,7 +84,7 @@ na kúpu lístka alebo obchod s aplikáciami na kúpu lístka. Čo sa deje v nic
 <h2>Zdroje dát</h2>
 <ul>
   <li>Cestovné poriadky: verejné dáta Dopravného podniku mesta Prešov, a.s. (GTFS a zverejnené cestovné poriadky).</li>
-  <li>Miesta, ulice a adresy: © prispievatelia <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, licencia ODbL.</li>
+  <li>Miesta, ulice, adresy a mapa: © prispievatelia <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, licencia ODbL.</li>
 </ul>
 
 <h2>Zmeny</h2>
@@ -99,7 +101,7 @@ BEDEKA, s.r.o., Hlavná 2894/47, 080 01 Prešov, Slovakia (contact: <a href="mai
   <li>Location (if you allow it) is used only on the device to find the nearest stop and to alert you before your stop. It is never sent anywhere or stored.</li>
   <li>Saved quick destinations stay in the app's local storage on your device.</li>
   <li>Exit alerts are local notifications scheduled on the device.</li>
-  <li>When online, the map loads tiles from OpenStreetMap servers, which see your IP address and the visible map area (OSM Foundation privacy policy applies).</li>
+  <li>The Android and iOS apps make no network requests: timetables, places and the map (drawn from bundled OpenStreetMap data) are inside the app. The web version is served by GitHub Pages, which sees your IP address like any web host.</li>
   <li>Buttons that open Google Maps, SMS or app stores only do so when you tap them.</li>
 </ul>
 </div>

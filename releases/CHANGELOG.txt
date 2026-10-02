@@ -15,6 +15,22 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.4.1  (2. 10. 2026)
+----------------------------------------------------------------
+- Nová offline mapa: kreslí sa priamo v telefóne z dát OpenStreetMap
+  zabalených v aplikácii — ulice podľa významu, rieka Torysa
+  a potoky, parky, lesy, lúky, ihriská a cintoríny, linky MHD.
+  Pri priblížení názvy zastávok, ulíc, námestí, kostolov, obchodných
+  centier, nemocníc, staníc a častí mesta; popisy sa neprekrývajú.
+  Funguje aj bez internetu (v lietadlovom režime vyzerá rovnako).
+- Šípky smeru pri zastávkach sú väčšie — ukazujú, ktorým smerom
+  z daného nástupišťa autobusy odchádzajú.
+- Aplikácia už nesťahuje mapové dlaždice z internetu — nerobí žiadne
+  sieťové požiadavky (Google Play: „žiadne údaje sa nezbierajú“).
+  Zásady ochrany súkromia aktualizované:
+  https://vlado-obona.github.io/mhdPO/sukromie/
+
+----------------------------------------------------------------
 v1.4.0  (2. 10. 2026)
 ----------------------------------------------------------------
 - Vyhľadanie miesta podľa názvu: do polí Odkiaľ / Kam (aj do

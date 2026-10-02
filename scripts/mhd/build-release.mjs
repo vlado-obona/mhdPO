@@ -2,8 +2,8 @@
 // Zostaví release plánovača MHD Prešov do releases/v<verzia>/:
 //   mhd-presov-standalone.html — celá appka v jednom súbore (Leaflet,
 //   dataset aj podkladová sieť trás inline). Funguje otvorením hocikde —
-//   z disku, z mailu, z akéhokoľvek hostingu; online si dotiahne OSM
-//   dlaždice, offline kreslí na sieť trás MHD.
+//   z disku, z mailu, z akéhokoľvek hostingu; mapa sa kreslí offline
+//   z dát OpenStreetMap zabalených v súbore.
 //
 // Použitie: node scripts/mhd/build-release.mjs <verzia>   (napr. 1.0.0)
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -27,6 +27,7 @@ function mustReplace(src, from, to, label) {
 const dataset = read('data/dataset.json');
 const basemap = read('data/basemap.json');
 const placesJson = read('data/places.json');
+const mapbaseJson = read('data/mapbase.json');
 const appCss = read('app.css');
 const leafletCss = read('vendor/leaflet.css');
 const leafletJs = read('vendor/leaflet.js');
@@ -62,6 +63,11 @@ app = mustReplace(app,
   `Promise.resolve(window.__PLACES__ || null)`,
   'načítanie miest');
 app = mustReplace(app,
+  `fetch(\`data/mapbase.json\${D?.meta?.mapbaseV ? \`?v=\${D.meta.mapbaseV}\` : ''}\`)
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)`,
+  `Promise.resolve(window.__MAPBASE__ || null)`,
+  'načítanie mapy');
+app = mustReplace(app,
   `  if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }`,
@@ -95,7 +101,8 @@ ${leafletJs}
 </script>
 <script>window.__DATASET__ = ${dataset};
 window.__BASEMAP__ = ${basemap};
-window.__PLACES__ = ${placesJson};</script>
+window.__PLACES__ = ${placesJson};
+window.__MAPBASE__ = ${mapbaseJson};</script>
 <script>
 ${raptor}
 ${app}
@@ -115,7 +122,7 @@ ${(meta.patches || []).map((p) => `- úprava podľa DPMP: ${p.title} (${p.validF
 
 Súbory:
 - mhd-presov-v${version}.html — celá appka v jednom súbore, otvor v hociktorom
-  prehliadači (aj z disku, aj offline — mapa vtedy kreslí sieť trás MHD).
+  prehliadači (aj z disku, aj offline — mapa je zabalená v súbore).
 - mhd-presov-v${version}.apk / .aab — Android aplikácia (priama inštalácia /
   Google Play), pridáva ich workflow „Android (APK + AAB)“.
 - mhd-presov-v${version}-ios.ipa — iOS (nepodpísaná), workflow „iOS (IPA)“.
