@@ -1,5 +1,5 @@
 // Zostaví mhd-app/data/places.json z data/osm-places/ (stiahnuté workflowom
-// „MHD Presov - miesta z OpenStreetMap“): pomenované miesta s kategóriou
+// „Miesta a adresy (OpenStreetMap)“): pomenované miesta s kategóriou
 // a adresy zoskupené po uliciach. Nič sa nedopĺňa ani neodhaduje — názvy aj
 // súradnice sú presne z OSM, appka k nim len hľadá najbližšie zastávky.
 import { readFileSync, existsSync } from 'node:fs';

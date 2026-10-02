@@ -1,11 +1,11 @@
-name: MHD Presov - DPMP info o listkoch
+name: DPMP info o lístkoch
 
 # Stiahne oficiálne stránky DPMP o kúpe cestovných lístkov (SMS lístok,
 # aplikácie, platba kartou, ceny, e-shop PCL) do data/dpmp-info/, aby sa
 # údaje v appke dali overiť proti zdroju (sandbox na dpmp.sk nedosiahne).
 on:
   push:
-    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    branches: [main]
     paths:
       - '.github/workflows/mhd-dpmp-info.yml'
   workflow_dispatch:

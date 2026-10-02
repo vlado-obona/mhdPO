@@ -1,4 +1,4 @@
-name: MHD Presov - iOS
+name: iOS (IPA)
 
 # Zostaví iOS verziu plánovača (Capacitor, macOS runner):
 #   releases/v<verzia>/mhd-presov-ios-unsigned.ipa
@@ -8,15 +8,14 @@ name: MHD Presov - iOS
 # 7 dní, s plateným účtom (99 USD/rok) 1 rok / App Store.
 on:
   push:
-    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    branches: [main]
     paths:
       - '.github/workflows/mhd-ios.yml'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Verzia release (napr. 1.1.0)'
+        description: 'Verzia (prázdne = APP_VERSION z mhd-app/app.js)'
         required: false
-        default: '1.3.3'
         type: string
 
 permissions:
@@ -29,10 +28,14 @@ concurrency:
 jobs:
   build:
     runs-on: macos-latest
-    env:
-      VERSION: ${{ inputs.version || '1.3.3' }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verzia
+        run: |
+          V="${{ inputs.version }}"
+          [ -n "$V" ] || V=$(sed -n "s/^const APP_VERSION = '\([0-9.]*\)';/\1/p" mhd-app/app.js)
+          echo "VERSION=$V" >> "$GITHUB_ENV"; echo "verzia $V"
 
       - uses: actions/setup-node@v4
         with:
@@ -45,8 +48,8 @@ jobs:
           npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/ios@6 @capacitor/geolocation@6 @capacitor/local-notifications@6.1.3 @capacitor/haptics@6.0.3 @capacitor/app@6.0.3 @capacitor-community/keep-awake@5.0.1 @capacitor-community/text-to-speech@4.1.1 >/dev/null
           cat > capacitor.config.json <<EOF
           {
-            "appId": "sk.mhdpresov.app",
-            "appName": "MHD Prešov v$VERSION",
+            "appId": "sk.operatorsystem.mhdpresov",
+            "appName": "Odkiaľ Kam v$VERSION",
             "webDir": "www"
           }
           EOF
@@ -62,8 +65,8 @@ jobs:
           /usr/libexec/PlistBuddy -c "Add :NSLocationWhenInUseUsageDescription string 'Poloha sa používa na nájdenie najbližšej zastávky a na navigáciu počas cesty (upozornenie pred výstupom).'" "$P" || \
           /usr/libexec/PlistBuddy -c "Set :NSLocationWhenInUseUsageDescription 'Poloha sa používa na nájdenie najbližšej zastávky a na navigáciu počas cesty (upozornenie pred výstupom).'" "$P"
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$P" || true
-          /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string 'MHD Prešov v$VERSION'" "$P" || \
-          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName 'MHD Prešov v$VERSION'" "$P" || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string 'Odkiaľ Kam v$VERSION'" "$P" || \
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName 'Odkiaľ Kam v$VERSION'" "$P" || true
           plutil -p "$P" | grep -E 'Location|ShortVersion'
 
       - name: Ikony aplikacie
@@ -110,3 +113,18 @@ jobs:
             git pull --rebase origin "$GITHUB_REF_NAME" || true
             git push || (git pull --rebase origin "$GITHUB_REF_NAME" && git push)
           fi
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GitHub Release v<verzia> — vytvorí ho prvý workflow, ďalší len pridajú súbory
+          rel() {
+            for n in 1 2 3; do
+              gh release view "v$VERSION" >/dev/null 2>&1 || gh release create "v$VERSION" --title "Odkiaľ Kam v$VERSION" \
+                --notes "Popis zmien: releases/CHANGELOG.txt. Súbory: .apk (Android, priama inštalácia), .aab (Google Play), .html (appka v jednom súbore), -ios.ipa (iOS, nepodpísaná)." || true
+              gh release upload "v$VERSION" "$@" --clobber && return 0
+              sleep 10
+            done; return 1
+          }
+          rel "releases/v$VERSION/mhd-presov-v$VERSION-ios.ipa"

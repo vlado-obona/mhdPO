@@ -1,0 +1,46 @@
+name: Web (GitHub Pages)
+
+# Zverejní webovú verziu appky (mhd-app/) a stránky z web/ (zásady ochrany
+# súkromia na /sukromie/) na GitHub Pages:
+#   https://vlado-obona.github.io/mhdPO/            — appka
+#   https://vlado-obona.github.io/mhdPO/sukromie/   — zásady súkromia (Google Play)
+# Raz treba zapnúť: Settings → Pages → Build and deployment → Source: GitHub Actions.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mhd-app/**'
+      - 'web/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zostavit web
+        run: |
+          mkdir _site
+          cp -r mhd-app/. _site/
+          cp -r web/. _site/
+          touch _site/.nojekyll
+          ls -la _site _site/sukromie
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

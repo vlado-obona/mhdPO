@@ -1,13 +1,13 @@
-name: MHD Presov - GTFS data
+name: Cestovné poriadky (GTFS)
 
 # Stiahne oficiálny GTFS feed MHD Prešov (DPMP), skompiluje dataset pre
-# plánovač (/mhd/) a commitne zmeny. Spúšťa sa ručne alebo denne
-# (cestovné poriadky sa menia — dataset treba držať aktuálny).
-# Aktuálne obdobie platnosti CP končí 30. 9. 2026 — pri zmene feedu
-# treba vydať novú verziu appky (releases/). Posledná ručná kontrola: 1. 10. 2026 popoludní (nové CP).
+# plánovač a commitne zmeny. Spúšťa sa ručne alebo denne (cestovné
+# poriadky sa menia). Pri zmene feedu treba vydať novú verziu appky
+# (APP_VERSION + Android/iOS workflow) — Google Play verzia sa sama neaktualizuje.
+# Opravy z data/gtfs-patches/ platia len pre feed, pre ktorý boli vytvorené.
 on:
   push:
-    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    branches: [main]
     paths:
       - '.github/workflows/mhd-gtfs-data.yml'
       - 'scripts/mhd/fetch-gtfs.sh'
@@ -22,7 +22,7 @@ on:
 
 permissions:
   contents: write
-  actions: write # spustenie deploy workflow po aktualizácii dát
+  actions: write # spustenie web workflow po aktualizácii dát
 
 concurrency:
   group: mhd-gtfs-${{ github.ref }}
@@ -64,9 +64,10 @@ jobs:
           else
             git commit -m "mhd: aktualizacia GTFS dat DPMP ($(date -u +%F))"
             git push
-            # push cez GITHUB_TOKEN nespusti deploy workflow — spusti ho explicitne
+            echo "::warning::Nové GTFS dáta — over ich a vydaj novú verziu appky."
+            # push cez GITHUB_TOKEN nespusti web workflow — spusti ho explicitne
             if [ "${GITHUB_REF_NAME}" = "main" ]; then
-              gh workflow run deploy-mhd.yml --ref main || echo "Deploy sa nepodarilo spustit."
+              gh workflow run pages.yml --ref main || echo "Web sa nepodarilo zverejnit."
             fi
           fi
         env:

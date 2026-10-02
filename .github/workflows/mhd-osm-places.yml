@@ -1,4 +1,4 @@
-name: MHD Presov - miesta z OpenStreetMap
+name: Miesta a adresy (OpenStreetMap)
 
 # Stiahne pomenované miesta (námestia, kostoly, obchody, úrady, školy,
 # nemocnice, časti mesta…) a adresy z OpenStreetMap v okolí zastávok MHD
@@ -6,7 +6,7 @@ name: MHD Presov - miesta z OpenStreetMap
 # Dáta © prispievatelia OpenStreetMap, licencia ODbL.
 on:
   push:
-    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    branches: [main]
     paths:
       - '.github/workflows/mhd-osm-places.yml'
   workflow_dispatch:

@@ -1,0 +1,23 @@
+# podpisový kľúč a heslá — NIKDY necommitovať
+*.keystore
+*.jks
+*.p12
+*.pem
+newkey/
+ANDROID_KEYSTORE*.txt
+.env
+.env.*
+
+# build
+node_modules/
+cap-build/
+_site/
+
+# diagnostické výstupy porovnania PDF↔GTFS (lcp-compare/lcp-diff)
+__pycache__/
+data/dpmp-lcp/compare.json
+data/dpmp-lcp/diff.json
+
+# OS / editor
+.DS_Store
+Thumbs.db

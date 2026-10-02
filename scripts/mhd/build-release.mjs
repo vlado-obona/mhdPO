@@ -106,7 +106,7 @@ ${app}
 
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, `mhd-presov-v${version}.html`), out);
-writeFileSync(join(OUT, 'RELEASE.md'), `# MHD Prešov v${version}
+writeFileSync(join(OUT, 'RELEASE.md'), `# Odkiaľ Kam – MHD Prešov v${version}
 
 - vytvorené: ${new Date().toISOString()}
 - cestovné poriadky: ${meta.validFrom}–${meta.validTo} (${meta.agency})
@@ -116,7 +116,8 @@ ${(meta.patches || []).map((p) => `- úprava podľa DPMP: ${p.title} (${p.validF
 Súbory:
 - mhd-presov-v${version}.html — celá appka v jednom súbore, otvor v hociktorom
   prehliadači (aj z disku, aj offline — mapa vtedy kreslí sieť trás MHD).
-- mhd-presov-v${version}.apk — Android aplikácia s dátami zabalenými vnútri
-  (pridáva ju workflow „MHD Presov - offline APK“).
+- mhd-presov-v${version}.apk / .aab — Android aplikácia (priama inštalácia /
+  Google Play), pridáva ich workflow „Android (APK + AAB)“.
+- mhd-presov-v${version}-ios.ipa — iOS (nepodpísaná), workflow „iOS (IPA)“.
 `);
 console.log(`releases/v${version}/mhd-presov-v${version}.html — ${(out.length / 1048576).toFixed(2)} MB`);
