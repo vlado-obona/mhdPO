@@ -2021,7 +2021,7 @@ function drawMapLabels(m, M, layer) {
   const put = (la, lo, w, h, html, dx = 0, dy = 0, center = true) => {
     const pt = m.latLngToContainerPoint([la, lo]);
     const r = center ? { x: pt.x - w / 2 + dx, y: pt.y - h / 2 + dy, w, h } : { x: pt.x + dx, y: pt.y + dy, w, h };
-    if (r.x < -w || r.y < -h || r.x > size.x || r.y > size.y || hit(r)) return false;
+    if (r.x < 0 || r.y < 0 || r.x + r.w > size.x || r.y + r.h > size.y || hit(r)) return false; // celý popis musí byť vidno
     placed.push(r);
     L.marker([la, lo], {
       pane: 'maplabels', interactive: false, keyboard: false,
@@ -2044,10 +2044,18 @@ function drawMapLabels(m, M, layer) {
   // 1) názvy zastávok (raz na skupinu nástupíšť)
   if (z >= 16) {
     const seen = new Set();
-    for (const i of vis) {
+    // pri viacerých nástupištiach toho istého mena popísať to bližšie k stredu mapy
+    const c = m.getCenter();
+    const byCenter = vis.slice().sort((a, b) =>
+      haversine(c.lat, c.lng, D.stops[a].la, D.stops[a].lo) - haversine(c.lat, c.lng, D.stops[b].la, D.stops[b].lo));
+    for (const i of byCenter) {
       const s = D.stops[i];
       if (seen.has(s.n)) continue;
-      if (put(s.la, s.lo, tw(s.n, 11), 14, `<span class="ml-stop">${esc(s.n)}</span>`, 10, -7, false)) seen.add(s.n);
+      const w = tw(s.n, 11), html = `<span class="ml-stop">${esc(s.n)}</span>`;
+      // vpravo, vľavo, nad, pod zastávkou — prvé voľné miesto
+      for (const [dx, dy] of [[11, -7], [-w - 11, -7], [-w / 2, -25], [-w / 2, 11]]) {
+        if (put(s.la, s.lo, w, 14, html, dx, dy, false)) { seen.add(s.n); break; }
+      }
     }
   }
   // 2) časti mesta, dôležité miesta
