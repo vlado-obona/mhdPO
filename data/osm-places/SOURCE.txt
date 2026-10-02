@@ -1,5 +1,5 @@
 zdroj: OpenStreetMap cez Overpass API, © prispievatelia OpenStreetMap, ODbL 1.0
-stiahnute: 2026-10-02T17:55:05Z
-stav OSM: 2026-10-02T17:51:30Z
+stiahnute: 2026-10-02T18:07:41Z
+stav OSM: 2026-10-02T18:02:49Z
 bbox: 48.925,21.145,49.085,21.37
-miesta: 7274, adresy: 26326, úseky ulíc: 3687
+miesta: 7274, adresy: 26326, úseky ulíc: 3671
