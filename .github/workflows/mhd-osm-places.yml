@@ -1,7 +1,8 @@
 name: Miesta a adresy (OpenStreetMap)
 
 # Stiahne pomenované miesta (námestia, kostoly, obchody, úrady, školy,
-# nemocnice, časti mesta…) a adresy z OpenStreetMap v okolí zastávok MHD
+# nemocnice, časti mesta…), adresy, ulice a plochy pre offline mapu (voda,
+# parky, lesy, lúky, cintoríny) z OpenStreetMap v okolí zastávok MHD
 # Prešov do data/osm-places/ (sandbox na Overpass nedosiahne).
 # Dáta © prispievatelia OpenStreetMap, licencia ODbL.
 on:
@@ -60,6 +61,20 @@ jobs:
           way["highway"]["name"]["highway"!~"^(bus_stop|platform|proposed|construction)$"](${BB});
           out geom tags;
           EOF
+          cat > areas.ql <<EOF
+          [out:json][timeout:300];
+          (
+            way["natural"="water"](${BB}); relation["natural"="water"](${BB});
+            way["waterway"="riverbank"](${BB}); relation["waterway"="riverbank"](${BB});
+            way["waterway"~"^(river|stream|canal)$"](${BB});
+            way["leisure"~"^(park|garden|pitch|playground)$"](${BB}); relation["leisure"~"^(park|garden)$"](${BB});
+            way["landuse"~"^(forest|grass|meadow|recreation_ground|village_green|cemetery|allotments|orchard)$"](${BB});
+            relation["landuse"~"^(forest|grass|meadow|recreation_ground|cemetery|allotments|orchard)$"](${BB});
+            way["natural"~"^(wood|scrub|grassland|heath)$"](${BB}); relation["natural"~"^(wood|scrub|grassland)$"](${BB});
+            way["amenity"="grave_yard"](${BB});
+          );
+          out geom;
+          EOF
           q() { # $1 = dotaz, $2 = výstup; viac zrkadiel Overpass
             for n in 1 2 3 4; do
               for u in https://overpass-api.de/api/interpreter https://overpass.private.coffee/api/interpreter https://overpass.kumi.systems/api/interpreter; do
@@ -74,18 +89,23 @@ jobs:
           q pois.ql pois.json
           q addr.ql addr.json
           q streets.ql streets.json
+          q areas.ql areas.json
           # len potrebné značky, aby súbor ostal malý
           jq -c '[.elements[] | {t:.type[0:1], id, la:((.lat // .center.lat)*1e5|round/1e5), lo:((.lon // .center.lon)*1e5|round/1e5),
                   g:(.tags | with_entries(select(.key|test("^(name|name:sk|alt_name|old_name|short_name|official_name|brand|amenity|shop|tourism|leisure|historic|office|healthcare|craft|club|sport|building|landuse|place|railway|highway|natural|man_made|power|aeroway|religion|denomination|addr:street|addr:place|addr:housenumber|addr:conscriptionnumber|addr:streetnumber|addr:city)$"))))}]' pois.json > $OUT/pois.json
           jq -c '[.elements[] | select(.lat or .center) | [((.lat // .center.lat)*1e5|round/1e5), ((.lon // .center.lon)*1e5|round/1e5),
                   (.tags["addr:street"] // .tags["addr:place"] // ""), (.tags["addr:housenumber"] // ""), (.tags["addr:city"] // ""), (.tags.name // "")]]' addr.json > $OUT/addresses.json
           jq -c '[.elements[] | select(.geometry) | {n:.tags.name, h:.tags.highway, p:[.geometry[] | [(.lat*1e5|round/1e5), (.lon*1e5|round/1e5)]]}]' streets.json > $OUT/streets.json
+          # plochy: druh + geometria (cesty aj multipolygóny s rolami outer/inner)
+          jq -c '[.elements[] | {t:.type[0:1], g:(.tags | with_entries(select(.key|test("^(name|natural|waterway|leisure|landuse|amenity|water)$")))),
+                  p:(if .geometry then [.geometry[] | [(.lat*1e5|round/1e5), (.lon*1e5|round/1e5)]] else null end),
+                  m:(if .members then [.members[] | select(.geometry) | {r:.role, p:[.geometry[] | [(.lat*1e5|round/1e5), (.lon*1e5|round/1e5)]]}] else null end)}]' areas.json > $OUT/areas.json
           {
             echo "zdroj: OpenStreetMap cez Overpass API, © prispievatelia OpenStreetMap, ODbL 1.0"
             echo "stiahnute: $(date -u +%FT%TZ)"
             echo "stav OSM: $(jq -r '.osm3s.timestamp_osm_base' pois.json)"
             echo "bbox: $BB"
-            echo "miesta: $(jq length $OUT/pois.json), adresy: $(jq length $OUT/addresses.json), úseky ulíc: $(jq length $OUT/streets.json)"
+            echo "miesta: $(jq length $OUT/pois.json), adresy: $(jq length $OUT/addresses.json), úseky ulíc: $(jq length $OUT/streets.json), plochy: $(jq length $OUT/areas.json)"
           } > $OUT/SOURCE.txt
           cat $OUT/SOURCE.txt; ls -la $OUT
       - name: Commit
