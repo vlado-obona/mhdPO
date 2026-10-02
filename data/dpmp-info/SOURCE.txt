@@ -1,4 +1,4 @@
-stiahnute: 2026-10-01T18:20:48Z
+stiahnute: 2026-10-02T18:05:10Z
 b260fdd0e3bca7865c35da2a78f45d73c81c299e538a1b23450a1a274f6a5ee8  data/dpmp-info/aplikacie.html
 b1110bb12af151f0d9bc3d5cf4ee4f0526d9e8c018fc79706891caaf1e3c707b  data/dpmp-info/ceny-listkov.html
 00bdad31408a520859a326cba813aba496064af79eb485e23cbb7e8422be88d7  data/dpmp-info/cyril.html
