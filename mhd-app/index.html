@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>MHD Prešov — plánovač spojení</title>
-  <meta name="description" content="Plánovač spojení MHD Prešov — vyhľadávanie spojení s prestupmi podľa aktuálnych cestovných poriadkov DPMP.">
+  <title>Odkiaľ Kam — MHD Prešov</title>
+  <meta name="description" content="Odkiaľ Kam — neoficiálny plánovač spojení MHD Prešov s prestupmi podľa verejných cestovných poriadkov.">
   <meta name="theme-color" content="#0b7a3b">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png">
@@ -13,14 +13,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="MHD Prešov">
+  <meta name="apple-mobile-web-app-title" content="Odkiaľ Kam">
   <link rel="stylesheet" href="vendor/leaflet.css">
   <link rel="stylesheet" href="app.css">
   <meta name="robots" content="noindex">
 </head>
 <body>
   <header class="top">
-    <h1>MHD Prešov <span id="appVer" class="app-ver"></span></h1>
+    <h1>Odkiaľ Kam <span class="app-ver">MHD Prešov</span> <span id="appVer" class="app-ver"></span></h1>
     <span id="dataInfo" class="data-info" title="Platnosť cestovných poriadkov"></span>
   </header>
 
@@ -30,13 +30,13 @@
       <button id="fav1" class="fav fav-b" type="button"><span class="fav-ico"></span><span class="fav-lbl"></span><span class="fav-sub"></span></button>
     </section>
     <p class="fav-hint">Ťuknutím ťa appka navedie do cieľa · podržaním nastavíš cieľ a názov</p>
-    <button id="tktBtn" class="tkt-btn" type="button">🎫 Kúpiť lístok DPMP <span>SMS · karta · aplikácia</span></button>
+    <button id="tktBtn" class="tkt-btn" type="button">🎫 Kúpiť lístok <span>SMS · karta · aplikácia</span></button>
 
     <section class="planner" id="planner">
       <div class="field from">
         <label for="fromInput">🚩 Odkiaľ</label>
         <div class="input-row">
-          <input id="fromInput" type="text" placeholder="Zastávka alebo bod na mape" autocomplete="off" enterkeyhint="search">
+          <input id="fromInput" type="text" placeholder="Zastávka, miesto, adresa…" autocomplete="off" enterkeyhint="search">
           <button id="geoBtn" class="icon-btn" title="Použiť moju polohu" aria-label="Použiť moju polohu">📍</button>
         </div>
         <div id="fromSuggest" class="suggest" hidden></div>
@@ -47,7 +47,7 @@
       <div class="field to">
         <label for="toInput">🏁 Kam</label>
         <div class="input-row">
-          <input id="toInput" type="text" placeholder="Cieľová zastávka" autocomplete="off" enterkeyhint="search">
+          <input id="toInput" type="text" placeholder="Zastávka, miesto, adresa…" autocomplete="off" enterkeyhint="search">
         </div>
         <div id="toSuggest" class="suggest" hidden></div>
       </div>
@@ -90,9 +90,9 @@
       <label for="favName">Názov tlačidla</label>
       <input id="favName" type="text" maxlength="18" placeholder="napr. Domov, Škola" autocomplete="off">
       <div id="favIcons" class="fav-icons" role="group" aria-label="Ikona"></div>
-      <label for="favStop">Cieľová zastávka</label>
+      <label for="favStop">Cieľ (zastávka, miesto alebo adresa)</label>
       <div class="field">
-        <div class="input-row"><input id="favStop" type="text" placeholder="Začni písať názov zastávky" autocomplete="off"></div>
+        <div class="input-row"><input id="favStop" type="text" placeholder="Začni písať názov" autocomplete="off"></div>
         <div id="favSuggest" class="suggest" hidden></div>
       </div>
       <div class="dlg-alt">
@@ -194,9 +194,11 @@
 
   <footer class="foot">
     <p>Hviezdička (*) v názve = zastávka na znamenie.</p>
-    <p>Dáta: oficiálne cestovné poriadky <span id="agencyName">DPMP</span> (GTFS).
+    <p><b>Neoficiálna aplikácia</b> — nie je prevádzkovaná dopravným podnikom.
+    Dáta: verejné cestovné poriadky <span id="agencyName">DPMP</span> (GTFS).
     Plánovač je informatívny — sleduj aj aktuálne výluky na
     <a href="https://www.dpmp.sk" target="_blank" rel="noopener">dpmp.sk</a>.</p>
+    <p>Miesta a adresy: © prispievatelia <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL).</p>
   </footer>
 
   <script src="vendor/leaflet.js"></script>

@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.3.3';
+const APP_VERSION = '1.4.0';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -125,36 +125,138 @@ async function loadData() {
   setStatus('');
 }
 
+// ── miesta a adresy (OpenStreetMap) ─────────────────────────────────
+// data/places.json zostavuje build-data.mjs z data/osm-places/ (námestia,
+// kostoly, obchody, úrady, školy… a adresy). Načíta sa pri prvom písaní.
+let places = null, placesLoading = null;
+function loadPlaces() {
+  if (!placesLoading) {
+    placesLoading = fetch(`data/places.json${D?.meta?.placesV ? `?v=${D.meta.placesV}` : ''}`)
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      .then((P) => { places = P ? prepPlaces(P) : null; return places; });
+  }
+  return placesLoading;
+}
+function prepPlaces(P) {
+  const items = P.p.map(([name, c, la, lo, alt]) => ({
+    name, c, la, lo, norm: norm(name), alt: alt ? norm(alt) : '', cat: norm(P.cats[c][0]),
+  }));
+  const streets = P.a.map(([name, la, lo, nums]) => ({ name, la, lo, nums, norm: norm(name) }));
+  return { cats: P.cats, items, streets };
+}
+// najbližšia zastávka k miestu (podľa vzdušnej čiary)
+function nearestStop(la, lo) {
+  let best = null, bd = Infinity;
+  for (const st of D.stops) {
+    const d = haversine(la, lo, st.la, st.lo);
+    if (d < bd) { bd = d; best = st; }
+  }
+  return { name: best.n, d: bd };
+}
+const wordsOf = (n) => n.split(/[\s,.\-–/()„“"]+/).filter(Boolean);
+// skóre zhody: 0 = názov začína dotazom, 1 = všetky slová dotazu sú začiatky
+// slov názvu, 2 = názov obsahuje dotaz, 3 = zhoda cez kategóriu (napr. „kostol“)
+function matchScore(it, q, toks) {
+  if (it.norm.startsWith(q)) return 0;
+  const w = wordsOf(it.norm).concat(wordsOf(it.alt));
+  if (toks.every((t) => w.some((x) => x.startsWith(t)))) return 1;
+  if (it.norm.includes(q) || (it.alt && it.alt.includes(q))) return 2;
+  const wc = w.concat(wordsOf(it.cat));
+  if (toks.every((t) => wc.some((x) => x.startsWith(t)))) return 3;
+  return -1;
+}
+const NUM_RE = /^\d+[a-z]?(\/\d+[a-z]?)?$/;
+function searchPlaces(qRaw, limit) {
+  if (!places) return [];
+  const q = norm(qRaw.trim()).replace(/\s+/g, ' ');
+  if (q.length < 2) return [];
+  const toks = q.split(' ');
+  const out = [];
+  // adresa „ulica číslo“ — číslo môže byť súpisné/orientačné (2894/47) aj len jedno z nich
+  const last = toks[toks.length - 1];
+  if (toks.length > 1 && NUM_RE.test(last)) {
+    const sq = toks.slice(0, -1).join(' ');
+    for (const s of places.streets) {
+      if (!(s.norm.startsWith(sq) || wordsOf(s.norm).some((x) => x.startsWith(sq)))) continue;
+      for (const [hn, la, lo] of s.nums) {
+        const h = norm(hn);
+        if (h === last || h.split('/').includes(last)) {
+          const m = s.name.match(/^(.*) \((.*)\)$/); // „Hlavná (Fintice)“ → „Hlavná 47 (Fintice)“
+          out.push({ kind: 'addr', name: m ? `${m[1]} ${hn} (${m[2]})` : `${s.name} ${hn}`, la, lo, score: s.norm.startsWith(sq) ? 0 : 1 });
+        }
+      }
+    }
+  }
+  for (const s of places.streets) {
+    const sc = s.norm.startsWith(q) ? 0 : wordsOf(s.norm).some((x) => x.startsWith(q)) ? 1 : -1;
+    if (sc >= 0) out.push({ kind: 'street', name: s.name, la: s.la, lo: s.lo, score: sc + 0.5 });
+  }
+  for (const it of places.items) {
+    const sc = matchScore(it, q, toks);
+    if (sc >= 0) out.push({ kind: 'place', name: it.name, la: it.la, lo: it.lo, c: it.c, score: sc });
+  }
+  out.sort((a, b) => a.score - b.score || a.name.length - b.name.length || a.name.localeCompare(b.name, 'sk'));
+  return out.slice(0, limit);
+}
+function placeMeta(r) {
+  if (r.kind === 'addr') return ['🏠', 'adresa'];
+  if (r.kind === 'street') return ['🛣️', 'ulica · pre presnosť dopíš číslo domu'];
+  const [label, icon] = places.cats[r.c];
+  return [icon, label];
+}
+
 // ── autocomplete ─────────────────────────────────────────────────────
+// zastávky + miesta/adresy; miesto sa plánuje ako bod (pešo na najbližšie zastávky)
 function attachSuggest(input, box, onPick) {
   let items = [], active = -1;
   const render = () => {
     box.innerHTML = '';
-    items.forEach((g, i) => {
+    items.forEach((it, i) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.innerHTML = `${g.name} <span class="hint">(${g.stops.length}× nástupište)</span>`;
+      if (it.kind === 'group') {
+        b.innerHTML = `🚏 ${esc(it.g.name)} <span class="hint">zastávka · ${it.g.stops.length}× nástupište</span>`;
+      } else {
+        const [icon, label] = placeMeta(it);
+        const ns = nearestStop(it.la, it.lo);
+        b.innerHTML = `${icon} ${esc(it.name)} <span class="hint">${esc(label)} · ${fmtDist(ns.d)} od zastávky ${esc(ns.name)}</span>`;
+      }
       if (i === active) b.classList.add('active');
-      b.addEventListener('mousedown', (e) => { e.preventDefault(); pick(g); });
+      b.addEventListener('mousedown', (e) => { e.preventDefault(); pick(it); });
       box.appendChild(b);
     });
     box.hidden = items.length === 0;
   };
-  const pick = (g) => {
-    input.value = g.name;
+  const pick = (it) => {
     box.hidden = true;
-    onPick({ kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon });
+    if (it.kind === 'group') {
+      const g = it.g;
+      input.value = g.name;
+      onPick({ kind: 'group', name: g.name, stops: g.stops, lat: g.lat, lon: g.lon });
+    } else {
+      input.value = it.name;
+      onPick({ kind: 'point', lat: it.la, lon: it.lo, label: it.name });
+    }
   };
-  input.addEventListener('input', () => {
-    const q = norm(input.value.trim());
-    onPick(null);
-    if (q.length < 1) { box.hidden = true; return; }
+  const update = () => {
+    const raw = input.value.trim();
+    const q = norm(raw);
+    if (q.length < 1) { items = []; box.hidden = true; return; }
     const starts = groups.filter((g) => g.norm.startsWith(q));
     const contains = groups.filter((g) => !g.norm.startsWith(q) && g.norm.includes(q));
-    items = [...starts, ...contains].slice(0, 12);
+    const st = [...starts, ...contains].map((g) => ({ kind: 'group', g }));
+    const pl = searchPlaces(raw, 10);
+    // zastávky, ktorých názov začína dotazom, idú prvé; potom miesta
+    items = [...st.slice(0, starts.length ? 6 : 4), ...pl].slice(0, 14);
     active = -1;
     render();
+  };
+  input.addEventListener('input', () => {
+    onPick(null);
+    update();
+    if (!places) loadPlaces().then(() => { if (places && document.activeElement === input) update(); });
   });
+  input.addEventListener('focus', () => { loadPlaces(); });
   input.addEventListener('keydown', (e) => {
     if (box.hidden) return;
     if (e.key === 'ArrowDown') { active = Math.min(active + 1, items.length - 1); render(); e.preventDefault(); }
@@ -296,8 +398,10 @@ function search() {
   if (!D) return;
   if (!sel.from) { setStatus('Vyber východiskovú zastávku.', true); $('fromInput').focus(); return; }
   if (!sel.to) { setStatus('Vyber cieľovú zastávku.', true); $('toInput').focus(); return; }
-  const fromStops = stopSetFor(sel.from);
-  const toStops = stopSetFor(sel.to);
+  let fromStops = stopSetFor(sel.from);
+  if (!fromStops.size) fromStops = stopSetFor(sel.from, 1500);
+  let toStops = stopSetFor(sel.to);
+  if (!toStops.size) toStops = stopSetFor(sel.to, 1500);
   if (!fromStops.size) { setStatus('V okolí zvoleného bodu nie je žiadna zastávka MHD.', true); return; }
   if (!toStops.size) { setStatus('V okolí cieľového bodu nie je žiadna zastávka MHD.', true); return; }
 
@@ -405,7 +509,7 @@ function renderResults(journeys) {
       div.className = 'leg';
       div.innerHTML = `
         <div class="t">${fmtTime(j.arrTime - j.finalWalk)}</div>
-        <div><span class="badge walk">pešo</span> ${fmtDur(j.finalWalk)} do cieľa</div>`;
+        <div><span class="badge walk">pešo</span> ${fmtDur(j.finalWalk)} do cieľa${sel.to?.kind === 'point' && !sel.to.label.startsWith('Bod ') ? ` <b>${esc(sel.to.label)}</b>` : ''}</div>`;
       body.appendChild(div);
     }
 
@@ -1890,7 +1994,7 @@ function renderTripLive() {
 // ── inicializácia ────────────────────────────────────────────────────
 async function main() {
   $('appVer').textContent = `v${APP_VERSION}`;
-  document.title = `MHD Prešov v${APP_VERSION} — plánovač spojení`;
+  document.title = `Odkiaľ Kam v${APP_VERSION} — MHD Prešov`;
   const now = nowInSk();
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;

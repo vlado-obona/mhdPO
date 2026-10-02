@@ -1,7 +1,7 @@
 {
-  "name": "MHD Prešov — plánovač spojení",
-  "short_name": "MHD Prešov",
-  "description": "Vyhľadávanie spojení MHD Prešov s prestupmi podľa aktuálnych cestovných poriadkov DPMP.",
+  "name": "Odkiaľ Kam — MHD Prešov",
+  "short_name": "Odkiaľ Kam",
+  "description": "Neoficiálny plánovač spojení MHD Prešov s prestupmi podľa verejných cestovných poriadkov.",
   "lang": "sk",
   "start_url": "./",
   "scope": "./",

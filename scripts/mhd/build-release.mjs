@@ -26,6 +26,7 @@ function mustReplace(src, from, to, label) {
 
 const dataset = read('data/dataset.json');
 const basemap = read('data/basemap.json');
+const placesJson = read('data/places.json');
 const appCss = read('app.css');
 const leafletCss = read('vendor/leaflet.css');
 const leafletJs = read('vendor/leaflet.js');
@@ -56,6 +57,11 @@ app = mustReplace(app,
   `Promise.resolve(window.__BASEMAP__ || null)`,
   'načítanie basemapy');
 app = mustReplace(app,
+  `fetch(\`data/places.json\${D?.meta?.placesV ? \`?v=\${D.meta.placesV}\` : ''}\`)
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)`,
+  `Promise.resolve(window.__PLACES__ || null)`,
+  'načítanie miest');
+app = mustReplace(app,
   `  if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }`,
@@ -72,7 +78,7 @@ const out = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MHD Prešov — plánovač spojení (v${version})</title>
+<title>Odkiaľ Kam — MHD Prešov (v${version})</title>
 <style>
 ${leafletCss}
 ${appCss}
@@ -81,14 +87,15 @@ ${appCss}
 <body>
 ${body}
 <div style="max-width:640px;margin:0 auto 2rem;padding:0 1rem;font-size:.75rem;color:#667">
-Samostatná verzia v${version} — cestovné poriadky platné
+Samostatná verzia v${version} — miesta a adresy © prispievatelia OpenStreetMap (ODbL); cestovné poriadky platné
 ${meta.validFrom}–${meta.validTo} (zabalené v súbore, generované ${meta.generated?.slice(0, 10)}).
 </div>
 <script>
 ${leafletJs}
 </script>
 <script>window.__DATASET__ = ${dataset};
-window.__BASEMAP__ = ${basemap};</script>
+window.__BASEMAP__ = ${basemap};
+window.__PLACES__ = ${placesJson};</script>
 <script>
 ${raptor}
 ${app}

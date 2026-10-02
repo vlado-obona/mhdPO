@@ -16,6 +16,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { applyPatches } from './gtfs-patch.mjs';
+import { buildPlaces } from './places.mjs';
 
 const SRC = 'data/gtfs-presov';
 const OUT = 'mhd-app/data';
@@ -350,6 +351,15 @@ const basemap = [];
 
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, 'basemap.json'), JSON.stringify(basemap));
+// ── miesta a adresy z OpenStreetMap (vyhľadávanie „odkiaľ/kam“) ────
+const pl = buildPlaces(stops);
+if (pl) {
+  const pj = JSON.stringify(pl.places);
+  dataset.meta.placesV = createHash('sha256').update(pj).digest('hex').slice(0, 12);
+  writeFileSync(join(OUT, 'places.json'), pj);
+  const st = pl.stat;
+  console.log(`miesta OSM: ${st.kept} (z ${st.pois}; bez kategórie ${st.noCat}, ďaleko od MHD ${st.far}, duplicity ${st.dup}), ulice: ${st.streets}, adresy: ${st.addr}, ${(pj.length / 1024).toFixed(0)} kB`);
+} else console.warn('⚠ data/osm-places chýba — vyhľadávanie miest nebude k dispozícii');
 const json = JSON.stringify(dataset);
 const hash = createHash('sha256').update(json).digest('hex').slice(0, 12);
 writeFileSync(join(OUT, 'dataset.json'), json);

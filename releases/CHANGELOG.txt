@@ -1,4 +1,4 @@
-MHD PREŠOV — PLÁNOVAČ SPOJENÍ
+ODKIAĽ KAM — MHD PREŠOV (pôvodne „MHD Prešov — plánovač spojení“)
 Popis zmien jednotlivých verzií
 ================================================================
 
@@ -7,11 +7,34 @@ Súbory každej verzie (od v1.2.2 s verziou v názve):
   mhd-presov-vX.Y.Z.aab         Android balík pre Google Play (od v1.3.3)
   mhd-presov-vX.Y.Z.html        appka v jednom súbore (iPhone/PC — otvor v prehliadači)
   mhd-presov-vX.Y.Z-ios.ipa     iOS balík (podpis cez Sideloadly/AltStore)
+Od v1.4.0 sú súbory v GitHub Releases repozitára vlado-obona/mhdPO.
 
 Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS),
 od v1.3.0 doplnené o zmeny vyhlásené DPMP (oznam + linkové CP v PDF).
 Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.4.0  (2. 10. 2026)
+----------------------------------------------------------------
+- Vyhľadanie miesta podľa názvu: do polí Odkiaľ / Kam (aj do
+  rýchlych cieľov) sa dá písať nielen zastávka, ale aj
+  • miesto — námestie, kostol, obchodné centrum, nemocnica, úrad,
+    škola, park, aquapark, časť mesta… (≈ 5 500 miest),
+  • ulica a adresa s číslom domu, napr. „Hlavná 47“ alebo
+    „Hlavná 2894/47“ (≈ 800 ulíc, 22 700 adries; rovnomenné ulice
+    v okolitých obciach sú odlíšené, napr. „Hlavná (Fintice)“).
+  Pri každom návrhu appka ukáže najbližšiu zastávku a vzdialenosť
+  k nej; spojenie počíta pešo na najvhodnejšie okolité zastávky
+  a na konci ukáže „pešo … do cieľa <miesto>“.
+  Funguje offline. Zdroj: OpenStreetMap (© prispievatelia
+  OpenStreetMap, ODbL), stav k 2. 10. 2026.
+- Nový názov aplikácie „Odkiaľ Kam“ (na ploche „Odkiaľ Kam v1.4.0“),
+  označenie „neoficiálna aplikácia“; tlačidlo „Kúpiť lístok“.
+- Android: nový názov balíčka sk.operatorsystem.mhdpresov (pre
+  Google Play) — nainštaluje sa ako nová appka, staršiu
+  „MHD Prešov“ (sk.mhdpresov.app) môžeš odinštalovať.
+- Vývoj presunutý do repozitára vlado-obona/mhdPO.
 
 ----------------------------------------------------------------
 v1.3.3  (2. 10. 2026)
