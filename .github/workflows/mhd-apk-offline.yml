@@ -1,9 +1,13 @@
 name: MHD Presov - offline APK
 
-# Zabalí plánovač (mhd-app/) do samostatnej Android aplikácie (Capacitor):
-# web aj dáta sú VNÚTRI aplikácie — nepotrebuje žiadny hosting ani doménu.
-# Online si mapa dotiahne OSM dlaždice, offline kreslí sieť trás MHD.
-# Výsledok commitne do releases/v<verzia>/mhd-presov-offline.apk.
+# Zabalí plánovač (mhd-app/) do samostatnej Android aplikácie (Capacitor 8,
+# targetSdk 36 — požiadavka Google Play od 31. 8. 2026): web aj dáta sú
+# VNÚTRI aplikácie. Výsledok commitne do releases/v<verzia>/:
+#   mhd-presov-v<verzia>.apk  — na priamu inštaláciu (sideload)
+#   mhd-presov-v<verzia>.aab  — na nahratie do Google Play Console
+# Oba sú podpísané tým istým kľúčom zo secrets ANDROID_KEYSTORE_B64 +
+# ANDROID_KEYSTORE_PASSWORD (alias „android“). Bez nich sa vytvorí nový kľúč
+# (v artefakte) — vtedy sa appka nedá aktualizovať, len preinštalovať.
 on:
   push:
     branches: [claude/presov-mhd-planner-app-xnl2ew]
@@ -14,7 +18,7 @@ on:
       version:
         description: 'Verzia release (napr. 1.1.0)'
         required: false
-        default: '1.3.2'
+        default: '1.3.3'
         type: string
 
 permissions:
@@ -28,24 +32,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ inputs.version || '1.3.2' }}
+      VERSION: ${{ inputs.version || '1.3.3' }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Capacitor projekt
         run: |
           mkdir cap-build && cd cap-build
           npm init -y >/dev/null
-          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6 @capacitor/geolocation@6 @capacitor/local-notifications@6.1.3 @capacitor/haptics@6.0.3 @capacitor/app@6.0.3 @capacitor-community/keep-awake@5.0.1 @capacitor-community/text-to-speech@4.1.1 >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@8.5.2 @capacitor/cli@8.5.2 @capacitor/android@8.5.2 @capacitor/geolocation@8.2.2 @capacitor/local-notifications@8.3.1 @capacitor/haptics@8.0.2 @capacitor/app@8.1.2 @capacitor-community/keep-awake@8.0.1 @capacitor-community/text-to-speech@8.0.2 >/dev/null
           cat > capacitor.config.json <<EOF
           {
             "appId": "sk.mhdpresov.app",
@@ -58,12 +62,14 @@ jobs:
           grep -q "APP_VERSION = '$VERSION'" www/app.js || { echo "::error::APP_VERSION v app.js nesedí s $VERSION"; exit 1; }
           npx cap add android
           npx cap sync android
-          # oprávnenia: geolokácia (Capacitor Geolocation) + presné upozornenie na výstup
-          # (LocalNotifications „at“ — bez exact alarm by Android 12+ mohol oznámenie oneskoriť)
+          grep -E 'targetSdkVersion|compileSdkVersion' android/variables.gradle
+          grep -q 'targetSdkVersion = 36' android/variables.gradle || { echo "::error::targetSdk nie je 36 (Google Play)"; exit 1; }
+          # oprávnenia: geolokácia (len pri používaní appky). Presné upozornenie na výstup:
+          # SCHEDULE_EXACT_ALARM pridáva plugin LocalNotifications (USE_EXACT_ALARM Google Play
+          # povoľuje len budíkom/kalendárom — nepoužívame).
           M=android/app/src/main/AndroidManifest.xml
-          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />\n    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />\n</manifest>#' "$M"
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n</manifest>#' "$M"
           grep -c LOCATION "$M"
-          grep -c EXACT_ALARM "$M"
 
       - name: Ikony aplikacie
         working-directory: cap-build
@@ -76,64 +82,76 @@ jobs:
       - name: Verzia aplikacie
         working-directory: cap-build/android
         run: |
-          CODE=$(date -u +%Y%m%d)
+          # versionCode musí stále rásť (Google Play aj aktualizácia v telefóne):
+          # (YYMMDD)*1000 + minúta dňa/2 → napr. 261002*1000+417; je vyššie než
+          # doterajšie 20261001 a pod limitom 2 100 000 000
+          D=$(date -u +%y%m%d); HM=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
+          CODE=$(( 10#$D * 1000 + HM / 2 ))
           sed -i "s/versionCode 1$/versionCode $CODE/" app/build.gradle
           sed -i "s/versionName \"1.0\"$/versionName \"$VERSION\"/" app/build.gradle
           grep -E 'versionCode|versionName' app/build.gradle
 
-      - name: Build release APK
+      - name: Build release APK + AAB
         working-directory: cap-build/android
-        run: ./gradlew --no-daemon assembleRelease
+        run: ./gradlew --no-daemon assembleRelease bundleRelease
 
-      - name: Podpis APK
+      - name: Podpis APK a AAB
         env:
           KS_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
           KS_PASS_SECRET: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           cd cap-build
+          mkdir -p newkey
           if [ -n "$KS_B64" ] && [ -n "$KS_PASS_SECRET" ]; then
             echo "$KS_B64" | base64 -d > android.keystore
             KS_PASS="$KS_PASS_SECRET"
+            echo "::add-mask::$KS_PASS"
             echo "Kluc zo secrets."
           else
             KS_PASS=$(openssl rand -hex 16)
+            echo "::add-mask::$KS_PASS"
             keytool -genkeypair -alias android -keyalg RSA -keysize 2048 \
               -validity 10000 -keystore android.keystore \
               -storepass "$KS_PASS" -keypass "$KS_PASS" \
               -dname "CN=MHD Presov, O=mhdpresov, L=Presov, C=SK"
-            echo "VYGENEROVANY NOVY KLUC (v artefakte, uloz si ho + heslo do secrets)."
-            echo "$KS_PASS" > keystore-password.txt
+            echo "::warning::Secrets ANDROID_KEYSTORE_* chybaju - vygenerovany NOVY kluc (artefakt 'novy-podpisovy-kluc'). Ulož ho do secrets, inak sa appka neda aktualizovat."
+            cp android.keystore newkey/android.keystore
+            base64 -w0 android.keystore > newkey/ANDROID_KEYSTORE_B64.txt
+            printf '%s' "$KS_PASS" > newkey/ANDROID_KEYSTORE_PASSWORD.txt
           fi
-          echo "::add-mask::$KS_PASS"
+          keytool -list -v -keystore android.keystore -storepass "$KS_PASS" -alias android | grep -E 'SHA256:|Valid'
           BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
           UNSIGNED=android/app/build/outputs/apk/release/app-release-unsigned.apk
           "$BT/zipalign" -f 4 "$UNSIGNED" aligned.apk
           "$BT/apksigner" sign --ks android.keystore --ks-key-alias android \
             --ks-pass "pass:$KS_PASS" --key-pass "pass:$KS_PASS" \
             --out mhd-presov-offline.apk aligned.apk
-          "$BT/apksigner" verify mhd-presov-offline.apk && echo "podpis OK"
+          "$BT/apksigner" verify mhd-presov-offline.apk && echo "APK podpis OK"
+          cp android/app/build/outputs/bundle/release/app-release.aab mhd-presov.aab
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore android.keystore \
+            -storepass "$KS_PASS" -keypass "$KS_PASS" mhd-presov.aab android
+          jarsigner -verify mhd-presov.aab | tail -1
+          rm -f android.keystore aligned.apk
 
-      - name: Artefakt (kluc pri prvom builde)
+      - name: Artefakt — novy kluc (len ak chybaju secrets)
+        if: hashFiles('cap-build/newkey/android.keystore') != ''
         uses: actions/upload-artifact@v4
         with:
-          name: mhd-presov-offline-apk
-          path: |
-            cap-build/mhd-presov-offline.apk
-            cap-build/android.keystore
-            cap-build/keystore-password.txt
+          name: novy-podpisovy-kluc
+          path: cap-build/newkey/
           retention-days: 30
 
-      - name: Commit APK do releases
+      - name: Commit APK + AAB do releases
         run: |
           mkdir -p "releases/v$VERSION"
           cp cap-build/mhd-presov-offline.apk "releases/v$VERSION/mhd-presov-v$VERSION.apk"
+          cp cap-build/mhd-presov.aab "releases/v$VERSION/mhd-presov-v$VERSION.aab"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "releases/v$VERSION/mhd-presov-v$VERSION.apk"
+          git add "releases/v$VERSION/mhd-presov-v$VERSION.apk" "releases/v$VERSION/mhd-presov-v$VERSION.aab"
           if git diff --cached --quiet; then
-            echo "APK bez zmeny."
+            echo "APK/AAB bez zmeny."
           else
-            git commit -m "mhd: offline APK v$VERSION ($(date -u +%F))"
-            git pull --rebase origin "$GITHUB_REF_NAME" || true
-            git push
+            git commit -m "mhd: Android APK + AAB v$VERSION ($(date -u +%F))"
+            for n in 1 2 3; do git pull --rebase origin "$GITHUB_REF_NAME" && git push && break; sleep 5; done
           fi

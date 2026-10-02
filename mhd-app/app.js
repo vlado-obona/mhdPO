@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.3.2';
+const APP_VERSION = '1.3.3';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -1431,8 +1431,19 @@ async function prepareNotifications(t) {
       id: NOTIF_CHANNEL, name: 'Upozornenie na výstup', importance: 5,
       vibration: true, visibility: 1, description: 'Upozornenie pred výstupom alebo prestupom',
     }).catch(() => {});
+    await checkExact(t);
   } catch {}
   if (trip === t && t.j) scheduleTripNotifs();
+}
+
+// Android 12+: bez povolenia „Budíky a pripomienky“ príde systémová notifikácia
+// (pri zamknutom displeji) len približne — ponúknuť povolenie tlačidlom
+async function checkExact(t) {
+  const LN = window.Capacitor?.Plugins?.LocalNotifications;
+  if (!LN?.checkExactNotificationSetting || !t.notifOk) return;
+  const r = await LN.checkExactNotificationSetting().catch(() => null);
+  t.exactOk = !r || r.exact_alarm === 'granted';
+  if (trip === t) renderTrip();
 }
 
 // kedy podľa CP (+ meškanie) príde autobus jazdy k na predposlednú zastávku
@@ -1549,6 +1560,7 @@ function onTripHidden() {
 }
 function onTripVisible() {
   if (!trip) return;
+  if (trip.exactOk === false) checkExact(trip);
   keepAwake(true);
   evaluateTrip();
   if (trip && trip.j && !['done', 'error'].includes(trip.phase)) scheduleTripNotifs();
@@ -1801,6 +1813,7 @@ function renderTrip() {
   $('tripBoard').hidden = !(t.phase === 'toStop' || t.phase === 'wait' || t.phase === 'ride');
   $('tripBoard').textContent = t.phase === 'ride' ? '✓ Vystúpil som' : '🚌 Už som nastúpil';
   $('tripReplan').hidden = t.phase === 'done' || t.phase === 'locating';
+  $('tripExact').hidden = t.exactOk !== false || t.phase === 'done';
   renderTripLive();
 }
 
@@ -1981,6 +1994,13 @@ async function main() {
   });
   $('tripNav').addEventListener('click', (e) => { if (e.target !== $('tripGm')) tripGmaps(); });
   $('tripGm').addEventListener('click', () => tripGmaps());
+  $('tripExact').addEventListener('click', async () => {
+    const LN = window.Capacitor?.Plugins?.LocalNotifications;
+    const t = trip;
+    if (!LN?.changeExactNotificationSetting || !t) return;
+    const r = await LN.changeExactNotificationSetting().catch(() => null);
+    if (r && trip === t) { t.exactOk = r.exact_alarm === 'granted'; if (t.j) scheduleTripNotifs(); renderTrip(); }
+  });
   $('gmCancel').addEventListener('click', closeGmDlg);
   $('gmGo').addEventListener('click', () => {
     if (trip) trip.gmapsWarned = true;

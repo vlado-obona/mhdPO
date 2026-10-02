@@ -4,6 +4,7 @@ Popis zmien jednotlivých verzií
 
 Súbory každej verzie (od v1.2.2 s verziou v názve):
   mhd-presov-vX.Y.Z.apk         Android aplikácia (všetko zabalené vnútri)
+  mhd-presov-vX.Y.Z.aab         Android balík pre Google Play (od v1.3.3)
   mhd-presov-vX.Y.Z.html        appka v jednom súbore (iPhone/PC — otvor v prehliadači)
   mhd-presov-vX.Y.Z-ios.ipa     iOS balík (podpis cez Sideloadly/AltStore)
 
@@ -11,6 +12,26 @@ Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS),
 od v1.3.0 doplnené o zmeny vyhlásené DPMP (oznam + linkové CP v PDF).
 Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.3.3  (2. 10. 2026)
+----------------------------------------------------------------
+- Príprava na Google Play:
+  • nový súbor mhd-presov-v1.3.3.aab (Android App Bundle) na
+    nahratie do Google Play Console; názov balíčka sk.mhdpresov.app,
+  • Android appka postavená na Capacitor 8 s cieľovým API 36
+    (Android 16) — požiadavka Google Play od 31. 8. 2026,
+  • APK aj AAB podpisuje jeden stály kľúč (GitHub secrets) — po jeho
+    uložení sa ďalšie verzie inštalujú ako aktualizácia, bez
+    odinštalovania,
+  • číslo verzie (versionCode) pri každom zostavení rastie.
+- Presné upozornenie na výstup pri zamknutom displeji: Google Play
+  nedovoľuje plánovačom automatické „presné budíky“, preto ak ich
+  Android nemá povolené, v navigácii sa zobrazí tlačidlo
+  „⏰ Povoliť presné upozornenie“ (otvorí nastavenie Budíky
+  a pripomienky). Bez povolenia príde notifikácia o niečo voľnejšie;
+  pri otvorenej appke upozorňuje GPS ako doteraz.
+- Cestovné poriadky bez zmeny (1. – 28. 10. 2026).
 
 ----------------------------------------------------------------
 v1.3.2  (1. 10. 2026)
