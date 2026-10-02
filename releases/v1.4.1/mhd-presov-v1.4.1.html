@@ -817,6 +817,7 @@ button.ghost {
 
 /* šípka smeru odchodu pri bode zastávky */
 .stop-dir { pointer-events: none; }
+.z-low .stop-dir { display: none; }
 .stop-dir span {
   display: block; width: 18px; height: 18px; line-height: 18px;
   text-align: center; font-size: 17px; color: var(--green);
@@ -2113,6 +2114,10 @@ function initMap() {
   addBaseLayers(map);
   markersLayer = L.layerGroup().addTo(map);
   journeyLayer = L.layerGroup().addTo(map);
+  // pri malom priblížení by sa šípky smeru prekrývali so zastávkami — skryť
+  const lowZoom = () => map.getContainer().classList.toggle('z-low', map.getZoom() < 15);
+  map.on('zoomend', lowZoom);
+  lowZoom();
 
   // každé nástupište zvlášť (sú na správnej strane cesty) + smerová
   // šípka podľa azimutu odchodu autobusov

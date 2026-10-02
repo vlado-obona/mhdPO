@@ -498,6 +498,10 @@ function initMap() {
   addBaseLayers(map);
   markersLayer = L.layerGroup().addTo(map);
   journeyLayer = L.layerGroup().addTo(map);
+  // pri malom priblížení by sa šípky smeru prekrývali so zastávkami — skryť
+  const lowZoom = () => map.getContainer().classList.toggle('z-low', map.getZoom() < 15);
+  map.on('zoomend', lowZoom);
+  lowZoom();
 
   // každé nástupište zvlášť (sú na správnej strane cesty) + smerová
   // šípka podľa azimutu odchodu autobusov

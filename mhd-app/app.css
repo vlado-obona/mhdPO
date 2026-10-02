@@ -148,6 +148,7 @@ button.ghost {
 
 /* šípka smeru odchodu pri bode zastávky */
 .stop-dir { pointer-events: none; }
+.z-low .stop-dir { display: none; }
 .stop-dir span {
   display: block; width: 18px; height: 18px; line-height: 18px;
   text-align: center; font-size: 17px; color: var(--green);
