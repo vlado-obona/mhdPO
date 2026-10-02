@@ -1,0 +1,97 @@
+name: MHD Presov - miesta z OpenStreetMap
+
+# Stiahne pomenované miesta (námestia, kostoly, obchody, úrady, školy,
+# nemocnice, časti mesta…) a adresy z OpenStreetMap v okolí zastávok MHD
+# Prešov do data/osm-places/ (sandbox na Overpass nedosiahne).
+# Dáta © prispievatelia OpenStreetMap, licencia ODbL.
+on:
+  push:
+    branches: [claude/presov-mhd-planner-app-xnl2ew]
+    paths:
+      - '.github/workflows/mhd-osm-places.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stiahnut miesta a adresy z Overpass API
+        run: |
+          set -e
+          OUT=data/osm-places; mkdir -p $OUT
+          # rozsah zastávok MHD (48.942–49.066, 21.165–21.349) + okraj
+          BB="48.925,21.145,49.085,21.37"
+          cat > pois.ql <<EOF
+          [out:json][timeout:300];
+          (
+            nwr["name"]["amenity"](${BB});
+            nwr["name"]["shop"](${BB});
+            nwr["name"]["tourism"](${BB});
+            nwr["name"]["leisure"](${BB});
+            nwr["name"]["historic"](${BB});
+            nwr["name"]["office"](${BB});
+            nwr["name"]["healthcare"](${BB});
+            nwr["name"]["craft"](${BB});
+            nwr["name"]["club"](${BB});
+            nwr["name"]["sport"](${BB});
+            nwr["name"]["building"](${BB});
+            nwr["name"]["landuse"~"^(cemetery|retail|commercial|industrial|recreation_ground|allotments)$"](${BB});
+            nwr["name"]["place"](${BB});
+            nwr["name"]["railway"~"^(station|halt)$"](${BB});
+            nwr["name"]["highway"="pedestrian"](${BB});
+            nwr["name"]["natural"~"^(peak|hill|water|wood|spring)$"](${BB});
+            nwr["name"]["man_made"~"^(tower|water_tower|observation_tower)$"](${BB});
+            nwr["name"]["power"="plant"](${BB});
+            nwr["name"]["aeroway"](${BB});
+          );
+          out center tags;
+          EOF
+          cat > addr.ql <<EOF
+          [out:json][timeout:300];
+          nwr["addr:housenumber"](${BB});
+          out center tags;
+          EOF
+          cat > streets.ql <<EOF
+          [out:json][timeout:300];
+          way["highway"]["name"]["highway"!~"^(bus_stop|platform|proposed|construction)$"](${BB});
+          out geom tags;
+          EOF
+          q() { # $1 = dotaz, $2 = výstup; viac zrkadiel Overpass
+            for n in 1 2 3 4; do
+              for u in https://overpass-api.de/api/interpreter https://overpass.private.coffee/api/interpreter https://overpass.kumi.systems/api/interpreter; do
+                if curl -sS --fail --max-time 400 -A "mhd-presov-planner (github.com/vlado-obona)" --data-urlencode "data@$1" "$u" -o "$2.tmp" \
+                   && jq -e '.elements | length > 0' "$2.tmp" >/dev/null; then
+                  mv "$2.tmp" "$2"; echo "$1 <- $u: $(jq '.elements|length' "$2") prvkov"; jq -r '.osm3s.timestamp_osm_base' "$2"; return 0
+                fi
+                echo "  $u zlyhal (pokus $n)" >&2; sleep $((n*10))
+              done
+            done; return 1
+          }
+          q pois.ql pois.json
+          q addr.ql addr.json
+          q streets.ql streets.json
+          # len potrebné značky, aby súbor ostal malý
+          jq -c '[.elements[] | {t:.type[0:1], id, la:((.lat // .center.lat)*1e5|round/1e5), lo:((.lon // .center.lon)*1e5|round/1e5),
+                  g:(.tags | with_entries(select(.key|test("^(name|name:sk|alt_name|old_name|short_name|official_name|brand|amenity|shop|tourism|leisure|historic|office|healthcare|craft|club|sport|building|landuse|place|railway|highway|natural|man_made|power|aeroway|religion|denomination|addr:street|addr:place|addr:housenumber|addr:conscriptionnumber|addr:streetnumber|addr:city)$"))))}]' pois.json > $OUT/pois.json
+          jq -c '[.elements[] | select(.lat or .center) | [((.lat // .center.lat)*1e5|round/1e5), ((.lon // .center.lon)*1e5|round/1e5),
+                  (.tags["addr:street"] // .tags["addr:place"] // ""), (.tags["addr:housenumber"] // ""), (.tags["addr:city"] // ""), (.tags.name // "")]]' addr.json > $OUT/addresses.json
+          jq -c '[.elements[] | select(.geometry) | {n:.tags.name, h:.tags.highway, p:[.geometry[] | [(.lat*1e5|round/1e5), (.lon*1e5|round/1e5)]]}]' streets.json > $OUT/streets.json
+          {
+            echo "zdroj: OpenStreetMap cez Overpass API, © prispievatelia OpenStreetMap, ODbL 1.0"
+            echo "stiahnute: $(date -u +%FT%TZ)"
+            echo "stav OSM: $(jq -r '.osm3s.timestamp_osm_base' pois.json)"
+            echo "bbox: $BB"
+            echo "miesta: $(jq length $OUT/pois.json), adresy: $(jq length $OUT/addresses.json), úseky ulíc: $(jq length $OUT/streets.json)"
+          } > $OUT/SOURCE.txt
+          cat $OUT/SOURCE.txt; ls -la $OUT
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/osm-places
+          git commit -m "mhd: miesta a adresy z OpenStreetMap" || exit 0
+          for n in 1 2 3; do git pull --rebase origin "$GITHUB_REF_NAME" && git push && break; sleep 5; done
