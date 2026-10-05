@@ -37,6 +37,7 @@ public class TripTrackerService extends Service {
     static final String CH_TRACK = "odkialkam-cesta";
     static final String CH_ALERT = "mhd-vystup";     // kanál vytvára appka (zvuk + vibrácie)
     static final long JS_SILENT_MS = 15000;          // JS bez odozvy dlhšie = upozorní služba
+    static final String PRIVACY = "Tvoja poloha sa nikam neposiela";
 
     // stav zdieľaný s pluginom (jeden proces)
     static volatile boolean running = false;
@@ -185,9 +186,12 @@ public class TripTrackerService extends Service {
             nm.createNotificationChannel(ch);
         }
         Notification.Builder b = Build.VERSION.SDK_INT >= 26 ? new Notification.Builder(this, CH_TRACK) : new Notification.Builder(this);
+        String body = text == null || text.isEmpty() ? "Upozorní ťa pred výstupom aj pri zamknutom displeji." : text;
         b.setSmallIcon(getApplicationInfo().icon)
             .setContentTitle("Odkiaľ Kam sleduje tvoju cestu")
-            .setContentText(text == null || text.isEmpty() ? "Upozorní ťa pred výstupom aj pri zamknutom displeji." : text)
+            .setContentText(body)
+            .setSubText(PRIVACY)
+            .setStyle(new Notification.BigTextStyle().bigText(body + "\n🔒 " + PRIVACY))
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setCategory(Notification.CATEGORY_NAVIGATION)
