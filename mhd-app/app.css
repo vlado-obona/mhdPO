@@ -99,6 +99,10 @@ main { max-width: 640px; margin: 0 auto; padding: .75rem; }
   border: 1px solid var(--line); border-radius: 8px; background: var(--field);
   min-width: 0;
 }
+/* dátum potrebuje viac miesta ako čas (inak sa na úzkom displeji oreže rok) */
+.when #dateInput { flex: 1.9 1 0; padding-right: .3rem; }
+.when #timeInput { flex: 1 1 0; padding-right: .3rem; }
+.when input::-webkit-calendar-picker-indicator { margin-left: 2px; }
 .actions { display: flex; gap: .5rem; }
 button.primary {
   flex: 1; background: var(--green); color: #fff; border: 0;

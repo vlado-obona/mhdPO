@@ -15,6 +15,12 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.2  (5. 10. 2026)
+----------------------------------------------------------------
+- Pole dátumu je širšie — na úzkych telefónoch sa už neoreže rok.
+- Podklady pre Google Play (texty, ikona, grafika, snímky) v store/.
+
+----------------------------------------------------------------
 v1.6.1  (5. 10. 2026)
 ----------------------------------------------------------------
 - Widget „Najbližší autobus“ ukazuje spoje z tvojej aktuálnej GPS
