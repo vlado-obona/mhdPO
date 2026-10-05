@@ -15,6 +15,12 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.4.2  (5. 10. 2026)
+----------------------------------------------------------------
+- Tlačidlo výmeny smeru (⇅) je v riadku „Kam“ pod tlačidlom
+  polohy — rovnako veľké, už neprekrýva polia Odkiaľ/Kam.
+
+----------------------------------------------------------------
 v1.4.1  (2. 10. 2026)
 ----------------------------------------------------------------
 - Nová offline mapa: kreslí sa priamo v telefóne z dát OpenStreetMap
