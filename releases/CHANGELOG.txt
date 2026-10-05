@@ -15,6 +15,13 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.3  (5. 10. 2026)
+----------------------------------------------------------------
+- Plus: nákup dokončený mimo appky (napr. odložená platba) sa pri
+  ďalšom spustení potvrdí v Google Play, aby ho Play po 3 dňoch
+  automaticky nevrátil.
+
+----------------------------------------------------------------
 v1.6.2  (5. 10. 2026)
 ----------------------------------------------------------------
 - Pole dátumu je širšie — na úzkych telefónoch sa už neoreže rok.

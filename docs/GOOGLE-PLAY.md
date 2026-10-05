@@ -1,6 +1,6 @@
 # Google Play – stav a postup
 
-Stav k 5. 10. 2026 (súhrn z Play Console). Neobsahuje žiadne heslá ani kľúče.
+Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani kľúče.
 
 ## Aplikácia
 | Položka | Hodnota |
@@ -11,6 +11,13 @@ Stav k 5. 10. 2026 (súhrn z Play Console). Neobsahuje žiadne heslá ani kľú�
 | Play App Signing | zapnuté – podpisový kľúč spravuje Google; náš keystore (secrets `ANDROID_KEYSTORE_*`) je **upload kľúč** |
 | Interné testovanie | aktívne od 1.6.1 (versionCode 261005339), zoznam „Interní testeri“ |
 | Testovanie licencií | zoznam „Interní testeri“, RESPOND_NORMALLY (nákupy zadarmo) |
+| Platobný profil | Google Payments BEDEKA, s.r.o. (organizácia), prepojený |
+| Produkt Plus | `odkialkam_plus`, jednorazový INAPP (trvalý – **nikdy nekonzumovať**), možnosť nákupu `buy`, spätne kompatibilná, **aktívny**, 174 krajín; SK 2,49 € s DPH (základ 2,02 € bez DPH) |
+
+## Nákup Plus v appke
+- Plugin `@capgo/native-purchases`: nákup `purchaseProduct({productType:'inapp'})` – plugin nákup sám potvrdí (acknowledge).
+- Pri každom štarte `getPurchases('inapp')` → Plus podľa nákupu v stave PURCHASED; nepotvrdený nákup (napr. odložená platba dokončená mimo appky) appka potvrdí cez `acknowledgePurchase` (od v1.6.3) – inak ho Play po 3 dňoch vráti.
+- Cena na tlačidle je z Google Play (`priceString` = formattedPrice), nie natvrdo.
 
 ## Pravidlá pre build
 - **versionCode** = `YYMMDD·1000 + (minúta dňa / 2)`, 9 číslic, vždy rastie (≥ 261005339, limit 2 100 000 000).
@@ -21,6 +28,6 @@ Stav k 5. 10. 2026 (súhrn z Play Console). Neobsahuje žiadne heslá ani kľú�
 - `assetlinks.json` netreba – appka je natívna (Capacitor), nie TWA.
 
 ## Čaká
-- Platobný profil (Vlado) → potom jednorazový produkt `odkialkam_plus` („Odkiaľ Kam Plus“, 2,49 EUR, možnosť nákupu `buy`, spätne kompatibilná, aktivovať).
-- Nastavenie aplikácie: obsah aplikácie (zásady súkromia, reklamy, IARC, cieľová skupina 13+, Data safety, vládna appka), záznam v obchode (texty, ikona, grafika, snímky).
+- Platobný profil – Vlado: bankový účet (bez neho žiadne výplaty), DIČ/IČ DPH, prihlásenie do programu 15 % poplatku (skupina účtov + podmienky).
+- Nastavenie aplikácie: obsah aplikácie (zásady súkromia, reklamy, IARC, cieľová skupina 13+, Data safety, vládna appka), záznam v obchode (texty, ikona, grafika, snímky) – podklady v `store/`.
 - Servisný účet pre automatické nahrávanie (secret `PLAY_SERVICE_ACCOUNT_JSON`).

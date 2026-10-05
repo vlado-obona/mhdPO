@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.6.2';
+const APP_VERSION = '1.6.3';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -1202,7 +1202,15 @@ async function refreshPlus() {
     const { isBillingSupported } = await P.isBillingSupported();
     if (!isBillingSupported) return;
     const { purchases } = await P.getPurchases({ productType: 'inapp' });
-    setPlus((purchases || []).some(isPlusPurchase));
+    const own = (purchases || []).filter(isPlusPurchase);
+    setPlus(own.length > 0);
+    // nákup dokončený mimo appky (napr. odložená platba) treba potvrdiť do 3 dní,
+    // inak ho Google Play automaticky vráti
+    for (const p of own) {
+      if (p.isAcknowledged === false && p.purchaseToken) {
+        try { await P.acknowledgePurchase({ purchaseToken: p.purchaseToken }); } catch {}
+      }
+    }
   } catch { /* Play nedostupný — ostáva posledný známy stav */ }
   try {
     const { products } = await P.getProducts({ productIdentifiers: [PLUS_ID], productType: 'inapp' });
