@@ -18,7 +18,7 @@ Odkiaľ Kam je jednoduchý plánovač mestskej hromadnej dopravy v Prešove. Nav
 Nastav si tlačidlo „Domov“ alebo „Škola“. Jedným ťuknutím ti appka povie, ktorým autobusom ísť a kedy, navedie ťa na správnu zastávku a ukáže, ktorým smerom autobus odchádza.
 
 UPOZORNÍ ŤA NA VÝSTUP
-Počas jazdy sleduje, kde si, a pred tvojou zastávkou ťa upozorní zvukom, vibráciou aj hlasom – aj pri zamknutom displeji.
+Počas jazdy sleduje, kde si, a pred tvojou zastávkou ťa upozorní zvukom, vibráciou aj hlasom. Keď zamkneš displej, príde upozornenie ako notifikácia – podľa cestovného poriadku a zisteného meškania.
 
 NÁJDE ZASTÁVKU, MIESTO AJ ADRESU
 Napíš „NOVUM“, „Konkatedrála“, „Aquapark“ alebo „Hlavná 47“ – appka ukáže najbližšiu zastávku a spojenie s prestupmi.
@@ -55,7 +55,7 @@ TAP AND GO
 Set a "Home" or "School" button. One tap tells you which bus to take and when, guides you to the right stop and shows which way the bus departs.
 
 EXIT ALERT
-During the ride the app follows your position and alerts you before your stop with sound, vibration and voice – even with the screen locked.
+During the ride the app follows your position and alerts you before your stop with sound, vibration and voice. With the screen locked, a notification arrives based on the timetable and the measured delay.
 
 STOPS, PLACES AND ADDRESSES
 Search for a stop, a place (shopping centre, church, aquapark) or a street address and get the nearest stop and a connection with transfers.

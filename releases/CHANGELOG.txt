@@ -15,6 +15,13 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.4  (5. 10. 2026)
+----------------------------------------------------------------
+- Android: vypnuté odosielanie diagnostiky knižnice Google Play
+  Billing do Google — appka neposiela nikam žiadne údaje, nákup
+  Plus funguje ako doteraz.
+
+----------------------------------------------------------------
 v1.6.3  (5. 10. 2026)
 ----------------------------------------------------------------
 - Plus: nákup dokončený mimo appky (napr. odložená platba) sa pri

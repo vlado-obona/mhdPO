@@ -87,6 +87,13 @@ jobs:
           cp -r ../android-native/app/src/main/. android/app/src/main/
           sed -i 's#</application>#    <receiver android:name=".NextBusWidget" android:exported="false" android:label="@string/widget_label">\n            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>\n            <meta-data android:name="android.appwidget.provider" android:resource="@xml/next_bus_widget_info" />\n        </receiver>\n    </application>#' "$M"
           grep -q 'NextBusWidget' "$M" || { echo "::error::widget nie je v AndroidManifest"; exit 1; }
+          # Play Billing Library posiela diagnostiku o volaniach billing API do Google
+          # (datatransport/CCT). Appka nemá zbierať žiadne údaje (Data safety „nezbiera“),
+          # preto sa odosielač (backend CCT) z manifestu odstráni — logger knižnice je
+          # celý v try/catch, udalosti ostanú bez backendu a zahodia sa; nákupy fungujú.
+          grep -q 'xmlns:tools=' "$M" || sed -i 's#<manifest #<manifest xmlns:tools="http://schemas.android.com/tools" #' "$M"
+          sed -i 's#</application>#    <service android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery" tools:node="remove" />\n    </application>#' "$M"
+          grep -q 'TransportBackendDiscovery' "$M" || { echo "::error::odstránenie diagnostiky nie je v AndroidManifest"; exit 1; }
           grep -q 'registerPlugin(WidgetBridgePlugin.class)' android/app/src/main/java/sk/operatorsystem/mhdpresov/MainActivity.java || { echo "::error::MainActivity bez WidgetBridge"; exit 1; }
 
       - name: Ikony aplikacie
@@ -135,6 +142,11 @@ jobs:
             --ks-pass "pass:$KS_PASS" --key-pass "pass:$KS_PASS" \
             --out mhd-presov-offline.apk aligned.apk
           "$BT/apksigner" verify mhd-presov-offline.apk && echo "APK podpis OK"
+          # výsledné APK nesmie obsahovať odosielač diagnostiky (Data safety „nezbiera“)
+          if "$BT/aapt2" dump xmltree --file AndroidManifest.xml mhd-presov-offline.apk | grep -qE 'TransportBackendDiscovery|CctBackendFactory'; then
+            echo "::error::APK obsahuje datatransport backend (diagnostika do Google)"; exit 1
+          fi
+          echo "datatransport backend: odstránený"
           cp android/app/build/outputs/bundle/release/app-release.aab mhd-presov.aab
           jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore android.keystore \
             -storepass "$KS_PASS" -keypass "$KS_PASS" mhd-presov.aab android
