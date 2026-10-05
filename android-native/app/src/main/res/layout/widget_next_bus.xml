@@ -7,16 +7,35 @@
     android:padding="12dp"
     android:background="@drawable/widget_bg">
 
-    <TextView
-        android:id="@+id/w_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Odkiaľ Kam"
-        android:textColor="#CCFFFFFF"
-        android:textSize="13sp"
-        android:textStyle="bold"
-        android:maxLines="1"
-        android:ellipsize="end" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/w_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Odkiaľ Kam"
+            android:textColor="#CCFFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/w_refresh"
+            android:layout_width="40dp"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:text="↻"
+            android:contentDescription="Obnoviť podľa mojej polohy"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

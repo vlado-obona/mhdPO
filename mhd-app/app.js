@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.6.0';
+const APP_VERSION = '1.6.1';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -1276,14 +1276,42 @@ function initPlus() {
 // z rýchlych cieľov (na ~26 h) a pošle ich natívnemu widgetu cez most
 // WidgetBridge. Widget nič nesťahuje — prepočet beží pri otvorení appky.
 const WIDGET_KEY = 'mhd-presov.widget.v1';
+const WIDGET_POS_KEY = 'mhd-presov.widgetpos.v1';
 const WIDGET_HORIZON = 26 * 3600; // s
 const WIDGET_MAX = 300; // pri častých linkách ~ celý deň
-let widgetCfg = { from: null, fav: 0 };
+// mode 'gps' = spoje z poslednej zistenej polohy (pri otvorení appky alebo ↻ vo widgete),
+// náhradná pevná zastávka `from` sa použije, keď poloha nie je alebo je stará;
+// mode 'fixed' = vždy z pevnej zastávky
+let widgetCfg = { mode: 'gps', from: null, fav: 0 };
+let widgetPos = null; // { lat, lon, t }
 let widgetBusy = false, widgetLast = 0;
 const widgetApi = () => window.Capacitor?.Plugins?.WidgetBridge;
 
 function loadWidgetCfg() {
   try { widgetCfg = { ...widgetCfg, ...JSON.parse(localStorage.getItem(WIDGET_KEY) || '{}') }; } catch {}
+  try { widgetPos = JSON.parse(localStorage.getItem(WIDGET_POS_KEY) || 'null'); } catch {}
+}
+function saveWidgetPos(p) {
+  widgetPos = p;
+  try { localStorage.setItem(WIDGET_POS_KEY, JSON.stringify(p)); } catch {}
+}
+// poloha bez otázky na povolenie — len ak ho už appka má (pri otvorení appky)
+async function quietPosition() {
+  try {
+    const geo = window.Capacitor?.Plugins?.Geolocation;
+    if (geo) {
+      const perm = await geo.checkPermissions();
+      if (perm.location !== 'granted' && perm.coarseLocation !== 'granted') return null;
+      const pos = await geo.getCurrentPosition({ enableHighAccuracy: false, timeout: 8000, maximumAge: 120000 });
+      return { lat: pos.coords.latitude, lon: pos.coords.longitude, t: Date.now() };
+    }
+    if (!navigator.permissions || !navigator.geolocation) return null;
+    const st = await navigator.permissions.query({ name: 'geolocation' });
+    if (st.state !== 'granted') return null;
+    return await new Promise((res) => navigator.geolocation.getCurrentPosition(
+      (p) => res({ lat: p.coords.latitude, lon: p.coords.longitude, t: Date.now() }), () => res(null),
+      { timeout: 8000, maximumAge: 120000 }));
+  } catch { return null; }
 }
 function saveWidgetCfg() { try { localStorage.setItem(WIDGET_KEY, JSON.stringify(widgetCfg)); } catch {} }
 
@@ -1343,28 +1371,58 @@ async function widgetJourneys(from, to) {
   return list.filter((e, i) => !list.slice(i + 1).some((f) => f.a <= e.a));
 }
 
-async function updateWidget(force = false) {
+// pos: čerstvo zistená poloha (↻ vo widgete); inak sa skúsi zistiť potichu
+async function updateWidget(force = false, pos = null) {
   const W = widgetApi();
   if (!W || !D || widgetBusy) return;
-  if (!force && Date.now() - widgetLast < 20 * 60 * 1000) return;
+  if (!force && Date.now() - widgetLast < (widgetCfg.mode === 'gps' ? 5 : 20) * 60 * 1000) return;
   widgetBusy = true;
   try {
     const fav = favs[widgetCfg.fav] || favs[0];
-    const out = { v: 1, plus, title: fav ? `${fav.icon} ${fav.label}` : 'Odkiaľ Kam' };
-    if (plus && widgetCfg.from && fav?.target) {
-      out.from = targetLabel(widgetCfg.from);
-      out.title = `${fav.icon} ${fav.label} · z ${out.from}`;
-      out.j = await widgetJourneys(resolveTarget(widgetCfg.from), resolveTarget(fav.target));
+    const out = { v: 2, plus, mode: widgetCfg.mode, title: fav ? `${fav.icon} ${fav.label}` : 'Odkiaľ Kam' };
+    if (plus && fav?.target) {
+      const dest = resolveTarget(fav.target);
+      if (widgetCfg.mode === 'gps') {
+        const p = pos || (await quietPosition());
+        if (p) saveWidgetPos(p);
+        if (widgetPos) {
+          const near = nearestStop(widgetPos.lat, widgetPos.lon);
+          out.gps = { t: widgetPos.t, near: near.d < 1500 ? near.name : '' };
+          out.j = await widgetJourneys({ kind: 'point', lat: widgetPos.lat, lon: widgetPos.lon, label: 'poloha' }, dest);
+        }
+      }
+      if (widgetCfg.from) {
+        out.fixed = targetLabel(widgetCfg.from);
+        out.jf = await widgetJourneys(resolveTarget(widgetCfg.from), dest);
+      }
     }
     await W.update({ data: JSON.stringify(out) });
     widgetLast = Date.now();
   } catch { /* widget nie je dostupný (web, iOS) */ } finally { widgetBusy = false; }
 }
 
+// ↻ vo widgete: appka sa otvorí, zistí polohu, prepočíta spoje a sama sa skryje
+async function refreshWidgetFromHere() {
+  setStatus('📍 Zisťujem polohu pre widget…');
+  let p = null;
+  try { const q = await getPosition(); p = { lat: q.lat, lon: q.lon, t: Date.now() }; } catch {}
+  widgetBusy = false;
+  await updateWidget(true, p);
+  setStatus(p ? 'Widget obnovený podľa tvojej polohy.' : 'Polohu sa nepodarilo zistiť — widget ukazuje náhradnú zastávku.', !p);
+  const CapApp = window.Capacitor?.Plugins?.App;
+  const busy = trip || !$('plusDlg').hidden || !$('favDlg').hidden || !$('tktDlg').hidden;
+  if (p && !busy) setTimeout(() => CapApp?.minimizeApp?.().catch(() => {}), 700);
+}
+
 function renderWidgetCfg() {
   const box = $('plusWidget');
   if (!box) return;
   box.hidden = !(plus && widgetApi());
+  $('wModeGps').checked = widgetCfg.mode !== 'fixed';
+  $('wModeFixed').checked = widgetCfg.mode === 'fixed';
+  $('wFromLbl').textContent = widgetCfg.mode === 'fixed'
+    ? 'Zastávka, odkiaľ ideš'
+    : 'Náhradná zastávka (keď poloha nie je k dispozícii) — nepovinné';
   const sel = $('wFav');
   sel.innerHTML = '';
   favs.forEach((f, i) => {
@@ -1381,13 +1439,20 @@ function saveWidgetFromDlg() {
   const msg = $('plusMsg');
   msg.classList.remove('err');
   const fi = Number($('wFav').value) || 0;
+  widgetCfg.mode = $('wModeFixed').checked ? 'fixed' : 'gps';
   if (widgetFromPick) widgetCfg.from = widgetFromPick;
-  if (!widgetCfg.from) { msg.textContent = 'Vyber zastávku, odkiaľ zvyčajne ideš (zo zoznamu).'; msg.classList.add('err'); $('wFrom').focus(); return; }
+  if (!$('wFrom').value.trim()) widgetCfg.from = null;
+  if (widgetCfg.mode === 'fixed' && !widgetCfg.from) { msg.textContent = 'Vyber zastávku, odkiaľ ideš (zo zoznamu).'; msg.classList.add('err'); $('wFrom').focus(); return; }
   if (!favs[fi]?.target) { msg.textContent = 'Vybraný rýchly cieľ ešte nemá nastavenú zastávku — podrž jeho tlačidlo a nastav ho.'; msg.classList.add('err'); return; }
   widgetCfg.fav = fi;
   saveWidgetCfg();
   msg.textContent = 'Widget uložený. Pridaj ho na plochu: podrž prst na voľnom mieste plochy → Miniaplikácie → Odkiaľ Kam.';
-  updateWidget(true);
+  renderWidgetCfg();
+  if (widgetCfg.mode === 'gps') {
+    // prvá poloha hneď (používateľ práve ťukol — otázka na povolenie je na mieste)
+    getPosition().then((q) => updateWidget(true, { lat: q.lat, lon: q.lon, t: Date.now() }))
+      .catch(() => { updateWidget(true); msg.textContent += ' Bez povolenia polohy použije widget náhradnú zastávku.'; });
+  } else updateWidget(true);
 }
 function initWidget() {
   loadWidgetCfg();
@@ -1397,11 +1462,15 @@ function initWidget() {
       : { kind: 'point', lat: v.lat, lon: v.lon, label: v.label };
   });
   $('wSave').addEventListener('click', saveWidgetFromDlg);
+  for (const id of ['wModeGps', 'wModeFixed']) $(id).addEventListener('change', () => {
+    $('wFromLbl').textContent = $('wModeFixed').checked ? 'Zastávka, odkiaľ ideš' : 'Náhradná zastávka (keď poloha nie je k dispozícii) — nepovinné';
+  });
   // ťuknutie na widget: odkialkam://widget = navigácia do cieľa, odkialkam://plus = okno Plus
   const CapApp = window.Capacitor?.Plugins?.App;
   const onUrl = (url) => {
     if (!url || !url.startsWith('odkialkam://')) return;
     if (url.startsWith('odkialkam://plus')) { if ($('plusDlg').hidden) openPlusDlg(); return; }
+    if (url.startsWith('odkialkam://widget-refresh')) { if (plus) refreshWidgetFromHere(); else if ($('plusDlg').hidden) openPlusDlg(); return; }
     const i = widgetCfg.fav;
     if (plus && favs[i]?.target) startTrip(i);
     else if ($('plusDlg').hidden) openPlusDlg();

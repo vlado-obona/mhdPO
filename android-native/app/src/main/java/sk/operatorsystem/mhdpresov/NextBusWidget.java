@@ -61,12 +61,32 @@ public class NextBusWidget extends AppWidgetProvider {
                 time = "Odkiaľ Kam Plus";
                 sub = "Widget je súčasť Plus · ťukni a zisti viac";
                 url = "odkialkam://plus";
-            } else if (!d.has("j")) {
-                time = "Nastav widget";
-                sub = "V appke: ⭐ Odkiaľ Kam Plus → Widget";
-                url = "odkialkam://plus";
             } else {
-                JSONArray j = d.getJSONArray("j");
+                // v2: „j“ = spoje z poslednej polohy (gps.t), „jf“ = z náhradnej/pevnej zastávky
+                boolean gpsMode = !"fixed".equals(d.optString("mode", "gps"));
+                long gpsT = d.has("gps") ? d.getJSONObject("gps").optLong("t", 0) : 0;
+                boolean fresh = gpsT > 0 && now - gpsT < 2 * 3600 * 1000L;
+                JSONArray j = null;
+                String fromLbl = "";
+                boolean hintRefresh = false;
+                if (gpsMode && d.has("j") && fresh) {
+                    j = d.getJSONArray("j");
+                    fromLbl = "📍 poloha " + hm(gpsT);
+                } else if (d.has("jf")) {
+                    j = d.getJSONArray("jf");
+                    fromLbl = "🚏 " + d.optString("fixed", "");
+                    hintRefresh = gpsMode;
+                } else if (gpsMode && d.has("j")) {
+                    j = d.getJSONArray("j");
+                    fromLbl = "📍 poloha z " + hm(gpsT);
+                    hintRefresh = true;
+                }
+                if (!fromLbl.isEmpty()) title = title + " · " + fromLbl;
+                if (j == null) {
+                    time = gpsMode ? "Ťukni ↻" : "Nastav widget";
+                    sub = gpsMode ? "Spoje z miesta, kde práve si" : "V appke: ⭐ Odkiaľ Kam Plus → Widget";
+                    if (!gpsMode) url = "odkialkam://plus";
+                } else {
                 int first = -1;
                 for (int i = 0; i < j.length(); i++) {
                     if (j.getJSONObject(i).getLong("d") > now - 20000) { first = i; break; }
@@ -92,7 +112,9 @@ public class NextBusWidget extends AppWidgetProvider {
                         nb.append(hm(n.getLong("d"))).append(" (").append(n.optString("l", "")).append(")");
                     }
                     next = nb.length() > 0 ? "ďalšie: " + nb : "";
+                    if (hintRefresh) next = (next.isEmpty() ? "" : next + "  ·  ") + "↻ odtiaľto";
                     nextUpdate = e.getLong("d") + 30000;
+                }
                 }
             }
         } catch (Exception ex) {
@@ -105,6 +127,12 @@ public class NextBusWidget extends AppWidgetProvider {
             .setData(Uri.parse(url))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent click = PendingIntent.getActivity(ctx, 0, open,
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Intent refresh = new Intent(ctx, MainActivity.class)
+            .setAction(Intent.ACTION_VIEW)
+            .setData(Uri.parse("odkialkam://widget-refresh"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent refreshPi = PendingIntent.getActivity(ctx, 2, refresh,
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         for (int id : ids) {
@@ -119,6 +147,7 @@ public class NextBusWidget extends AppWidgetProvider {
             v.setInt(R.id.w_line, "setBackgroundColor", lineBg);
             v.setTextColor(R.id.w_line, lineFg);
             v.setOnClickPendingIntent(R.id.w_root, click);
+            v.setOnClickPendingIntent(R.id.w_refresh, refreshPi);
             mgr.updateAppWidget(id, v);
         }
 

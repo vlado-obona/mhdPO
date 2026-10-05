@@ -15,6 +15,19 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.1  (5. 10. 2026)
+----------------------------------------------------------------
+- Widget „Najbližší autobus“ ukazuje spoje z tvojej aktuálnej GPS
+  polohy (predvolené): poloha sa zistí pri otvorení appky alebo
+  ťuknutím na ↻ vo widgete — appka sa na chvíľu otvorí, prepočíta
+  spoje odtiaľ, kde si, a sama sa skryje. Na pozadí sa poloha
+  nezisťuje (žiadne povolenie „poloha vždy“).
+- Ručná (náhradná) zastávka je nepovinná a použije sa, len keď
+  poloha nie je k dispozícii alebo je staršia ako 2 hodiny.
+  Ak chceš, widget môže ísť aj „vždy z pevnej zastávky“.
+- Widget ukazuje, odkiaľ spoje počíta (📍 poloha a čas / 🚏 zastávka).
+
+----------------------------------------------------------------
 v1.6.0  (5. 10. 2026)
 ----------------------------------------------------------------
 - Nový doplnok Odkiaľ Kam Plus: widget „Najbližší autobus“ na plochu
