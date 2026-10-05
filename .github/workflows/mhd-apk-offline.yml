@@ -95,6 +95,14 @@ jobs:
           sed -i 's#</application>#    <service android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery" tools:node="remove" />\n    </application>#' "$M"
           grep -q 'TransportBackendDiscovery' "$M" || { echo "::error::odstránenie diagnostiky nie je v AndroidManifest"; exit 1; }
           grep -q 'registerPlugin(WidgetBridgePlugin.class)' android/app/src/main/java/sk/operatorsystem/mhdpresov/MainActivity.java || { echo "::error::MainActivity bez WidgetBridge"; exit 1; }
+          # režim cesty: služba v popredí (typ „location“) drží GPS aj pri zamknutom displeji,
+          # aby upozornenie na výstup išlo podľa skutočnej polohy autobusu (zápchy, meškanie).
+          # Spúšťa sa len z otvorenej appky (poloha „pri používaní“) — bez ACCESS_BACKGROUND_LOCATION.
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />\n    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />\n</manifest>#' "$M"
+          sed -i 's#</application>#    <service android:name=".TripTrackerService" android:exported="false" android:foregroundServiceType="location" />\n    </application>#' "$M"
+          grep -q 'TripTrackerService' "$M" && grep -q 'FOREGROUND_SERVICE_LOCATION' "$M" || { echo "::error::sledovanie cesty nie je v AndroidManifest"; exit 1; }
+          grep -q 'registerPlugin(TripTrackerPlugin.class)' android/app/src/main/java/sk/operatorsystem/mhdpresov/MainActivity.java || { echo "::error::MainActivity bez TripTracker"; exit 1; }
+          ! grep -q 'ACCESS_BACKGROUND_LOCATION' "$M" || { echo "::error::ACCESS_BACKGROUND_LOCATION nechceme"; exit 1; }
 
       - name: Ikony aplikacie
         working-directory: cap-build
@@ -147,6 +155,10 @@ jobs:
             echo "::error::APK obsahuje datatransport backend (diagnostika do Google)"; exit 1
           fi
           echo "datatransport backend: odstránený"
+          "$BT/aapt2" dump permissions mhd-presov-offline.apk | tee perms.txt
+          ! grep -q 'ACCESS_BACKGROUND_LOCATION' perms.txt || { echo "::error::APK žiada polohu na pozadí"; exit 1; }
+          grep -q 'FOREGROUND_SERVICE_LOCATION' perms.txt || { echo "::error::APK bez FOREGROUND_SERVICE_LOCATION"; exit 1; }
+          rm -f perms.txt
           cp android/app/build/outputs/bundle/release/app-release.aab mhd-presov.aab
           jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore android.keystore \
             -storepass "$KS_PASS" -keypass "$KS_PASS" mhd-presov.aab android

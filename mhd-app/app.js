@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.6.4';
+const APP_VERSION = '1.6.5';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -1807,13 +1807,14 @@ async function startTripWatch(t) {
   if (t.watch || t.watchStarting) return;
   t.watchStarting = true;
   try {
-    const h = await watchPos((p) => { if (trip === t) onTripPos(p); }, () => {
+    const h = await watchPos((p) => { if (trip === t) { t.webFixAt = Date.now(); onTripPos(p); } }, () => {
       if (trip === t) { t.gpsErr = true; renderTripLive(); }
     });
     if (trip === t && !t.watch) t.watch = h; else h.clear();
   } catch {}
   t.watchStarting = false;
   if (trip === t && !t.timer) t.timer = setInterval(() => { evaluateTrip(); maintainNotifs(); renderTripLive(); }, 1000);
+  if (trip === t) startBgTracker(t);
 }
 
 function planFromHere(reason) {
@@ -1908,6 +1909,7 @@ function onTripPos(p) {
   updateTripUser();
   evaluateTrip();
   renderTripLive();
+  if (trip === t) { syncBg(t); maintainNotifs(); }
 }
 
 function evaluateTrip() {
@@ -2036,6 +2038,7 @@ function arrived(keepAlert = false) {
   const t = trip;
   t.phase = 'done';
   cancelTripNotifs();
+  stopBgTracker(t);
   try { localStorage.removeItem(TRIP_KEY); } catch {}
   if (!keepAlert) dismissAlert();
   keepAwake(false);
@@ -2156,8 +2159,9 @@ async function scheduleTripNotifs() {
     if (k < t.ri || t.alerted.has(k) || t.seated.has(k)) return;
     let at = notifDue(t, k);
     if (at < Date.now() + 5000) return;
-    // na obrazovke upozorní GPS — notifikácia je len poistka na neskôr
-    if (!pageHidden()) at = Math.max(at, Date.now() + 120000);
+    // na obrazovke (a v pozadí so sledovaním cesty) upozorní GPS — notifikácia
+    // podľa CP je len poistka pre prípad, že GPS vypadne
+    if (!pageHidden() || bgGpsLive(t)) at = Math.max(at, Date.now() + 120000);
     list.push(notifPayload(t, k, at));
     t.notifAt.set(k, at);
   });
@@ -2172,7 +2176,7 @@ let notifBusy = false;
 async function maintainNotifs() {
   const LN = window.Capacitor?.Plugins?.LocalNotifications;
   const t = trip;
-  if (!LN || !t || !t.notifOk || notifBusy || !t.notifAt.size || pageHidden()) return;
+  if (!LN || !t || !t.notifOk || notifBusy || !t.notifAt.size || (pageHidden() && !bgGpsLive(t))) return;
   const soon = [...t.notifAt].filter(([k, at]) => !t.alerted.has(k) && at - Date.now() < 60000);
   if (!soon.length) return;
   notifBusy = true;
@@ -2234,12 +2238,114 @@ async function cancelTripNotifs(t = trip) {
   try { await LN.cancel({ notifications: ids }); } catch {}
 }
 
+// ── sledovanie cesty na pozadí (Android) ───────────────────────────
+// Služba v popredí (trvalá notifikácia „Sledujem cestu“) drží GPS aj pri
+// zamknutom displeji a posiela polohy sem — upozornenie na výstup ide podľa
+// skutočnej polohy autobusu (zápcha, meškanie), nie podľa CP. Spúšťa sa len
+// z otvorenej appky, takže stačí poloha „pri používaní“. Keď JS neodpovedá
+// (systém uspal WebView), upozorní služba sama podľa cieľov z bgTargets().
+// Poloha neopúšťa telefón.
+const tripTracker = () => (window.Capacitor?.getPlatform?.() === 'android' ? window.Capacitor?.Plugins?.TripTracker : null);
+let bgListening = false;
+
+function bgTargets(t) {
+  if (!t.j) return [];
+  const out = [];
+  t.rides.forEach((r, k) => {
+    if (k < t.ri || t.alerted.has(k) || t.seated.has(k)) return;
+    const n = r.stops.length;
+    const pv = D.stops[r.stops[Math.max(0, n - 2)]], ex = D.stops[r.to];
+    const next = t.rides[k + 1];
+    out.push({
+      k, la: pv.la, lo: pv.lo, ela: ex.la, elo: ex.lo,
+      title: next ? '🔔 Prestup na ďalšej zastávke' : '🔔 Vystupuj na ďalšej zastávke',
+      titleNow: next ? '🔔 Prestup TERAZ' : '🔔 Vystupuj TERAZ',
+      body: `${ex.n}${next ? ` — pokračuj linkou ${D.routes[next.route].s}` : ''}`,
+    });
+  });
+  return out;
+}
+function bgText(t) {
+  if (!t.j || ['locating', 'error'].includes(t.phase)) return 'Hľadám spojenie…';
+  if (t.phase === 'final') return 'Posledný úsek pešo do cieľa.';
+  const r = t.rides[Math.min(t.ri, t.rides.length - 1)];
+  const line = D.routes[r.route].s;
+  return t.phase === 'ride'
+    ? `Linka ${line} · upozorním ťa pred zastávkou ${D.stops[r.to].n}.`
+    : `Linka ${line} o ${fmtTime(r.dep)} zo zastávky ${D.stops[r.from].n}.`;
+}
+function bgUntil(t) {
+  if (!t.j) return Date.now() + 3 * 3600000;
+  const last = t.rides[t.rides.length - 1];
+  return tripEpoch(last.arr + Math.max(0, t.delay || 0) + (t.j.finalWalk || 0)) + 30 * 60000;
+}
+const bgSig = (t) => JSON.stringify([bgText(t), t.jIdx, t.t0Epoch, bgTargets(t).map((x) => x.k), Math.round(bgUntil(t) / 600000)]);
+const bgGpsLive = (t) => !!(t && t.bg && t.bg.on && Date.now() - t.bg.lastFix < 30000 && goodFix(t));
+
+async function startBgTracker(t) {
+  const TT = tripTracker();
+  if (!TT || t.bg) return;
+  t.bg = { on: false, sig: '', beatAt: 0, lastFix: 0 };
+  try {
+    if (!bgListening) {
+      bgListening = true;
+      TT.addListener('location', onBgLocation);
+      TT.addListener('fired', (d) => onBgFired(trip, d && d.k));
+    }
+    await TT.start({ text: bgText(t), until: bgUntil(t), targets: bgTargets(t) });
+    if (trip === t && t.bg) { t.bg.on = true; t.bg.sig = bgSig(t); t.bg.beatAt = Date.now(); } else TT.stop().catch(() => {});
+  } catch { /* bez služby ostáva záloha notifikáciou podľa CP */ }
+}
+function stopBgTracker(t) {
+  const TT = tripTracker();
+  if (!TT || !t || !t.bg) return;
+  t.bg = null;
+  TT.stop().catch(() => {});
+}
+function syncBg(t) {
+  const TT = tripTracker();
+  if (!TT || !t || !t.bg || !t.bg.on || !t.j) return;
+  const sig = bgSig(t);
+  if (sig !== t.bg.sig) {
+    t.bg.sig = sig; t.bg.beatAt = Date.now();
+    TT.update({ text: bgText(t), until: bgUntil(t), targets: bgTargets(t) }).catch(() => {});
+  } else if (Date.now() - t.bg.beatAt > 5000) {
+    t.bg.beatAt = Date.now();
+    TT.beat().catch(() => {});
+  }
+}
+function onBgLocation(d) {
+  const t = trip;
+  if (!t || !t.bg || !t.bg.on || !d) return;
+  t.bg.lastFix = Date.now();
+  // na obrazovke dodáva polohy watchPosition — služba len keď appka nie je vidieť
+  if (!pageHidden() && Date.now() - (t.webFixAt || 0) < 10000) return;
+  onTripPos({ coords: { latitude: d.latitude, longitude: d.longitude, accuracy: d.accuracy, speed: d.speed ?? null } });
+}
+// služba upozornila sama (JS spal) — to isté upozornenie znova nespúšťať
+function onBgFired(t, k) {
+  if (!t || k == null || t.alerted.has(k)) return;
+  t.alerted.add(k);
+  cancelTripNotif(k);
+}
+function pullBgState(t) {
+  const TT = tripTracker();
+  if (!TT || !t.bg || !t.bg.on) return;
+  TT.getState().then((st) => {
+    if (trip !== t || !t.bg) return;
+    if (!st.running) t.bg.on = false; // ukončené z notifikácie
+    (st.fired || []).forEach((k) => onBgFired(t, k));
+    renderTripLive();
+  }).catch(() => {});
+}
+
 // appka ide do pozadia / späť na obrazovku
 function onTripHidden() {
   if (trip && trip.j) scheduleTripNotifs();
 }
 function onTripVisible() {
   if (!trip) return;
+  pullBgState(trip);
   if (trip.exactOk === false) checkExact(trip);
   keepAwake(true);
   evaluateTrip();
@@ -2288,6 +2394,7 @@ function endTrip(silent) {
   if (!trip) return;
   const t = trip;
   cancelTripNotifs(t);
+  stopBgTracker(t);
   try { localStorage.removeItem(TRIP_KEY); } catch {}
   if (t.watch) t.watch.clear();
   if (t.timer) clearInterval(t.timer);
@@ -2463,6 +2570,7 @@ function countdown(secs) {
 function renderTrip() {
   const t = trip;
   if (!t) return;
+  syncBg(t);
   const key = `${t.phase}|${t.ri}|${t.jIdx}`;
   if (key !== t.phaseKey) { t.phaseKey = key; t.phaseAt = Date.now(); }
   $('tripDestName').textContent = `${t.fav.icon} ${t.fav.label}`;

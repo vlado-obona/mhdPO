@@ -18,7 +18,7 @@ Odkiaľ Kam je jednoduchý plánovač mestskej hromadnej dopravy v Prešove. Nav
 Nastav si tlačidlo „Domov“ alebo „Škola“. Jedným ťuknutím ti appka povie, ktorým autobusom ísť a kedy, navedie ťa na správnu zastávku a ukáže, ktorým smerom autobus odchádza.
 
 UPOZORNÍ ŤA NA VÝSTUP
-Počas jazdy sleduje, kde si, a pred tvojou zastávkou ťa upozorní zvukom, vibráciou aj hlasom. Keď zamkneš displej, príde upozornenie ako notifikácia – podľa cestovného poriadku a zisteného meškania.
+Počas jazdy sleduje, kde si, a pred tvojou zastávkou ťa upozorní zvukom, vibráciou aj hlasom – aj pri zamknutom displeji a aj keď autobus mešká v zápche.
 
 NÁJDE ZASTÁVKU, MIESTO AJ ADRESU
 Napíš „NOVUM“, „Konkatedrála“, „Aquapark“ alebo „Hlavná 47“ – appka ukáže najbližšiu zastávku a spojenie s prestupmi.
@@ -55,7 +55,7 @@ TAP AND GO
 Set a "Home" or "School" button. One tap tells you which bus to take and when, guides you to the right stop and shows which way the bus departs.
 
 EXIT ALERT
-During the ride the app follows your position and alerts you before your stop with sound, vibration and voice. With the screen locked, a notification arrives based on the timetable and the measured delay.
+During the ride the app follows your position and alerts you before your stop with sound, vibration and voice – even with the screen locked and even when the bus is stuck in traffic.
 
 STOPS, PLACES AND ADDRESSES
 Search for a stop, a place (shopping centre, church, aquapark) or a street address and get the nearest stop and a connection with transfers.
@@ -98,9 +98,10 @@ Snímky použiť pre slovenčinu aj angličtinu.
 | Cieľová skupina a obsah | Vekové skupiny: **13 – 15, 16 – 17, 18 a viac** (NIE pod 13); „Môže aplikácia neúmyselne zaujať deti?“ **Nie** (plánovač dopravy) |
 | Aplikácia so správami (News) | **Nie** |
 | Aplikácie na sledovanie kontaktov / COVID | **Nie** |
-| Bezpečnosť údajov (Data safety) | „Zbiera alebo zdieľa aplikácia niektorý z požadovaných typov údajov?“ → **Nie**. (Poloha sa spracúva len v telefóne a nikam sa neposiela; nákup spracúva Google Play; žiadne účty, analytika ani reklamy.) Ak formulár napriek tomu žiada: šifrovanie pri prenose – appka neprenáša údaje; žiadosť o vymazanie účtu – appka nemá účty |
+| Bezpečnosť údajov (Data safety) | „Zbiera alebo zdieľa aplikácia niektorý z požadovaných typov údajov?“ → **Nie**. (Poloha sa spracúva len v telefóne a nikam sa neposiela – ani počas sledovania cesty; nákup spracúva Google Play; žiadne účty, analytika ani reklamy.) Ak formulár napriek tomu žiada: šifrovanie pri prenose – appka neprenáša údaje; žiadosť o vymazanie účtu – appka nemá účty |
 | Vládna aplikácia | **Nie** |
 | Finančné funkcie | **Žiadne** |
 | Zdravie | **Nie / žiadne zdravotné funkcie** |
-| Povolenie polohy (ak sa formulár zobrazí) | len **v popredí**; účel: nájdenie najbližšej zastávky a upozornenie na výstup počas cesty; na pozadí sa poloha nepoužíva |
+| Povolenie polohy (ak sa formulár zobrazí) | len **pri používaní** (žiadne „vždy“ / ACCESS_BACKGROUND_LOCATION); účel: nájdenie najbližšej zastávky a upozornenie na výstup počas cesty; poloha sa nikam neposiela |
+| Povolenia služieb v popredí (Foreground service) | typ **Poloha** (FOREGROUND_SERVICE_LOCATION); úloha: **Navigácia / sledovanie cesty spustené používateľom**. Popis: „Keď používateľ ťukne na cieľ (napr. Domov), spustí sa režim cesty. Kým trvá, služba v popredí s trvalou notifikáciou „Odkiaľ Kam sleduje tvoju cestu“ zisťuje GPS polohu aj pri zamknutom displeji, aby používateľa upozornila pred zastávkou, kde má vystúpiť alebo prestúpiť – podľa skutočnej polohy autobusu (zápchy, meškania). Služba sa končí príchodom do cieľa, ukončením cesty v appke alebo tlačidlom „Ukončiť sledovanie“ v notifikácii. Poloha sa spracúva len v telefóne a nikam sa neposiela.“ Video: pozri docs/GOOGLE-PLAY.md |
 | Povolenie presných budíkov (ak sa zobrazí) | appka nepožaduje USE_EXACT_ALARM; SCHEDULE_EXACT_ALARM len voliteľne pre presné upozornenie na výstup, používateľ ho povoľuje sám |

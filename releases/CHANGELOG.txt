@@ -15,6 +15,18 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.5  (5. 10. 2026)
+----------------------------------------------------------------
+- Upozornenie na výstup ide podľa GPS aj pri zamknutom displeji
+  (Android): počas režimu cesty appka sleduje polohu autobusu,
+  takže upozorní včas aj pri zápche či meškaní. Kým sledovanie
+  beží, je vidieť notifikácia „Odkiaľ Kam sleduje tvoju cestu“
+  (dá sa ukončiť tlačidlom). Povolenie „poloha vždy“ netreba,
+  poloha sa nikam neposiela.
+- Ak GPS vypadne, upozornenie príde podľa cestovného poriadku
+  a naposledy zisteného meškania.
+
+----------------------------------------------------------------
 v1.6.4  (5. 10. 2026)
 ----------------------------------------------------------------
 - Android: vypnuté odosielanie diagnostiky knižnice Google Play

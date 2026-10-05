@@ -21,9 +21,14 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 - Play Billing Library (9.x) posiela diagnostiku volaní billing API do Google cez `datatransport` (backend CCT). Workflow od v1.6.4 odstráni z manifestu `TransportBackendDiscovery` (`tools:node="remove"`) a kontroluje výsledné APK – logger knižnice je celý v `try/catch`, udalosti bez backendu sa zahodia. Vďaka tomu platí Data safety „nezbiera“.
 - Kontrolóri Google Plus nekúpia – nevadí: platené doplnky nie sú „obmedzený prístup“ (prihlásenie), jadro appky je celé dostupné. Odomykací kód netreba; ak by ho Google pri kontrole vyžiadal, doplní sa.
 
-## Upozornenie na výstup
-- Pri otvorenej appke: GPS (watchPosition) + zvuk, vibrácia, hlas; displej ostáva zapnutý (KeepAwake).
-- Pri zamknutom displeji / appke v pozadí: naplánovaná lokálna notifikácia podľa CP + zisteného meškania (LocalNotifications, `allowWhileIdle`; presne s povolením „Budíky a pripomienky“ = SCHEDULE_EXACT_ALARM). Poloha sa na pozadí NEzisťuje – žiadna foreground service ani ACCESS_BACKGROUND_LOCATION. Texty v obchode to tak popisujú (od 5. 10. 2026).
+## Upozornenie na výstup (od v1.6.5 podľa GPS aj pri zamknutom displeji)
+- Režim cesty spustí natívnu službu `TripTrackerService` (foreground service, typ `location`, trvalá notifikácia „Odkiaľ Kam sleduje tvoju cestu“ s tlačidlom „Ukončiť sledovanie“). Spúšťa sa len z otvorenej appky po udelení polohy → stačí poloha „pri používaní“, **bez ACCESS_BACKGROUND_LOCATION** (workflow to kontroluje v hotovom APK).
+- Služba posiela polohy do JS (plugin `TripTracker`, udalosť `location`); JS vyhodnocuje jazdu ako na obrazovke (nástup, meškanie, upozornenie zvuk + vibrácie + hlas + notifikácia).
+- Záloha 1: ak JS 15 s neodpovedá (systém uspal WebView), služba upozorní sama pri priblížení k predposlednej zastávke (vo vozidle) alebo pri výstupnej zastávke.
+- Záloha 2: notifikácia podľa CP + meškania (LocalNotifications); kým GPS zo služby žije, odsúva sa – príde len pri výpadku GPS.
+- Služba končí: príchod do cieľa, ukončenie cesty, „Ukončiť sledovanie“, alebo čas konca cesty + 30 min.
+- **Play Console → Obsah aplikácie → Povolenia služieb v popredí:** typ Poloha, úloha Navigácia (sledovanie cesty spustené používateľom), popis v `store/ZAZNAM-V-OBCHODE.md`, **video** (YouTube nezaradené): ťuk na Domov → trvalá notifikácia → zamknutie displeja → upozornenie pred zastávkou → koniec sledovania.
+- Data safety ostáva „nezbiera“ – poloha sa spracúva len v zariadení.
 
 ## Pravidlá pre build
 - **versionCode** = `YYMMDD·1000 + (minúta dňa / 2)`, 9 číslic, vždy rastie (posledný nahratý 261005387, limit 2 100 000 000).

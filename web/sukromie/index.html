@@ -75,6 +75,15 @@ my nevidíme tvoje meno, e-mail ani platobné údaje. Aplikácia sa len priamo v
 <p>Upozornenie na výstup je <b>lokálna</b> notifikácia naplánovaná priamo v telefóne. Nepoužívame
 push notifikácie ani žiadnu notifikačnú službu tretej strany.</p>
 
+<h2>Sledovanie cesty (Android)</h2>
+<p>Keď ťukneš na cieľ (napr. Domov), spustí sa režim cesty. Kým trvá, aplikácia zisťuje
+tvoju GPS polohu aj pri zamknutom displeji – vidíš to podľa trvalej notifikácie
+„Odkiaľ Kam sleduje tvoju cestu“. Slúži to len na to, aby ťa upozornila pred zastávkou,
+kde máš vystúpiť alebo prestúpiť, aj keď autobus mešká. Poloha sa spracúva len v telefóne,
+nikam sa neposiela a neukladá sa. Sledovanie skončí príchodom do cieľa, ukončením cesty
+v aplikácii alebo tlačidlom „Ukončiť sledovanie“ v notifikácii. Povolenie „poloha vždy“
+aplikácia nežiada.</p>
+
 <h2>Mapa a internet</h2>
 <p>Aplikácia pre Android a iOS <b>nekomunikuje so žiadnym serverom</b>: cestovné poriadky, miesta aj mapa
 (ulice, rieky, parky — z dát OpenStreetMap) sú uložené priamo v aplikácii a mapa sa kreslí v telefóne.
@@ -113,6 +122,7 @@ BEDEKA, s.r.o., Hlavná 2894/47, 080 01 Prešov, Slovakia (contact: <a href="mai
   <li>The optional one-time “Plus” purchase on Android is processed entirely by Google Play; the app only checks on the device whether the purchase is active and sends nothing anywhere.</li>
   <li>Exit alerts are local notifications scheduled on the device.</li>
   <li>The Android and iOS apps make no network requests: timetables, places and the map (drawn from bundled OpenStreetMap data) are inside the app. The web version is served by GitHub Pages, which sees your IP address like any web host.</li>
+  <li>Trip mode (Android): while a trip is running, the app reads your GPS position even with the screen locked (shown by the ongoing notification “Odkiaľ Kam sleduje tvoju cestu”) only to alert you before your stop. The position stays on the phone, is not stored and is never sent anywhere. No “allow all the time” location permission is requested.</li>
   <li>Buttons that open Google Maps, SMS or app stores only do so when you tap them.</li>
 </ul>
 </div>
