@@ -202,7 +202,8 @@ jobs:
           body = re.sub(r'[ \t]*\n[ \t]+', ' ', body)          # zalomené riadky odrážok spojiť
           body = re.sub(r'\n{2,}', '\n', body).strip()
           if len(body) > 500: body = body[:497].rsplit(' ', 1)[0] + '…'
-          open('whatsnew/whatsnew-sk', 'w', encoding='utf-8')  # Play prijme len tag „sk“, nie „sk-SK“.write(body)
+          # Play prijme len jazykový tag „sk“, nie „sk-SK“
+          open('whatsnew/whatsnew-sk', 'w', encoding='utf-8').write(body)
           print(body)
           PY
 
