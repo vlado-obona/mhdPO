@@ -18,8 +18,9 @@ v telefóne. Prevádzkovateľ: BEDEKA, s.r.o.
   notifikáciou.
 - **Lístok.** Odkazy na SMS lístok, platbu kartou a aplikácie DPMP.
 - **Odkiaľ Kam Plus** (len Android, jednorazový nákup cez Google Play Billing,
-  produkt `odkialkam_plus`, typ „jednorazový produkt“): až 6 rýchlych cieľov a
-  tmavý režim. Jadro appky je zadarmo. Nákup sa overuje v telefóne cez Google
+  produkt `odkialkam_plus`, typ „jednorazový produkt“): až 6 rýchlych cieľov,
+  tmavý režim a widget „Najbližší autobus“ (natívny kód v `android-native/`,
+  dáta mu posiela appka cez most `WidgetBridge`). Jadro appky je zadarmo. Nákup sa overuje v telefóne cez Google
   Play (plugin `@capgo/native-purchases`), bez vlastného servera.
 
 ## Štruktúra

@@ -439,3 +439,9 @@ body.trip-open { overflow: hidden; }
 :root[data-theme="dark"] .tkt-btn span { color: #e0b4b0; }
 :root[data-theme="dark"] .leaflet-bar a { background: var(--card); color: var(--ink); border-color: var(--line); }
 :root[data-theme="dark"] .trip { background: var(--bg); }
+
+/* nastavenie widgetu v okne Plus */
+.plus-widget { margin: .4rem 0; padding: .6rem .7rem; border: 1px solid var(--line); border-radius: 10px; }
+.plus-widget h3 { margin: 0 0 .2rem; font-size: .95rem; }
+.plus-widget select { width: 100%; font-size: 1rem; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 8px; background: var(--field); color: var(--ink); }
+.plus-widget #wSave { width: 100%; margin-top: .6rem; }

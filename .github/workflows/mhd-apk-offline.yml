@@ -16,6 +16,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/mhd-apk-offline.yml'
+      - 'android-native/**'
   workflow_dispatch:
     inputs:
       version:
@@ -76,6 +77,11 @@ jobs:
           M=android/app/src/main/AndroidManifest.xml
           sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n    <uses-permission android:name="com.android.vending.BILLING" />\n</manifest>#' "$M"
           grep -c LOCATION "$M"
+          # widget „Najbližší autobus“ (Odkiaľ Kam Plus): natívny kód z android-native/
+          cp -r ../android-native/app/src/main/. android/app/src/main/
+          sed -i 's#</application>#    <receiver android:name=".NextBusWidget" android:exported="false" android:label="@string/widget_label">\n            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>\n            <meta-data android:name="android.appwidget.provider" android:resource="@xml/next_bus_widget_info" />\n        </receiver>\n    </application>#' "$M"
+          grep -q 'NextBusWidget' "$M" || { echo "::error::widget nie je v AndroidManifest"; exit 1; }
+          grep -q 'registerPlugin(WidgetBridgePlugin.class)' android/app/src/main/java/sk/operatorsystem/mhdpresov/MainActivity.java || { echo "::error::MainActivity bez WidgetBridge"; exit 1; }
 
       - name: Ikony aplikacie
         working-directory: cap-build

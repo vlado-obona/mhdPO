@@ -114,12 +114,25 @@
       <ul class="plus-list">
         <li><b>Až 6 rýchlych cieľov</b> — Domov, Škola, Práca, Babka, Lekár… každý jedným ťuknutím.</li>
         <li><b>Tmavý režim</b> — šetrí oči večer aj batériu.</li>
+        <li><b>Widget „Najbližší autobus“</b> na plochu (Android) — bez otvorenia appky vidíš, kedy ti ide autobus domov; ťuknutím ťa appka navedie.</li>
         <li><b>Ďalšie doplnky</b> pribudnú v aktualizáciách bez príplatku.</li>
       </ul>
       <p class="plus-once">Jednorazová platba, žiadne predplatné. Platí natrvalo pre tvoj Google účet.</p>
       <div id="plusOwned" class="plus-owned" hidden>
         <p>✅ Plus máš aktivovaný. Ďakujeme!</p>
         <label class="plus-switch"><input id="plusDark" type="checkbox"> Tmavý režim</label>
+      </div>
+      <div id="plusWidget" class="plus-widget" hidden>
+        <h3>📱 Widget „Najbližší autobus“</h3>
+        <label for="wFrom">Odkiaľ zvyčajne ideš (zastávka alebo miesto)</label>
+        <div class="field">
+          <div class="input-row"><input id="wFrom" type="text" placeholder="napr. Trojica, NOVUM, Hlavná 47" autocomplete="off"></div>
+          <div id="wFromSuggest" class="suggest" hidden></div>
+        </div>
+        <label for="wFav">Kam (rýchly cieľ)</label>
+        <select id="wFav"></select>
+        <button id="wSave" class="primary" type="button">Uložiť widget</button>
+        <p class="plus-once">Na plochu ho pridáš: podrž prst na voľnom mieste plochy → Miniaplikácie (Widgety) → Odkiaľ Kam.</p>
       </div>
       <p id="plusMsg" class="status" role="status"></p>
       <div class="dlg-actions">

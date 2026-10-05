@@ -15,6 +15,20 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.0  (5. 10. 2026)
+----------------------------------------------------------------
+- Nový doplnok Odkiaľ Kam Plus: widget „Najbližší autobus“ na plochu
+  (Android). V okne Plus nastavíš, odkiaľ zvyčajne ideš (zastávka,
+  miesto alebo adresa) a do ktorého rýchleho cieľa (napr. Domov).
+  Widget ukazuje najbližší spoj — linku, čas odchodu, kedy vyraziť,
+  kedy budeš v cieli — a ďalšie odchody; po odchode spoja sa sám
+  posunie na ďalší. Ťuknutím naň appka spustí navigáciu do cieľa.
+  Spoje na ~26 hodín vypočíta appka z cestovných poriadkov v telefóne
+  (pri každom otvorení), widget nič nesťahuje.
+  Pridanie: podrž prst na ploche → Miniaplikácie → Odkiaľ Kam.
+- Tlačidlo Späť v Androide zatvorí aj okno Plus.
+
+----------------------------------------------------------------
 v1.5.0  (5. 10. 2026)
 ----------------------------------------------------------------
 - Odkiaľ Kam Plus — jednorazový nákup v Android aplikácii cez

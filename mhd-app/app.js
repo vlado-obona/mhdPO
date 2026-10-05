@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.6.0';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -975,6 +975,7 @@ function loadFavs() {
 function saveFavs() {
   try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); favStorageOk = true; }
   catch { favStorageOk = false; }
+  if (typeof updateWidget === 'function') { renderWidgetCfg(); updateWidget(true); }
 }
 
 function resolveTarget(t) {
@@ -1174,6 +1175,8 @@ function applyPlus() {
   else delete document.documentElement.dataset.theme;
   renderFavs();
   renderPlusDlg();
+  renderWidgetCfg();
+  updateWidget(true);
 }
 function renderPlusDlg() {
   if (!$('plusDlg')) return;
@@ -1266,6 +1269,149 @@ function initPlus() {
   $('plusDark').addEventListener('change', (e) => { prefs.dark = e.target.checked; savePrefs(); applyPlus(); });
   applyPlus();
   refreshPlus();
+}
+
+// ── widget „Najbližší autobus“ (Odkiaľ Kam Plus, Android) ────────────
+// Appka vopred vypočíta najbližšie spoje zo zvolenej zastávky do jedného
+// z rýchlych cieľov (na ~26 h) a pošle ich natívnemu widgetu cez most
+// WidgetBridge. Widget nič nesťahuje — prepočet beží pri otvorení appky.
+const WIDGET_KEY = 'mhd-presov.widget.v1';
+const WIDGET_HORIZON = 26 * 3600; // s
+const WIDGET_MAX = 300; // pri častých linkách ~ celý deň
+let widgetCfg = { from: null, fav: 0 };
+let widgetBusy = false, widgetLast = 0;
+const widgetApi = () => window.Capacitor?.Plugins?.WidgetBridge;
+
+function loadWidgetCfg() {
+  try { widgetCfg = { ...widgetCfg, ...JSON.parse(localStorage.getItem(WIDGET_KEY) || '{}') }; } catch {}
+}
+function saveWidgetCfg() { try { localStorage.setItem(WIDGET_KEY, JSON.stringify(widgetCfg)); } catch {} }
+
+// epoch (ms) pre čas cestovného poriadku: dátum prevádzkového dňa + sekundy od polnoci v SR
+function skOffsetMin(utcMs) {
+  const p = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Bratislava', hourCycle: 'h23', year: 'numeric', month: '2-digit',
+    day: '2-digit', hour: '2-digit', minute: '2-digit',
+  }).formatToParts(new Date(utcMs));
+  const g = (k) => Number(p.find((x) => x.type === k).value);
+  return (Date.UTC(g('year'), g('month') - 1, g('day'), g('hour'), g('minute')) - Math.floor(utcMs / 60000) * 60000) / 60000;
+}
+function skEpoch(dateStr, secs) {
+  const naive = Date.parse(`${dateStr}T00:00:00Z`) + secs * 1000;
+  return naive - skOffsetMin(naive) * 60000;
+}
+const addDays = (dateStr, n) => new Date(Date.parse(`${dateStr}T00:00:00Z`) + n * 86400e3).toISOString().slice(0, 10);
+
+// najbližšie spoje z `from` do `to` od teraz na WIDGET_HORIZON; po kúskoch, aby appka nezamŕzala
+async function widgetJourneys(from, to) {
+  let fromStops = stopSetFor(from);
+  if (!fromStops.size) fromStops = stopSetFor(from, 1500);
+  let toStops = stopSetFor(to);
+  if (!toStops.size) toStops = stopSetFor(to, 1500);
+  if (!fromStops.size || !toStops.size) return [];
+  const now = Date.now(), end = now + WIDGET_HORIZON * 1000;
+  const today = nowInSk().date;
+  const out = new Map();
+  for (let k = 0; k < 2 && out.size < WIDGET_MAX; k++) {
+    const day = addDays(today, k);
+    const di = dateInfoFor(day);
+    if (D.meta.validTo && di.num > D.meta.validTo) break;
+    if (D.meta.validFrom && di.num < D.meta.validFrom) continue;
+    let cursor = k === 0 ? Math.max(0, nowSecsSk() - 120) : 0;
+    for (let guard = 0; guard < 250 && out.size < WIDGET_MAX; guard++) {
+      const js = planJourneys(raptor, fromStops, toStops, di, cursor, 4);
+      if (!js.length) break;
+      let maxDep = cursor;
+      for (const j of js) {
+        const ride = j.legs.find((l) => l.type === 'ride');
+        maxDep = Math.max(maxDep, j.depTime);
+        if (!ride) continue;
+        const d = skEpoch(day, ride.dep);
+        if (d < now - 60000 || d > end) continue;
+        const r = D.routes[ride.route];
+        const prev = out.get(d);
+        const e = { w: skEpoch(day, j.depTime), d, a: skEpoch(day, j.arrTime), l: r.s, c: r.c || '0b7a3b', tc: r.tc || 'ffffff', s: D.stops[ride.from].n };
+        if (!prev || e.a < prev.a) out.set(d, e);
+      }
+      if (skEpoch(day, maxDep) > end) break;
+      cursor = maxDep + 60;
+      await new Promise((res) => setTimeout(res, 0));
+    }
+  }
+  // len rozumné spoje: z dvoch s rovnakým príchodom ten neskorší odchod
+  const list = [...out.values()].sort((x, y) => x.d - y.d);
+  return list.filter((e, i) => !list.slice(i + 1).some((f) => f.a <= e.a));
+}
+
+async function updateWidget(force = false) {
+  const W = widgetApi();
+  if (!W || !D || widgetBusy) return;
+  if (!force && Date.now() - widgetLast < 20 * 60 * 1000) return;
+  widgetBusy = true;
+  try {
+    const fav = favs[widgetCfg.fav] || favs[0];
+    const out = { v: 1, plus, title: fav ? `${fav.icon} ${fav.label}` : 'Odkiaľ Kam' };
+    if (plus && widgetCfg.from && fav?.target) {
+      out.from = targetLabel(widgetCfg.from);
+      out.title = `${fav.icon} ${fav.label} · z ${out.from}`;
+      out.j = await widgetJourneys(resolveTarget(widgetCfg.from), resolveTarget(fav.target));
+    }
+    await W.update({ data: JSON.stringify(out) });
+    widgetLast = Date.now();
+  } catch { /* widget nie je dostupný (web, iOS) */ } finally { widgetBusy = false; }
+}
+
+function renderWidgetCfg() {
+  const box = $('plusWidget');
+  if (!box) return;
+  box.hidden = !(plus && widgetApi());
+  const sel = $('wFav');
+  sel.innerHTML = '';
+  favs.forEach((f, i) => {
+    const o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = `${f.icon} ${f.label}${f.target ? '' : ' (nenastavený)'}`;
+    sel.appendChild(o);
+  });
+  sel.value = String(Math.min(widgetCfg.fav, favs.length - 1));
+  $('wFrom').value = widgetCfg.from ? targetLabel(widgetCfg.from) : '';
+}
+let widgetFromPick = null;
+function saveWidgetFromDlg() {
+  const msg = $('plusMsg');
+  msg.classList.remove('err');
+  const fi = Number($('wFav').value) || 0;
+  if (widgetFromPick) widgetCfg.from = widgetFromPick;
+  if (!widgetCfg.from) { msg.textContent = 'Vyber zastávku, odkiaľ zvyčajne ideš (zo zoznamu).'; msg.classList.add('err'); $('wFrom').focus(); return; }
+  if (!favs[fi]?.target) { msg.textContent = 'Vybraný rýchly cieľ ešte nemá nastavenú zastávku — podrž jeho tlačidlo a nastav ho.'; msg.classList.add('err'); return; }
+  widgetCfg.fav = fi;
+  saveWidgetCfg();
+  msg.textContent = 'Widget uložený. Pridaj ho na plochu: podrž prst na voľnom mieste plochy → Miniaplikácie → Odkiaľ Kam.';
+  updateWidget(true);
+}
+function initWidget() {
+  loadWidgetCfg();
+  attachSuggest($('wFrom'), $('wFromSuggest'), (v) => {
+    widgetFromPick = !v ? null : v.kind === 'group'
+      ? { kind: 'group', name: v.name, lat: v.lat, lon: v.lon }
+      : { kind: 'point', lat: v.lat, lon: v.lon, label: v.label };
+  });
+  $('wSave').addEventListener('click', saveWidgetFromDlg);
+  // ťuknutie na widget: odkialkam://widget = navigácia do cieľa, odkialkam://plus = okno Plus
+  const CapApp = window.Capacitor?.Plugins?.App;
+  const onUrl = (url) => {
+    if (!url || !url.startsWith('odkialkam://')) return;
+    if (url.startsWith('odkialkam://plus')) { if ($('plusDlg').hidden) openPlusDlg(); return; }
+    const i = widgetCfg.fav;
+    if (plus && favs[i]?.target) startTrip(i);
+    else if ($('plusDlg').hidden) openPlusDlg();
+  };
+  if (CapApp) {
+    CapApp.addListener('appUrlOpen', ({ url }) => onUrl(url)).catch?.(() => {});
+    CapApp.getLaunchUrl?.().then((r) => onUrl(r?.url)).catch(() => {});
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') updateWidget(); });
+  setTimeout(() => updateWidget(true), 1500);
 }
 
 // ── lístok DPMP ──────────────────────────────────────────────────────
@@ -2405,7 +2551,9 @@ async function main() {
 
   // rýchle ciele
   loadFavs();
+  loadWidgetCfg();
   initPlus(); // načíta stav Plus a nakreslí rýchle ciele
+  initWidget();
   attachSuggest($('favStop'), $('favSuggest'), (v) => setFavTargetFrom(v));
   $('favSave').addEventListener('click', saveFavDlg);
   $('favCancel').addEventListener('click', () => closeFavDlg());
@@ -2541,6 +2689,7 @@ async function main() {
       if (!$('tripAlert').hidden) dismissAlert();
       else if (!$('gmDlg').hidden) closeGmDlg();
       else if (!$('tktDlg').hidden) closeTktDlg();
+      else if (!$('plusDlg').hidden) closePlusDlg();
       else if (!$('favDlg').hidden) closeFavDlg();
       else if (trip) endTrip();
       else if (canGoBack) history.back();
