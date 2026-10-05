@@ -15,6 +15,21 @@ Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.5.0  (5. 10. 2026)
+----------------------------------------------------------------
+- Odkiaľ Kam Plus — jednorazový nákup v Android aplikácii cez
+  Google Play (žiadne predplatné). Vyhľadávanie spojení, navigácia
+  aj upozornenie na výstup ostávajú zadarmo. Plus pridáva:
+  • až 6 rýchlych cieľov (zadarmo 2) — tlačidlo „➕ Ďalší cieľ“,
+    ďalšie tlačidlá sa dajú odstrániť,
+  • tmavý režim (aj tmavá mapa).
+  Nákup sa overuje priamo v Google Play pri každom spustení;
+  tlačidlo „Obnoviť nákup“ pre nový telefón. Na webe a v iOS sa
+  Plus zatiaľ kúpiť nedá.
+- Odkaz „⭐ Odkiaľ Kam Plus“ v pätičke; zásady súkromia doplnené
+  o nákup cez Google Play.
+
+----------------------------------------------------------------
 v1.4.2  (5. 10. 2026)
 ----------------------------------------------------------------
 - Tlačidlo výmeny smeru (⇅) je v riadku „Kam“ pod tlačidlom

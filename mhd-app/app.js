@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.4.2';
+const APP_VERSION = '1.5.0';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -334,10 +334,9 @@ const MB_ST = {
   r: ['#fff', 3.6, 13], w: ['#e9e3f0', 4, 14], v: ['#fff', 2.2, 15], f: ['#d9826b', 1.2, 16],
 };
 const MB_ORDER = ['f', 'v', 'w', 'r', 't', 's', 'p', 'm'];
-const MB_BG = '#f3efe6';
 
 function addBaseLayers(m) {
-  m.getContainer().style.background = MB_BG;
+  m.getContainer().style.background = 'var(--map-bg)'; // v tmavom režime sa mení
   m.attributionControl.setPrefix(false);
   m.attributionControl.addAttribution('© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">prispievatelia OpenStreetMap</a>');
   m.createPane('basemap').style.zIndex = 150;
@@ -952,11 +951,12 @@ function stopNav() {
   compassStop();
 }
 
-// ── rýchle ciele (dve veľké tlačidlá) ───────────────────────────────
+// ── rýchle ciele (veľké tlačidlá; 2 zadarmo, s Plus až 6) ───────────
 // Cieľ sa ukladá názvom zastávky (indexy sa po aktualizácii CP menia)
 // a súradnicami ako záloha pre prípad, že zastávku premenujú.
 const FAV_KEY = 'mhd-presov.favs.v1';
 const FAV_ICONS = ['🏠', '🏫', '💼', '🏥', '🛒', '⭐', '❤️', '⚽'];
+const FAV_FREE = 2, FAV_MAX = 6;
 let favs = [
   { icon: '🏠', label: 'Domov', target: null },
   { icon: '🏫', label: 'Škola', target: null },
@@ -967,7 +967,9 @@ let favEdit = null;
 function loadFavs() {
   try {
     const v = JSON.parse(localStorage.getItem(FAV_KEY) || 'null');
-    if (Array.isArray(v) && v.length === 2) favs = v.map((f, i) => ({ ...favs[i], ...f }));
+    if (Array.isArray(v) && v.length >= FAV_FREE && v.length <= FAV_MAX) {
+      favs = v.map((f, i) => ({ icon: '⭐', label: `Cieľ ${i + 1}`, target: null, ...favs[i], ...f }));
+    }
   } catch { favStorageOk = false; }
 }
 function saveFavs() {
@@ -986,17 +988,45 @@ function resolveTarget(t) {
 }
 const targetLabel = (t) => !t ? '' : t.kind === 'group' ? t.name : (t.label || 'uložené miesto');
 
+// tlačidlá sa kreslia nanovo (počet závisí od Plus); bez Plus vidno len prvé dve,
+// ďalšie ostávajú uložené a vrátia sa po obnovení nákupu
+const favVisible = () => (plus ? favs.length : Math.min(favs.length, FAV_FREE));
 function renderFavs() {
-  favs.forEach((f, i) => {
-    const b = $(`fav${i}`);
-    b.classList.toggle('unset', !f.target);
+  const box = $('favs');
+  const focusedIdx = document.activeElement?.dataset?.fav;
+  box.innerHTML = '';
+  for (let i = 0; i < favVisible(); i++) {
+    const f = favs[i];
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = `fav fav-c${i}` + (f.target ? '' : ' unset');
+    b.dataset.fav = String(i);
+    b.innerHTML = '<span class="fav-ico"></span><span class="fav-lbl"></span><span class="fav-sub"></span>';
     b.querySelector('.fav-ico').textContent = f.icon;
     b.querySelector('.fav-lbl').textContent = f.label;
     b.querySelector('.fav-sub').textContent = f.target ? targetLabel(f.target) : 'podrž a nastav cieľ';
     b.setAttribute('aria-label', f.target
       ? `${f.label}: navigovať do ${targetLabel(f.target)}. Podržaním upravíš.`
       : `${f.label}: cieľ nie je nastavený, ťukni a nastav ho`);
-  });
+    attachLongPress(b, () => startTrip(i), () => openFavDlg(i));
+    box.appendChild(b);
+  }
+  if (favVisible() < FAV_MAX) {
+    const add = document.createElement('button');
+    add.type = 'button';
+    add.className = 'fav-add';
+    add.dataset.fav = 'add';
+    add.innerHTML = plus ? '➕ Pridať ďalší cieľ' : '➕ Ďalší cieľ <span>⭐ Plus</span>';
+    add.addEventListener('click', () => {
+      if (!plus) { openPlusDlg(); return; }
+      favs.push({ icon: FAV_ICONS[favs.length % FAV_ICONS.length], label: `Cieľ ${favs.length + 1}`, target: null });
+      saveFavs();
+      renderFavs();
+      openFavDlg(favs.length - 1);
+    });
+    box.appendChild(add);
+  }
+  if (focusedIdx != null) box.querySelector(`[data-fav="${focusedIdx}"]`)?.focus({ preventScroll: true });
 }
 
 // ťuknutie = akcia, podržanie (650 ms) = nastavenie; z klávesnice
@@ -1033,7 +1063,9 @@ let focusBack = [];
 let popSilently = 0; // history.back() po zatvorení dialógu tlačidlom — nie je to „Späť“ používateľa
 function setInertBehind() {
   const dlg = !$('favDlg').hidden, tk = !$('tktDlg').hidden, gm = !$('gmDlg').hidden, tr = !$('trip').hidden, al = !$('tripAlert').hidden;
-  for (const el of document.querySelectorAll('body > header, body > main, body > footer, #navBar')) el.inert = dlg || tk || gm || tr || al;
+  const pl = !$('plusDlg').hidden;
+  for (const el of document.querySelectorAll('body > header, body > main, body > footer, #navBar')) el.inert = dlg || tk || gm || tr || al || pl;
+  $('plusDlg').inert = al;
   $('trip').inert = al || tk || gm;
   $('favDlg').inert = al || tr;
   $('tktDlg').inert = al;
@@ -1061,7 +1093,8 @@ function openFavDlg(i) {
   renderFavIcons();
   $('favMsg').textContent = favStorageOk ? '' : 'Pozor: tento prehliadač nedovolí uložiť nastavenie natrvalo.';
   $('favMsg').classList.toggle('err', !favStorageOk);
-  $('favDel').hidden = !f.target;
+  $('favDel').hidden = !f.target && i < FAV_FREE;
+  $('favDel').textContent = i < FAV_FREE ? 'Vymazať' : 'Odstrániť tlačidlo';
   $('favFromTo').hidden = !sel.to;
   $('favDlg').hidden = false;
   try { history.pushState({ fav: 1 }, ''); } catch {}
@@ -1112,6 +1145,127 @@ function saveFavDlg() {
   saveFavs();
   renderFavs();
   closeFavDlg();
+}
+
+// ── Odkiaľ Kam Plus ─────────────────────────────────────────────────
+// Jednorazový nákup cez Google Play Billing (plugin NativePurchases).
+// Jadro appky (vyhľadávanie, navigácia, upozornenie na výstup) je zadarmo;
+// Plus odomyká pohodlie navyše. Stav sa overuje priamo v Google Play pri
+// každom spustení — appka nič neposiela na žiadny vlastný server. Na webe
+// a v iOS (zatiaľ bez App Store) sa Plus kúpiť nedá.
+const PLUS_ID = 'odkialkam_plus';
+const PLUS_KEY = 'mhd-presov.plus.v1';
+const PREFS_KEY = 'mhd-presov.prefs.v1';
+let plus = false;
+let plusProduct = null;
+let prefs = { dark: false };
+const purchasesApi = () => window.Capacitor?.Plugins?.NativePurchases;
+const canBuyPlus = () => !!window.Capacitor?.isNativePlatform?.() && window.Capacitor.getPlatform() === 'android' && !!purchasesApi();
+const isPlusPurchase = (p) => p && p.productIdentifier === PLUS_ID && (p.purchaseState === 'PURCHASED' || p.purchaseState === '1');
+
+function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch {} }
+function setPlus(v) {
+  plus = !!v;
+  try { localStorage.setItem(PLUS_KEY, JSON.stringify({ owned: plus })); } catch {}
+  applyPlus();
+}
+function applyPlus() {
+  if (plus && prefs.dark) document.documentElement.dataset.theme = 'dark';
+  else delete document.documentElement.dataset.theme;
+  renderFavs();
+  renderPlusDlg();
+}
+function renderPlusDlg() {
+  if (!$('plusDlg')) return;
+  $('plusOwned').hidden = !plus;
+  $('plusDark').checked = !!prefs.dark;
+  const buy = $('plusBuy'), restore = $('plusRestore');
+  buy.hidden = plus;
+  restore.hidden = plus || !canBuyPlus();
+  if (!canBuyPlus()) {
+    buy.disabled = true;
+    buy.textContent = 'Kúpiť Plus';
+    if (!plus) $('plusMsg').textContent = 'Plus sa dá kúpiť v Android aplikácii Odkiaľ Kam z Google Play.';
+  } else {
+    buy.disabled = false;
+    buy.textContent = plusProduct?.priceString ? `Kúpiť Plus · ${plusProduct.priceString}` : 'Kúpiť Plus';
+  }
+}
+// overenie nákupu v Google Play (funguje aj bez internetu z vyrovnávacej pamäte Play)
+async function refreshPlus() {
+  const P = purchasesApi();
+  if (!canBuyPlus()) return;
+  try {
+    const { isBillingSupported } = await P.isBillingSupported();
+    if (!isBillingSupported) return;
+    const { purchases } = await P.getPurchases({ productType: 'inapp' });
+    setPlus((purchases || []).some(isPlusPurchase));
+  } catch { /* Play nedostupný — ostáva posledný známy stav */ }
+  try {
+    const { products } = await P.getProducts({ productIdentifiers: [PLUS_ID], productType: 'inapp' });
+    plusProduct = (products || []).find((p) => p.identifier === PLUS_ID) || null;
+    renderPlusDlg();
+  } catch {}
+}
+async function buyPlus() {
+  const P = purchasesApi();
+  if (!canBuyPlus()) return;
+  const msg = $('plusMsg');
+  msg.classList.remove('err');
+  msg.textContent = 'Otváram Google Play…';
+  $('plusBuy').disabled = true;
+  try {
+    const t = await P.purchaseProduct({ productIdentifier: PLUS_ID, productType: 'inapp' });
+    if (isPlusPurchase(t) || t?.purchaseState == null) await refreshPlus();
+    if (plus) { msg.textContent = 'Hotovo — Plus je aktivovaný. Ďakujeme!'; buzz([30, 60, 30]); }
+    else if (t?.purchaseState === 'PENDING' || t?.purchaseState === '2') msg.textContent = 'Platba čaká na dokončenie. Plus sa zapne, keď ju Google Play potvrdí.';
+    else msg.textContent = '';
+  } catch (e) {
+    const s = String(e?.message || e || '');
+    // zrušenie používateľom nie je chyba
+    msg.textContent = /cancel/i.test(s) ? '' : 'Nákup sa nepodaril. Skús to znova neskôr.';
+    msg.classList.toggle('err', !/cancel/i.test(s));
+  } finally {
+    renderPlusDlg();
+  }
+}
+async function restorePlus() {
+  const P = purchasesApi();
+  if (!canBuyPlus()) return;
+  const msg = $('plusMsg');
+  msg.classList.remove('err');
+  msg.textContent = 'Overujem nákup v Google Play…';
+  try { await P.restorePurchases(); } catch {}
+  await refreshPlus();
+  msg.textContent = plus ? 'Plus je obnovený.' : 'Pre tento Google účet sme nákup Plus nenašli.';
+}
+function openPlusDlg() {
+  $('plusMsg').textContent = '';
+  $('plusMsg').classList.remove('err');
+  renderPlusDlg();
+  $('plusDlg').hidden = false;
+  try { history.pushState({ plus: 1 }, ''); } catch {}
+  layerOpened(plus ? $('plusDark') : $('plusBuy').disabled ? $('plusClose') : $('plusBuy'));
+  refreshPlus();
+}
+function closePlusDlg(fromHistory = false) {
+  if ($('plusDlg').hidden) return;
+  $('plusDlg').hidden = true;
+  layerClosed();
+  if (!fromHistory) { try { if (history.state && history.state.plus) { popSilently++; history.back(); } } catch {} }
+}
+function initPlus() {
+  try { plus = JSON.parse(localStorage.getItem(PLUS_KEY) || 'null')?.owned === true; } catch {}
+  try { prefs = { ...prefs, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') }; } catch {}
+  // mimo Androidu sa Plus neoveruje ani nepredáva — uložený stav by tam nebol overený
+  if (!canBuyPlus()) plus = false;
+  $('plusBuy').addEventListener('click', buyPlus);
+  $('plusRestore').addEventListener('click', restorePlus);
+  $('plusClose').addEventListener('click', () => closePlusDlg());
+  $('plusLink').addEventListener('click', openPlusDlg);
+  $('plusDark').addEventListener('change', (e) => { prefs.dark = e.target.checked; savePrefs(); applyPlus(); });
+  applyPlus();
+  refreshPlus();
 }
 
 // ── lístok DPMP ──────────────────────────────────────────────────────
@@ -2251,14 +2405,14 @@ async function main() {
 
   // rýchle ciele
   loadFavs();
-  renderFavs();
-  [0, 1].forEach((i) => attachLongPress($(`fav${i}`), () => startTrip(i), () => openFavDlg(i)));
+  initPlus(); // načíta stav Plus a nakreslí rýchle ciele
   attachSuggest($('favStop'), $('favSuggest'), (v) => setFavTargetFrom(v));
   $('favSave').addEventListener('click', saveFavDlg);
   $('favCancel').addEventListener('click', () => closeFavDlg());
   $('favDel').addEventListener('click', () => {
     if (!favEdit) return;
-    favs[favEdit.i] = { ...favs[favEdit.i], target: null };
+    if (favEdit.i >= FAV_FREE) favs.splice(favEdit.i, 1); // ďalšie tlačidlá (Plus) sa odstránia celé
+    else favs[favEdit.i] = { ...favs[favEdit.i], target: null };
     saveFavs(); renderFavs(); closeFavDlg();
   });
   $('favFromTo').addEventListener('click', () => { if (sel.to) setFavTargetFrom(sel.to); });
@@ -2361,6 +2515,7 @@ async function main() {
       closeGmDlg();
       if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
     } else if (!$('tktDlg').hidden) closeTktDlg(true);
+    else if (!$('plusDlg').hidden) closePlusDlg(true);
     else if (!$('favDlg').hidden) closeFavDlg(true);
     else if (trip) endTrip(true);
   });
@@ -2369,6 +2524,7 @@ async function main() {
     if (!$('tripAlert').hidden) dismissAlert();
     else if (!$('gmDlg').hidden) closeGmDlg();
     else if (!$('tktDlg').hidden) closeTktDlg();
+    else if (!$('plusDlg').hidden) closePlusDlg();
     else if (!$('favDlg').hidden) closeFavDlg();
     else if (trip) endTrip();
     else return;

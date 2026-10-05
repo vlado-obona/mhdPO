@@ -17,6 +17,10 @@ v telefóne. Prevádzkovateľ: BEDEKA, s.r.o.
   cez GPS a upozorní ťa pred výstupom zvukom, vibráciou, hlasom aj
   notifikáciou.
 - **Lístok.** Odkazy na SMS lístok, platbu kartou a aplikácie DPMP.
+- **Odkiaľ Kam Plus** (len Android, jednorazový nákup cez Google Play Billing,
+  produkt `odkialkam_plus`, typ „jednorazový produkt“): až 6 rýchlych cieľov a
+  tmavý režim. Jadro appky je zadarmo. Nákup sa overuje v telefóne cez Google
+  Play (plugin `@capgo/native-purchases`), bez vlastného servera.
 
 ## Štruktúra
 

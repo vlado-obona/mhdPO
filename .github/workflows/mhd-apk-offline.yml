@@ -55,7 +55,7 @@ jobs:
         run: |
           mkdir cap-build && cd cap-build
           npm init -y >/dev/null
-          npm i --no-audit --no-fund @capacitor/core@8.5.2 @capacitor/cli@8.5.2 @capacitor/android@8.5.2 @capacitor/geolocation@8.2.2 @capacitor/local-notifications@8.3.1 @capacitor/haptics@8.0.2 @capacitor/app@8.1.2 @capacitor-community/keep-awake@8.0.1 @capacitor-community/text-to-speech@8.0.2 >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@8.5.2 @capacitor/cli@8.5.2 @capacitor/android@8.5.2 @capacitor/geolocation@8.2.2 @capacitor/local-notifications@8.3.1 @capacitor/haptics@8.0.2 @capacitor/app@8.1.2 @capacitor-community/keep-awake@8.0.1 @capacitor-community/text-to-speech@8.0.2 @capgo/native-purchases@8.8.1 >/dev/null
           cat > capacitor.config.json <<EOF
           {
             "appId": "sk.operatorsystem.mhdpresov",
@@ -70,11 +70,11 @@ jobs:
           npx cap sync android
           grep -E 'targetSdkVersion|compileSdkVersion' android/variables.gradle
           grep -q 'targetSdkVersion = 36' android/variables.gradle || { echo "::error::targetSdk nie je 36 (Google Play)"; exit 1; }
-          # oprávnenia: geolokácia (len pri používaní appky). Presné upozornenie na výstup:
+          # oprávnenia: geolokácia (len pri používaní appky), nákup Plus cez Google Play Billing. Presné upozornenie na výstup:
           # SCHEDULE_EXACT_ALARM pridáva plugin LocalNotifications (USE_EXACT_ALARM Google Play
           # povoľuje len budíkom/kalendárom — nepoužívame).
           M=android/app/src/main/AndroidManifest.xml
-          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n</manifest>#' "$M"
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n    <uses-permission android:name="com.android.vending.BILLING" />\n</manifest>#' "$M"
           grep -c LOCATION "$M"
 
       - name: Ikony aplikacie

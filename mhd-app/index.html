@@ -25,10 +25,7 @@
   </header>
 
   <main>
-    <section class="favs" aria-label="Rýchle ciele">
-      <button id="fav0" class="fav fav-a" type="button"><span class="fav-ico"></span><span class="fav-lbl"></span><span class="fav-sub"></span></button>
-      <button id="fav1" class="fav fav-b" type="button"><span class="fav-ico"></span><span class="fav-lbl"></span><span class="fav-sub"></span></button>
-    </section>
+    <section id="favs" class="favs" aria-label="Rýchle ciele"></section>
     <p class="fav-hint">Ťuknutím ťa appka navedie do cieľa · podržaním nastavíš cieľ a názov</p>
     <button id="tktBtn" class="tkt-btn" type="button">🎫 Kúpiť lístok <span>SMS · karta · aplikácia</span></button>
 
@@ -103,6 +100,31 @@
         <button id="favDel" class="ghost danger" type="button">Vymazať</button>
         <button id="favCancel" class="ghost" type="button">Zrušiť</button>
         <button id="favSave" class="primary" type="button">Uložiť</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="plusDlg" class="dlg" hidden role="dialog" aria-modal="true" aria-labelledby="plusTitle">
+    <div class="dlg-box plus">
+      <div class="tkt-head">
+        <h2 id="plusTitle">⭐ Odkiaľ Kam Plus</h2>
+        <button id="plusClose" class="trip-close" type="button" aria-label="Zavrieť">✕</button>
+      </div>
+      <p class="plus-lead">Vyhľadávanie spojení, navigácia aj upozornenie na výstup ostávajú <b>zadarmo</b>. Plus pridáva pohodlie navyše a podporí ďalší vývoj appky.</p>
+      <ul class="plus-list">
+        <li><b>Až 6 rýchlych cieľov</b> — Domov, Škola, Práca, Babka, Lekár… každý jedným ťuknutím.</li>
+        <li><b>Tmavý režim</b> — šetrí oči večer aj batériu.</li>
+        <li><b>Ďalšie doplnky</b> pribudnú v aktualizáciách bez príplatku.</li>
+      </ul>
+      <p class="plus-once">Jednorazová platba, žiadne predplatné. Platí natrvalo pre tvoj Google účet.</p>
+      <div id="plusOwned" class="plus-owned" hidden>
+        <p>✅ Plus máš aktivovaný. Ďakujeme!</p>
+        <label class="plus-switch"><input id="plusDark" type="checkbox"> Tmavý režim</label>
+      </div>
+      <p id="plusMsg" class="status" role="status"></p>
+      <div class="dlg-actions">
+        <button id="plusRestore" class="ghost" type="button">Obnoviť nákup</button>
+        <button id="plusBuy" class="primary" type="button">Kúpiť Plus</button>
       </div>
     </div>
   </div>
@@ -198,6 +220,7 @@
     Plánovač je informatívny — sleduj aj aktuálne výluky na
     <a href="https://www.dpmp.sk" target="_blank" rel="noopener">dpmp.sk</a>.</p>
     <p>Mapa, miesta a adresy: © prispievatelia <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL).</p>
+    <p><button id="plusLink" class="link-btn" type="button">⭐ Odkiaľ Kam Plus</button></p>
     <p><a href="https://vlado-obona.github.io/mhdPO/sukromie/" target="_blank" rel="noopener">Ochrana súkromia</a> · appka nezbiera žiadne osobné údaje, poloha zostáva v telefóne.</p>
   </footer>
 
