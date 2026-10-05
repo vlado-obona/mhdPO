@@ -146,6 +146,10 @@ jobs:
           mkdir -p "releases/v$VERSION"
           cp cap-build/mhd-presov-offline.apk "releases/v$VERSION/mhd-presov-v$VERSION.apk"
           cp cap-build/mhd-presov.aab "releases/v$VERSION/mhd-presov-v$VERSION.aab"
+          # appka v jednom súbore (.html) — ak ešte nie je v repe, zostaví sa tu
+          H="releases/v$VERSION/mhd-presov-v$VERSION.html"
+          [ -f "$H" ] || node scripts/mhd/build-release.mjs "$VERSION" || echo "::warning::HTML release sa nepodarilo zostaviť"
+          [ -f "$H" ] && git add "$H" "releases/v$VERSION/RELEASE.md"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "releases/v$VERSION/mhd-presov-v$VERSION.apk" "releases/v$VERSION/mhd-presov-v$VERSION.aab"
