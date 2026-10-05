@@ -23,6 +23,12 @@ on:
         description: 'Verzia (prázdne = APP_VERSION z mhd-app/app.js)'
         required: false
         type: string
+      play_track:
+        description: 'Google Play: kam nahrať AAB (internal = interné testovanie, none = nenahrávať)'
+        required: false
+        default: 'internal'
+        type: choice
+        options: [internal, none]
 
 permissions:
   contents: write
@@ -166,3 +172,63 @@ jobs:
           F=("releases/v$VERSION/mhd-presov-v$VERSION.apk" "releases/v$VERSION/mhd-presov-v$VERSION.aab")
           [ -f "releases/v$VERSION/mhd-presov-v$VERSION.html" ] && F+=("releases/v$VERSION/mhd-presov-v$VERSION.html")
           rel "${F[@]}"
+
+      # ── Google Play: automatické nahratie AAB do interného testovania ──
+      # Potrebuje secret PLAY_SERVICE_ACCOUNT_JSON (servisný účet Google Cloud
+      # s prístupom „Vydania“ v Play Console). Bez neho sa krok preskočí.
+      # Prvé vydanie musí byť v Play Console nahraté ručne (API appku nevytvorí).
+      # Do produkcie sa verzia posúva ručne v Play Console (Propagovať vydanie).
+      - name: Google Play – príprava
+        id: play
+        env:
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PLAY_TRACK: ${{ inputs.play_track || 'internal' }}
+        run: |
+          if [ -z "$PLAY_JSON" ]; then
+            echo "::notice::Secret PLAY_SERVICE_ACCOUNT_JSON nie je nastavený – nahratie do Google Play preskočené."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ "$PLAY_TRACK" = "none" ]; then echo "enabled=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+          echo "track=$PLAY_TRACK" >> "$GITHUB_OUTPUT"
+          # „Čo je nové“ (max. 500 znakov) z releases/CHANGELOG.txt
+          mkdir -p whatsnew
+          python3 - "$VERSION" <<'PY'
+          import re, sys
+          v = sys.argv[1]
+          txt = open('releases/CHANGELOG.txt', encoding='utf-8').read()
+          m = re.search(r'^v' + re.escape(v) + r'\b.*?\n-+\n(.*?)(?=\n-{10,}\nv\d|\Z)', txt, re.S | re.M)
+          body = m.group(1).strip() if m else f'Verzia {v}.'
+          body = re.sub(r'[ \t]*\n[ \t]+', ' ', body)          # zalomené riadky odrážok spojiť
+          body = re.sub(r'\n{2,}', '\n', body).strip()
+          if len(body) > 500: body = body[:497].rsplit(' ', 1)[0] + '…'
+          open('whatsnew/whatsnew-sk-SK', 'w', encoding='utf-8').write(body)
+          print(body)
+          PY
+
+      - name: Google Play – nahratie (interné testovanie)
+        id: upload
+        if: steps.play.outputs.enabled == 'true'
+        continue-on-error: true
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: sk.operatorsystem.mhdpresov
+          releaseFiles: releases/v${{ env.VERSION }}/mhd-presov-v${{ env.VERSION }}.aab
+          releaseName: ${{ env.VERSION }}
+          track: ${{ steps.play.outputs.track }}
+          status: completed
+          whatsNewDirectory: whatsnew
+
+      # appka, ktorá ešte nemá žiadne zverejnené vydanie, prijme len koncept
+      - name: Google Play – nahratie ako koncept
+        if: steps.play.outputs.enabled == 'true' && steps.upload.outcome == 'failure'
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: sk.operatorsystem.mhdpresov
+          releaseFiles: releases/v${{ env.VERSION }}/mhd-presov-v${{ env.VERSION }}.aab
+          releaseName: ${{ env.VERSION }}
+          track: ${{ steps.play.outputs.track }}
+          status: draft
+          whatsNewDirectory: whatsnew
