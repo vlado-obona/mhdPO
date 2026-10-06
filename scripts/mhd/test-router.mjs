@@ -161,8 +161,10 @@ console.log(`krížová kontrola live odchodov: ${matched}/${observed.length} ($
 if (misses.length) console.log(`  nenájdené: ${misses.join(', ')}`);
 if (ratio < 0.85) fail('krížová kontrola pod 85 % — dataset nemusí byť aktuálny');
 
-// ── 4b: zmeny CP od 1.10.2026 (oprava data/gtfs-patches) ────────────
-if ((D.meta.patches || []).some((p) => p.id === 'dpmp-2026-10-01')) {
+// ── 4b: zmeny CP od 1.10.2026 (oprava 1382 alebo feed 1384 + väzby) ──
+const octIds = ['dpmp-2026-10-01', 'dpmp-2026-10-vazby'];
+for (const di of (D.meta.patches || []).some((p) => octIds.includes(p.id))
+  ? ['2026-10-02', '2026-10-09', '2026-10-27'].filter((d) => Number(d.replaceAll('-', '')) <= D.meta.validTo).map(dateInfoFor) : []) {
   const deps = (line, stop, d) => {
     const set = new Set();
     for (const p of D.patterns) {
@@ -197,7 +199,7 @@ if ((D.meta.patches || []).some((p) => p.id === 'dpmp-2026-10-01')) {
   const t14 = [...D.patterns].some((p) => D.routes[p.r].s === '14' && D.stops[p.stops[0]].n === 'Záborské'
     && D.stops[p.stops.at(-1)].n === 'Trojica' && p.trips.some((t) => t.t[1] === hm('7:00') && raptor.serviceActive(t.sv, di.num, di.weekday)));
   if (!t14) { bad++; fail('CP 1.10.: linka 14 o 7:00 zo Záborského nekončí na Trojici'); }
-  if (!bad) ok(`zmeny CP od 1.10.2026: všetkých ${expect.reduce((a, e) => a + e[2].length + e[3].length, 0) + 1} kontrol sedí`);
+  if (!bad) ok(`zmeny CP od 1.10.2026 (${di.num}): všetkých ${expect.reduce((a, e) => a + e[2].length + e[3].length, 0) + 1} kontrol sedí`);
 
   // „zostaň sedieť“: nadväzujúce spoje z oznamu sa plánujú ako jeden autobus
   const grp = (n) => new Map(D.stops.map((s, i) => [s, i]).filter(([s]) => s.n === n).map(([, i]) => [i, 0]));
@@ -214,7 +216,7 @@ if ((D.meta.patches || []).some((p) => p.id === 'dpmp-2026-10-01')) {
     if (!hit) { bad++; fail(`zostaň sedieť ${a} → ${b} (${lines.join('→')}) sa nenašlo`); continue; }
     if (hit.transfers !== 0) { bad++; fail(`zostaň sedieť ${a} → ${b}: počíta sa ako ${hit.transfers} prestup`); }
   }
-  if (!bad) ok(`zostaň sedieť (44→28, 18→14, 41→13, 32A→32): ${seat.length}/${seat.length}, bez prestupu`);
+  if (!bad) ok(`zostaň sedieť (44→28, 18→14, 41→13, 32A→32) ${di.num}: ${seat.length}/${seat.length}, bez prestupu`);
 }
 
 // ── 5: nočné spoje cez polnoc ───────────────────────────────────────

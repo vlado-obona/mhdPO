@@ -30,7 +30,7 @@ v telefóne. Prevádzkovateľ: BEDEKA, s.r.o.
 | `mhd-app/` | appka (HTML/CSS/JS, PWA). `data/` = skompilovaný dataset, miesta, podkladová mapa |
 | `scripts/mhd/` | kompilácia dát (`build-data.mjs`, `places.mjs`, `gtfs-patch.mjs`), release (`build-release.mjs`), testy (`test-router.mjs`) |
 | `data/gtfs-presov/` | surový GTFS feed DPMP (provenience v `SOURCE.txt`) |
-| `data/gtfs-patches/` | zmeny CP vyhlásené DPMP, ktoré ešte nie sú vo feede (overené proti PDF) |
+| `data/gtfs-patches/` | zmeny CP vyhlásené DPMP, ktoré ešte nie sú vo feede (overené proti PDF), a väzby „zostaň sedieť“ (GTFS nemá block_id); každá oprava platí len pre svoj feed (`baseFeedVersion`) |
 | `data/dpmp-lcp/`, `data/dpmp-info/` | oficiálne podklady DPMP (linkové CP v PDF, stránky o lístkoch) na overenie |
 | `data/osm-places/` | miesta a adresy z OpenStreetMap (© prispievatelia OSM, ODbL) |
 | `web/` | stránky na GitHub Pages: `sukromie/` = zásady ochrany súkromia |

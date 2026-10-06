@@ -1,0 +1,328 @@
+{
+ "id": "dpmp-2026-10-vazby",
+ "baseFeedVersion": "1382_1384",
+ "title": "Nadväzujúce spoje („zostaň sedieť“) podľa DPMP",
+ "validFrom": 20261001,
+ "validTo": 20261031,
+ "sources": [
+  "data/gtfs-patches/1382-dpmp-2026-10-01.json — väzby z oznamu DPMP od 1. 10. 2026 a z PDF liniek 32 a 32A"
+ ],
+ "notes": [
+  "Feed 1382_1384 už obsahuje CP od 1. 10. 2026 (aj prázdninové dni 29.–30. 10.); dopĺňajú sa len väzby, ktoré GTFS nemá."
+ ],
+ "links": [
+  {
+   "from": "1384_609",
+   "to": "1384_5159",
+   "note": "oznam DPMP: linka 44 (6:20) ďalej ako linka 28 do Ľubotíc"
+  },
+  {
+   "from": "1384_6632",
+   "to": "1384_6780",
+   "note": "oznam DPMP: linka 18 (17:01 Bzenov) ďalej ako linka 14 do Záborského"
+  },
+  {
+   "from": "1384_542",
+   "to": "1384_6758",
+   "note": "oznam DPMP: linka 41 (7:00 Surdok) ďalej ako linka 13 do Ľubotíc"
+  },
+  {
+   "from": "1384_5166",
+   "to": "1384_7401",
+   "note": "oznam DPMP: linka 28 (6:53 Ľubotice) z Trojice ďalej ako linka 32"
+  },
+  {
+   "from": "1384_244",
+   "to": "1384_7209",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3196",
+   "to": "1384_7432",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3706",
+   "to": "1384_3713",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3707",
+   "to": "1384_3719",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3708",
+   "to": "1384_3715",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3710",
+   "to": "1384_3716",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3711",
+   "to": "1384_3717",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3712",
+   "to": "1384_3718",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_375",
+   "to": "1384_266",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7211",
+   "to": "1384_7212",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7213",
+   "to": "1384_7214",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7215",
+   "to": "1384_7216",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7217",
+   "to": "1384_7218",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7219",
+   "to": "1384_7220",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7221",
+   "to": "1384_7222",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7223",
+   "to": "1384_7228",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7229",
+   "to": "1384_7230",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7404",
+   "to": "1384_7405",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_4150",
+   "to": "1384_4164",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_4153",
+   "to": "1384_4165",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_4154",
+   "to": "1384_4168",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_4157",
+   "to": "1384_4166",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_4158",
+   "to": "1384_4167",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_4160",
+   "to": "1384_4169",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_4161",
+   "to": "1384_320",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_7098",
+   "to": "1384_7099",
+   "note": "PDF linky 32: E ďalej ako linka 28 do Ľubotíc"
+  },
+  {
+   "from": "1384_7102",
+   "to": "1384_7103",
+   "note": "PDF linky 32: E ďalej ako linka 28 do Ľubotíc"
+  },
+  {
+   "from": "1384_455",
+   "to": "1384_397",
+   "note": "PDF linky 32: F ďalej ako linka 45 do V. Šariša"
+  },
+  {
+   "from": "1384_10009",
+   "to": "1384_2015",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_10011",
+   "to": "1384_2011",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_10013",
+   "to": "1384_8506",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_10014",
+   "to": "1384_2013",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_10015",
+   "to": "1384_8508",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_10016",
+   "to": "1384_2020",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1203",
+   "to": "1384_8528",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1230",
+   "to": "1384_8540",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1317",
+   "to": "1384_2019",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1908",
+   "to": "1384_3400",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1915",
+   "to": "1384_8520",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1935",
+   "to": "1384_8532",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1949",
+   "to": "1384_8516",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_1960",
+   "to": "1384_8524",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_2025",
+   "to": "1384_8536",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_9632",
+   "to": "1384_2008",
+   "note": "PDF linky 32: D ďalej ako linka 18"
+  },
+  {
+   "from": "1384_10455",
+   "to": "1384_10456",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10457",
+   "to": "1384_10458",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10459",
+   "to": "1384_10460",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10461",
+   "to": "1384_10462",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10463",
+   "to": "1384_10464",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10465",
+   "to": "1384_10466",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10467",
+   "to": "1384_10468",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10473",
+   "to": "1384_10655",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10475",
+   "to": "1384_10657",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_10652",
+   "to": "1384_10653",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_243",
+   "to": "1384_10453",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3115",
+   "to": "1384_1182",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3120",
+   "to": "1384_3109",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  },
+  {
+   "from": "1384_3121",
+   "to": "1384_3112",
+   "note": "PDF linky 32A: „Okružná — ďalej pokračuje ako linka 32“"
+  }
+ ],
+ "summary": [
+  "väzby: 62 (z opravy 1382: 48, nové 32A→32 v ďalších dňoch: 14); podľa služby {\"1384_PD\":32,\"1384_SO\":8,\"1384_NE\":8,\"1384_PR\":14}"
+ ]
+}

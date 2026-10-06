@@ -11,8 +11,19 @@ Od v1.4.0 sú súbory v GitHub Releases repozitára vlado-obona/mhdPO.
 
 Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS),
 od v1.3.0 doplnené o zmeny vyhlásené DPMP (oznam + linkové CP v PDF).
-Aktuálne obdobie platnosti: 1. 10. – 28. 10. 2026. Po vydaní nových
+Aktuálne obdobie platnosti: 1. 10. – 31. 10. 2026 (vrátane jesenných
+prázdnin 29.–30. 10.). Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.6.7  (6. 10. 2026)
+----------------------------------------------------------------
+- Nové oficiálne cestovné poriadky DPMP (GTFS feed 1382_1384):
+  platia do 31. 10. 2026 vrátane jesenných prázdnin 29.–30. 10.
+  (prázdninový CP). Zmeny 23 spojov od 1. 10. sú už priamo
+  v oficiálnych dátach — overené všetkých 40 kontrol.
+- Nadväzujúce spoje „zostaň sedieť“ (napr. 44 → 28, 18 → 14,
+  41 → 13, 32A → 32) prenesené na nové dáta: 62 väzieb.
 
 ----------------------------------------------------------------
 v1.6.6  (5. 10. 2026)
