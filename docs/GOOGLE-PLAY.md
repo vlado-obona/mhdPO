@@ -30,11 +30,20 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 - **Play Console → Obsah aplikácie → Povolenia služieb v popredí:** typ Poloha, úloha Navigácia (sledovanie cesty spustené používateľom), popis v `store/ZAZNAM-V-OBCHODE.md`, **video** (YouTube nezaradené): ťuk na Domov → trvalá notifikácia → zamknutie displeja → upozornenie pred zastávkou → koniec sledovania.
 - Data safety ostáva „nezbiera“ – poloha sa spracúva len v zariadení.
 
+## Automatické vydávanie (Vlado len schvaľuje)
+1. Build (workflow „Android (APK + AAB)“) nahrá AAB do **interného testovania** (status completed → testeri ho majú hneď). Potrebuje secret `PLAY_SERVICE_ACCOUNT_JSON`.
+2. Job **„produkcia“** potom čaká na schválenie v GitHub prostredí `produkcia` (povinný schvaľovateľ vlado-obona). Príde e-mail / notifikácia v appke GitHub → **Review deployments → Approve**.
+3. Po schválení `scripts/mhd/play-release.py` vydá to isté AAB (rovnaký versionCode) do **produkcie** s poznámkami z CHANGELOG → Google ho skontroluje a zverejní.
+   - Ak je v Play Console zapnuté „Spravované zverejňovanie“, vydanie sa len pripraví a odošle sa v Play Console.
+   - Kým appka nie je zverejnená, Play prijme len koncept → prvé vydanie do produkcie sa odošle ručne v Play Console.
+4. Novší build staré čakanie na schválenie zruší (schvaľuje sa vždy najnovšia verzia). Odmietnuť = Reject (verzia ostane len v internom testovaní).
+- Poistka: job „produkcia“ sa spustí len pri premennej repozitára `PLAY_PROD_SCHVALOVANIE = zapnute` — nastavuje sa spolu s povinným schvaľovateľom, aby nikdy nešlo do produkcie bez schválenia.
+
 ## Pravidlá pre build
 - **versionCode** = `YYMMDD·1000 + (minúta dňa / 2)`, 9 číslic, vždy rastie (posledný nahratý 261005387, limit 2 100 000 000).
 - **Poznámky k vydaniu** („Čo je nové“): jazykový tag **`sk`** (Play odmieta `sk-SK`), max. 500 znakov – workflow ich berie z `releases/CHANGELOG.txt`.
 - Android workflow po builde nahrá AAB do **interného testovania** cez servisný účet (secret `PLAY_SERVICE_ACCOUNT_JSON`). Bez secretu sa krok preskočí.
-- Do produkcie sa verzia posúva ručne: Play Console → Interné testovanie → Propagovať vydanie.
+- Do produkcie: po schválení v GitHube automaticky (pozri vyššie), alebo ručne Play Console → Interné testovanie → Propagovať vydanie.
 - R8/ProGuard nie je zapnutý (Capacitor release bez minifikácie), preto `mapping.txt` neexistuje – upozornenie Play na chýbajúci súbor je len informačné (pády v Android vitals budú čitateľné aj bez neho).
 - `assetlinks.json` netreba – appka je natívna (Capacitor), nie TWA.
 

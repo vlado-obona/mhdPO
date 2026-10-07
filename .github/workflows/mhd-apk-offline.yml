@@ -33,21 +33,27 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: mhd-apk-offline-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    # súbeh len pre build — čakanie na schválenie produkcie ďalšie buildy neblokuje
+    concurrency:
+      group: mhd-apk-offline-${{ github.ref }}
+      cancel-in-progress: false
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+      code: ${{ steps.vcode.outputs.code }}
+      internal: ${{ steps.upload.outcome }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Verzia
+        id: ver
         run: |
           V="${{ inputs.version }}"
           [ -n "$V" ] || V=$(sed -n "s/^const APP_VERSION = '\([0-9.]*\)';/\1/p" mhd-app/app.js)
           echo "VERSION=$V" >> "$GITHUB_ENV"; echo "verzia $V"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v4
         with:
@@ -113,6 +119,7 @@ jobs:
           npx capacitor-assets generate --android || echo "generovanie ikon zlyhalo — ostane predvolena"
 
       - name: Verzia aplikacie
+        id: vcode
         working-directory: cap-build/android
         run: |
           # versionCode musí stále rásť (Google Play aj aktualizácia v telefóne):
@@ -121,6 +128,7 @@ jobs:
           D=$(date -u +%y%m%d); HM=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
           CODE=$(( 10#$D * 1000 + HM / 2 ))
           sed -i "s/versionCode 1$/versionCode $CODE/" app/build.gradle
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
           sed -i "s/versionName \"1.0\"$/versionName \"$VERSION\"/" app/build.gradle
           grep -E 'versionCode|versionName' app/build.gradle
 
@@ -261,3 +269,33 @@ jobs:
           track: ${{ steps.play.outputs.track }}
           status: draft
           whatsNewDirectory: whatsnew
+
+  # ── Google Play: produkcia až po schválení ─────────────────────────
+  # Po úspešnom nahratí do interného testovania čaká na schválenie v prostredí
+  # „produkcia“ (GitHub → Settings → Environments → produkcia → Required
+  # reviewers: vlado-obona). Schvaľovateľ dostane e-mail / notifikáciu v appke
+  # GitHub; po „Approve“ sa to isté AAB (rovnaký versionCode) vydá do produkcie
+  # a Google ho skontroluje. Bez premennej PLAY_PROD_SCHVALOVANIE = zapnute
+  # (nastaví sa spolu s povinným schvaľovateľom) sa krok vôbec nespustí — aby
+  # nikdy nešlo do produkcie bez schválenia. Novší build staré čakanie zruší.
+  produkcia:
+    needs: build
+    if: needs.build.outputs.internal == 'success' && vars.PLAY_PROD_SCHVALOVANIE == 'zapnute'
+    runs-on: ubuntu-latest
+    environment: produkcia
+    concurrency:
+      group: mhd-play-produkcia
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            releases/CHANGELOG.txt
+            scripts/mhd/play-release.py
+          sparse-checkout-cone-mode: false
+      - name: Google Play – vydanie do produkcie
+        env:
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          pip install -q google-auth requests
+          python3 scripts/mhd/play-release.py production "${{ needs.build.outputs.code }}" "${{ needs.build.outputs.version }}"
