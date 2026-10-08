@@ -9,7 +9,7 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 | Aplikácia | Odkiaľ Kam – MHD Prešov (app ID 4973310957021774926) |
 | Balíček | `sk.operatorsystem.mhdpresov` (nemeniteľný) |
 | Play App Signing | zapnuté – podpisový kľúč spravuje Google; náš keystore (secrets `ANDROID_KEYSTORE_*`) je **upload kľúč** |
-| Interné testovanie | aktívne od 1.6.1; posledná 1.6.6 (versionCode 261005419, 7. 10. 2026), zoznam „Interní testeri“ |
+| Interné testovanie | aktívne od 1.6.1; posledná 1.6.9 (automaticky 8. 10. 2026; pred ňou 1.6.6 = 261005419), zoznam „Interní testeri“ |
 | Testovanie licencií | zoznam „Interní testeri“, RESPOND_NORMALLY (nákupy zadarmo) |
 | Platobný profil | Google Payments BEDEKA, s.r.o. (organizácia), prepojený |
 | Produkt Plus | `odkialkam_plus`, jednorazový INAPP (trvalý – **nikdy nekonzumovať**), možnosť nákupu `buy`, spätne kompatibilná, **aktívny**, 174 krajín; SK 2,49 € s DPH (základ 2,02 € bez DPH) |
@@ -42,7 +42,7 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 ## Stav nastavenia (7. 10. 2026)
 - Záznam v obchode SK/EN uložený (veta o upozornení „aj pri zamknutom displeji a aj keď autobus mešká v zápche“), profil vývojára s promo textom.
 - **Povolenia služieb v popredí – chýba:** Obsah aplikácie → „Povolenia pre službu na popredí“ → úloha **Navigácia** → povinný **odkaz na video** (bez neho sa nedá uložiť ani koncept). Interné testovanie neblokuje, odoslanie na kontrolu áno.
-- Automatické nahrávanie: čaká na servisný účet + secret `PLAY_SERVICE_ACCOUNT_JSON`, prostredie `produkcia` a premennú `PLAY_PROD_SCHVALOVANIE`.
+- Automatické nahrávanie **funguje od v1.6.9 (8. 10. 2026)**: build sám nahral AAB do interného testovania a job „produkcia“ čakal na schválenie. Kým appka nie je zverejnená a nie je hotová deklarácia služby v popredí (video), produkciu NESCHVAĽOVAŤ (Reject alebo nechať čakať — novší build čakanie zruší).
 
 ## Pravidlá pre build
 - **versionCode** = `YYMMDD·1000 + (minúta dňa / 2)`, 9 číslic, vždy rastie (posledný nahratý 261005419, limit 2 100 000 000).
