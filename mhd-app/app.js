@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.6.8';
+const APP_VERSION = '1.6.9';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -2156,6 +2156,7 @@ async function scheduleTripNotifs() {
   const t = trip;
   if (!LN || !t || !t.j || !t.notifOk) return;
   await cancelTripNotifs();
+  if (trip !== t) return; // cesta medzitým skončila
   const list = [];
   t.rides.forEach((r, k) => {
     if (k < t.ri || t.alerted.has(k) || t.seated.has(k)) return;
@@ -2186,6 +2187,7 @@ async function maintainNotifs() {
     for (const [k] of soon) {
       const at = Math.max(notifDue(t, k), Date.now() + 120000);
       await LN.cancel({ notifications: [{ id: TRIP_NOTIF_BASE + k }] }).catch(() => {});
+      if (trip !== t) break; // cesta medzitým skončila
       await LN.schedule({ notifications: [notifPayload(t, k, at)] }).catch(() => {});
       t.notifAt.set(k, at);
     }
@@ -2677,6 +2679,27 @@ function renderTripLive() {
   if ($('tripSr').textContent !== sr) $('tripSr').textContent = sr;
 }
 
+// ── ukončenie aplikácie (len Android; iOS programové ukončenie nepovoľuje) ──
+// Najprv vypnúť všetko, čo by bežalo ďalej: režim cesty, sledovanie na pozadí
+// (aj zo skoršej cesty), GPS navigáciu na zastávku a polohu na mape.
+const canExitApp = () => window.Capacitor?.getPlatform?.() === 'android' && !!window.Capacitor?.Plugins?.App?.exitApp;
+let exiting = false;
+async function exitApp() {
+  const CapApp = window.Capacitor?.Plugins?.App;
+  if (!canExitApp() || exiting) return;
+  exiting = true;
+  if (trip) endTrip(true);
+  // aj naplánované upozornenia z cesty, ktorú systém predtým ukončil s appkou
+  cancelAllTripNotifs();
+  stopNav();
+  stopPosWatch();
+  const TT = tripTracker();
+  // natívne: zastaví sledovanie a zavrie appku aj zo zoznamu „Nedávne“
+  if (TT?.closeApp) { try { await TT.closeApp(); return; } catch {} }
+  try { await TT?.stop(); } catch {}
+  CapApp.exitApp().catch(() => {});
+}
+
 // prázdny dátum/čas (tlačidlo „VYMAZAŤ“ v systémovom výbere) → aktuálny dátum/čas
 function fillEmptyWhen() {
   const n = nowInSk();
@@ -2693,6 +2716,10 @@ async function main() {
   $('timeInput').value = now.time;
 
   for (const id of ['dateInput', 'timeInput']) $(id).addEventListener('change', fillEmptyWhen);
+  if (canExitApp()) {
+    $('exitBtn').hidden = false;
+    $('exitBtn').addEventListener('click', exitApp);
+  }
   $('nowBtn').addEventListener('click', () => {
     const n = nowInSk();
     $('dateInput').value = n.date;

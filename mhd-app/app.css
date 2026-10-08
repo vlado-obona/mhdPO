@@ -56,6 +56,15 @@ body {
 .top h1 { font-size: 1.15rem; margin: 0; letter-spacing: .02em; }
 .app-ver { font-size: .7rem; font-weight: 400; opacity: .8; vertical-align: middle; }
 .data-info { font-size: .72rem; opacity: .85; }
+/* ukončenie aplikácie (len Android) — vpravo v hlavičke */
+.exit-btn {
+  margin-left: auto; align-self: center; flex: 0 0 auto;
+  width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%;
+  border: 1.5px solid rgb(255 255 255 / 70%); background: rgb(255 255 255 / 12%); color: #fff;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.exit-btn:active { background: rgb(255 255 255 / 28%); }
+.exit-btn svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 
 main { max-width: 640px; margin: 0 auto; padding: .75rem; }
 

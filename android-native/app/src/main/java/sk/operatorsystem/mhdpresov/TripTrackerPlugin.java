@@ -74,6 +74,20 @@ public class TripTrackerPlugin extends Plugin {
         call.resolve();
     }
 
+    // tlačidlo „Ukončiť“: zastaví sledovanie a zavrie appku aj zo zoznamu
+    // „Nedávne“ (App.exitApp volá len finish() — karta by ostala a jej otvorenie
+    // by zopakovalo odkaz z widgetu)
+    @PluginMethod
+    public void closeApp(PluginCall call) {
+        Context ctx = getContext();
+        if (TripTrackerService.running) {
+            Intent i = new Intent(ctx, TripTrackerService.class).setAction(TripTrackerService.ACTION_STOP);
+            try { ctx.startService(i); } catch (RuntimeException e) { ctx.stopService(new Intent(ctx, TripTrackerService.class)); }
+        }
+        call.resolve();
+        if (getActivity() != null) getActivity().runOnUiThread(() -> getActivity().finishAndRemoveTask());
+    }
+
     @PluginMethod
     public void getState(PluginCall call) {
         JSObject ret = new JSObject();

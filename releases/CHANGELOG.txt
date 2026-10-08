@@ -16,6 +16,15 @@ prázdnin 29.–30. 10.). Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.9  (8. 10. 2026)
+----------------------------------------------------------------
+- Android: tlačidlo ⏻ vpravo hore ukončí aplikáciu. Vypne aj
+  sledovanie cesty, upozornenia na výstup a GPS, appka zmizne aj
+  zo zoznamu nedávnych aplikácií. Widget na ploche funguje ďalej.
+- Otvorenie appky zo zoznamu nedávnych už nezopakuje akciu
+  widgetu (napr. nespustí cestu sama od seba).
+
+----------------------------------------------------------------
 v1.6.8  (8. 10. 2026)
 ----------------------------------------------------------------
 - Oprava: tlačidlo „Vymazať“ v systémovom výbere dátumu či času
