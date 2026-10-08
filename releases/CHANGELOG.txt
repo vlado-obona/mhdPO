@@ -16,6 +16,14 @@ prázdnin 29.–30. 10.). Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.6.8  (8. 10. 2026)
+----------------------------------------------------------------
+- Oprava: tlačidlo „Vymazať“ v systémovom výbere dátumu či času
+  nechalo pole prázdne — appka potom hlásila „Žiadne spojenie“
+  (prázdny dátum) alebo hľadala od polnoci (prázdny čas). Prázdne
+  pole sa teraz doplní aktuálnym dátumom a časom.
+
+----------------------------------------------------------------
 v1.6.7  (6. 10. 2026)
 ----------------------------------------------------------------
 - Nové oficiálne cestovné poriadky DPMP (GTFS feed 1382_1384):

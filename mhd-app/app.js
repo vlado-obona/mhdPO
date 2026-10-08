@@ -3,7 +3,7 @@ import { Raptor, planJourneys } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.6.7';
+const APP_VERSION = '1.6.8';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -603,8 +603,10 @@ function search() {
   if (!fromStops.size) { setStatus('V okolí zvoleného bodu nie je žiadna zastávka MHD.', true); return; }
   if (!toStops.size) { setStatus('V okolí cieľového bodu nie je žiadna zastávka MHD.', true); return; }
 
+  // „VYMAZAŤ“ v systémovom výbere dátumu/času nechá pole prázdne → teraz
+  fillEmptyWhen();
   const dateStr = $('dateInput').value;
-  const timeStr = $('timeInput').value || '00:00';
+  const timeStr = $('timeInput').value;
   const di = dateInfoFor(dateStr);
   const ymd = (n) => `${n % 100}. ${Math.floor(n / 100) % 100}. ${Math.floor(n / 10000)}`;
   if (D.meta.validTo && di.num > D.meta.validTo) {
@@ -2675,6 +2677,13 @@ function renderTripLive() {
   if ($('tripSr').textContent !== sr) $('tripSr').textContent = sr;
 }
 
+// prázdny dátum/čas (tlačidlo „VYMAZAŤ“ v systémovom výbere) → aktuálny dátum/čas
+function fillEmptyWhen() {
+  const n = nowInSk();
+  if (!$('dateInput').value) $('dateInput').value = n.date;
+  if (!$('timeInput').value) $('timeInput').value = n.time;
+}
+
 // ── inicializácia ────────────────────────────────────────────────────
 async function main() {
   $('appVer').textContent = `v${APP_VERSION}`;
@@ -2683,6 +2692,7 @@ async function main() {
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;
 
+  for (const id of ['dateInput', 'timeInput']) $(id).addEventListener('change', fillEmptyWhen);
   $('nowBtn').addEventListener('click', () => {
     const n = nowInSk();
     $('dateInput').value = n.date;
