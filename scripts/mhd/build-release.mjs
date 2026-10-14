@@ -44,7 +44,7 @@ const raptor = read('raptor.js').replace(/^export /gm, '');
 }
 
 let app = read('app.js');
-app = mustReplace(app, "import { Raptor, planJourneys } from './raptor.js';\n", '', 'import');
+app = mustReplace(app, "import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './raptor.js';\n", '', 'import');
 app = mustReplace(app,
   `  let v = '';
   try { v = (await (await fetch('data/version.json', { cache: 'no-cache' })).json()).v; } catch {}

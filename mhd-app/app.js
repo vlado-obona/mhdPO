@@ -1,9 +1,9 @@
 // MHD Prešov — plánovač spojení nad oficiálnymi GTFS dátami DPMP.
-import { Raptor, planJourneys } from './raptor.js';
+import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.6.9';
+const APP_VERSION = '1.7.0';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -591,6 +591,103 @@ function stopSetFor(s, radius = POINT_RADIUS) {
   return m;
 }
 
+// Cieľ: zastávka aj okolité zastávky do POINT_RADIUS s pešou chôdzou k nej
+// (napr. ZŠ Ľubotice obsluhuje pár školských spojov, ale linka 37 zastaví na
+// Vranovskej 430 m odtiaľ). Peší prestup v RAPTORe siaha len 400 m.
+// m.extra: pri výbere výstupu sa chôdza z okolitej zastávky počíta dvojnásobne
+// — autobus priamo na zastávku má prednosť, ak príde len o chvíľu neskôr.
+function destStopsFor(s, radius = POINT_RADIUS) {
+  const m = stopSetFor(s, radius);
+  m.extra = new Map();
+  if (!s || s.kind !== 'group' || !m.size) return m;
+  const own = s.stops.map((i) => D.stops[i]);
+  const cand = [];
+  D.stops.forEach((st, i) => {
+    if (m.has(i)) return;
+    let d = Infinity;
+    for (const o of own) d = Math.min(d, haversine(o.la, o.lo, st.la, st.lo));
+    if (d <= radius) cand.push([i, d]);
+  });
+  cand.sort((a, b) => a[1] - b[1]);
+  for (const [i, d] of cand.slice(0, 12)) {
+    const w = Math.round(d * WALK_DETOUR / WALK_SPEED);
+    m.set(i, w);
+    m.extra.set(i, w);
+  }
+  return m;
+}
+
+// Odporúčané spojenie (prvá karta): najnižšia „cena“ = príchod
+//   + 5 min za každý prestup
+//   + pol minúty za každú minútu chôdze navyše (oproti spojeniu s najmenšou)
+//   − štvrť minúty za každú minútu, o ktorú sa dá odísť neskôr
+// — priame spojenie, ktoré príde o pár minút neskôr, má prednosť pred
+// prestupovaním a autobus priamo do cieľa pred dlhou chôdzou. Ostatné podľa príchodu.
+const TRANSFER_PENALTY = 300, WALK_WEIGHT = 0.5, LEAVE_WEIGHT = 0.25;
+function rankJourneys(js, fromStops) {
+  if (js.length < 2) return js;
+  const walk = new Map(js.map((j) => [j, totalWalk(j, fromStops)]));
+  const leave = new Map(js.map((j) => [j, leaveTime(j, fromStops)]));
+  const minW = Math.min(...walk.values()), minL = Math.min(...leave.values());
+  const cost = (j) => j.arrTime + TRANSFER_PENALTY * j.transfers + WALK_WEIGHT * (walk.get(j) - minW) - LEAVE_WEIGHT * (leave.get(j) - minL);
+  const first = [...js].sort((a, b) => Math.round(cost(a) / 60) - Math.round(cost(b) / 60) ||
+    a.transfers - b.transfers || walk.get(a) - walk.get(b) || cost(a) - cost(b))[0];
+  return [first, ...js.filter((j) => j !== first).sort((a, b) => a.arrTime - b.arrTime || a.transfers - b.transfers)];
+}
+
+// k dominuje j: odchod nie skôr, príchod (s prirážkou za okolitú cieľovú
+// zastávku) nie neskôr, nie viac prestupov a aspoň v jednom lepšie
+function dominates(k, j, lv) {
+  const sk = k.score ?? k.arrTime, sj = j.score ?? j.arrTime;
+  return lv.get(k) >= lv.get(j) && sk <= sj && k.transfers <= j.transfers &&
+    (lv.get(k) > lv.get(j) || sk < sj || k.transfers < j.transfers);
+}
+const journeyKey = (j) => `${j.arrTime}|${j.transfers}|${j.legs.find((l) => l.type === 'ride')?.dep}`;
+
+// RAPTOR berie z každej linky len najskorší spoj, takže priamy spoj, ktorý
+// pokračuje ako iná linka („zostaň sedieť“), môže prehliadnuť — doplní sa
+// z hľadania bez prestupu (len v časovom okne bežných výsledkov)
+function withDirect(normal, direct, fromStops) {
+  if (!normal.length) return direct;
+  const lastArr = Math.max(...normal.map((j) => j.arrTime));
+  const have = new Set(normal.map(journeyKey));
+  const all = [...normal, ...direct.filter((j) => j.arrTime <= lastArr && !have.has(journeyKey(j)))];
+  if (all.length === normal.length) return normal;
+  const lv = new Map(all.map((j) => [j, leaveTime(j, fromStops)]));
+  return all.filter((j) => !all.some((k) => k !== j && dominates(k, j, lv)))
+    .sort((a, b) => a.arrTime - b.arrTime).slice(0, 6);
+}
+
+// „Bez prestupu“: len priame spojenia. Ak priame príde o viac ako hodinu
+// neskôr ako spojenie s prestupom (napr. večer, priamy až ráno) alebo žiadne
+// nie je, vráti spojenia s prestupom (direct: false) a priame pridá na koniec
+// (later) — appka povie, kedy ide priamy.
+const DIRECT_MAX_LATER = 3600;
+function planWithPrefs(fromStops, toStops, di, depTime) {
+  const toExtra = toStops.extra;
+  const normal = planJourneys(raptor, fromStops, toStops, di, depTime, 4, { toExtra });
+  const direct = planJourneys(raptor, fromStops, toStops, di, depTime, 4, { direct: true, toExtra });
+  if (!prefs.direct) return { js: rankJourneys(withDirect(normal, direct, fromStops), fromStops), direct: false };
+  const firstArr = (js) => Math.min(...js.map((j) => j.arrTime));
+  if (direct.length && (!normal.length || firstArr(direct) <= firstArr(normal) + DIRECT_MAX_LATER)) {
+    return { js: rankJourneys(direct, fromStops), direct: true };
+  }
+  const later = direct[0] || null;
+  if (!later) return { js: rankJourneys(normal, fromStops), direct: false, later };
+  // ten istý priamy autobus už môže byť medzi bežnými (nástup o zastávku inde)
+  const lv = new Map([...normal, later].map((j) => [j, leaveTime(j, fromStops)]));
+  if (normal.some((j) => journeyKey(j) === journeyKey(later) || dominates(j, later, lv))) {
+    return { js: rankJourneys(normal, fromStops), direct: false, later };
+  }
+  const js = rankJourneys(normal.filter((j) => !dominates(later, j, lv)), fromStops);
+  js.push(later);
+  return { js, direct: false, later };
+}
+function directLaterText(j) {
+  const dep = j.legs.find((l) => l.type === 'ride').dep;
+  return `Bez prestupu ide najbližšie spoj ${dep >= 86400 ? 'až na druhý deň ' : ''}o ${fmtTime(dep)} (v cieli ${fmtTime(j.arrTime)})`;
+}
+
 // ── vyhľadanie a vykreslenie ────────────────────────────────────────
 function search() {
   if (!D) return;
@@ -598,8 +695,8 @@ function search() {
   if (!sel.to) { setStatus('Vyber cieľovú zastávku.', true); $('toInput').focus(); return; }
   let fromStops = stopSetFor(sel.from);
   if (!fromStops.size) fromStops = stopSetFor(sel.from, 1500);
-  let toStops = stopSetFor(sel.to);
-  if (!toStops.size) toStops = stopSetFor(sel.to, 1500);
+  let toStops = destStopsFor(sel.to);
+  if (!toStops.size) toStops = destStopsFor(sel.to, 1500);
   if (!fromStops.size) { setStatus('V okolí zvoleného bodu nie je žiadna zastávka MHD.', true); return; }
   if (!toStops.size) { setStatus('V okolí cieľového bodu nie je žiadna zastávka MHD.', true); return; }
 
@@ -623,10 +720,18 @@ function search() {
   setStatus('Hľadám spojenia…');
   setTimeout(() => {
     const t0 = performance.now();
-    const journeys = planJourneys(raptor, fromStops, toStops, di, depTime, 4);
+    const { js: journeys, direct, later } = planWithPrefs(fromStops, toStops, di, depTime);
     const ms = Math.round(performance.now() - t0);
     renderResults(journeys);
-    setStatus(journeys.length ? `Nájdené za ${ms} ms.` : 'Žiadne spojenie sa nenašlo. Skús iný čas alebo zastávky.', !journeys.length);
+    // pešo rovno do cieľa (blízke miesta): ak je to skôr ako MHD, povedať to
+    const walk = walkOnlySecs(raptor, fromStops, toStops);
+    const walkFirst = walk < Infinity && (!journeys.length || depTime + walk <= Math.min(...journeys.map((j) => j.arrTime)));
+    if (walkFirst) setStatus(`Pešo to máš rovno do cieľa ~${fmtDur(walk)} (v cieli ${fmtTime(depTime + walk)})${journeys.length ? ' — skôr ako MHD.' : '.'}`);
+    else if (!journeys.length) setStatus('Žiadne spojenie sa nenašlo. Skús iný čas alebo zastávky.', true);
+    else if (prefs.direct && !direct) {
+      setStatus(later ? `${directLaterText(later)} — skôr sa dá s prestupom.` : 'Bez prestupu sa tam v najbližších hodinách nedostaneš — toto sú spojenia s prestupom.', true);
+    }
+    else setStatus(`Nájdené za ${ms} ms.`);
   }, 20);
 }
 
@@ -709,7 +814,7 @@ function renderResults(journeys) {
       div.className = 'leg';
       div.innerHTML = `
         <div class="t">${fmtTime(j.arrTime - j.finalWalk)}</div>
-        <div><span class="badge walk">pešo</span> ${fmtDur(j.finalWalk)} do cieľa${sel.to?.kind === 'point' && !sel.to.label.startsWith('Bod ') ? ` <b>${esc(sel.to.label)}</b>` : ''}</div>`;
+        <div><span class="badge walk">pešo</span> ${fmtDur(j.finalWalk)} do cieľa${sel.to?.kind === 'group' ? ` <b>${esc(sel.to.name)}</b>` : sel.to?.kind === 'point' && !sel.to.label.startsWith('Bod ') ? ` <b>${esc(sel.to.label)}</b>` : ''}</div>`;
       body.appendChild(div);
     }
 
@@ -1344,8 +1449,8 @@ const addDays = (dateStr, n) => new Date(Date.parse(`${dateStr}T00:00:00Z`) + n 
 async function widgetJourneys(from, to) {
   let fromStops = stopSetFor(from);
   if (!fromStops.size) fromStops = stopSetFor(from, 1500);
-  let toStops = stopSetFor(to);
-  if (!toStops.size) toStops = stopSetFor(to, 1500);
+  let toStops = destStopsFor(to);
+  if (!toStops.size) toStops = destStopsFor(to, 1500);
   if (!fromStops.size || !toStops.size) return [];
   const now = Date.now(), end = now + WIDGET_HORIZON * 1000;
   const today = nowInSk().date;
@@ -1357,7 +1462,7 @@ async function widgetJourneys(from, to) {
     if (D.meta.validFrom && di.num < D.meta.validFrom) continue;
     let cursor = k === 0 ? Math.max(0, nowSecsSk() - 120) : 0;
     for (let guard = 0; guard < 250 && out.size < WIDGET_MAX; guard++) {
-      const js = planJourneys(raptor, fromStops, toStops, di, cursor, 4);
+      const js = planJourneys(raptor, fromStops, toStops, di, cursor, 4, { toExtra: toStops.extra });
       if (!js.length) break;
       let maxDep = cursor;
       for (const j of js) {
@@ -1755,18 +1860,6 @@ function destDistance(t, la, lo) {
   return haversine(la, lo, p.la, p.lo);
 }
 
-// výber spojenia: najskorší príchod, ale pri rozdiele do 2 min radšej
-// menej prestupov a menej chôdze
-function rankJourneys(js) {
-  if (!js.length) return js;
-  const best = Math.min(...js.map((j) => j.arrTime));
-  const walkOf = (j) => j.legs.filter((l) => l.type === 'walk').reduce((a, l) => a + l.secs, 0) + j.finalWalk;
-  const close = js.filter((j) => j.arrTime <= best + 120)
-    .sort((a, b) => a.transfers - b.transfers || walkOf(a) - walkOf(b) || a.arrTime - b.arrTime);
-  const rest = js.filter((j) => !close.includes(j)).sort((a, b) => a.arrTime - b.arrTime);
-  return [close[0], ...close.slice(1).concat(rest).sort((a, b) => a.arrTime - b.arrTime)];
-}
-
 async function startTrip(i) {
   const f = favs[i];
   if (!f.target) { openFavDlg(i); return; }
@@ -1842,11 +1935,13 @@ function planFromHere(reason) {
   const destDist = destDistance(t, t.pos.la, t.pos.lo);
   let fromStops = stopSetFor(origin);
   if (!fromStops.size) fromStops = stopSetFor(origin, 1500);
-  let toStops = stopSetFor(t.dest);
-  if (!toStops.size) toStops = stopSetFor(t.dest, 1500);
-  const js = fromStops.size && toStops.size
-    ? rankJourneys(planJourneys(raptor, fromStops, toStops, di, Math.floor(t.t0Secs), 4))
-    : [];
+  let toStops = destStopsFor(t.dest);
+  if (!toStops.size) toStops = destStopsFor(t.dest, 1500);
+  const plan = fromStops.size && toStops.size ? planWithPrefs(fromStops, toStops, di, Math.floor(t.t0Secs)) : { js: [], direct: false };
+  const js = plan.js;
+  if (prefs.direct && js.length && !plan.direct && !t.info) {
+    t.info = plan.later ? `${directLaterText(plan.later)} — ide sa s prestupom.` : 'Bez prestupu sa tam teraz nedostaneš — ide sa s prestupom.';
+  }
   t.journeys = js;
   t.jIdx = 0;
   const walkSecs = destDist * WALK_DETOUR / WALK_SPEED;
@@ -2028,7 +2123,7 @@ function alight(keepAlert = false) {
     if (stay) { t.phase = 'ride'; buzz([60]); } else { t.delay = 0; t.phase = 'toStop'; }
     renderTrip();
     evaluateTrip();
-  } else if (t.dest.kind === 'point' && t.j.finalWalk > 30) {
+  } else if (t.j.finalWalk > 30) {
     t.phase = 'final'; t.follow = true;
     renderTrip();
   } else {
@@ -2069,7 +2164,7 @@ function exitAlert(atStop = false) {
       : `Pozor! Na ďalšej zastávke ${exitName} vystupujete a prestupujete na linku ${nr.s}.`;
   } else {
     title = `VYSTUPUJ ${when}`;
-    sub = `Vystúp: ${exitName}${t.dest.kind === 'point' && t.j.finalWalk > 30 ? ` · potom pešo ~${fmtDur(t.j.finalWalk)} do cieľa` : ''}.`;
+    sub = `Vystúp: ${exitName}${t.j.finalWalk > 30 ? ` · potom pešo ~${fmtDur(t.j.finalWalk)} do cieľa` : ''}.`;
     say = atStop ? `Pozor! Teraz vystúpte na zastávke ${exitName}.` : `Pozor! Na ďalšej zastávke ${exitName} vystupujete.`;
   }
   $('taTitle').textContent = title;
@@ -2464,8 +2559,9 @@ function drawTripJourney() {
       pts.push(...ll);
       prev = ll[ll.length - 1];
     });
-    if (t.dest.kind === 'point' && t.j.finalWalk > 0 && prev) {
-      L.polyline([prev, [t.dest.lat, t.dest.lon]], { color: '#6b716b', weight: 4, dashArray: '4 8' }).addTo(tripLayer);
+    if (t.j.finalWalk > 0 && prev) {
+      const end = destPoint(t, prev[0], prev[1]);
+      L.polyline([prev, [end.la, end.lo]], { color: '#6b716b', weight: 4, dashArray: '4 8' }).addTo(tripLayer);
     }
     t.rides.forEach((r, k) => {
       if (!t.seated.has(k - 1)) flag(coord(r.from), k === 0 ? '🚏' : '🔁', 'flag-transfer');
@@ -2775,6 +2871,13 @@ async function main() {
   loadFavs();
   loadWidgetCfg();
   initPlus(); // načíta stav Plus a nakreslí rýchle ciele
+  // „Bez prestupu“ (uložené v telefóne, platí aj pre rýchle ciele)
+  $('directChk').checked = !!prefs.direct;
+  $('directChk').addEventListener('change', (e) => {
+    prefs.direct = e.target.checked;
+    savePrefs();
+    if (!$('results').hidden && sel.from && sel.to) search();
+  });
   initWidget();
   attachSuggest($('favStop'), $('favSuggest'), (v) => setFavTargetFrom(v));
   $('favSave').addEventListener('click', saveFavDlg);

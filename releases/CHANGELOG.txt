@@ -16,6 +16,18 @@ prázdnin 29.–30. 10.). Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.7.0  (14. 10. 2026)
+----------------------------------------------------------------
+- Nové políčko „Bez prestupu“: len priame spoje. Keď taký nejde
+  alebo príde o viac ako hodinu neskôr, appka to povie a ukáže
+  aj spoje s prestupom. Platí aj pre rýchle ciele.
+- Cieľ: appka ponúkne aj spoje na zastávky v okolí s kúskom chôdze
+  (napr. na ZŠ Ľubotice linka 37 z Lesníckej na Vranovskú).
+- Odporúčané spojenie zohľadní prestupy aj chôdzu: radšej priamy
+  spoj, aj keď príde o pár minút neskôr, a bližšia zastávka.
+- Oprava: „zostaň sedieť“ sa už neukáže pri prestupe na iný autobus.
+
+----------------------------------------------------------------
 v1.6.9  (8. 10. 2026)
 ----------------------------------------------------------------
 - Android: tlačidlo ⏻ vpravo hore ukončí aplikáciu. Vypne aj
