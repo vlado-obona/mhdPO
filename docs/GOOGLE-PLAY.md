@@ -9,7 +9,7 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 | Aplikácia | Odkiaľ Kam – MHD Prešov (app ID 4973310957021774926) |
 | Balíček | `sk.operatorsystem.mhdpresov` (nemeniteľný) |
 | Play App Signing | zapnuté – podpisový kľúč spravuje Google; náš keystore (secrets `ANDROID_KEYSTORE_*`) je **upload kľúč** |
-| Interné testovanie | aktívne od 1.6.1; posledná 1.7.1 = 261014345 (automaticky 14. 10. 2026; pred ňou 1.7.0 = 261014304, 1.6.9 8. 10.), zoznam „Interní testeri“ |
+| Interné testovanie | aktívne od 1.6.1; posledná 1.7.2 = 261014405 (automaticky 14. 10. 2026; v ten deň aj 1.7.1 = 261014345 a 1.7.0 = 261014304; 1.6.9 8. 10.), zoznam „Interní testeri“ |
 | Testovanie licencií | zoznam „Interní testeri“, RESPOND_NORMALLY (nákupy zadarmo) |
 | Platobný profil | Google Payments BEDEKA, s.r.o. (organizácia), prepojený |
 | Produkt Plus | `odkialkam_plus`, jednorazový INAPP (trvalý – **nikdy nekonzumovať**), možnosť nákupu `buy`, spätne kompatibilná, **aktívny**, 174 krajín; SK 2,49 € s DPH (základ 2,02 € bez DPH) |
@@ -45,7 +45,7 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 - Automatické nahrávanie **funguje od v1.6.9 (8. 10. 2026)**: build sám nahral AAB do interného testovania a job „produkcia“ čakal na schválenie. Kým appka nie je zverejnená a nie je hotová deklarácia služby v popredí (video), produkciu NESCHVAĽOVAŤ (Reject alebo nechať čakať — novší build čakanie zruší).
 
 ## Pravidlá pre build
-- **versionCode** = `YYMMDD·1000 + (minúta dňa / 2)`, 9 číslic, vždy rastie (posledný nahratý 261014345 = 1.7.1, limit 2 100 000 000).
+- **versionCode** = `YYMMDD·1000 + (minúta dňa / 2)`, 9 číslic, vždy rastie (posledný nahratý 261014405 = 1.7.2, limit 2 100 000 000).
 - **Poznámky k vydaniu** („Čo je nové“): jazykový tag **`sk`** (Play odmieta `sk-SK`), max. 500 znakov – workflow ich berie z `releases/CHANGELOG.txt`.
 - Android workflow po builde nahrá AAB do **interného testovania** cez servisný účet (secret `PLAY_SERVICE_ACCOUNT_JSON`). Bez secretu sa krok preskočí.
 - Do produkcie: po schválení v GitHube automaticky (pozri vyššie), alebo ručne Play Console → Interné testovanie → Propagovať vydanie.
