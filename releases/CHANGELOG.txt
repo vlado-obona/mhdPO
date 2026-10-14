@@ -16,6 +16,13 @@ prázdnin 29.–30. 10.). Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.7.2  (14. 10. 2026)
+----------------------------------------------------------------
+- Krátke cesty: appka už nepreskočí použiteľné odchody (predtým
+  niekedy ukázala prvý autobus až o niekoľko hodín alebo žiadny,
+  hoci skorší išiel). Týka sa aj widgetu.
+
+----------------------------------------------------------------
 v1.7.1  (14. 10. 2026)
 ----------------------------------------------------------------
 - Krátke cesty: spojenie, ktoré je horšie ako chôdza, už nevytlačí

@@ -3,7 +3,7 @@ import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './rapt
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.7.1';
+const APP_VERSION = '1.7.2';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');

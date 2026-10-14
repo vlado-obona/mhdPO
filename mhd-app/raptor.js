@@ -210,8 +210,7 @@ export class Raptor {
   }
 
   // pre každé kolo najlepší cieľ (príchod s prirážkou za okolitú zastávku),
-  // ktorý prejde kontrolou accept; odmietnutý sa vráti len ako js.rejected
-  // (aby planJourneys vedel posunúť čas) a neblokuje ďalšie kolá
+  // ktorý prejde kontrolou accept; odmietnutý neblokuje ďalšie ciele ani kolá
   _extract(rounds, toStops, toExtra, accept) {
     const journeys = [];
     let bestSoFar = Infinity;
@@ -240,7 +239,7 @@ export class Raptor {
           transfers: legs.filter((l) => l.type === 'ride').length - 1 - legs.filter((l) => l.type === 'stay').length,
           legs,
         };
-        if (accept && !accept(j)) { journeys.rejected ??= j; continue; }
+        if (accept && !accept(j)) continue;
         bestSoFar = c.sc;
         journeys.push(j);
         break;
@@ -582,18 +581,24 @@ export function planJourneys(raptor, fromStops, toStops, dateInfo, depTime, want
   const out = [];
   const seen = new Set();
   let t = depTime;
-  for (let i = 0; i < want * 3 && out.length < want; i++) {
+  // pri krátkych cestách sa veľa spojení odmietne (horšie ako chôdza) → viac pokusov
+  const maxIter = walkOnly < Infinity ? want * 5 : want * 3;
+  for (let i = 0; i < maxIter && out.length < want; i++) {
     // spojenie horšie ako chôdza rovno do cieľa sa odmietne už pri výbere cieľa
-    // (inak by zablokovalo lepšie spojenie s prestupom v ďalšom kole)
+    // (inak by zablokovalo lepšie spojenie s prestupom v ďalšom kole);
+    // ďalší čas = najskorší odchod spomedzi všetkých posúdených spojení, aj
+    // odmietnutých — inak by sa preskočili použiteľné odchody
     const tq = t;
+    let minDep = Infinity;
     const accept = (j) => {
       tightenJourney(raptor, j, dateInfo);
       preferNearBoarding(j, fromStops, tq);
+      const r = j.legs.find((l) => l.type === 'ride');
+      if (r && r.dep < minDep) minDep = r.dep;
       return beatsWalking(j, fromStops, walkOnly);
     };
     const js = raptor.query(fromStops, toStops, dateInfo, t, { ...opts, accept });
-    const ref = js.length ? js[js.length - 1] : js.rejected;
-    if (!ref) break;
+    if (minDep === Infinity) break;
     // pareto výber: netriviálne alternatívy s menej prestupmi tiež ukáž
     let advanced = !js.length;
     for (const j of js) {
@@ -604,9 +609,7 @@ export function planJourneys(raptor, fromStops, toStops, dateInfo, depTime, want
         advanced = true;
       }
     }
-    const firstRide = ref.legs.find((l) => l.type === 'ride');
-    if (!firstRide) break;
-    const next = firstRide.dep + 60;
+    const next = minDep + 60;
     if (next <= t) break;
     t = next;
     if (!advanced && i > want * 2) break;

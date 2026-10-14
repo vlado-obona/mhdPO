@@ -473,7 +473,23 @@ if (D.meta.validFrom <= 20261004 && D.meta.validTo >= 20261029) {
     const js = planJourneys(raptor, from, m, dateInfoFor(ds), t0, 4, { toExtra: extra });
     if (!js.some((j) => j.arrTime <= arr)) { bad++; fail(`→ ${b} ${ds} ${fmt(t0)}: chýba spojenie s príchodom do ${fmt(arr)} (je ${js.map((j) => fmt(j.arrTime)).join(', ') || 'nič'})`); }
   }
-  if (!bad) ok(`spojenie horšie ako chôdza nevytlačí lepšie (Potočná, Gemor, Gbolovky, ZŠ Prostějovská)`);
+  // čas sa posúva od najskoršieho posúdeného odchodu (aj odmietnutého), inak
+  // sa preskočia použiteľné odchody; chôdza vzdušnou čiarou ako v appke
+  const straight = (a, b) => Math.round(hav(a[0], a[1], b[0], b[1]) * 1.2 / 1.25);
+  const skip = [
+    [[49.00234, 21.25442], [49.00822, 21.26720], null, '2026-10-28', 7 * 3600 + 38 * 60, 8 * 3600, 8 * 3600 + 25 * 60],
+    [[49.00012, 21.26167], null, 'Šafárikova, cintorín *', '2026-10-23', 12 * 3600 + 58 * 60, 14 * 3600, 14 * 3600 + 30 * 60],
+  ];
+  for (const [a, bpt, bname, ds, t0, leaveBy, arr] of skip) {
+    const fs = pt(a[0], a[1]);
+    let ts, extra, walk;
+    if (bpt) { ts = pt(bpt[0], bpt[1]); walk = straight(a, bpt); }
+    else { ({ m: ts, extra } = dest(bname)); walk = Math.min(...[...group(bname).keys()].map((i) => straight(a, [D.stops[i].la, D.stops[i].lo]))); }
+    const js = planJourneys(raptor, fs, ts, dateInfoFor(ds), t0, 4, { toExtra: extra, walkOnly: walk });
+    const lv = (j) => { const r = j.legs.find((l) => l.type === 'ride'); const l0 = j.legs[0]; return r.dep - (l0.type === 'walk' ? l0.secs + fs.get(l0.from) : fs.get(r.from)); };
+    if (!js.some((j) => lv(j) <= leaveBy && j.arrTime <= arr)) { bad++; fail(`${bname || bpt} ${ds} ${fmt(t0)}: chýba odchod do ${fmt(leaveBy)} s príchodom do ${fmt(arr)} (je ${js.map((j) => `${fmt(lv(j))}→${fmt(j.arrTime)}`).join(', ') || 'nič'})`); }
+  }
+  if (!bad) ok(`spojenie horšie ako chôdza nevytlačí lepšie ani nepreskočí odchody (Potočná, Gemor, Gbolovky, ZŠ Prostějovská, 2× krátka cesta)`);
 }
 
 // ── 5: nočné spoje cez polnoc ───────────────────────────────────────
