@@ -57,6 +57,8 @@ export class Raptor {
    * @param opts.toExtra Map(stopIdx -> sekundy) — prirážka pri výbere cieľovej
    *                  zastávky (okolité zastávky: chôdza sa počíta dvojnásobne,
    *                  aby autobus priamo na zastávku nevyhral len o pár sekúnd)
+   * @param opts.accept (journey) => bool — spojenie, ktoré neprejde (napr. horšie
+   *                  ako chôdza), sa nevráti a neblokuje ďalšie ciele ani kolá
    * @returns pole journey objektov (pareto podľa počtu prestupov)
    */
   query(fromStops, toStops, dateInfo, depTime, opts = {}) {
@@ -170,7 +172,7 @@ export class Raptor {
       rounds.push({ arr, parent, stays });
     }
 
-    return this._extract(rounds, toStops, opts.toExtra);
+    return this._extract(rounds, toStops, opts.toExtra, opts.accept);
   }
 
   _relaxFoot(arr, best, parent, marked) {
@@ -207,12 +209,14 @@ export class Raptor {
     return bestTrip;
   }
 
-  _extract(rounds, toStops, toExtra) {
+  // pre každé kolo najlepší cieľ (príchod s prirážkou za okolitú zastávku),
+  // ktorý prejde kontrolou accept; odmietnutý sa vráti len ako js.rejected
+  // (aby planJourneys vedel posunúť čas) a neblokuje ďalšie kolá
+  _extract(rounds, toStops, toExtra, accept) {
     const journeys = [];
     let bestSoFar = Infinity;
     for (let k = 1; k < rounds.length; k++) {
-      // najlepší cieľ v kole k (podľa príchodu s prirážkou za okolitú zastávku)
-      let bestStop = -1, bestScore = Infinity, bestT = Infinity, bestWalk = 0;
+      const cands = [];
       for (const [si, walk] of toStops) {
         // cieľ musí byť dosiahnutý jazdou/prestupom v kole k
         const a = rounds[k].arr[si];
@@ -220,22 +224,27 @@ export class Raptor {
         // okolitá zastávka len priamo z autobusu (nie pešo z inej + ďalej pešo)
         const x = toExtra?.get(si) || 0;
         if (x && rounds[k].parent[si]?.type === 'walk') continue;
-        const sc = a + walk + x;
-        if (sc < bestScore) { bestScore = sc; bestT = a + walk; bestStop = si; bestWalk = walk; }
+        cands.push({ si, sc: a + walk + x, arr: a + walk, walk });
       }
-      if (bestStop < 0 || bestScore >= bestSoFar) continue;
-      const legs = this._path(rounds, k, bestStop);
-      if (!legs) continue;
-      bestSoFar = bestScore;
-      journeys.push({
-        depTime: legs[0].dep,
-        arrTime: bestT,
-        score: bestScore,
-        finalWalk: bestWalk,
-        // sedenie v tom istom autobuse (iné číslo linky) nie je prestup
-        transfers: legs.filter((l) => l.type === 'ride').length - 1 - legs.filter((l) => l.type === 'stay').length,
-        legs,
-      });
+      cands.sort((p, q) => p.sc - q.sc);
+      for (const c of cands) {
+        if (c.sc >= bestSoFar) break;
+        const legs = this._path(rounds, k, c.si);
+        if (!legs) continue;
+        const j = {
+          depTime: legs[0].dep,
+          arrTime: c.arr,
+          score: c.sc,
+          finalWalk: c.walk,
+          // sedenie v tom istom autobuse (iné číslo linky) nie je prestup
+          transfers: legs.filter((l) => l.type === 'ride').length - 1 - legs.filter((l) => l.type === 'stay').length,
+          legs,
+        };
+        if (accept && !accept(j)) { journeys.rejected ??= j; continue; }
+        bestSoFar = c.sc;
+        journeys.push(j);
+        break;
+      }
     }
     return journeys;
   }
@@ -315,6 +324,7 @@ export class Raptor {
    */
   directJourneys(fromStops, toStops, dateInfo, depTime, opts = {}) {
     const extra = opts.toExtra;
+    const walkOnly = opts.walkOnly ?? Infinity; // spojenie musí byť lepšie ako chôdza (beatsWalking)
     const d = this.d, N = d.stops.length, end = depTime + HORIZON;
     // kolo 0 ako v query: východiská + pešo k susedným zastávkam
     const arr0 = new Float64Array(N).fill(Infinity);
@@ -361,6 +371,7 @@ export class Raptor {
             const lv = chain[0].trip.t[2 * chain[0].b + 1] + shift - w0 - depTime;
             if (lv + arr0[si] <= a || lv + arr0[e.to] <= a + e.foot) return;
             const total = a + e.secs, score = a + e.sc, walk = w0 + e.secs;
+            if (walkOnly < Infinity && !(lv + depTime + walkOnly > total || walk < walkOnly - 120)) return;
             if (!top || score < top.score || (score === top.score && walk < top.walk)) {
               top = { total, score, walk, chain, exit: e, a, bw: w0 };
             }
@@ -559,10 +570,11 @@ function beatsWalking(j, fromStops, walkOnly) {
 
 /** Viac odchodov za sebou: opakuje query s posunutým časom odchodu. */
 export function planJourneys(raptor, fromStops, toStops, dateInfo, depTime, want = 4, opts = {}) {
-  const walkOnly = walkOnlySecs(raptor, fromStops, toStops);
+  // chôdza rovno do cieľa: appka môže dodať vlastný odhad (vzdušnou čiarou)
+  const walkOnly = Math.min(opts.walkOnly ?? Infinity, walkOnlySecs(raptor, fromStops, toStops));
   if (opts.direct) {
     // bez prestupu: najbližšie priame spoje (prejde všetky, nie po kolách RAPTORu)
-    const js = raptor.directJourneys(fromStops, toStops, dateInfo, depTime, opts)
+    const js = raptor.directJourneys(fromStops, toStops, dateInfo, depTime, { ...opts, walkOnly })
       .filter((j) => beatsWalking(j, fromStops, walkOnly)).slice(0, want);
     for (const j of js) tightenJourney(raptor, j, dateInfo);
     return js.sort((a, b) => a.arrTime - b.arrTime);
@@ -571,20 +583,28 @@ export function planJourneys(raptor, fromStops, toStops, dateInfo, depTime, want
   const seen = new Set();
   let t = depTime;
   for (let i = 0; i < want * 3 && out.length < want; i++) {
-    const js = raptor.query(fromStops, toStops, dateInfo, t, opts);
-    if (!js.length) break;
-    for (const j of js) { tightenJourney(raptor, j, dateInfo); preferNearBoarding(j, fromStops, t); }
+    // spojenie horšie ako chôdza rovno do cieľa sa odmietne už pri výbere cieľa
+    // (inak by zablokovalo lepšie spojenie s prestupom v ďalšom kole)
+    const tq = t;
+    const accept = (j) => {
+      tightenJourney(raptor, j, dateInfo);
+      preferNearBoarding(j, fromStops, tq);
+      return beatsWalking(j, fromStops, walkOnly);
+    };
+    const js = raptor.query(fromStops, toStops, dateInfo, t, { ...opts, accept });
+    const ref = js.length ? js[js.length - 1] : js.rejected;
+    if (!ref) break;
     // pareto výber: netriviálne alternatívy s menej prestupmi tiež ukáž
-    let advanced = false;
+    let advanced = !js.length;
     for (const j of js) {
       const key = j.legs.map((l) => l.type === 'ride' ? `${l.route}:${l.from}:${l.to}:${l.dep}` : `w${l.from}-${l.to}`).join('|');
       if (!seen.has(key)) {
         seen.add(key);
-        if (beatsWalking(j, fromStops, walkOnly)) out.push(j);
+        out.push(j);
         advanced = true;
       }
     }
-    const firstRide = js[js.length - 1].legs.find((l) => l.type === 'ride');
+    const firstRide = ref.legs.find((l) => l.type === 'ride');
     if (!firstRide) break;
     const next = firstRide.dep + 60;
     if (next <= t) break;

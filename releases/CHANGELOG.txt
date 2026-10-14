@@ -16,6 +16,16 @@ prázdnin 29.–30. 10.). Po vydaní nových
 cestovných poriadkov treba stiahnuť novú verziu aplikácie.
 
 ----------------------------------------------------------------
+v1.7.1  (14. 10. 2026)
+----------------------------------------------------------------
+- Krátke cesty: spojenie, ktoré je horšie ako chôdza, už nevytlačí
+  rozumné spojenie s prestupom (predtým appka niekedy ukázala len
+  neskorý autobus alebo nič).
+- Bod na mape: čas „Pešo to máš rovno do cieľa“ sa počíta vzdušnou
+  čiarou ako v režime cesty (predtým cez zastávky — napr. 18 min
+  namiesto 2 min).
+
+----------------------------------------------------------------
 v1.7.0  (14. 10. 2026)
 ----------------------------------------------------------------
 - Nové políčko „Bez prestupu“: len priame spoje. Keď taký nejde

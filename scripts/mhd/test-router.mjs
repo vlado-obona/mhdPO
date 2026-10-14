@@ -447,6 +447,35 @@ if ((D.links || []).length) {
   if (!bad) ok(`cieľ s okolitými zastávkami: autobus priamo na zastávku (Detská nemocnica, Korabinského, Tulčícka), ${n} krátkych hľadaní bez kruhových spojení`);
 }
 
+// ── 4g: spojenie horšie ako chôdza nesmie vytlačiť lepšie spojenie ─────
+// (odmietne sa už pri výbere cieľa; inak krátke cesty ukázali len neskorý
+// autobus alebo nič, hoci rozumné spojenie s prestupom existuje)
+if (D.meta.validFrom <= 20261004 && D.meta.validTo >= 20261029) {
+  const hav = (a, b, c, d) => { const r = Math.PI / 180, x = (d - b) * r * Math.cos((a + c) / 2 * r), y = (c - a) * r; return Math.hypot(x, y) * 6371000; };
+  const group = (n) => new Map(D.stops.map((s, i) => [s, i]).filter(([s]) => s.n === n).map(([, i]) => [i, 0]));
+  const pt = (la, lo) => new Map(D.stops.map((x, i) => [i, hav(la, lo, x.la, x.lo)]).filter(([, d]) => d <= 700).sort((a, b) => a[1] - b[1]).slice(0, 8).map(([i, d]) => [i, Math.round(d * 1.2 / 1.25)]));
+  const dest = (n) => {
+    const m = group(n), own = [...m.keys()].map((i) => D.stops[i]), extra = new Map(), c = [];
+    D.stops.forEach((st, i) => { if (m.has(i)) return; let d = Infinity; for (const o of own) d = Math.min(d, hav(o.la, o.lo, st.la, st.lo)); if (d <= 700) c.push([i, d]); });
+    c.sort((a, b) => a[1] - b[1]);
+    for (const [i, d] of c.slice(0, 12)) { const w = Math.round(d * 1.2 / 1.25); m.set(i, w); extra.set(i, w); }
+    return { m, extra };
+  };
+  const cases = [
+    [group('Potočná'), 'Nižná Šebastová', '2026-10-14', 16 * 3600 + 13 * 60, 16 * 3600 + 39 * 60],
+    [group('Gemor *'), 'Pod Wilec.hôrkou *', '2026-10-17', 14 * 3600 + 24 * 60, 15 * 3600 + 4 * 60],
+    [pt(49.01616, 21.31191), 'Gbolovky *', '2026-10-29', 12 * 3600 + 19 * 60, 13 * 3600 + 16 * 60],
+    [pt(49.01169, 21.22207), 'ZŠ Prostějovská', '2026-10-04', 21 * 3600 + 6 * 60, 21 * 3600 + 15 * 60],
+  ];
+  let bad = 0;
+  for (const [from, b, ds, t0, arr] of cases) {
+    const { m, extra } = dest(b);
+    const js = planJourneys(raptor, from, m, dateInfoFor(ds), t0, 4, { toExtra: extra });
+    if (!js.some((j) => j.arrTime <= arr)) { bad++; fail(`→ ${b} ${ds} ${fmt(t0)}: chýba spojenie s príchodom do ${fmt(arr)} (je ${js.map((j) => fmt(j.arrTime)).join(', ') || 'nič'})`); }
+  }
+  if (!bad) ok(`spojenie horšie ako chôdza nevytlačí lepšie (Potočná, Gemor, Gbolovky, ZŠ Prostějovská)`);
+}
+
 // ── 5: nočné spoje cez polnoc ───────────────────────────────────────
 const nightPat = D.patterns.filter((p) => ['N1', 'N2'].includes(D.routes[p.r].s));
 if (nightPat.length) {

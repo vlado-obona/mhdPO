@@ -3,7 +3,7 @@ import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './rapt
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.7.0';
+const APP_VERSION = '1.7.1';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -617,6 +617,18 @@ function destStopsFor(s, radius = POINT_RADIUS) {
   return m;
 }
 
+// Pešo rovno do cieľa: vzdušnou čiarou × WALK_DETOUR medzi bodom alebo
+// nástupišťami zastávky (ako v režime cesty), nad 2 km sa nepočíta. Odhad cez
+// zastávky (walkOnlySecs) je pre body na mape často oveľa dlhší.
+function straightWalk(a, b) {
+  const pts = (s) => !s ? [] : s.kind === 'group' && s.stops?.length ? s.stops.map((i) => [D.stops[i].la, D.stops[i].lo])
+    : s.lat != null ? [[s.lat, s.lon]] : [];
+  let d = Infinity;
+  for (const p of pts(a)) for (const q of pts(b)) d = Math.min(d, haversine(p[0], p[1], q[0], q[1]));
+  return d <= 2000 ? Math.round(d * WALK_DETOUR / WALK_SPEED) : Infinity;
+}
+const walkStraight = (from, to, fromStops, toStops) => Math.min(straightWalk(from, to), walkOnlySecs(raptor, fromStops, toStops));
+
 // Odporúčané spojenie (prvá karta): najnižšia „cena“ = príchod
 //   + 5 min za každý prestup
 //   + pol minúty za každú minútu chôdze navyše (oproti spojeniu s najmenšou)
@@ -663,10 +675,10 @@ function withDirect(normal, direct, fromStops) {
 // nie je, vráti spojenia s prestupom (direct: false) a priame pridá na koniec
 // (later) — appka povie, kedy ide priamy.
 const DIRECT_MAX_LATER = 3600;
-function planWithPrefs(fromStops, toStops, di, depTime) {
+function planWithPrefs(fromStops, toStops, di, depTime, walkOnly) {
   const toExtra = toStops.extra;
-  const normal = planJourneys(raptor, fromStops, toStops, di, depTime, 4, { toExtra });
-  const direct = planJourneys(raptor, fromStops, toStops, di, depTime, 4, { direct: true, toExtra });
+  const normal = planJourneys(raptor, fromStops, toStops, di, depTime, 4, { toExtra, walkOnly });
+  const direct = planJourneys(raptor, fromStops, toStops, di, depTime, 4, { direct: true, toExtra, walkOnly });
   if (!prefs.direct) return { js: rankJourneys(withDirect(normal, direct, fromStops), fromStops), direct: false };
   const firstArr = (js) => Math.min(...js.map((j) => j.arrTime));
   if (direct.length && (!normal.length || firstArr(direct) <= firstArr(normal) + DIRECT_MAX_LATER)) {
@@ -720,11 +732,11 @@ function search() {
   setStatus('Hľadám spojenia…');
   setTimeout(() => {
     const t0 = performance.now();
-    const { js: journeys, direct, later } = planWithPrefs(fromStops, toStops, di, depTime);
+    const walk = walkStraight(sel.from, sel.to, fromStops, toStops);
+    const { js: journeys, direct, later } = planWithPrefs(fromStops, toStops, di, depTime, walk);
     const ms = Math.round(performance.now() - t0);
     renderResults(journeys);
     // pešo rovno do cieľa (blízke miesta): ak je to skôr ako MHD, povedať to
-    const walk = walkOnlySecs(raptor, fromStops, toStops);
     const walkFirst = walk < Infinity && (!journeys.length || depTime + walk <= Math.min(...journeys.map((j) => j.arrTime)));
     if (walkFirst) setStatus(`Pešo to máš rovno do cieľa ~${fmtDur(walk)} (v cieli ${fmtTime(depTime + walk)})${journeys.length ? ' — skôr ako MHD.' : '.'}`);
     else if (!journeys.length) setStatus('Žiadne spojenie sa nenašlo. Skús iný čas alebo zastávky.', true);
@@ -1452,6 +1464,7 @@ async function widgetJourneys(from, to) {
   let toStops = destStopsFor(to);
   if (!toStops.size) toStops = destStopsFor(to, 1500);
   if (!fromStops.size || !toStops.size) return [];
+  const opts = { toExtra: toStops.extra, walkOnly: walkStraight(from, to, fromStops, toStops) };
   const now = Date.now(), end = now + WIDGET_HORIZON * 1000;
   const today = nowInSk().date;
   const out = new Map();
@@ -1462,7 +1475,7 @@ async function widgetJourneys(from, to) {
     if (D.meta.validFrom && di.num < D.meta.validFrom) continue;
     let cursor = k === 0 ? Math.max(0, nowSecsSk() - 120) : 0;
     for (let guard = 0; guard < 250 && out.size < WIDGET_MAX; guard++) {
-      const js = planJourneys(raptor, fromStops, toStops, di, cursor, 4, { toExtra: toStops.extra });
+      const js = planJourneys(raptor, fromStops, toStops, di, cursor, 4, opts);
       if (!js.length) break;
       let maxDep = cursor;
       for (const j of js) {
@@ -1937,7 +1950,9 @@ function planFromHere(reason) {
   if (!fromStops.size) fromStops = stopSetFor(origin, 1500);
   let toStops = destStopsFor(t.dest);
   if (!toStops.size) toStops = destStopsFor(t.dest, 1500);
-  const plan = fromStops.size && toStops.size ? planWithPrefs(fromStops, toStops, di, Math.floor(t.t0Secs)) : { js: [], direct: false };
+  const plan = fromStops.size && toStops.size
+    ? planWithPrefs(fromStops, toStops, di, Math.floor(t.t0Secs), walkStraight(origin, t.dest, fromStops, toStops))
+    : { js: [], direct: false };
   const js = plan.js;
   if (prefs.direct && js.length && !plan.direct && !t.info) {
     t.info = plan.later ? `${directLaterText(plan.later)} — ide sa s prestupom.` : 'Bez prestupu sa tam teraz nedostaneš — ide sa s prestupom.';
