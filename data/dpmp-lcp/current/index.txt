@@ -1,0 +1,2001 @@
+
+
+
+
+
+Dopravný podnik mesta Prešov, a. s.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ window.consentStore = window.consentStore || {};
+ window.dataLayer = window.dataLayer || [];
+ function gtag(){dataLayer.push(arguments);}
+ function setConsents(operacia = 'default') {
+ if (consentStore) {
+ gtag('consent',operacia,consentStore);
+ } 
+ }
+
+
+
+ :root {
+ --cc-btn-primary-bg: #DB2017;
+ }
+
+ 
+
+ if (!consentStore.functionality_storage) {
+ consentStore = {
+ 'ad_storage': 'denied',
+ 'ad_user_data': 'denied',
+ 'ad_personalization': 'denied',
+ 'analytics_storage': 'denied',
+ 'functionality_storage': 'granted',
+ 'personalization_storage': 'granted',
+ 'security_storage': 'granted'
+ };
+ }
+ setConsents('default');
+
+
+ 
+ 
+
+
+
+
+ window.dataLayer = window.dataLayer || [];
+ function gtag(){dataLayer.push(arguments);}
+ gtag('js', new Date());
+
+ gtag('config', 'G-FC69QS7193');
+ gtag('config', 'AW-629130799');
+
+
+
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '847430268281545');
+fbq('track', 'PageView');
+
+<img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=847430268281545&ev=PageView&noscript=1"
+/>
+
+
+
+
+
+ window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+ window._adftrack.push({
+ HttpHost: 'track.adform.net',
+ pm: 2077769,
+ divider: encodeURIComponent('|'),
+ pagename: encodeURIComponent('Presov_MHD_homepage')
+ });
+ (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+
+
+
+
+
+
+
+
+
+
+
+Preskočiť na obsah
+
+
+
+
+
+
+
+
+
+
+
+Dopravný podnik mesta Prešov
+
+
+
+
+
+
+Hľadať
+
+
+ <input class="form-control ps-4" type="search" id="q" name="q"
+ placeholder="Hľadajte cestovný poriadok, odchody zo zastávky alebo informácie">
+
+
+
+
+
+
+
+
+
+ <button class="dp-social-link btn border-0 d-lg-none" type="button"
+ data-bs-toggle="collapse" data-bs-target="#hladanieMobil"
+ aria-expanded="false" aria-controls="hladanieMobil" aria-label="Hľadať">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+Hľadať
+
+
+ <input class="form-control rounded-start-pill ps-4" type="search" id="qm" name="q"
+ placeholder="Hľadáte spojenie alebo informácie">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <a class="nav-link dropdown-toggle" href="#" role="button"
+ data-bs-toggle="dropdown" data-bs-display="static"
+ aria-haspopup="true" aria-expanded="false">Pre cestujúcich
+
+
+
+
+
+Cestovné poriadky a trasy
+
+
+Cestovné poriadky
+
+Vyhľadanie spojenia
+
+Trasy liniek
+
+
+Schémy liniek MHD
+
+Schéma školských spojov MHD
+
+
+
+
+
+Možnosti cestovania
+
+
+Denná a nočná doprava
+
+Bezbariérová doprava
+
+Ako sa dostať zo Železničnej stanice?
+
+
+
+
+
+Cestovné lístky a platby
+
+
+Cestovné lístky – cenník
+
+JCL a eCL – predajné miesta
+
+eCL – bezkontaktná platba vo vozidlách MHD
+
+eCL – daňový doklad a výpis jázd
+
+SMS lístok a SMS daňový doklad
+
+On-line predaj BČK
+
+
+vCL cez mobilné aplikácie
+
+Tarifa
+
+
+
+
+
+Informácie
+
+
+Najčastejšie otázky (FAQ)
+
+Aktuálne informácie
+
+Všetky správy
+
+Straty a nálezy
+
+Prepravný poriadok
+
+
+
+
+
+
+
+
+
+ <a class="nav-link dropdown-toggle" href="#" role="button"
+ data-bs-toggle="dropdown" data-bs-display="static"
+ aria-haspopup="true" aria-expanded="false">O dopravnom podniku
+
+
+
+
+
+O spoločnosti
+
+
+História a súčastnosť MHD Prešov
+
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+
+Kariéra
+
+Privátna zóna
+
+
+
+
+
+Dokumenty a predpisy
+
+
+Stanovy 
+
+Organizačný poriadok 
+
+Etický kódex 
+
+
+
+
+
+Hospodárenie a transparentnosť
+
+
+Výročné správy, závierky, správy audítora
+
+Povinné zverejňovanie
+
+Verejné obstarávanie
+
+Majetok na predaj
+
+
+
+
+
+Ochrana údajov a pravidlá
+
+
+Ochrana osobných údajov
+
+Pravidlá používania súborov cookies
+
+
+
+
+
+
+
+
+
+ <a class="nav-link dropdown-toggle" href="#" role="button"
+ data-bs-toggle="dropdown" data-bs-display="static"
+ aria-haspopup="true" aria-expanded="false">Naše služby
+
+
+
+
+
+Služby
+
+
+Reklamné a iné služby
+
+Doprava na objednávku
+
+Ostatné služby
+
+
+
+
+
+
+
+
+
+
+Kontakt
+
+
+
+
+
+ <button class="dp-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#hlavneMenu"
+ aria-controls="hlavneMenu">
+ Menu 
+
+
+
+
+
+
+
+
+
+Hlavné menu
+
+
+ Menu 
+
+
+
+
+
+
+
+
+ <button class="accordion-button collapsed" type="button"
+ data-bs-toggle="collapse" data-bs-target="#mm1"
+ aria-expanded="false" aria-controls="mm1">Pre cestujúcich
+
+
+
+
+
+Cestovné poriadky a trasy
+
+
+Cestovné poriadky
+
+Vyhľadanie spojenia
+
+Trasy liniek
+
+
+Schémy liniek MHD
+
+Schéma školských spojov MHD
+
+
+
+Možnosti cestovania
+
+
+Denná a nočná doprava
+
+Bezbariérová doprava
+
+Ako sa dostať zo Železničnej stanice?
+
+
+
+Cestovné lístky a platby
+
+
+Cestovné lístky – cenník
+
+JCL a eCL – predajné miesta
+
+eCL – bezkontaktná platba vo vozidlách MHD
+
+eCL – daňový doklad a výpis jázd
+
+SMS lístok a SMS daňový doklad
+
+On-line predaj BČK
+
+
+vCL cez mobilné aplikácie
+
+Tarifa
+
+
+
+Informácie
+
+
+Najčastejšie otázky (FAQ)
+
+Aktuálne informácie
+
+Všetky správy
+
+Straty a nálezy
+
+Prepravný poriadok
+
+
+
+
+
+
+
+ 
+
+
+ <button class="accordion-button collapsed" type="button"
+ data-bs-toggle="collapse" data-bs-target="#mm2"
+ aria-expanded="false" aria-controls="mm2">O dopravnom podniku
+
+
+
+
+
+O spoločnosti
+
+
+História a súčasnosť MHD Prešov
+
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+
+Kariéra
+
+Privátna zóna
+
+
+
+Dokumenty a predpisy
+
+
+Stanovy 
+
+Organizačný poriadok 
+
+Etický kódex 
+
+
+
+Hospodárenie a transparentnosť
+
+
+Výročné správy, závierky, správy audítora
+
+Povinné zverejňovanie
+
+Verejné obstarávanie
+
+Majetok na predaj
+
+
+
+Ochrana údajov a pravidlá
+
+
+Ochrana osobných údajov
+
+Pravidlá používania súborov cookies
+
+
+
+
+
+
+
+ 
+
+
+ <button class="accordion-button collapsed" type="button"
+ data-bs-toggle="collapse" data-bs-target="#mm3"
+ aria-expanded="false" aria-controls="mm3">Naše služby
+
+
+
+
+
+Reklamné a iné služby
+
+Doprava na objednávku
+
+Ostatné služby
+
+
+
+
+
+
+ <!-- ================================================================
+ Kontakt – priamy odkaz, bez rozbaľovania
+ ================================================================ -->
+
+
+Kontakt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+ 
+ 
+ 
+
+
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+
+ 
+ 
+ 
+
+
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+
+
+
+
+
+Predchádzajúci
+
+
+
+
+Nasledujúci
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Vyhľadanie spojenia 
+ 
+ 
+ 
+ 
+ Cestovný poriadok 
+ 
+ 
+ 
+ 
+ Najbližšie odchody 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+
+
+ Odkiaľ (Štvrť): 
+
+Centrum
+
+ --- Trojica
+
+ --- Veľká pošta
+
+Stanica
+
+Sídlisko III
+
+ --- Sídlisko III
+
+ --- N. Kráľ. pokoja
+
+Sekčov
+
+ --- L. Novomeského
+
+ --- Sibírska
+
+Šváby
+
+17. novembra
+
+Sídlisko II
+
+ --- Obr. mieru
+
+ --- M. Čulena
+
+ --- Levočská
+
+Nemocnica
+
+Kollárova
+
+Budovateľská
+
+Sabinovská
+
+Solivar
+
+Šebastová
+
+Dúbrava
+
+Petrovanská
+
+Šarišské Lúky
+
+Veľký Šariš
+
+Košická
+
+Delňa
+
+Šidlovec
+
+Rúrky
+
+Širpo
+
+Ľubotice
+
+Kalvária
+
+Kúty
+
+Cemjata
+
+Vydumanec
+
+Malý Šariš
+
+Šalgovík
+
+Fintice
+
+Haniska
+
+Kanaš
+
+Záborské
+
+Bzenov
+
+Teriakovce
+
+Ruská Nová Ves
+
+Surdok
+
+K Surdoku
+
+ 
+
+
+ 
+
+
+
+-- zastávka --
+
+
+ 
+ 
+ 
+ 
+
+
+ 
+
+
+ Kam (Štvrť): 
+
+ 
+Centrum
+
+ --- Trojica
+
+ --- Veľká pošta
+
+Stanica
+
+Sídlisko III
+
+ --- Sídlisko III
+
+ --- N. Kráľ. pokoja
+
+Sekčov
+
+ --- L. Novomeského
+
+ --- Sibírska
+
+Šváby
+
+17. novembra
+
+Sídlisko II
+
+ --- Obr. mieru
+
+ --- M. Čulena
+
+ --- Levočská
+
+Nemocnica
+
+Kollárova
+
+Budovateľská
+
+Sabinovská
+
+Solivar
+
+Šebastová
+
+Dúbrava
+
+Petrovanská
+
+Šarišské Lúky
+
+Veľký Šariš
+
+Košická
+
+Delňa
+
+Šidlovec
+
+Rúrky
+
+Širpo
+
+Ľubotice
+
+Kalvária
+
+Kúty
+
+Cemjata
+
+Vydumanec
+
+Malý Šariš
+
+Šalgovík
+
+Fintice
+
+Haniska
+
+Kanaš
+
+Záborské
+
+Bzenov
+
+Teriakovce
+
+Ruská Nová Ves
+
+Surdok
+
+K Surdoku
+
+ 
+
+ 
+ 
+
+
+
+-- zastávka --
+
+
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+ Zobraziť 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ Zobraziť 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Aktuálne informácie
+
+
+
+ 
+
+
+
+24. 9. 2026
+Zmeny v cestovných poriadkoch 23 spojov MHD – od 1. októbra 2026!
+
+
+
+
+
+
+30. 8. 2026
+Neobsluhovaná zastávka Ihrisko od 1.9.2026
+
+
+
+
+
+
+3. 6. 2026
+PREDAJŇA CL NA NOVOM MIESTE Stanica SAD – Košická 2 už otvorená!
+
+
+
+
+
+
+8. 10. 2025
+Uzavretý most Jána Pavla II. od 13.10.2025
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+Stiahnite si
+mobilnú aplikáciu
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+ 
+ 
+
+
+ 
+
+ 
+ 
+
+
+ 
+ 
+
+
+ 
+
+ 
+
+
+
+
+
+
+
+ 
+ 
+
+ 
+
+
+
+Rýchle odkazy
+
+
+ <div class="carousel slide dp-cards-carousel" id="odkazyCarousel"
+ data-dp-group="6" data-dp-group-lg="4" data-dp-group-md="3" data-dp-group-sm="1">
+
+
+
+
+
+
+
+Cestovný poriadok
+
+
+
+
+
+
+
+
+
+
+Cestovné lístky
+
+
+
+
+
+
+
+
+
+
+Predajné miesta
+
+
+
+
+
+
+
+
+
+
+Platba kartou v MHD
+
+
+
+
+
+
+
+
+
+
+Kariéra
+
+
+
+
+
+
+
+
+
+
+Mapy a siete liniek
+
+
+
+
+
+
+
+
+
+
+
+
+
+Všetky správy
+
+ <div class="carousel slide dp-cards-carousel" id="spravyCarousel"
+ data-dp-group="4" data-dp-group-lg="3" data-dp-group-md="2" data-dp-group-sm="1">
+
+
+ 
+
+
+
+
+Prešovský dopravný podnik prichádza s novou digitálnou tvárou, jeho oficiálny web prešiel kompletným redizajnom.
+
+Dopravný podnik mesta Prešov, a.s. (DPMP) spustil svoju webovú stránku v kompletne novej podobe. Web naďalej funguje na svojej domovskej adrese www.dpmp.sk, no návštevníkov privíta v modernejšom šate, ktorý plne odráža nedávnu zmenu loga a komunikačných prvkov podniku. 
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Prešovská MHD je od 12. októbra lacnejšia. Základné cestovné sa dočasne zníži
+
+Cestujúci v prešovskej mestskej hromadnej doprave majú možnosť od 12. októbra 2026 cestovať výhodnejšie. Mesto Prešov sa zapája do celoštátneho opatrenia, ktorým vláda reaguje na vysoké ceny pohonných látok. Dočasne sa znížila cena základného cestovného pre plne platiacich cestujúcich. Opatrenie platí najmenej 30 dní, do 10. novembra 2026.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+DPMP rozšíril možnosti kúpy cestovných lístkov. K dispozícii sú dve mobilné aplikácie 
+
+Prešovská MHD ponúka ďalšiu modernú službu. Cestovný lístok sa dá od septembra 2026 kúpiť aj cez aplikáciu v mobile. Prostredníctvom aplikácií Ubian a Prešovonline si môžu cestujúci kúpiť jednorazový aj predplatný cestovný lístok, bez nutnosti vlastniť čipovú kartu. 
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Prešovskú MHD posilnili dva nové autobusy. DPMP vráti na cesty časť zrušených spojov
+
+Autobusová flotila Dopravného podniku mesta Prešov sa v uplynulých dňoch rozrástla o dva nové mestské autobusy ISUZU Citiport 12. Vďaka rozšíreniu vozového parku sa od 1.10.2026 vráti do premávky 23 spojov, ktoré dočasne nepremávali od januára 2024.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Na Deň otvorených dverí v DPMP prišli tisícky ľudí
+
+Do areálu Dopravného podniku mesta Prešov v Ľuboticiach zavítalo v sobotu 19.9.2026 viac ako 3 000 návštevníkov. Deň otvorených dverí 2026 ponúkol možnosť nazrieť do zákulisia prešovskej MHD, spoznať prácu zamestnancov DPMP a pestrý sprievodný program.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+DPMP opäť otvorí svoje brány verejnosti. Blíži sa DOD 2026
+
+Dopravný podnik mesta Prešov pozýva cestujúcich a fanúšikov MHD na Deň otvorených dverí. Areál DPMP v Ľuboticiach ožije v sobotu 19. septembra 2026 od 11:00 do 16:00 hod. Návštevníkov čaká pestrý program pre rodiny s deťmi, pohľad do zákulisia fungovania dopravného podniku a množstvo ďalších atrakcií pre všetky vekové kategórie. Vstup na podujatie je voľný.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+ETM 2026: Štartuje výtvarná súťaž pre deti
+
+Európsky týždeň mobility (ETM) sa uskutoční od 16. do 22. septembra 2026 v téme „Mobilita pre všetkých“. Jeho cieľom je propagovať udržateľné formy dopravy a motivovať ľudí k častejšiemu využívaniu verejnej dopravy. Integrovaný dopravný systém IDS Východ, mesto Prešov a Dopravný podnik mesta Prešov spoločne pripravili výtvarnú súťaž zameranú na verejnú dopravu a zvýhodnené vydávanie dopravných kariet.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+DPMP má nové logo, ktoré je súčasťou veľkej rodiny mestských značiek
+
+Dopravný podnik mesta Prešov mení svoju vizuálnu identitu a oficiálne začína používať nové logo. V online priestore sa sním cestujúci stretnú už teraz, no postupne pribudne aj vo vozidlách či na zastávkach MHD. Výmena loga DPMP je súčasťou širšieho projektu zjednotenia vizuálnej identity všetkých mestských spoločností v Prešove.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Letné osvieženie je s DPMP na dosah ruky. Linky prešovskej MHD premávajú k trom kúpaliskám
+
+S príchodom blížiacich sa letných prázdnin sa v Prešove už tradične začína nová sezóna na letných kúpaliskách na Delni, na Sídlisku III a na Solivare. S prešovskou MHD sa cestujúci dostanú na všetky tri miesta pohodlne a bezpečne, pričom im odpadnú aj starosti s parkovaním. DPMP opäť pripravil prehľad liniek MHD, ktoré cestujúci bežne využívajú na dochádzanie do práce, do školy či na nákupy, avšak počas letných mesiacov ponúkajú aj jednoduchý spôsob prepravy na kúpaliská.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Pre rodičov sprevádzajúcich dieťa bude MHD v Prešove bezplatná
+
+Mesto Prešov v spolupráci s Dopravným podnikom mesta Prešov zavádza bezplatné cestovanie pre rodičov alebo zákonných zástupcov sprevádzajúcich svoje deti počas cesty v I. tarifnom pásme MHD. Tento benefit je určený pre všetky deti a ich zákonných zástupcov s trvalým pobytom v meste Prešov. Novinka vstúpi do platnosti od 1.6.2026.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+DPMP predstavil počas Deň detí v meste Mimoňov. Na Hlavnú ulicu dorazili v netradičnom autobuse.
+
+Oslavy Medzinárodného dňa detí v Prešove tento rok oživia netradiční hostia. Dopravný podnik mesta Prešov predstaví v piatok 29.5.2026 unikátny Mimoni bus, ktorý bude súčasťou mestského programu pre deti na Hlavnej ulici.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+V Prešove sa otvárajú 2 nové pracoviská klientskeho centra
+
+Mesto Prešov rozširuje dostupnosť svojich služieb pre obyvateľov mesta priamo na dvoch najväčších sídliskách. 12. mája 2026 budú otvorené dve nové detašované pracoviská Klientskeho centra MsÚ v Prešove. Jedno pribudne na Sídlisku III v nákupnom stredisku Družba a druhé na sídlisku Sekčov v nákupnom stredisku Opál.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Dopravný podnik v Prešove hľadal výnimočné mamičky z mestskej dopravy
+
+DPMP pripravil pre svojich cestujúcich atraktívnu súťaž, v ktorej hľadal inšpiratívne ženy. Konkrétne išlo o mamičky, ktoré bežne sme stretávali v MHD, no väčšinou sme netušili, aký výnimočný príbeh v sebe skrývali. Nominovať mamičku, ktorá si za svoje hrdinstvo zaslúžila úctu a pozornosť, bolo možné v termíne od 20. 4. do 4. 5. 2026.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Označníky na zastávkach MHD budú čistejšie a krajšie
+
+Na vybraných zastávkach MHD prebieha plánovaná údržba a čistenie označníkov, ktoré cestujúci denne využívajú na vyhľadávanie informácií o odchodoch spojov. Súčasťou prác je aj výmena nálepiek s názvami zastávok.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Veľkonočná pátračka v prešovskej MHD priniesla zábavu a atraktívne ceny
+
+Dopravný podnik mesta Prešov pripravil interaktívnu súťaž „Veľkonočná pátračka v MHD“, ktorá ľuďom spríjemní všedné jazdy v autobusoch či trolejbusoch. V termíne od 30.3 do 6.4.2026 čaká cestujúcich spojenie zábavy a moderných technológií, pričom v hre sú ceny v hodnote viac ako 1 000 eur.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+DPMP zrealizoval veľkonočnú výtvarnú súťaž
+
+Dopravný podnik mesta Prešov pripravil veľkonočnú súťaž s názvom „Namaľuj si svoju jazdu“, ktorá trvala od 10. 3. do 20. 3. 2026. Súťaž bola určená pre deti, ktorých úlohou bolo nakresliť alebo namaľovať, ako si predstavovali veľkonočné tradície v spojení s mestskou hromadnou
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Do flotily DPMP pribudlo 5 mestských autobusov MAN
+
+Dopravný podnik mesta Prešov rozširuje svoj vozový park. Od spoločnosti MAN Truck & Bus Slovakia s.r.o. si prenajal 5 nízkopodlažných autobusov, ktoré sa už nachádzajú v depe. Aktuálne prebieha proces informačno-tarifného dovybavenia týchto vozidiel, pričom prvý z pätice autobusov bude 7.3.2026 zaradený do ostrej prevádzky.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Voňavé jazdy s karafiátmi v MHD spríjemnili dámam cestovanie počas MDŽ
+
+Dopravný podnik mesta Prešov pripravil pri príležitosti Medzinárodného dňa žien voňavé prekvapenie pre dámy. V nedeľu 8. 3. 2026 mohli cestujúci na vybraných linkách MHD stretnúť džentlmena vo fraku, ktorý ženám rozdával karafiáty.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Začína sa druhá etapa výmeny prístreškov MHD
+
+V meste Prešov bude od 2.3.2026 pokračovať postupná výmena zastávkových prístreškov MHD. Cieľom je zlepšiť komfort, bezpečnosť a celkové podmienky pre cestujúcich, ktorí využívajú MHD. Historicky najrozsiahlejšia výmena prístreškov na zastávkach MHD v Prešove odštartovala ešte v roku 2025, pričom v prvej fáze ich mesto vymenilo 33. V prvej polovici roka 2026 pribudne ďalších 26 nových prístreškov. 
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Cestovné poriadky MHD v Prešove sú dostupné už aj na Mapách Google
+
+Dopravný podnik mesta Prešov integroval cestovné poriadky do globálne využívanej platformy. Cestujúci odteraz môžu pohodlne vyhľadávať spoje jednotlivých liniek a jednoducho plánovať svoje cesty prostredníctvom mestskej hromadnej dopravy priamo v aplikácii Mapy Google (Google Maps).
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+Rozcestník
+
+
+ <div class="carousel slide" id="rozcestnikCarousel"
+ data-dp-group="4" data-dp-group-lg="4" data-dp-group-md="2" data-dp-group-sm="1">
+
+
+
+
+Cestovné poriadky a trasy
+
+
+Cestovné poriadky
+
+Vyhľadanie spojenia
+
+Trasy liniek
+
+Schémy liniek MHD
+
+Schéma školských spojov MHD
+
+Denná a nočná doprava
+
+Bezbariérová doprava
+
+Prepravný poriadok
+
+
+
+
+Cestovné lístky a platby
+
+
+Cestovné lístky – cenník
+
+JCL a eCL – predajné miesta
+
+eCL – bezkontaktná platba vo vozidlách
+
+eCL – daňový doklad a výpis jázd
+
+SMS lístok a SMS daňový doklad
+
+On-line predaj BČK
+
+
+vCL cez mobilné aplikácie
+
+Tarifa
+
+
+
+
+
+
+ 
+
+
+
+Naše služby
+
+
+Reklamné služby
+
+Doprava na objednávku
+
+Ostatné služby
+
+Straty a nálezy
+
+
+
+ 
+
+
+ 
+
+O dopravnom podniku
+
+
+História a súčasnosť MHD Prešov
+
+
+
+
+Ochrana osobných údajov
+
+Pravidlá používania súborov cookies
+
+Kariéra
+
+Kontakty
+
+
+ 
+
+
+
+
+
+
+
+
+ <!--div class="carousel slide" id="rozcestnikCarousel"
+ data-dp-group="4" data-dp-group-lg="4" data-dp-group-md="2" data-dp-group-sm="1">
+
+
+
+
+Pre cestujúcich
+
+
+Cestovné poriadky
+
+Vyhľadanie spojenia
+
+Trasy liniek
+
+Schémy liniek MHD
+
+Schéma školských spojov MHD
+
+
+
+Cestovné lístky – cenník
+
+JCL a eCL – predajné miesta
+
+eCL – bezkontaktná platba vo vozidlách MHD
+
+eCL – daňový doklad a výpis jázd
+
+SMS lístok a SMS daňový doklad
+
+On-line predaj BČK
+
+
+vCL cez mobilné aplikácie
+
+Tarifa
+
+
+
+Aktuálne informácie
+
+Informácie z podniku
+
+Straty a nálezy
+
+Prepravný poriadok
+
+
+
+
+
+ 
+
+O dopravnom podniku
+
+
+História a súčastnosť MHD Prešov
+
+Predstavenstvo, dozorná rada a vedenie spoločnosti
+
+Kariéra
+
+Ochrana osobných údajov
+
+Pravidlá používania súborov cookies
+
+
+ 
+
+
+
+Naše služby
+
+
+Reklamné služby
+
+Doprava na objednávku
+
+Ostatné služby
+
+
+
+
+ 
+
+
+
+Kontakt
+
+
+Kontakty
+
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Často kladené otázky
+
+
+
+
+
+
+
+
+
+
+
+ Môže vodič kontrolovať cestovné lístky?
+
+
+
+
+ Áno, vodič je oprávneným pracovníkom dopravcu, ktorému je cestujúci povinný na výzvu preukázať sa platným cestovným lístkom.
+
+
+
+
+
+
+ Môže vodič vylúčiť cestujúceho z vozidla?
+
+
+
+
+ Áno, ak cestujúci nespĺňa podmienky pre prepravu uvedené v prepravnom poriadku, napr. nedodržiava pokyny a príkazy dopravcu, svojím správaním narúša bezpečnú a plynulú prepravu ostatných cestujúcich a pod.
+
+
+
+
+
+
+ Môže revízor požadovať od cestujúceho preukaz totožnosti?
+
+
+
+
+ Áno, revízor môže od cestujúceho, ktorý sa nepreukáže platným cestovným dokladom, požadovať osobné údaje potrebné na vymáhanie cestovného a ďalších úhrad uvedených v tarife.
+
+
+
+
+
+
+ Aká tarifa platí na nočných spojoch?
+
+
+
+
+ Na nočných spojoch platí rovnaká tarifa ako počas dňa.
+
+
+
+
+
+
+ Kde je možné ohlásiť poruchu automatu na cestovné lístky?
+
+
+
+
+ Poruchu automatu môže cestujúci ohlásiť na tel. č. 0902 814 998, 74 70 204 al. 7764064, kde stačí oznámiť číslo nefunkčného automatu (číslo je uvedené v informačnom okne automatu).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 051 / 7470 211
+
+
+ dpmp@dpmp.sk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Predajne cestovných lístkov
+
+
+
+
+
+ <div class="carousel slide" id="predajneCarousel"
+ data-dp-group="4" data-dp-group-md="2" data-dp-group-sm="1">
+
+
+
+
+Centrum mesta
+
+
+ Ukázať na mape 
+
+
+
+ Weberova 2
+
+051 773 17 03
+
+PO-PI
+ 7.00 — 17.00 hod.
+
+
+ 
+
+
+
+Autobusová stanica
+
+
+ Ukázať na mape 
+
+
+
+ Košická 2
+
+051 773 18 66
+
+PO-PI
+ 7.00 — 11.30 hod. a 
+12.00 — 15.00 hod.
+
+
+ 
+
+
+
+Sídlisko Sekčov
+
+
+ Ukázať na mape 
+
+
+
+Nákupné stredisko Opál
+ Zemplínska 9
+
+051 770 32 56
+
+PO, ST, PI
+ 8.00 — 12.00 hod. a 
+12.30 — 16.00 hod.
+
+UT, ŠT
+ 9.00 — 12.00 hod. a 
+12.30 — 17.00 hod.
+
+
+ 
+
+
+Sídlisko III
+
+
+ Ukázať na mape 
+
+
+
+Nákupné stredisko Družba
+ Námestie Kráľovnej pokoja 3
+
+051 771 84 87
+
+
+UT, ŠT
+ 9.00 — 12.00 hod. a 
+12.30 — 17.00 hod.
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+Stiahnite si
+mobilnú aplikáciu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Dopravný podnik mesta Prešov, akciová spoločnosť
+
+Bardejovská 7, 080 06 Ľubotice
+
+Copyright © 2005–2026 DPMP a.s. Všetky práva vyhradené.
+
+
+
+Tvoríme dizajn web stránok | MiDesign
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

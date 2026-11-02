@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dopravný podnik mesta Prešov, a. s.</title>
+<meta name="description" content="Cestovné poriadky, vyhľadanie spojenia, cestovné lístky a informácie MHD v Prešove.">
+
+<!-- Bootstrap 5.3 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!-- Vlastné doplnky -->
+<link rel="stylesheet" href="/assets/css/custom.css">
+<script type="text/javascript" src="/assets/js/spotlight.bundle.js"></script>
+
+
+
+<script type="text/javascript" src="/assets/js/cookie-consent-4-0.js"></script>
+
+
+<script src="https://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+
+<link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+<link rel="shortcut icon" href="/favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="DPMP" />
+<link rel="manifest" href="/favicon/site.webmanifest" />
+
+<meta name="msapplication-TileColor" content="#DB2017">
+<meta name="theme-color" content="#DB2017">
+
+<meta property="og:title"              content="Cestovné poriadky" />
+<meta property="og:description"  content="" />
+<meta property="og:image"          content=""/>
+
+<!-- CONSENT V2 2024 ---- PART A START -->
+  <script>
+    window.consentStore = window.consentStore || {};
+    window.dataLayer    = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    function setConsents(operacia = 'default') {
+      if (consentStore) {
+        gtag('consent',operacia,consentStore);
+      }  
+    }
+  </script>
+  <link rel="stylesheet" href="/cmp/cookieconsent.css">
+  <style>
+    :root {
+      --cc-btn-primary-bg: #DB2017;
+    }
+  </style>
+  <script type="module" src="/cmp/cookieconsent-config.js"></script>
+  <script>
+    if (!consentStore.functionality_storage) {
+      consentStore = {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'functionality_storage': 'granted',
+        'personalization_storage': 'granted',
+        'security_storage': 'granted'
+      };
+    }
+    setConsents('default');
+  </script>
+  <!-- CONSENT V2 2024 ---- PART A END -->
+  
+  
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FC69QS7193"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FC69QS7193');
+  gtag('config', 'AW-629130799');
+</script>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '847430268281545');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=847430268281545&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<!-- Adform Tracking Code BEGIN -->
+<script type="text/javascript">
+    window._adftrack = Array.isArray(window._adftrack) ? window._adftrack : (window._adftrack ? [window._adftrack] : []);
+    window._adftrack.push({
+        HttpHost: 'track.adform.net',
+        pm: 2077769,
+        divider: encodeURIComponent('|'),
+        pagename: encodeURIComponent('Presov_MHD_homepage')
+    });
+    (function () { var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'https://s2.adform.net/banners/scripts/st/trackpoint-async.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x); })();
+
+</script>
+<noscript>
+    <p style="margin:0;padding:0;border:0;">
+        <img src="https://track.adform.net/Serving/TrackPoint/?pm=2077769&ADFPageName=Presov_MHD_homepage&ADFdivider=|" width="1" height="1" alt="" />
+    </p>
+</noscript>
+<!-- Adform Tracking Code END -->
+</head>
+<body>
+
+<a class="dp-skip-link" href="#obsah">Preskočiť na obsah</a>
+<header>
+  <!-- Horný pruh: logo, vyhľadávanie, sociálne siete, jazyk -->
+  <div class="dp-topbar">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between gap-3 py-3">
+
+        <!-- Logo -->
+        <a class="d-flex align-items-center gap-2 gap-md-3 text-decoration-none text-dp-ink" href="index.html">
+          <img class="dp-logo-mark" src="assets/img/dpmp_m.png" alt="">
+          <span>
+            <span class="dp-logo-claim d-none">Dopravný podnik mesta Prešov</span>
+          </span>
+        </a>
+
+        <!-- Vyhľadávanie – desktop -->
+        <form class="dp-header-search d-none d-lg-block flex-grow-1" style="max-width:32rem" role="search" action="vyhladavanie" method="get">
+          <label class="visually-hidden" for="q">Hľadať</label>
+          <div class="input-group">
+            <input class="form-control  ps-4" type="search" id="q" name="q"
+                   placeholder="Hľadajte cestovný poriadok, odchody zo zastávky alebo informácie">
+            <button class="btn pe-4" type="submit" aria-label="Hľadať">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </form>
+
+        <div class="d-flex align-items-center gap-1 gap-md-2">
+
+          <!-- Vyhľadávanie – mobil (prepínač) -->
+          <button class="dp-social-link btn border-0 d-lg-none" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#hladanieMobil"
+                  aria-expanded="false" aria-controls="hladanieMobil" aria-label="Hľadať">
+            <i class="bi bi-search"></i>
+          </button>
+
+          <!-- Sociálne siete -->
+          <nav class="d-none d-md-flex align-items-center gap-1" aria-label="Sociálne siete">
+            <a class="dp-social-link" href="https://www.facebook.com/DPMPO/" aria-label="Facebook" target="_blank" ><i class="bi bi-facebook"></i></a>
+            <a class="dp-social-link" href="https://www.instagram.com/dpmp_as/" aria-label="Instagram" target="_blank" ><i class="bi bi-instagram"></i></a>
+            <a class="dp-social-link" href="https://www.youtube.com/@dpmp_as" aria-label="YouTube" target="_blank" ><i class="bi bi-youtube"></i></a>
+            <a class="dp-social-link" href="https://www.linkedin.com/company/dopravn%C3%BD-podnik-mesta-pre%C5%A1ov-a-s" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+          </nav>
+
+          <!-- Prepínač jazyka -->
+          <div>
+            <a class="btn btn-link text-dp-ink text-decoration-none d-flex align-items-center gap-2 px-2"                    aria-label="English" href="?lang=en">
+
+           <img src="assets/img/en.gif" alt="English">
+            </a>
+            
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Vyhľadávanie – mobil (rozbaľovacie) -->
+      <div class="collapse d-lg-none" id="hladanieMobil">
+        <form class="dp-header-search pb-3" role="search" action="search.php" method="get">
+          <label class="visually-hidden" for="qm">Hľadať</label>
+          <div class="input-group">
+            <input class="form-control rounded-start-pill ps-4" type="search" id="qm" name="q"
+                   placeholder="Hľadáte spojenie alebo informácie">
+            <button class="btn rounded-end-pill pe-4" type="submit" aria-label="Hľadať">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<nav class="dp-mainnav" aria-label="Hlavné menu">
+  <div class="container">
+
+    <!-- Desktop -->
+    <ul class="nav d-none d-lg-flex">
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button"
+           data-bs-toggle="dropdown" data-bs-display="static"
+           aria-haspopup="true" aria-expanded="false">Pre cestujúcich</a>
+
+        <div class="dropdown-menu dp-megamenu">
+
+          <div>
+            <h3 class="dp-mega-group-title">Cestovné poriadky a trasy</h3>
+            <ul class="dp-linklist">
+              <li><a href="cestovne-poriadky">Cestovné poriadky</a></li>
+              <li><a href="search">Vyhľadanie spojenia</a></li>
+              <li><a href="trasy-liniek">Trasy liniek</a></li>
+
+              <li><a href="schema-siete">Schémy liniek MHD</a></li>
+              <li><a href="trasy-skolskych-spojov">Schéma školských spojov MHD</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="dp-mega-group-title">Možnosti cestovania</h3>
+            <ul class="dp-linklist">
+              <li><a href="nocne-linky">Denná a nočná doprava</a></li>
+              <li><a href="bezbarierova-doprava">Bezbariérová doprava</a></li>
+              <li><a href="ako-sa-dostat">Ako sa dostať zo Železničnej stanice?</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="dp-mega-group-title">Cestovné lístky a platby</h3>
+            <ul class="dp-linklist">
+              <li><a href="ceny-listkov">Cestovné lístky – cenník</a></li>
+              <li><a href="predajne-miesta">JCL a eCL – predajné miesta</a></li>
+              <li><a href="navod-na-zakupenie-listka-kartou">eCL – bezkontaktná platba vo vozidlách MHD</a></li>
+              <li><a href="kontrola-jazd">eCL – daňový doklad a výpis jázd</a></li>
+              <li><a href="sms-listok">SMS lístok a SMS daňový doklad</a></li>
+              <li><a href="nova-karta">On-line predaj BČK</a></li>
+
+              <li><a href="mobilneappky">vCL cez mobilné aplikácie</a></li>
+              <li><a href="tarifa">Tarifa</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="dp-mega-group-title">Informácie</h3>
+            <ul class="dp-linklist">
+              <li><a href="faq">Najčastejšie otázky (FAQ)</a></li>
+              <li><a href="/">Aktuálne informácie</a></li>
+              <li><a href="informacie-z-podniku">Všetky správy</a></li>
+              <li><a href="straty-a-nalezy">Straty a nálezy</a></li>
+              <li><a href="prepravny-poriadok">Prepravný poriadok</a></li>
+            </ul>
+          </div>
+
+        </div>
+      </li>
+
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button"
+           data-bs-toggle="dropdown" data-bs-display="static"
+           aria-haspopup="true" aria-expanded="false">O dopravnom podniku</a>
+
+        <div class="dropdown-menu dp-megamenu">
+
+          <div>
+            <h3 class="dp-mega-group-title">O spoločnosti</h3>
+            <ul class="dp-linklist">
+              <li><a href="historia-a-sucasnost-mhd-presov">História a súčastnosť MHD Prešov</a></li>
+              <li><a href="vedenie-spolocnosti">Predstavenstvo, dozorná rada a vedenie spoločnosti</a></li>
+              <li><a href="kariera">Kariéra</a></li>
+              <li><a href="https://podnik.dpmp.sk">Privátna zóna</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="dp-mega-group-title">Dokumenty a predpisy</h3>
+            <ul class="dp-linklist">
+              <li><a href="subory/stanovy.pdf" target="_blank" rel="noopener">Stanovy <i class="bi bi-download"></i></a></li>
+              <li><a href="subory/organizacny-poriadok.pdf" target="_blank" rel="noopener">Organizačný poriadok <i class="bi bi-download"></i></a></li>
+              <li><a href="subory/kodex.pdf" target="_blank" rel="noopener">Etický kódex <i class="bi bi-download"></i></a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="dp-mega-group-title">Hospodárenie a transparentnosť</h3>
+            <ul class="dp-linklist">
+              <li><a href="vyrocne-spravy">Výročné správy, závierky, správy audítora</a></li>
+              <li><a href="zmluvy-">Povinné zverejňovanie</a></li>
+              <li><a href="verejne-obstaravania">Verejné obstarávanie</a></li>
+              <li><a href="majetok-na-predaj">Majetok na predaj</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="dp-mega-group-title">Ochrana údajov a pravidlá</h3>
+            <ul class="dp-linklist">
+              <li><a href="ochrana-osobnych-udajov">Ochrana osobných údajov</a></li>
+              <li><a href="pravidla-pouzivania-suborov-cookies">Pravidlá používania súborov cookies</a></li>
+            </ul>
+          </div>
+
+        </div>
+      </li>
+
+
+      <li class="nav-item dropdown position-relative">
+        <a class="nav-link dropdown-toggle" href="#" role="button"
+           data-bs-toggle="dropdown" data-bs-display="static"
+           aria-haspopup="true" aria-expanded="false">Naše služby</a>
+
+        <div class="dropdown-menu dp-megamenu is-narrow">
+
+          <div>
+            <h3 class="dp-mega-group-title">Služby</h3>
+            <ul class="dp-linklist">
+              <li><a href="sluzby">Reklamné a iné služby</a></li>
+              <li><a href="doprava-na-objednavku">Doprava na objednávku</a></li>
+              <li><a href="ostatne-sluzby">Ostatné služby</a></li>
+            </ul>
+          </div>
+
+
+
+        </div>
+      </li>
+
+      <!-- Kontakt – priamy odkaz -->
+      <li class="nav-item"><a class="nav-link" href="/kontakt">Kontakt</a></li>
+    </ul>
+
+    <!-- Mobil -->
+    <div class="d-flex d-lg-none justify-content-end">
+      <button class="dp-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#hlavneMenu"
+              aria-controls="hlavneMenu">
+        Menu <i class="bi bi-list fs-2 lh-1"></i>
+      </button>
+    </div>
+
+  </div>
+</nav>
+<div class="offcanvas offcanvas-end dp-offcanvas" tabindex="-1" id="hlavneMenu" aria-labelledby="hlavneMenuTitle">
+
+  <div class="offcanvas-header">
+    <h2 class="visually-hidden" id="hlavneMenuTitle">Hlavné menu</h2>
+    <button class="dp-menu-toggle" type="button" data-bs-dismiss="offcanvas" aria-label="Zavrieť menu">
+      Menu <i class="bi bi-list fs-2 lh-1" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="offcanvas-body">
+    <div class="accordion accordion-flush" id="menuAkordeon">
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#mm1"
+                  aria-expanded="false" aria-controls="mm1">Pre cestujúcich</button>
+        </h3>
+        <div class="accordion-collapse collapse" id="mm1" data-bs-parent="#menuAkordeon">
+          <div class="accordion-body">
+
+            <h5 class="dp-menu-group">Cestovné poriadky a trasy</h5>
+            <ul class="dp-linklist">
+              <li><a href="cestovne-poriadky">Cestovné poriadky</a></li>
+              <li><a href="search">Vyhľadanie spojenia</a></li>
+              <li><a href="trasy-liniek">Trasy liniek</a></li>
+
+              <li><a href="schema-siete">Schémy liniek MHD</a></li>
+              <li><a href="trasy-skolskych-spojov">Schéma školských spojov MHD</a></li>
+            </ul>
+
+            <h5 class="dp-menu-group">Možnosti cestovania</h5>
+            <ul class="dp-linklist">
+                  <li><a href="nocne-linky">Denná a nočná doprava</a></li>
+              <li><a href="bezbarierova-doprava">Bezbariérová doprava</a></li>
+              <li><a href="ako-sa-dostat">Ako sa dostať zo Železničnej stanice?</a></li>
+            </ul>
+
+            <h5 class="dp-menu-group">Cestovné lístky a platby</h5>
+            <ul class="dp-linklist">
+              <li><a href="ceny-listkov">Cestovné lístky – cenník</a></li>
+              <li><a href="predajne-miesta">JCL a eCL – predajné miesta</a></li>
+              <li><a href="navod-na-zakupenie-listka-kartou">eCL – bezkontaktná platba vo vozidlách MHD</a></li>
+              <li><a href="kontrola-jazd">eCL – daňový doklad a výpis jázd</a></li>
+              <li><a href="sms-listok">SMS lístok a SMS daňový doklad</a></li>
+              <li><a href="nova-karta">On-line predaj BČK</a></li>
+
+              <li><a href="mobilneappky">vCL cez mobilné aplikácie</a></li>
+              <li><a href="tarifa">Tarifa</a></li>
+            </ul>
+
+            <h5 class="dp-menu-group">Informácie</h5>
+            <ul class="dp-linklist">
+              <li><a href="faq">Najčastejšie otázky (FAQ)</a></li>
+              <li><a href="/">Aktuálne informácie</a></li>
+              <li><a href="informacie-z-podniku">Všetky správy</a></li>
+              <li><a href="straty-a-nalezy">Straty a nálezy</a></li>
+              <li><a href="prepravny-poriadok">Prepravný poriadok</a></li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+
+    
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#mm2"
+                  aria-expanded="false" aria-controls="mm2">O dopravnom podniku</button>
+        </h3>
+        <div class="accordion-collapse collapse" id="mm2" data-bs-parent="#menuAkordeon">
+          <div class="accordion-body">
+
+            <h5 class="dp-menu-group">O spoločnosti</h5>
+            <ul class="dp-linklist">
+             <li><a href="historia-a-sucasnost-mhd-presov">História a súčasnosť MHD Prešov</a></li>
+              <li><a href="vedenie-spolocnosti">Predstavenstvo, dozorná rada a vedenie spoločnosti</a></li>
+              <li><a href="kariera">Kariéra</a></li>
+              <li><a href="https://podnik.dpmp.sk">Privátna zóna</a></li>
+            </ul>
+
+            <h5 class="dp-menu-group">Dokumenty a predpisy</h5>
+            <ul class="dp-linklist">
+               <li><a href="subory/stanovy.pdf" target="_blank" rel="noopener">Stanovy <i class="bi bi-download"></i></a></li>
+              <li><a href="subory/organizacny-poriadok.pdf" target="_blank" rel="noopener">Organizačný poriadok <i class="bi bi-download"></i></a></li>
+              <li><a href="subory/kodex.pdf" target="_blank" rel="noopener">Etický kódex <i class="bi bi-download"></i></a></li>
+            </ul>
+
+            <h5 class="dp-menu-group">Hospodárenie a transparentnosť</h5>
+            <ul class="dp-linklist">
+              <li><a href="vyrocne-spravy">Výročné správy, závierky, správy audítora</a></li>
+              <li><a href="zmluvy-">Povinné zverejňovanie</a></li>
+              <li><a href="verejne-obstaravania">Verejné obstarávanie</a></li>
+              <li><a href="majetok-na-predaj">Majetok na predaj</a></li>
+            </ul>
+
+            <h5 class="dp-menu-group">Ochrana údajov a pravidlá</h5>
+            <ul class="dp-linklist">
+                 <li><a href="ochrana-osobnych-udajov">Ochrana osobných údajov</a></li>
+              <li><a href="pravidla-pouzivania-suborov-cookies">Pravidlá používania súborov cookies</a></li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+
+ 
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#mm3"
+                  aria-expanded="false" aria-controls="mm3">Naše služby</button>
+        </h3>
+        <div class="accordion-collapse collapse" id="mm3" data-bs-parent="#menuAkordeon">
+          <div class="accordion-body">
+            <ul class="dp-linklist">
+                  <li><a href="sluzby">Reklamné a iné služby</a></li>
+              <li><a href="doprava-na-objednavku">Doprava na objednávku</a></li>
+              <li><a href="ostatne-sluzby">Ostatné služby</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================
+           Kontakt – priamy odkaz, bez rozbaľovania
+           ================================================================ -->
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <a class="dp-menu-link" href="kontakt">Kontakt</a>
+        </h3>
+      </div>
+
+    </div>
+
+    <nav class="dp-menu-social" aria-label="Sociálne siete">
+      <a href="https://www.facebook.com/DPMPO/" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+      <a href="https://www.instagram.com/dpmp_as/" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+      <a href="https://www.youtube.com/@dpmp_as" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+      <a href="https://www.linkedin.com/company/dopravn%C3%BD-podnik-mesta-pre%C5%A1ov-a-s" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+    </nav>
+  </div>
+</div>
+</header>
+
+<main id="obsah">
+  <section class="dp-pagehead">
+    <div class="container">
+      <h1 class="dp-pagehead-title">Cestovné poriadky</h1>
+    </div>
+  </section>
+<div class="container">
+       <div class="dp-searchbox p-3 p-lg-4 pt-lg-0">            
+        <ul class="nav nav-pills nav-fill nav-justified mb-3" id="vyhladavanieTaby" role="tablist">              
+          <li class="nav-item" role="presentation">                
+            <button class="nav-link active" id="tab-spojenie" data-bs-toggle="pill" data-bs-target="#pane-spojenie" type="button" role="tab" aria-controls="pane-spojenie" aria-selected="true">                  
+              <i class="bi bi-arrow-left-right"></i> Vyhľadanie spojenia                 
+            </button>              
+          </li>              
+          <li class="nav-item" role="presentation">                
+            <button class="nav-link" id="tab-poriadok" data-bs-toggle="pill" data-bs-target="#pane-poriadok" type="button" role="tab" aria-controls="pane-poriadok" aria-selected="false">                  
+              <i class="bi bi-bus-front"></i> Cestovný poriadok                 
+            </button>              
+          </li>              
+          <li class="nav-item" role="presentation">                
+            <button class="nav-link" id="tab-odchody" data-bs-toggle="pill" data-bs-target="#pane-odchody"                         type="button" role="tab" aria-controls="pane-odchody" aria-selected="false">                  
+              <i class="bi bi-clock"></i> Najbližšie odchody                 
+            </button>              
+          </li>            
+        </ul>            
+        <div class="tab-content">              
+          <!-- Vyhľadanie spojenia -->              
+          <div class="tab-pane fade show active" id="pane-spojenie" role="tabpanel" aria-labelledby="tab-spojenie">                
+            <form action="search" method="post">                  
+              <div class="row g-3 align-items-center">                    
+                <div class="col-12 col-lg">                      
+                  <div class="input-group dp-field">                        
+                    <span class="input-group-text">
+                      <i class="bi bi-flag"></i>
+                    </span>                        
+                    <select name="sfrom" id="sfrom" class="form-select" aria-label="Odkiaľ">
+					<option value="0">
+					Odkiaľ (Štvrť): 
+					</option>
+					<option value="8,10">Centrum</option>
+<option value="8"> --- Trojica</option>
+<option value="10"> --- Veľká pošta</option>
+<option value="13">Stanica</option>
+<option value="1,100">Sídlisko III</option>
+<option value="1"> --- Sídlisko III</option>
+<option value="100"> --- N. Kráľ. pokoja</option>
+<option value="97,116">Sekčov</option>
+<option value="97"> --- L. Novomeského</option>
+<option value="116"> --- Sibírska</option>
+<option value="17">Šváby</option>
+<option value="88">17. novembra</option>
+<option value="71,118,152">Sídlisko II</option>
+<option value="71"> --- Obr. mieru</option>
+<option value="118"> --- M. Čulena</option>
+<option value="152"> --- Levočská</option>
+<option value="140">Nemocnica</option>
+<option value="124">Kollárova</option>
+<option value="67">Budovateľská</option>
+<option value="7">Sabinovská</option>
+<option value="50">Solivar</option>
+<option value="30">Šebastová</option>
+<option value="79">Dúbrava</option>
+<option value="236">Petrovanská</option>
+<option value="38">Šarišské Lúky</option>
+<option value="151">Veľký Šariš</option>
+<option value="15">Košická</option>
+<option value="156">Delňa</option>
+<option value="208">Šidlovec</option>
+<option value="199">Rúrky</option>
+<option value="111">Širpo</option>
+<option value="228">Ľubotice</option>
+<option value="214">Kalvária</option>
+<option value="174">Kúty</option>
+<option value="255">Cemjata</option>
+<option value="251">Vydumanec</option>
+<option value="179">Malý Šariš</option>
+<option value="219">Šalgovík</option>
+<option value="196">Fintice</option>
+<option value="205">Haniska</option>
+<option value="243">Kanaš</option>
+<option value="232">Záborské</option>
+<option value="260">Bzenov</option>
+<option value="272">Teriakovce</option>
+<option value="269">Ruská Nová Ves</option>
+<option value="177">Surdok</option>
+<option value="172">K Surdoku</option>
+	
+
+				</select>
+                  </div> 
+<div class="input-group dp-field mt-1">
+<span class="input-group-text"><i class="bi bi-flag"></i></span>
+<select name="zfrom" class="form-select" id="zfrom">
+<option value="0">--  zastávka --</option>
+</select>
+</div>                   
+                </div>                    
+                <div class="col-12 col-lg">                      
+                  <div class="input-group dp-field">                        
+                    <span class="input-group-text">
+                      <i class="bi bi-flag-fill"></i>
+                    </span>                        
+                    <select name="snach" id="snach" class="form-select"  aria-label="Kam">
+					<option value="0">
+					Kam (Štvrť): 
+					</option>
+					
+					<option value="8,10">Centrum</option>
+<option value="8"> --- Trojica</option>
+<option value="10"> --- Veľká pošta</option>
+<option value="13">Stanica</option>
+<option value="1,100">Sídlisko III</option>
+<option value="1"> --- Sídlisko III</option>
+<option value="100"> --- N. Kráľ. pokoja</option>
+<option value="97,116">Sekčov</option>
+<option value="97"> --- L. Novomeského</option>
+<option value="116"> --- Sibírska</option>
+<option value="17">Šváby</option>
+<option value="88">17. novembra</option>
+<option value="71,118,152">Sídlisko II</option>
+<option value="71"> --- Obr. mieru</option>
+<option value="118"> --- M. Čulena</option>
+<option value="152"> --- Levočská</option>
+<option value="140">Nemocnica</option>
+<option value="124">Kollárova</option>
+<option value="67">Budovateľská</option>
+<option value="7">Sabinovská</option>
+<option value="50">Solivar</option>
+<option value="30">Šebastová</option>
+<option value="79">Dúbrava</option>
+<option value="236">Petrovanská</option>
+<option value="38">Šarišské Lúky</option>
+<option value="151">Veľký Šariš</option>
+<option value="15">Košická</option>
+<option value="156">Delňa</option>
+<option value="208">Šidlovec</option>
+<option value="199">Rúrky</option>
+<option value="111">Širpo</option>
+<option value="228">Ľubotice</option>
+<option value="214">Kalvária</option>
+<option value="174">Kúty</option>
+<option value="255">Cemjata</option>
+<option value="251">Vydumanec</option>
+<option value="179">Malý Šariš</option>
+<option value="219">Šalgovík</option>
+<option value="196">Fintice</option>
+<option value="205">Haniska</option>
+<option value="243">Kanaš</option>
+<option value="232">Záborské</option>
+<option value="260">Bzenov</option>
+<option value="272">Teriakovce</option>
+<option value="269">Ruská Nová Ves</option>
+<option value="177">Surdok</option>
+<option value="172">K Surdoku</option>
+	
+
+				</select>                    
+                  </div>   
+<div class="input-group dp-field mt-1">
+<span class="input-group-text"><i class="bi  bi-flag-fill"></i></span>
+<select name="znach" class="form-select" id="znach">
+<option value="0">--  zastávka --</option>
+</select>
+</div>                 
+                </div> 
+      
+                <div class="col-6 col-lg-3">                      
+                  <div class="input-group dp-field">                        
+                    <span class="input-group-text">
+                      <i class="bi bi-clock"></i>
+                    </span>                        
+                    <input class="form-control" type="time" name="cas" aria-label="Čas">                      
+                  </div>                    
+                </div>                    
+                <div class="col-6 col-lg-1 text-lg-end">                      
+                  <button class="btn btn-dp-ghost dp-btn-submit d-inline-flex align-items-center justify-content-center gap-3 px-4 py-3 fw-semibold" type="submit">
+                    <i class="bi bi-search"></i>                      
+                  </button>                    
+                </div>                  
+              </div>
+                   
+            </form>              
+          </div>              
+          <!-- Cestovný poriadok -->              
+          <div class="tab-pane fade" id="pane-poriadok" role="tabpanel" aria-labelledby="tab-poriadok">                
+            <form action="odch.php" method="get">                  
+              <div class="row g-3 align-items-center my-2">                    
+                <div class="col-12 col-lg-4">                      
+                  <div class="input-group dp-field">                        
+                    <span class="input-group-text">
+                      <i class="bi bi-signpost-2"></i>
+                    </span>                        
+                    <select name="zast" class="form-select" id="linky"></select>                    
+                  </div>                    
+                </div>                    
+                <div class="col-12 col-lg-5">                      
+                  <div class="input-group dp-field">                        
+                    <span class="input-group-text">
+                      <i class="bi bi-signpost"></i>
+                    </span>                        
+                    <select name="zast2" class="form-select" id="zast"></select>               
+                  </div>                    
+                </div>                    
+                <div class="col-12 col-lg-3">                      
+                  <button class="btn btn-dp-ghost w-100 d-inline-flex align-items-center justify-content-between gap-3 px-4 py-3 fw-semibold" type="submit">                        Zobraziť 
+                    <i class="bi bi-arrow-right"></i>                      
+                  </button>                    
+                </div>                  
+              </div>                
+            </form>              
+          </div>              
+          <!-- Najbližšie odchody -->              
+          <div class="tab-pane fade" id="pane-odchody" role="tabpanel" aria-labelledby="tab-odchody">                
+            <form action="odchody.php" method="get">                  
+              <div class="row g-3 align-items-center my-2">                    
+                <div class="col-12 col-lg-9">                      
+                  <div class="input-group dp-field">                        
+                    <span class="input-group-text">
+                      <i class="bi bi-geo-alt"></i>
+                    </span>                                                
+                    <select name="zast" class="form-select" id="odch"  aria-label="Najbližšie odchody zo zastávky">                           
+                    </select>                      
+                  </div>                    
+                </div>                    
+                <div class="col-12 col-lg-3">                      
+                  <button class="btn btn-dp-ghost w-100 d-inline-flex align-items-center justify-content-between gap-3 px-4 py-3 fw-semibold" type="button">                        Zobraziť 
+                    <i class="bi bi-arrow-right"></i>                      
+                  </button>                    
+                </div>                  
+              </div>                
+            </form>              
+          </div>            
+        </div>          
+      </div>        
+   
+</div>
+  <article class="dp-section">
+    <div class="container">
+      <div class="row g-1 g-lg-2 mx-0">
+         
+
+      </div>
+    <div class="row g-1 g-lg-2 mx-0">
+    <h3>Linkový cestovný poriadok: <a href='_uploads/files/c6baafa364.pdf' target='_blank' class=''>LCP 2026-10-01.pdf</a></h3>
+
+<hr>
+<h3>Ako hľadať v cestovných poriadkoch</h3>
+
+<p>Vyhľadávanie medzi cestovnými poriadkami je spracované s ohľadom na čo najjednoduchšiu orientáciu cestujúceho.</p>
+
+<p>Pre cestujúcich, ktorí hľadajú cestovný poriadok konkrétnej linky je určené vyhľadávanie podľa linky a smeru. Zvolením jednej z položiek ponuky sa zobrazí linkový cestovný poriadok. To znamená, že v danom smere linky sú zobrazené všetky jej odchody z východzích zastávok. Pre stanovenie odchodov z ktorejkoľvek ďalšej zastávky je potrebné k uvedeným časom odchodov pripočítať jazdný čas, ktorý je uvedený v stĺpci vľavo pri každej zo zastávok. Ako východzia zastávka je vo väčšine prípadov prvá zastávka v zozname zastávok linky, no časť spojov začína svoju trasu aj na niektorej z nácestných zastávok. Iné spoje môžu byť na niektorej nácestnej zastávke ukončené. Je teda dôležité pozorne sledovať vysvetlivky k poznámkam pri jednotlivých odchodoch. Vľavo od časov odchodov sa nachádza zoznam zastávok linky. Kliknutím na niektorú zo zastávok sa zobrazí zastávkový cestovný poriadok platný pre zastávku, ktorá bola zvolená. K uvedeným odchodom už nie je potrebné pripočítavať žiaden jazdný čas.</p>
+
+<p>Hľadanie cestovného poriadku podľa zastávky umožní nájsť rýchlo cestovný poriadok z konkrétnej zastávky v ponuke. Výberom zastávky sa zobrazí zoznam liniek, ktoré na zastávke v rôznych smeroch zastavujú. Po zvolení žiadanej linky sa zobrazí jej cestovný poriadok z príslušnej zastávky.</p>
+
+<p>Vo všetkých druhoch cestovných poriadkov sú informácie o časoch odchodov zobrazené v stĺpcoch podľa typu prevádzkového dňa, ktorým môže byť pracovný deň školský, pracovný deň prázdninový, sobota alebo nedeľa a sviatok (dni pracovného voľna - štátom uznané sviatky). Počas vianočných a novoročných sviatkov je zavedená odlišná organizácia dopravy podľa špeciálne upravených cestovných poriadkov.</p>
+
+<hr>
+<h3>Tlač cestovných poriadkov</h3>
+
+<p>Každý cestovný poriadok zobrazený na tejto stránke je možné rýchlo a jednoducho vytlačiť. Pod vyhľadaným cestovným poriadkom stačí kliknúť na odkaz "Tlačiť".</p>
+
+<p>V režime zastávkových cestovných poriadkov je možné tlačiť aj viacero liniek na jednu stranu. Stačí si vybrať v zozname zastávok a následne označiť žiadané linky a smery, maximálne však 2 na jednu stranu. Tlačidlom "Zobraziť pre tlač" sa zobrazí náhľad, kde kliknutím na "Vytlačiť" sa spustí tlač cestovného poriadku.</p>
+
+<p><strong>Cestovné poriadky jednotlivých liniek na stiahnutie vo formáte PDF:</strong></p>
+
+<p><a href='_uploads/files/44a19fe24b.pdf' target='_blank' class=''>L01.pdf</a> | <a href='_uploads/files/f47044279a.pdf' target='_blank' class=''>L02.pdf</a> | <a href='_uploads/files/dead3cf36a.pdf' target='_blank' class=''>L04.pdf</a> | <a href='_uploads/files/1198a7290e.pdf' target='_blank' class=''>L05.pdf</a> | <a href='_uploads/files/b6a279f0d7.pdf' target='_blank' class=''>L07.pdf</a> | <a href='_uploads/files/de4561690d.pdf' target='_blank' class=''>L08.pdf</a> | <a href='_uploads/files/d2702a80e0.pdf' target='_blank' class=''>L10.pdf</a> | <a href='_uploads/files/4f722346eb.pdf' target='_blank' class=''>L11.pdf</a> | <a href='_uploads/files/c11a7106c3.pdf' target='_blank' class=''>L12.pdf</a> | <a href='_uploads/files/e2a56005c0.pdf' target='_blank' class=''>L13.pdf</a> | <a href='_uploads/files/0bd7c41ff8.pdf' target='_blank' class=''>L14.pdf</a> | <a href='_uploads/files/b429ee9078.pdf' target='_blank' class=''>L15.pdf</a> | <a href='_uploads/files/b51e5d1b58.pdf' target='_blank' class=''>L17.pdf</a> | <a href='_uploads/files/bdfbec4ab1.pdf' target='_blank' class=''>L18.pdf</a> | <a href='_uploads/files/e19041e947.pdf' target='_blank' class=''>L19.pdf</a> | <a href='_uploads/files/af7c71bf83.pdf' target='_blank' class=''>L21.pdf</a> | <a href='_uploads/files/1b82970553.pdf' target='_blank' class=''>L22.pdf</a> | <a href='_uploads/files/3c998b1004.pdf' target='_blank' class=''>L23.pdf</a> | <a href='_uploads/files/1b2b3d2ddc.pdf' target='_blank' class=''>L24.pdf</a> | <a href='_uploads/files/5841b0b955.pdf' target='_blank' class=''>L26.pdf</a> | <a href='_uploads/files/6190d802de.pdf' target='_blank' class=''>L27.pdf</a> | <a href='_uploads/files/59945a45f0.pdf' target='_blank' class=''>L28.pdf</a> | <a href='_uploads/files/0685f309ac.pdf' target='_blank' class=''>L29.pdf</a> | <a href='_uploads/files/d91b0e26a9.pdf' target='_blank' class=''>L30.pdf</a> | <a href='_uploads/files/d1738ce982.pdf' target='_blank' class=''>L32.pdf</a> | <a href='_uploads/files/a6ea9b420c.pdf' target='_blank' class=''>L32A.pdf</a> | <a href='_uploads/files/998f86c0fc.pdf' target='_blank' class=''>L33.pdf</a> | <a href='_uploads/files/f3640a4657.pdf' target='_blank' class=''>L34.pdf</a> | <a href='_uploads/files/b1a4424f5b.pdf' target='_blank' class=''>L35.pdf</a> | <a href='_uploads/files/86ab3beb2a.pdf' target='_blank' class=''>L36.pdf</a> | <a href='_uploads/files/3ba041c766.pdf' target='_blank' class=''>L37.pdf</a> | <a href='_uploads/files/132da3d000.pdf' target='_blank' class=''>L38.pdf</a> | <a href='_uploads/files/49146f74aa.pdf' target='_blank' class=''>L39.pdf</a> | <a href='_uploads/files/b60184d2c7.pdf' target='_blank' class=''>L41.pdf</a> | <a href='_uploads/files/473e8c579e.pdf' target='_blank' class=''>L42.pdf</a> | <a href='_uploads/files/04c03b0c7a.pdf' target='_blank' class=''>L43.pdf</a> | <a href='_uploads/files/ff99f55cee.pdf' target='_blank' class=''>L44.pdf</a> | <a href='_uploads/files/a179c96b76.pdf' target='_blank' class=''>L45.pdf</a> | <a href='_uploads/files/c280526d7a.pdf' target='_blank' class=''>L46.pdf</a> | <a href='_uploads/files/b5fac6c5ce.pdf' target='_blank' class=''>N1.pdf</a> | <a href='_uploads/files/74036873a7.pdf' target='_blank' class=''>N2.pdf</a> | <a href='_uploads/files/86924106d2.pdf' target='_blank' class=''>sk-spoje 2026-09-01.pdf</a> | <a href='_uploads/files/c6baafa364.pdf' target='_blank' class=''>LCP 2026-10-01.pdf</a> | <a href='_uploads/files/9edf188324.pdf' target='_blank' class=''>LZ13 2026-07-01.pdf</a> | <a href='_uploads/files/8618cf1f45.pdf' target='_blank' class=''>LZ22 2026-01-01.pdf</a> | |</p>
+  </div>
+
+    </div>
+  </article>
+  <section class="container pt-3 pt-lg-4">
+    <h2 class="visually-hidden">Rýchle odkazy</h2>
+
+    <div class="carousel slide dp-cards-carousel" id="odkazyCarousel"
+         data-dp-group="6" data-dp-group-lg="4" data-dp-group-md="3" data-dp-group-sm="1">
+      <div class="carousel-inner">
+        <div class="dp-carousel-source">
+
+          <div class="dp-item">
+            <a class="dp-tile" href="cestovne-poriadky">
+              <span class="dp-tile-icon"><i class="bi bi-bus-front"></i></span>
+              <span class="d-flex align-items-end justify-content-between gap-2">
+                <span class="dp-tile-title">Cestovný poriadok</span>
+                <span class="dp-btn-arrow"><i class="bi bi-arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+
+          <div class="dp-item">
+            <a class="dp-tile" href="ceny-listkov">
+              <span class="dp-tile-icon"><i class="bi bi-ticket-perforated"></i></span>
+              <span class="d-flex align-items-end justify-content-between gap-2">
+                <span class="dp-tile-title">Cestovné lístky</span>
+                <span class="dp-btn-arrow"><i class="bi bi-arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+
+          <div class="dp-item">
+            <a class="dp-tile" href="predajne-miesta">
+              <span class="dp-tile-icon"><i class="bi bi-shop"></i></span>
+              <span class="d-flex align-items-end justify-content-between gap-2">
+                <span class="dp-tile-title">Predajné miesta</span>
+                <span class="dp-btn-arrow"><i class="bi bi-arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+
+          <div class="dp-item">
+            <a class="dp-tile" href="/navod-na-zakupenie-listka-kartou">
+              <span class="dp-tile-icon"><i class="bi bi-credit-card-2-front"></i></span>
+              <span class="d-flex align-items-end justify-content-between gap-2">
+                <span class="dp-tile-title">Platba kartou v MHD</span>
+                <span class="dp-btn-arrow"><i class="bi bi-arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+
+          <div class="dp-item">
+            <a class="dp-tile" href="/kariera">
+              <span class="dp-tile-icon"><i class="bi bi-person-workspace"></i></span>
+              <span class="d-flex align-items-end justify-content-between gap-2">
+                <span class="dp-tile-title">Kariéra</span>
+                <span class="dp-btn-arrow"><i class="bi bi-arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+
+          <div class="dp-item">
+            <a class="dp-tile" href="schema-siete">
+              <span class="dp-tile-icon"><i class="bi bi-map"></i></span>
+              <span class="d-flex align-items-end justify-content-between gap-2">
+                <span class="dp-tile-title">Mapy a siete liniek</span>
+                <span class="dp-btn-arrow"><i class="bi bi-arrow-right"></i></span>
+              </span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+      <div class="carousel-indicators dp-dots"></div>
+    </div>
+  </section>
+ <section class="dp-section bg-dp-grey">
+    <div class="container">
+      <h2 class="visually-hidden">Rozcestník</h2>
+
+    <div class="carousel slide" id="rozcestnikCarousel"
+           data-dp-group="4" data-dp-group-lg="4" data-dp-group-md="2" data-dp-group-sm="1">
+        <div class="carousel-inner">
+          <div class="dp-carousel-source">
+
+            <div class="dp-item">
+              <h3 class="dp-linkcol-title">Cestovné poriadky a trasy</h3>
+              <ul class="dp-linklist">
+                <li><a href="cestovne-poriadky">Cestovné poriadky</a></li>
+                <li><a href="search">Vyhľadanie spojenia</a></li>
+                <li><a href="trasy-liniek">Trasy liniek</a></li>
+              <li><a href="schema-siete">Schémy liniek MHD</a></li>
+              <li><a href="trasy-skolskych-spojov">Schéma školských spojov MHD</a></li>
+                <li><a href="nocne-linky">Denná a nočná doprava</a></li>
+                <li><a href="bezbarierova-doprava">Bezbariérová doprava</a></li>
+     <li><a href="prepravny-poriadok">Prepravný poriadok</a></li>
+              </ul>
+</div>
+   <div class="dp-item">
+              <h3 class="dp-linkcol-title">Cestovné lístky a platby</h3>
+             <ul class="dp-linklist">
+ <li><a href="ceny-listkov">Cestovné lístky – cenník</a></li>
+              <li><a href="predajne-miesta">JCL a eCL – predajné miesta</a></li>
+              <li><a href="navod-na-zakupenie-listka-kartou">eCL – bezkontaktná platba vo vozidlách</a></li>
+              <li><a href="kontrola-jazd">eCL – daňový doklad a výpis jázd</a></li>
+              <li><a href="sms-listok">SMS lístok a SMS daňový doklad</a></li>
+              <li><a href="nova-karta">On-line predaj BČK</a></li>
+
+              <li><a href="mobilneappky">vCL cez mobilné aplikácie</a></li>
+              <li><a href="tarifa">Tarifa</a></li>
+              </ul>
+
+
+            </div>
+
+          
+
+
+            <div class="dp-item">
+              <h3 class="dp-linkcol-title">Naše služby</h3>
+              <ul class="dp-linklist">
+                <li><a href="reklamne-sluzby">Reklamné služby</a></li>
+                <li><a href="doprava-na-objednavku">Doprava na objednávku</a></li>
+                <li><a href="ostatne-sluzby">Ostatné služby</a></li>
+      <li><a href="straty-a-nalezy">Straty a nálezy</a></li>
+
+              </ul>
+             
+            </div>
+
+         
+ <div class="dp-item">
+              <h3 class="dp-linkcol-title">O dopravnom podniku</h3>
+              <ul class="dp-linklist">
+ <li><a href="historia-a-sucasnost-mhd-presov">História a súčasnosť MHD Prešov</a></li>
+
+
+
+  <li><a href="ochrana-osobnych-udajov">Ochrana osobných údajov</a></li>
+              <li><a href="pravidla-pouzivania-suborov-cookies">Pravidlá používania súborov cookies</a></li>
+              <li><a href="kariera">Kariéra</a></li>
+   <li><a href="kontakt">Kontakty</a></li>
+              </ul>
+              
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-indicators dp-dots"></div>
+      </div>
+
+
+      <!--div class="carousel slide" id="rozcestnikCarousel"
+           data-dp-group="4" data-dp-group-lg="4" data-dp-group-md="2" data-dp-group-sm="1">
+        <div class="carousel-inner">
+          <div class="dp-carousel-source">
+
+            <div class="dp-item">
+              <h3 class="dp-linkcol-title">Pre cestujúcich</h3>
+              <ul class="dp-linklist">
+                <li><a href="cestovne-poriadky">Cestovné poriadky</a></li>
+                <li><a href="search">Vyhľadanie spojenia</a></li>
+                <li><a href="trasy-liniek">Trasy liniek</a></li>
+              <li><a href="schema-siete">Schémy liniek MHD</a></li>
+              <li><a href="trasy-skolskych-spojov">Schéma školských spojov MHD</a></li>
+              </ul>
+             <ul class="dp-linklist">
+ <li><a href="ceny-listkov">Cestovné lístky – cenník</a></li>
+              <li><a href="predajne-miesta">JCL a eCL – predajné miesta</a></li>
+              <li><a href="navod-na-zakupenie-listka-kartou">eCL – bezkontaktná platba vo vozidlách MHD</a></li>
+              <li><a href="kontrola-jazd">eCL – daňový doklad a výpis jázd</a></li>
+              <li><a href="sms-listok">SMS lístok a SMS daňový doklad</a></li>
+              <li><a href="nova-karta">On-line predaj BČK</a></li>
+
+              <li><a href="mobilneappky">vCL cez mobilné aplikácie</a></li>
+              <li><a href="tarifa">Tarifa</a></li>
+              </ul>
+  <ul class="dp-linklist">
+ <li><a href="/">Aktuálne informácie</a></li>
+              <li><a href="informacie-z-podniku">Informácie z podniku</a></li>
+              <li><a href="straty-a-nalezy">Straty a nálezy</a></li>
+              <li><a href="prepravny-poriadok">Prepravný poriadok</a></li>
+              </ul>
+
+            </div>
+
+          
+ <div class="dp-item">
+              <h3 class="dp-linkcol-title">O dopravnom podniku</h3>
+              <ul class="dp-linklist">
+ <li><a href="historia-a-sucastnost-mhd-presov">História a súčastnosť MHD Prešov</a></li>
+              <li><a href="vedenie-spolocnosti">Predstavenstvo, dozorná rada a vedenie spoločnosti</a></li>
+              <li><a href="kariera">Kariéra</a></li>
+  <li><a href="ochrana-osobnych-udajov">Ochrana osobných údajov</a></li>
+              <li><a href="pravidla-pouzivania-suborov-cookies">Pravidlá používania súborov cookies</a></li>
+              </ul>
+              
+            </div>
+
+            <div class="dp-item">
+              <h3 class="dp-linkcol-title">Naše služby</h3>
+              <ul class="dp-linklist">
+                <li><a href="reklamne-sluzby">Reklamné služby</a></li>
+                <li><a href="doprava-na-objednavku">Doprava na objednávku</a></li>
+                <li><a href="ostatne-sluzby">Ostatné služby</a></li>
+
+
+              </ul>
+             
+            </div>
+
+            <div class="dp-item">
+              <h3 class="dp-linkcol-title">Kontakt</h3>
+              <ul class="dp-linklist">
+               <li><a href="kontakt">Kontakty</a></li>
+              
+              </ul>
+             
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-indicators dp-dots"></div>
+      </div-->
+
+    </div>
+  </section>
+</main>
+
+
+<footer>
+
+   <!-- Kontaktný pruh -->
+  <div class="dp-footer-contact py-4">
+    <div class="container">
+      <div class="row g-3 align-items-center">
+        <div class="col-12 col-lg-8">
+          <div class="d-flex flex-column flex-sm-row gap-3 gap-sm-5">
+            <a class="d-inline-flex align-items-center gap-3 fs-5 fw-semibold" href="tel:+421517470211">
+              <i class="bi bi-telephone-fill"></i> 051 / 7470 211
+            </a>
+            <a class="d-inline-flex align-items-center gap-3 fs-5 fw-semibold" href="mailto:dpmp@dpmp.sk">
+              <i class="bi bi-envelope-fill"></i> dpmp@dpmp.sk
+            </a>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <nav class="d-flex gap-2 justify-content-lg-end" aria-label="Sociálne siete">
+            <a class="dp-social-box" href="https://www.facebook.com/DPMPO/" aria-label="Facebook" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a class="dp-social-box" href="https://www.instagram.com/dpmp_as/" aria-label="Instagram" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a class="dp-social-box" href="https://www.youtube.com/@dpmp_as" aria-label="YouTube" target="_blank"><i class="bi bi-youtube"></i></a>
+            <a class="dp-social-box" href="https://www.linkedin.com/company/dopravn%C3%BD-podnik-mesta-pre%C5%A1ov-a-s" aria-label="LinkedIn" target="_blank"><i class="bi bi-linkedin"></i></a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+   <div class="dp-footer py-4 py-lg-5">
+    <div class="container">
+
+      <!-- banner -->
+
+<iframe class="dp-radius mb-4 mb-lg-5" style="width:100%;aspect-ratio:16/9" src="https://www.youtube.com/embed/3gcMiZtZ2l0?si=YWE9Led4S22ylrav" title="DOD 2026" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      <!-- !banner -->
+      <h2 class="h3 fw-semibold mb-4">Predajne cestovných lístkov</h2>
+
+      <div class="row g-4">
+        <div class="col-12 col-lg-9">
+
+          <div class="carousel slide" id="predajneCarousel"
+               data-dp-group="4" data-dp-group-md="2" data-dp-group-sm="1">
+            <div class="carousel-inner">
+              <div class="dp-carousel-source">
+
+                <div class="dp-item">
+                  <h3 class="h6 fw-bold mb-3">Centrum mesta</h3>
+                  <a class="btn btn-dp-dark d-inline-flex align-items-center gap-2 px-3 py-2 mb-2" href="https://goo.gl/maps/nwGScaJDDjB2">
+                    Ukázať na mape <i class="bi bi-chevron-right small"></i>
+                  </a>
+<ul class="dp-poi-list">
+                    <li><i class="bi bi-geo-alt-fill"></i> Weberova 2</li>
+                    <li><i class="bi bi-telephone-fill"></i> <a href="tel:+421517731703">051 773 17 03</a></li>
+                    <li><i class="bi bi-clock-fill"></i>PO-PI<br> 7.00 — 17.00 hod.</li>
+                  </ul>
+                  
+                </div>
+
+                <div class="dp-item">
+                  <h3 class="h6 fw-bold mb-3">Autobusová stanica</h3>
+                  <a class="btn btn-dp-dark d-inline-flex align-items-center gap-2 px-3 py-2 mb-2" href="https://maps.app.goo.gl/kryWt2hdnaXVr3K26">
+                    Ukázať na mape <i class="bi bi-chevron-right small"></i>
+                  </a>
+<ul class="dp-poi-list">
+                    <li><i class="bi bi-geo-alt-fill"></i> Košická 2</li>
+                    <li><i class="bi bi-telephone-fill"></i> <a href="tel:+421517731866">051 773 18 66</a></li>
+                    <li><i class="bi bi-clock-fill"></i>PO-PI<br> 7.00 — 11.30 hod. a <br>12.00 — 15.00 hod.</li>
+                  </ul>
+                  
+                </div>
+
+                <div class="dp-item">
+                  <h3 class="h6 fw-bold mb-3">Sídlisko Sekčov</h3>
+                  <a class="btn btn-dp-dark d-inline-flex align-items-center gap-2 px-3 py-2 mb-2" href="https://goo.gl/maps/MVVDvrw6VYv">
+                    Ukázať na mape <i class="bi bi-chevron-right small"></i>
+                  </a>
+      <ul class="dp-poi-list">
+                    <li><i class="bi bi-geo-alt-fill"></i>Nákupné stredisko Opál<br> Zemplínska 9</li>
+                    <li><i class="bi bi-telephone-fill"></i> <a href="tel:+421517703256">051 770 32 56</a></li>
+                    <li><i class="bi bi-clock-fill"></i>PO, ST, PI<br> 8.00 — 12.00 hod. a <br>12.30 — 16.00 hod.</li>
+                    <li><i class="bi bi-clock-fill"></i>UT, ŠT<br> 9.00 — 12.00 hod. a <br>12.30 — 17.00 hod.</li>
+                  </ul>
+            
+                </div>
+<div class="dp-item">
+                  <h3 class="h6 fw-bold mb-3">Sídlisko III</h3>
+                  <a class="btn btn-dp-dark d-inline-flex align-items-center gap-2 px-3 py-2 mb-2" href="https://maps.app.goo.gl/uaBGfF7C6JVVt86u5">
+                    Ukázať na mape <i class="bi bi-chevron-right small"></i>
+                  </a>
+       <ul class="dp-poi-list">
+                    <li><i class="bi bi-geo-alt-fill"></i>Nákupné stredisko Družba<br> Námestie Kráľovnej pokoja 3</li>
+                    <li><i class="bi bi-telephone-fill"></i> <a href="tel:+421517718487">051 771 84 87</a></li>
+
+                    <li><i class="bi bi-clock-fill"></i>UT, ŠT<br> 9.00 — 12.00 hod. a <br>12.30 — 17.00 hod.</li>
+                  </ul>
+           
+                </div>
+
+              </div>
+            </div>
+            <div class="carousel-indicators dp-dots dp-dots-light"></div>
+          </div>
+
+        </div>
+
+        <!-- Aplikácia + logá -->
+        <div class="col-12 col-lg-3">
+          <p class="fw-bold lh-sm">Stiahnite si<br>mobilnú aplikáciu</p>
+          <div class="d-flex gap-2 mb-2">
+<a class="dp-app-badge" href="https://presovonline.sk/"  target="_blank"><img src="assets/img/po-sml.png" alt="PrešovOnline"></a>
+              <a class="dp-app-badge" href="https://www.ubian.sk/mhd-listok"  target="_blank"><img src="assets/img/ubian-sml.png" alt="Ubian"></a>
+              <a class="dp-app-badge" href="https://www.cyril.sk/"  target="_blank"><img src="assets/img/cyril-sml.svg" alt="CYRIL"></a>
+          </div>
+
+          <a href="/nova-karta" class="d-block  mb-2"><img class="bg-white rounded p-2" src="assets/img/BCK.png" width="230" alt="Nákup BČK cez internet"></a>
+          <a href="/projekteu"><img class="bg-white rounded p-2" src="assets/img/logoOPIIMDVKF.jpg" width="230" alt="Európska únia – Ministerstvo dopravy a výstavby SR"></a>
+        </div>
+      </div>
+
+      <hr class="my-4 my-lg-5">
+
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg-8">
+          <p class="fw-bold mb-1">Dopravný podnik mesta Prešov, akciová spoločnosť</p>
+          <p class="mb-2 small">Bardejovská 7, 080 06 Ľubotice</p>
+          <p class="mb-0 small">Copyright © 2005–2026 DPMP a.s. Všetky práva vyhradené.</p>
+        </div>
+        <div class="col-12 col-lg-4 text-lg-end small">
+          <a class="text-decoration-none" href="https://www.midesign.sk">Tvoríme dizajn web stránok | MiDesign</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script type="text/javascript" src="/script.php?script=0,39,,55,50"></script>
+</body>
+</html>

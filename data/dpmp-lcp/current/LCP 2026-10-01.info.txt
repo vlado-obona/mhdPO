@@ -1,0 +1,19 @@
+Title:           DPMP_oznamy
+Creator:         Adobe Acrobat Pro 2017 17.12.30262
+Producer:        Adobe Acrobat Pro 2017 17.12.30262
+CreationDate:    Tue Oct 13 10:56:32 2026 UTC
+ModDate:         Tue Oct 13 10:56:32 2026 UTC
+Custom Metadata: no
+Metadata Stream: yes
+Tagged:          no
+UserProperties:  no
+Suspects:        no
+Form:            AcroForm
+JavaScript:      no
+Pages:           44
+Encrypted:       no
+Page size:       595.56 x 842.04 pts (A4)
+Page rot:        0
+File size:       977419 bytes
+Optimized:       yes
+PDF version:     1.7
