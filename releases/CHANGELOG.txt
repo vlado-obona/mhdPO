@@ -11,9 +11,18 @@ Od v1.4.0 sú súbory v GitHub Releases repozitára vlado-obona/mhdPO.
 
 Dáta: oficiálne cestovné poriadky DPMP (GTFS, vydavateľ R&G PLUS),
 od v1.3.0 doplnené o zmeny vyhlásené DPMP (oznam + linkové CP v PDF).
-Aktuálne obdobie platnosti: 1. 10. – 31. 10. 2026 (vrátane jesenných
-prázdnin 29.–30. 10.). Po vydaní nových
-cestovných poriadkov treba stiahnuť novú verziu aplikácie.
+Aktuálne obdobie platnosti: 1. 9. – 22. 12. 2026 (CP DPMP od 1. 10.
+2026 platia aj v novembri a decembri; od 23. 12. vianočné CP, zatiaľ
+nezverejnené). Po vydaní nových cestovných poriadkov treba stiahnuť
+novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.7.3  (2. 11. 2026)
+----------------------------------------------------------------
+- Cestovné poriadky platia do 22. 12. 2026. DPMP od 1. 10. nič
+  nezmenil, preto appka používa októbrové CP aj v novembri
+  a decembri (pracovné dni, soboty, nedele; 17. 11. je pracovný
+  deň). Vianočné CP od 23. 12. DPMP zatiaľ nezverejnil.
 
 ----------------------------------------------------------------
 v1.7.2  (14. 10. 2026)

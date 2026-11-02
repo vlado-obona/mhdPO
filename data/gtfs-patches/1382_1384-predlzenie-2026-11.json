@@ -1,0 +1,86 @@
+{
+  "id": "dpmp-2026-11-predlzenie",
+  "baseFeedVersion": "1382_1384",
+  "title": "CP DPMP od 1. 10. 2026 platia aj od 1. 11. do 22. 12. 2026",
+  "validFrom": 20261101,
+  "validTo": 20261222,
+  "sources": [
+    "https://www.dpmp.sk/cestovne-poriadky (2. 11. 2026) — „Linkový cestovný poriadok: LCP 2026-10-01.pdf“ (https://www.dpmp.sk/_uploads/files/c6baafa364.pdf, sha256 10e1d2153763570c160570e0e0d69597f73c2c388ff4d0c2ccf226fdba09d7ae; data/dpmp-lcp/current/)",
+    "https://www.dpmp.sk — aktuality (2. 11. 2026): posledná zmena CP „Zmeny v cestovných poriadkoch 23 spojov MHD – od 1. októbra 2026“, iná zmena ohlásená nie je",
+    "https://www.vlada.gov.sk/slovensko/statne-sviatky/ — 17. november: „nie je dňom pracovného pokoja“ (rovnako 1. 9. a 28. 10.)",
+    "https://www.minedu.sk/priloha-1-terminy-skolskych-prazdnin-20262027-a-20272028/ — posledný deň vyučovania pred vianočnými prázdninami 22. 12. 2026, prázdniny 23. 12. 2026 – 7. 1. 2027"
+  ],
+  "notes": [
+    "Nové PDF LCP (vytvorené 13. 10. 2026, redizajn webu DPMP) má 42 strán CP textovo zhodných s uloženým LCP-2026-10-01.pdf (sha256 40177fa8…); lcp-parse.py dáva pre všetkých 78 smerov rovnaké zastávky, odchody, vysvetlivky aj „Platnosť od“ (najnovšia 1. 10. 2026). Líšia sa len titulná a úvodná strana.",
+    "GTFS feed 1382_1384 končí 31. 10. 2026 len technicky; CP DPMP platia „od“ dátumu bez konca. Dni sa preto len pridávajú do existujúcich služieb 1384 (žiadne nové spoje).",
+    "Pracovné dni → 1384_PD (školský), soboty → 1384_SO, nedele → 1384_NE. 1. 11. je nedeľa. 17. 11. nie je dňom pracovného pokoja → PD (tak ako 1. 9. a 28. 10. 2026 v samotnom feede DPMP). Do 22. 12. nie sú školské prázdniny → 1384_PR sa nepoužije.",
+    "Od 23. 12. platia vianočné a novoročné prázdniny a DPMP zavádza „odlišnú organizáciu dopravy podľa špeciálne upravených cestovných poriadkov“ — tie zatiaľ nie sú zverejnené, preto platnosť končí 22. 12. 2026."
+  ],
+  "calendar": {
+    "addDates": {
+      "1384_PD": [
+        "20261102",
+        "20261103",
+        "20261104",
+        "20261105",
+        "20261106",
+        "20261109",
+        "20261110",
+        "20261111",
+        "20261112",
+        "20261113",
+        "20261116",
+        "20261117",
+        "20261118",
+        "20261119",
+        "20261120",
+        "20261123",
+        "20261124",
+        "20261125",
+        "20261126",
+        "20261127",
+        "20261130",
+        "20261201",
+        "20261202",
+        "20261203",
+        "20261204",
+        "20261207",
+        "20261208",
+        "20261209",
+        "20261210",
+        "20261211",
+        "20261214",
+        "20261215",
+        "20261216",
+        "20261217",
+        "20261218",
+        "20261221",
+        "20261222"
+      ],
+      "1384_SO": [
+        "20261107",
+        "20261114",
+        "20261121",
+        "20261128",
+        "20261205",
+        "20261212",
+        "20261219"
+      ],
+      "1384_NE": [
+        "20261101",
+        "20261108",
+        "20261115",
+        "20261122",
+        "20261129",
+        "20261206",
+        "20261213",
+        "20261220"
+      ]
+    }
+  },
+  "summary": [
+    "1384_PD: 37 dní (20261102 – 20261222)",
+    "1384_SO: 7 dní (20261107 – 20261219)",
+    "1384_NE: 8 dní (20261101 – 20261220)"
+  ]
+}

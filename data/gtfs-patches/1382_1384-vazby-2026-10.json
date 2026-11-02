@@ -3,12 +3,13 @@
  "baseFeedVersion": "1382_1384",
  "title": "Nadväzujúce spoje („zostaň sedieť“) podľa DPMP",
  "validFrom": 20261001,
- "validTo": 20261031,
+ "validTo": 20261222,
  "sources": [
   "data/gtfs-patches/1382-dpmp-2026-10-01.json — väzby z oznamu DPMP od 1. 10. 2026 a z PDF liniek 32 a 32A"
  ],
  "notes": [
-  "Feed 1382_1384 už obsahuje CP od 1. 10. 2026 (aj prázdninové dni 29.–30. 10.); dopĺňajú sa len väzby, ktoré GTFS nemá."
+  "Feed 1382_1384 už obsahuje CP od 1. 10. 2026 (aj prázdninové dni 29.–30. 10.); dopĺňajú sa len väzby, ktoré GTFS nemá.",
+  "Od 2. 11. 2026 platí aj pre predĺženie CP do 22. 12. 2026 (1382_1384-predlzenie-2026-11.json) — väzby sú medzi spojmi, nie dátumami."
  ],
  "links": [
   {

@@ -164,7 +164,7 @@ if (ratio < 0.85) fail('krížová kontrola pod 85 % — dataset nemusí byť ak
 // ── 4b: zmeny CP od 1.10.2026 (oprava 1382 alebo feed 1384 + väzby) ──
 const octIds = ['dpmp-2026-10-01', 'dpmp-2026-10-vazby'];
 for (const di of (D.meta.patches || []).some((p) => octIds.includes(p.id))
-  ? ['2026-10-02', '2026-10-09', '2026-10-27'].filter((d) => Number(d.replaceAll('-', '')) <= D.meta.validTo).map(dateInfoFor) : []) {
+  ? ['2026-10-02', '2026-10-09', '2026-10-27', '2026-11-17', '2026-12-22'].filter((d) => Number(d.replaceAll('-', '')) <= D.meta.validTo).map(dateInfoFor) : []) {
   const deps = (line, stop, d) => {
     const set = new Set();
     for (const p of D.patterns) {
@@ -490,6 +490,25 @@ if (D.meta.validFrom <= 20261004 && D.meta.validTo >= 20261029) {
     if (!js.some((j) => lv(j) <= leaveBy && j.arrTime <= arr)) { bad++; fail(`${bname || bpt} ${ds} ${fmt(t0)}: chýba odchod do ${fmt(leaveBy)} s príchodom do ${fmt(arr)} (je ${js.map((j) => `${fmt(lv(j))}→${fmt(j.arrTime)}`).join(', ') || 'nič'})`); }
   }
   if (!bad) ok(`spojenie horšie ako chôdza nevytlačí lepšie ani nepreskočí odchody (Potočná, Gemor, Gbolovky, ZŠ Prostějovská, 2× krátka cesta)`);
+}
+
+// ── 4h: predĺženie CP od 1. 10. 2026 do 22. 12. 2026 (feed 1382_1384) ──
+// Každý deň 1. 11. – 22. 12. má presne tie isté spoje ako ten istý deň v týždni
+// 22.–28. 10. (17. 11. nie je deň pracovného pokoja → pracovný deň), po 22. 12. nič.
+if (D.meta.patches?.some((p) => p.id === 'dpmp-2026-11-predlzenie')) {
+  const active = (s) => {
+    const { num, weekday } = dateInfoFor(s), ids = [];
+    D.patterns.forEach((p, pi) => p.trips.forEach((t, ti) => { if (raptor.serviceActive(t.sv, num, weekday)) ids.push(pi * 1e4 + ti); }));
+    return ids.join(',');
+  };
+  const ref = ['2026-10-26', '2026-10-27', '2026-10-28', '2026-10-22', '2026-10-23', '2026-10-24', '2026-10-25'].map(active);
+  let bad = 0;
+  for (let t = Date.UTC(2026, 10, 1); t <= Date.UTC(2026, 11, 31); t += 864e5) {
+    const s = new Date(t).toISOString().slice(0, 10), { num, weekday } = dateInfoFor(s), got = active(s);
+    if (num <= 20261222 ? got !== ref[weekday] : got !== '') { bad++; fail(`${s}: spoje nesedia s októbrovým CP (${got.split(',').filter(Boolean).length})`); }
+  }
+  if (D.meta.validTo !== 20261222) { bad++; fail(`platnosť datasetu do ${D.meta.validTo}, čakám 20261222`); }
+  if (!bad) ok('CP od 1. 10. platí 1. 11. – 22. 12. 2026 (pracovné dni, soboty, nedele; 17. 11. pracovný deň), od 23. 12. nič');
 }
 
 // ── 5: nočné spoje cez polnoc ───────────────────────────────────────
