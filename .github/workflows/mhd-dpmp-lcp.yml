@@ -1,0 +1,66 @@
+name: DPMP LCP kontrola
+
+# Stiahne aktuálnu stránku cestovných poriadkov DPMP, linkový CP (LCP) PDF,
+# PDF jednotlivých liniek a aktuality do data/dpmp-lcp/current/, aby sa dala
+# overiť zmena CP proti uloženej verzii (sandbox na dpmp.sk nedosiahne).
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mhd-dpmp-lcp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stiahnut CP DPMP
+        run: |
+          set +e
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128 Safari/537.36"
+          c() {
+            for n in 1 2 3 4 5; do
+              curl -sSL -A "$UA" --connect-timeout 20 --max-time 180 "$@" && return 0
+              echo "  pokus $n zlyhal, cakam" >&2; sleep $((n*6))
+            done; return 1
+          }
+          totxt() { sed 's/<script.*<\/script>//g; s/<style.*<\/style>//g; s/<br[^>]*>/\n/gi; s/<[^>]*>/\n/g' "$1" | sed 's/&nbsp;/ /g' | python3 -c 'import html,sys; print(html.unescape(sys.stdin.read()))' | tr -s ' \t' ' ' | grep -v '^ *$' > "${1%.html}.txt"; }
+          which pdftotext || (sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils)
+          OUT=data/dpmp-lcp/current; rm -rf $OUT; mkdir -p $OUT/linky
+          c -o $OUT/cestovne-poriadky.html https://www.dpmp.sk/cestovne-poriadky
+          c -o $OUT/index.html https://www.dpmp.sk/ && totxt $OUT/index.html
+          c -o $OUT/aktuality.html https://www.dpmp.sk/aktuality && totxt $OUT/aktuality.html
+          # odkazy na PDF zo stranky CP
+          grep -oE "_uploads/files/[0-9a-f]+\.pdf'[^>]*>[^<]+" $OUT/cestovne-poriadky.html \
+            | sed -E "s#^(_uploads/files/[0-9a-f]+\.pdf)'[^>]*>(.*)#\1 \2#" | sort -u > $OUT/pdf-odkazy.txt
+          cat $OUT/pdf-odkazy.txt
+          while read -r path name; do
+            case "$name" in
+              LCP*) c -o "$OUT/$name" "https://www.dpmp.sk/$path"; pdftotext -layout "$OUT/$name" "$OUT/${name%.pdf}.layout.txt"; pdftotext -raw "$OUT/$name" "$OUT/${name%.pdf}.raw.txt"; pdfinfo "$OUT/$name" > "$OUT/${name%.pdf}.info.txt";;
+              *) c -o "$OUT/linky/$name" "https://www.dpmp.sk/$path";;
+            esac
+          done < $OUT/pdf-odkazy.txt
+          # odkazy na aktuality (news-*) z titulky a aktualit
+          cat $OUT/index.html $OUT/aktuality.html | grep -oE 'news-[a-z0-9-]+\.html' | sort -u | head -15 > $OUT/news-odkazy.txt
+          while read -r n; do c -o "$OUT/$n" "https://www.dpmp.sk/$n" && totxt "$OUT/$n"; done < $OUT/news-odkazy.txt
+          {
+            echo "stiahnute: $(date -u +%FT%TZ)"
+            (cd $OUT && sha256sum *.pdf linky/*.pdf)
+          } > $OUT/SOURCE.txt
+          cat $OUT/SOURCE.txt
+          echo "===== porovnanie s ulozenym LCP"
+          sha256sum data/dpmp-lcp/LCP-2026-10-01.pdf
+          for f in $OUT/LCP*.layout.txt; do diff <(grep -v '^\s*$' data/dpmp-lcp/LCP-2026-10-01.layout.txt) <(grep -v '^\s*$' "$f") | head -300; echo "diff riadkov: $(diff data/dpmp-lcp/LCP-2026-10-01.layout.txt "$f" | grep -c '^[<>]')"; done
+          echo "===== news"; cat $OUT/news-odkazy.txt
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          ls data/dpmp-lcp/current/LCP*.pdf || { echo "::error::LCP sa nestiahol"; exit 1; }
+          git add data/dpmp-lcp/current
+          git commit -m "mhd: aktualny LCP a stranka CP DPMP [skip ci]" || exit 0
+          for n in 1 2 3; do git pull --rebase origin "$GITHUB_REF_NAME" && git push && break; sleep 5; done
