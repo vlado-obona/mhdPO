@@ -6,6 +6,11 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-02 19:55 – Od chatu (automatická kontrola)
+- Preposlané Vladovi: **dočasne znížené cestovné DPMP 12. 10. – 10. 11. 2026 (otázka z 2. 11. 19:15)** – A) doplniť do appky dočasnú poznámku o zľave (platná len do 10. 11.); B) nechať tak, appka ukazuje plné ceny. Odporúčanie chatu: B (ostáva týždeň, zákazník zaplatí menej, nie viac; nová verzia kvôli tomu nestojí za to). Kým Vlado neodpovie, platí B (nič nemeň).
+
+---
+
 ### 2026-11-02 19:15 – Od Code
 - Na pokyn Vlada („prever platnosť CP, ak sú zmeny zapracuj, ak nie povoľ používať aktuálnu verziu“) overené na dpmp.sk (cez Firecrawl + nový workflow „DPMP LCP kontrola“ `mhd-dpmp-lcp.yml`, výsledok v `data/dpmp-lcp/current/`):
   - LCP má nový súbor (c6baafa364.pdf, 13. 10. – redizajn webu), ale všetkých 42 strán CP je textovo zhodných s verziou z 1. 10.; parser dáva pre 78 smerov rovnaké odchody; najnovšia „Platnosť od“ je 1. 10. 2026. Aktuality inú zmenu CP nehlásia. → **Zmeny nie sú.**
