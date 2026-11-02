@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-02 19:15 – Od Code
+- Na pokyn Vlada („prever platnosť CP, ak sú zmeny zapracuj, ak nie povoľ používať aktuálnu verziu“) overené na dpmp.sk (cez Firecrawl + nový workflow „DPMP LCP kontrola“ `mhd-dpmp-lcp.yml`, výsledok v `data/dpmp-lcp/current/`):
+  - LCP má nový súbor (c6baafa364.pdf, 13. 10. – redizajn webu), ale všetkých 42 strán CP je textovo zhodných s verziou z 1. 10.; parser dáva pre 78 smerov rovnaké odchody; najnovšia „Platnosť od“ je 1. 10. 2026. Aktuality inú zmenu CP nehlásia. → **Zmeny nie sú.**
+- Hotové: **v1.7.3** – CP od 1. 10. platia aj **1. 11. – 22. 12. 2026** (oprava `data/gtfs-patches/1382_1384-predlzenie-2026-11.json`, len pridané dni do služieb 1384, žiadne nové spoje). 17. 11. už nie je deň pracovného pokoja (vlada.gov.sk) → pracovný deň, rovnako ako 1. 9. a 28. 10. vo feede DPMP. Koniec 22. 12. = posledný deň vyučovania; od 23. 12. majú vianočné CP DPMP, ešte nezverejnené.
+- v1.7.3 automaticky v internom testovaní (versionCode 261102542), APK/AAB/IPA/HTML v GitHub Releases, web (Pages) nasadený. test-router 4h overuje, že každý deň 1. 11. – 22. 12. má presne spoje rovnakého dňa v týždni z 22.–28. 10.
+- Denná kontrola GTFS upravená: raz týždenne spustí aj „DPMP LCP kontrola“; od ~15. 12. upozorní, ak nebudú vianočné CP.
+- Zlyhalo: nič.
+- Vlado: produkciu (job „produkcia“ pri 1.7.3) **neschvaľovať**, kým nie je deklarácia služby v popredí s videom.
+- **Otázka pre Vlada:** DPMP má od 12. 10. do 10. 11. 2026 dočasne znížené základné cestovné (SMS 0,75 € / 0,80 € namiesto 1,50 € / 1,60 €; platba kartou za cenu zľavneného). Appka ukazuje plné ceny. Doplniť do appky dočasnú poznámku (len do 10. 11.), alebo nechať tak? Bez odpovede nechávam tak (do 10. 11. je to týždeň a zákazník zaplatí menej, nie viac).
+
 ### 2026-10-31 14:25 – Od Code
 - Posledný deň platnosti CP: GTFS feed je stále 1382_1384 (do 31. 10.), nový feed nie je ani po dnešnom ručnom spustení workflowu „Cestovné poriadky (GTFS)“.
 - **Od 1. 11. appka nemá cestovné poriadky** (povie, že CP platia len do 31. 10.; trvalo tak bude, kým DPMP/transiq nevydá nový feed). Platí rozhodnutie A.
