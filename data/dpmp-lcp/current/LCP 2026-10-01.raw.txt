@@ -3,8 +3,7 @@ Bardejovská 7 051/7470 211
 080 06 Ľubotice dpmpo
 LINKOVÉ
 CESTOVNÉ PORIADKY
-Aktualizácia k 1.10.2026
-Dopravný podnik mesta Prešov, akciová spoločnosť
+Aktualizácia k 1.10.2026Dopravný podnik mesta Prešov, akciová spoločnosť
 Bardejovská 7
 080 06 Ľubotice
 www.dpmp.sk
@@ -39,8 +38,7 @@ Nočná prevádzka: 2230
 Nočná doprava
 Nočnú dopravu zabezpečujú linky N1 a N2.
 Cestovné - podľa platnej tarify MHD v Prešove.
-Všetky zastávky na trasách nočných liniek sú na znamenie.
-Trojica
+Všetky zastávky na trasách nočných liniek sú na znamenie.Trojica
 *Duklianska
 *Rázcestie Kúty
 *Dopravný podnik
@@ -50,8 +48,7 @@ Všetky zastávky na trasách nočných liniek sú na znamenie.
 smer Nižná Šebastová
 Odchody zo zastávky Solivar
 Linka 1
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Solivar 1
 1' *Múzeum Solivar 1
 2' *Bohúňova 1
@@ -99,8 +96,7 @@ VYSVETLIVKY: * zastávka na znamenie
 smer Solivar
 Odchody zo zastávky Nižná Šebastová
 Linka 1
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Nižná Šebastová 1
 1'
 *Múzeum Solivar
@@ -156,16 +152,12 @@ Veľká pošta
 1
 1
 VYSVETLIVKY: * zastávka na znamenie Tolerancia odchodov +-2min.
-Platnosť od 8.1.2023
-A zo zastávky Dopravný podnik; B po Dopravný podnik
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Platnosť od 8.1.2023 A zo zastávky Dopravný podnik; B po Dopravný podnik
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skTolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Obrancov mieru
 Odchody zo zastávky Budovateľská
 Linka 2
-min. pásmo
-zastávka
+min. pásmo zastávka
 0' Budovateľská 1 4
 5 15 45
 6 05 44 08 38
@@ -211,8 +203,7 @@ VYSVETLIVKY: * zastávka na znamenie
 smer Budovateľská
 Odchody zo zastávky Obrancov mieru
 Linka 2
-min. pásmo
-zastávka
+min. pásmo zastávka
 0'
 Budovateľská
 4
@@ -242,8 +233,7 @@ Platnosť od 1.9.2026
 6-7'
 *Štúrova
 8-9'
-Čierny most
-9-10'
+Čierny most 9-10'
 Veľká pošta
 11-12'
 Na Hlavnej
@@ -296,12 +286,10 @@ h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 04 34
 04 34
 04 34
-04 38
-smer Sídlisko III
+04 38smer Sídlisko III
 Odchody zo zastávky Pod Šalgovíkom
 Linka 4
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Pod Šalgovíkom 4
 5 04 24 46 04 24 46 46
 6 06 26 46 06 26 46 16 46
@@ -327,8 +315,7 @@ Tolerancia odchodov +-2min.
 smer Pod Šalgovíkom
 Odchody zo zastávky Sídlisko III
 Linka 4
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sídlisko III 4 42A 50 42A 50
 5 10 30 50 10 30 50 32B 52A
 6 10 25 40 55 10 30 50 10 40
@@ -427,13 +414,11 @@ Tolerancia odchodov +-2min.
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-B zo zastávky Dúbrava (Rázc.Šidlovec +2 min.)
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skB zo zastávky Dúbrava (Rázc.Šidlovec +2 min.)
 smer Obrancov mieru
 Odchody zo zastávky Bajkalská
 Linka 5
-min. pásmo
-zastávka
+min. pásmo zastávka
 0' Bajkalská 4
 5 20B 50 48
 6 20B 50 48
@@ -488,8 +473,7 @@ Tolerancia odchodov +-2min.
 smer Bajkalská
 Odchody zo zastávky Obrancov mieru
 Linka 5
-min. pásmo
-zastávka
+min. pásmo zastávka
 0'
 Bajkalská
 4
@@ -528,8 +512,7 @@ Tolerancia odchodov +-2min.
 9'
 Sabinovská, fut.aréna
 10'
-Trojica
-11-12'
+Trojica 11-12'
 Na Hlavnej
 14-15'
 Divadlo J.Záborského
@@ -555,8 +538,7 @@ Obrancov mieru 1
 1
 1
 1
-*Dúbrava - D
-19'
+*Dúbrava - D 19'
 h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 20B 50
@@ -593,15 +575,12 @@ h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 20 50
 20 52
 Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-Škultétyho
-D zo zastávky Dopravný podnik
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: A-po zast.Dopr. podnik; C po DJZ, ďalej ako linka 14
+ŠkultétyhoD zo zastávky Dopravný podnik
+Tolerancia odchodov +-2min. VYSVETLIVKY: A-po zast.Dopr. podnik; C po DJZ, ďalej ako linka 14
 smer Širpo
 Odchody zo zastávky Budovateľská
 Linka 7
-min. pásmo
-zastávka h. pracovný deň sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň sobota,nedeľa,sviatok
 0' Budovateľská 4
 5 37 41P
 6 37
@@ -622,15 +601,13 @@ zastávka h. pracovný deň sobota,nedeľa,sviatok
 21 08A 35 08A
 22 08A 25A 08A
 19'
-Širpo
-20'
+Širpo 20'
 * zastávka na znamenie
 E zo zastávky DJZ; P zo zastávky Pekárne Platnosť od 1.9.2026
 smer Budovateľská
 Odchody zo zastávky Širpo
 Linka 7
-min. pásmo
-zastávka h. pracovný deň sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň sobota,nedeľa,sviatok
 0' Širpo 4 45D
 5 00D 15D 25D 38D
 6 00 25D
@@ -661,22 +638,14 @@ Tolerancia odchodov +-2min.
 5' *Dopravný podnik
 6' *Rázcestie Kúty
 8'
-Trojica
-10'
-Na Hlavnej
-12'
-Veľká pošta
-14'
-Čierny most
-15'
-*Štúrova
-17'
-*Priemyselné centrum
-18'
-*Pekárne
-19'
-Budovateľská
-20'
+Trojica 10'
+Na Hlavnej 12'
+Veľká pošta 14'
+Čierny most 15'
+*Štúrova 17'
+*Priemyselné centrum 18'
+*Pekárne 19'
+Budovateľská 20'
 *Duklianska
 1' *Pekárne
 2' *Priemyselné centrum
@@ -721,12 +690,10 @@ Budovateľská
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-smer Sídlisko III
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sksmer Sídlisko III
 Odchody zo zastávky Sibírska
 Linka 8
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sibírska 4 44B 45 44B 45
 5 13 33 55 13 33 55 20
 6 15 35 53 15 35 55 00 30
@@ -752,8 +719,7 @@ Tolerancia odchodov +-2min.
 smer Sibírska
 Odchody zo zastávky Sídlisko III
 Linka 8
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sídlisko III 4 52A 52A
 5 00 20 40 00 20 40 00A 28 55
 6 00 18 33 48 00 20 40 25 55
@@ -852,15 +818,12 @@ Tolerancia odchodov +-2min.
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-A po zast. Žel. stanica
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skA po zast. Žel. stanica
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Nemocnica
 Odchody zo zastávky Sibírska
 Linka 10
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 37 37
 6 37 40
@@ -884,8 +847,7 @@ Platnosť od 1.5.2025
 smer Sibírska
 Odchody zo zastávky Fakultná nemocnica
 Linka 10
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Fakultná nemocnica 4
 5 59 58
 6 59
@@ -914,18 +876,12 @@ Tolerancia odchodov +-2min.
 4' *Moyzesova
 7' Veľká pošta
 8'
-Železničná stanica
-10'
-*Nový Solivar
-11'
-*Košická
-12'
-*Chalupkova
-13'
-Švábska
-14'
-Lomnická
-15'
+Železničná stanica 10'
+*Nový Solivar 11'
+*Košická 12'
+*Chalupkova 13'
+Švábska 14'
+Lomnická 15'
 Čierny most
 9' Lomnická
 10' Švábska
@@ -1014,17 +970,14 @@ Lomnická
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-V po Veľkú poštu; S po Solivar; D vynechá zast. Valkovská a Solivar
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skV po Veľkú poštu; S po Solivar; D vynechá zast. Valkovská a Solivar
 B z Veľkej pošty
 H po zast. Na Hlavnej
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie; P zo zastávky Poliklinika;
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie; P zo zastávky Poliklinika;
 smer Na Rúrkach
 Odchody zo zastávky Solivar
 Linka 11
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Solivar 4
 5 12P 58A 17P
 6 46U
@@ -1051,8 +1004,7 @@ A z DJZ; C ďalej ako linka 23 do M. Šariša; U z Dulovej Vsi (Pod Hr.+6´) Pla
 smer Solivar / Dulova Ves
 Odchody zo zastávky Na Rúrkach
 Linka 11
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' 4
 5 20V
 6 12D
@@ -1080,20 +1032,13 @@ Tolerancia odchodov +-2min.
 8'
 10'
 12'
-Čierny most
-13'
-*Rusínska
-16'
-Martina Benku
-18'
-*Suvorovova
-22'
-*Cintorín Solivar
-23'
-*Na brehu
-24'
-*Pod Hrádkom
-25'
+Čierny most 13'
+*Rusínska 16'
+Martina Benku 18'
+*Suvorovova 22'
+*Cintorín Solivar 23'
+*Na brehu 24'
+*Pod Hrádkom 25'
 1' *Valkovská
 4' *Cintorín Solivar
 5' *Suvorovova
@@ -1203,19 +1148,15 @@ Poliklinika
 Trojica
 Na Hlavnej
 Veľká pošta
-*Valkovská
-26'
+*Valkovská 26'
 1
 27'
-Solivar
-27'
+Solivar 27'
 1
 1
 1
-Pavla Horova
-19'
-Lesnícka
-20'
+Pavla Horova 19'
+Lesnícka 20'
 2' *Pod Hrádkom
 3' *Na brehu
 1
@@ -1224,8 +1165,7 @@ Lesnícka
 12' *Hobby park
 1
 1
-Eperia
-17' 1
+Eperia 17' 1
 2
 2
 2
@@ -1236,143 +1176,68 @@ Eperia
 *Dulova Ves - kostol
 *Vlčie doly
 *Zlatobanská 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-1
-*Šidlovec
-45'
-1
-*Jahodová
-44'
-1
-*Šidlovská
-43'
-1
-*Jánošíkova
-42'
-1
-*Veterinárna nemocnica
-40'
-1
-Bajkalská
-39'
-1
-Prostějovská
-38'
-1
-Centrum
-37'
-1
-VUKOV
-35'
-1
-Volgogradská
-33'
-1
-*M.Čulena
-31'
-1
-*Odborárska
-30'
-*Sázavského
-29' 1
-*Kollárova
-28' 1
-*SOŠ lesnícka
-27' 1
-*Gymnázium sv.Moniky
-24' 1
-*Kúpeľná
-23' 1
-*Pavlovičovo námestie
-22' 1
-Veľká pošta
-20' 1
-Na Hlavnej
-18' 1
-Trojica
-16' 1
-*Vajanského
-13' 1
-*Dilongova
-11' 1
-Detská nemocnica
-10' 1
-Fakultná nemocnica
-9' 1
-*Lesík delostrelcov
-7' 1
-*Pod Táborom
-6' 1
-*Nižné lúky
-5' 1
-Jurkovičova
-3' 1
-Karpatská
-2' 1
-1
-Sibírska
-0'
-1
-Sibírska
-47'
-1
-Karpatská
-45'
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk1 *Šidlovec 45'
+1 *Jahodová 44'
+1 *Šidlovská 43'
+1 *Jánošíkova 42'
+1 *Veterinárna nemocnica 40'
+1 Bajkalská 39'
+1 Prostějovská 38'
+1 Centrum 37'
+1 VUKOV 35'
+1 Volgogradská 33'
+1 *M.Čulena 31'
+1 *Odborárska 30'
+*Sázavského 29' 1
+*Kollárova 28' 1
+*SOŠ lesnícka 27' 1
+*Gymnázium sv.Moniky 24' 1
+*Kúpeľná 23' 1
+*Pavlovičovo námestie 22' 1
+Veľká pošta 20' 1
+Na Hlavnej 18' 1
+Trojica 16' 1
+*Vajanského 13' 1
+*Dilongova 11' 1
+Detská nemocnica 10' 1
+Fakultná nemocnica 9' 1
+*Lesík delostrelcov 7' 1
+*Pod Táborom 6' 1
+*Nižné lúky 5' 1
+Jurkovičova 3' 1
+Karpatská 2' 1
+1 Sibírska 0'
+1 Sibírska 47'
+1 Karpatská 45'
 44' Jurkovičova 1
 42' *Nižné lúky 1
-1
-*Pod Táborom
-41'
+1 *Pod Táborom 41'
 40' *Lesík delostrelcov 1
 38' Fakultná nemocnica 1
-1
-Detská nemocnica
-37'
+1 Detská nemocnica 37'
 36' *Šafárikova - cintorín 1
 35' *Duklianska 1
 33' Trojica 1
 31' Na Hlavnej 1
-1
-Divadlo J. Záborského
-30'
+1 Divadlo J. Záborského 30'
 27' *Pavlovičovo námestie 1
-1
-*Kúpeľná
-26'
+1 *Kúpeľná 26'
 25' *Malá stanica 1
-1
-*SOŠ lesnícka
-22'
+1 *SOŠ lesnícka 22'
 21' *Kollárova 1
 20' *Sázavského 1
-1
-*Odborárska
-19'
+1 *Odborárska 19'
 18' *M.Čulena 1
 16' Volgogradská 1
-1
-Námestie Kráľ. pokoja
-15'
-1
-VUKOV
-14'
-1
-Centrum
-12'
-1
-Prostějovská
-11'
+1 Námestie Kráľ. pokoja 15'
+1 VUKOV 14'
+1 Centrum 12'
+1 Prostějovská 11'
 10' Sídlisko III 1
-1
-*Veterinárna nemocnica
-8'
-1
-*Dúbrava
-6'
+1 *Veterinárna nemocnica 8'
+1 *Dúbrava 6'
 4' *Pri kaplnke 1
-1
-*Dúbravská
-3'
+1 *Dúbravská 3'
 2' *Šidlovská 1
 1' *Stavbárska 1
 Tolerancia odchodov +-2min.
@@ -1381,10 +1246,7 @@ E zo zastávky Pod Šalgovíkom (Vyšné lúky + 4´)
 N po zastávku Detská nemocnica
 VYSVETLIVKY: * zastávka na znamenie
 smer Šidlovská
-Odchody zo zastávky Sibírska
-Linka 12
-min. pásmo
-zastávka
+Odchody zo zastávky Sibírska Linka 12 min. pásmo zastávka
 h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5
@@ -1407,8 +1269,7 @@ Platnosť od 8.1.2023
 smer Sibírska
 Odchody zo zastávky Šidlovec
 Linka 12
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 35B 44
 6 48H
@@ -1451,17 +1312,14 @@ VYSVETLIVKY: * zastávka na znamenie
 Platnosť od 8.1.2023
 0' *Šidlovec 1
 34' Námestie Kráľ. pokoja 1
-*Vyšné lúky
-4' 1
+*Vyšné lúky 4' 1
 43' *Vyšné lúky 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-*Pod Maglovcom
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk*Pod Maglovcom
 5' *OcÚ Vyšná Šebastová2
 smer Čierny most
 Odchody zo zastávky Podhradík
 Linka 13
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 školský prázdniny
 sobota,
@@ -1493,8 +1351,7 @@ Tolerancia odchod.+-2min. Platnosť od 1.7.2026
 smer Podhradík
 Odchody zo zastávky Veľká pošta
 Linka 13
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 4
 5
@@ -1660,137 +1517,60 @@ pásmo
 30' *Nižný koniec 2
 0' Podhradík 2
 1' *Nižný koniec 2
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Kanaš-Stráže
-38' 2
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skKanaš-Stráže 38' 2
 37' *Stará škola 2
-*Medzi jarkami
-36' 2
-*Pri kostole
-35' 2
-*Husí hrb
-34' 2
-*Kozí rožok
-32' 2
-*Sordok
-30' 2
-*Rázcestie Kanaš
-29' 2
+*Medzi jarkami 36' 2
+*Pri kostole 35' 2
+*Husí hrb 34' 2
+*Kozí rožok 32' 2
+*Sordok 30' 2
+*Rázcestie Kanaš 29' 2
 28' *Šariš park 2
-1
-*Dúbrava
-25'
-1
-*Rázcestie Šidlovec
-24'
-1
-*Pod Skalkou
-23'
-1
-*Mičurinova
-22'
-1
-21' Sabinovská, futbal ar.
-1
-18' Trojica
-1
-Na Hlavnej
-16'
-1
-15' Divadlo J.Záborského
-1
-Čierny most
-13'
-1
-11' Železničná stanica
-1
-*Nový Solivar
-10'
-1
-*Košická
-9'
-*Logistické centrum
-5' 1
-*Rázcestie Záborské
-2' 2
-*Záborské-stred
-1' 2
-2
-Záborské
-41'
-*Záborské-stred
-40' 2
-2
-*Rázcestie Záborské
-39'
-1
-*Logistické centrum
-37'
-1
-*Petrovianska
-35'
+1 *Dúbrava 25'
+1 *Rázcestie Šidlovec 24'
+1 *Pod Skalkou 23'
+1 *Mičurinova 22'
+1 21' Sabinovská, futbal ar.
+1 18' Trojica
+1 Na Hlavnej 16'
+1 15' Divadlo J.Záborského
+1 Čierny most 13'
+1 11' Železničná stanica
+1 *Nový Solivar 10'
+1 *Košická 9'
+*Logistické centrum 5' 1
+*Rázcestie Záborské 2' 2
+*Záborské-stred 1' 2
+2 Záborské 41'
+*Záborské-stred 40' 2
+2 *Rázcestie Záborské 39'
+1 *Logistické centrum 37'
+1 *Petrovianska 35'
 32' *Košická 1
-1
-*Nový Solivar
-31'
-1
-Železničná stanica
-30'
-1
-Čierny most
-28'
-1
-Veľká pošta
-27'
-1
-Na Hlavnej
-25'
-1
-Trojica
-23'
-1
-Sabinovská, futbal ar.
-20'
-1
-*Mičurinova
-19'
-1
-*Pod Skalkou
-18'
+1 *Nový Solivar 31'
+1 Železničná stanica 30'
+1 Čierny most 28'
+1 Veľká pošta 27'
+1 Na Hlavnej 25'
+1 Trojica 23'
+1 Sabinovská, futbal ar. 20'
+1 *Mičurinova 19'
+1 *Pod Skalkou 18'
 17' *Rázcestie Šidlovec 1
-1
-*Dúbrava
-15'
-2
-*Šariš park
-11'
-2
-*Rázcestie Kanaš
-10'
-2
-*Sordok
-8'
-2
-*Kozí rožok
-6'
-2
-*Husí hrb
-4'
-2
-*Pri kostole
-3'
-2
-*Medzi jarkami
-2'
-2
-*Stará škola
-1'
+1 *Dúbrava 15'
+2 *Šariš park 11'
+2 *Rázcestie Kanaš 10'
+2 *Sordok 8'
+2 *Kozí rožok 6'
+2 *Husí hrb 4'
+2 *Pri kostole 3'
+2 *Medzi jarkami 2'
+2 *Stará škola 1'
 *Petrovianska
 smer Kanaš
 Odchody zo zastávky Záborské
 Linka 14
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 školský prázdniny
 sobota,
@@ -1833,8 +1613,7 @@ Tolerancia odchodov +-2min. Platnosť od 1.10.2026
 smer Záborské
 Odchody zo zastávky Kanaš
 Linka 14
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 4
 5
@@ -1895,15 +1674,12 @@ V po Veľkú poštu
 pracovný deň
 Tolerancia odchodov +-2min. Platnosť od 1.10.2026
 0' Kanaš-Stráže 2
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-B-zo zastávky Poliklinika; D-zo zastávky DJZ
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie; A-cez Ul.Obr.mieru; & midibus
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skB-zo zastávky Poliklinika; D-zo zastávky DJZ
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie; A-cez Ul.Obr.mieru; & midibus
 smer Nemocnica
 Odchody zo zastávky Za Kalváriou
 Linka 15
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 27A 27C&
 6 27A
@@ -1927,8 +1703,7 @@ C-po zast. Na Hlavnej; T-z Terchovskej (Zimný št.+4´), Na Hlavnej čaká L45.
 smer Za Kalváriou
 Odchody zo zastávky Fakultná nemocnica
 Linka 15
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0'
 Divadlo J.Záborského
 4
@@ -1949,8 +1724,7 @@ Divadlo J.Záborského
 19 10
 20 10 23&
 21
-22 21D& 21D&
-1
+22 21D& 21D& 1
 VYSVETLIVKY: * zast. na znamenie; A-cez Ul.Obr.mieru; & midibus
 Platnosť od 1.7.2026
 Tolerancia odchodov +-2min.
@@ -1964,18 +1738,12 @@ Fakultná nemocnica
 *Moyzesova
 7-8' Na Hlavnej
 9-10'
-Poliklinika
-11-12'
-*Centrál
-13-14'
-*Októbrová
-14-15'
-*Sázavského
-15-16'
-*Kollárova
-16-17'
-*SOŠ lesnícka
-17-18'
+Poliklinika 11-12'
+*Centrál 13-14'
+*Októbrová 14-15'
+*Sázavského 15-16'
+*Kollárova 16-17'
+*SOŠ lesnícka 17-18'
 Trojica
 0' Za Kalváriou
 18-20' *Zimný štadión
@@ -2067,14 +1835,11 @@ nemocnica
 1
 P po zastávku Poliklinika
 1' Detská nemocnica 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skTolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Širpo
 Odchody zo zastávky Sídlisko III
 Linka 17
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sídlisko III 4
 5 12 32
 6 00
@@ -2095,14 +1860,12 @@ zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,s
 21
 22
 19'
-Širpo
-20'
+Širpo 20'
 A po zastávku Dopravný podnik Platnosť od 1.10.2026
 smer Sídlisko III
 Odchody zo zastávky Širpo
 Linka 17
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Širpo 4
 5
 6
@@ -2131,22 +1894,14 @@ Tolerancia odchodov +-2min.
 5' *Dopravný podnik
 6' *Rázcestie Kúty
 8'
-Poliklinika
-10'
-Levočská
-12'
-Volgogradská
-14'
-Nám. Kráľ. pokoja
-15'
-VUKOV
-16'
-Centrum
-18'
-Prostějovská
-19'
-Sídlisko III
-20'
+Poliklinika 10'
+Levočská 12'
+Volgogradská 14'
+Nám. Kráľ. pokoja 15'
+VUKOV 16'
+Centrum 18'
+Prostějovská 19'
+Sídlisko III 20'
 *Duklianska
 1' Prostějovská
 2' Centrum
@@ -2195,8 +1950,7 @@ Sídlisko III
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skTolerancia odchodov +-2min.
 VYSVETLIVKY:
 * zastávka na znamenie
 A po zastávku Cemjata
@@ -2204,8 +1958,7 @@ D zo zastávky Poliklinika
 smer Bzenov
 Odchody zo zastávky Divadlo Jonáša Záborského
 Linka 18
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4 50DA
 5 29
 6 27
@@ -2232,8 +1985,7 @@ Platnosť od 8.1.2025
 smer Veľká pošta
 Odchody zo zastávky Bzenov
 Linka 18
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' 2
 2
 2
@@ -2406,14 +2158,11 @@ G zo zast. Cemjata; L po zast. Poliklinika.
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skTolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Nemocnica
 Odchody zo zastávky Solivar
 Linka 19
-min. pásmo
-zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 07
 6 00
@@ -2438,8 +2187,7 @@ Platnosť od 1.5.2025
 smer Solivar
 Odchody zo zastávky Fakultná nemocnica
 Linka 19
-min. pásmo
-zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Fakultná nemocnica 4
 5 29
 6 24
@@ -2470,18 +2218,12 @@ Tolerancia odchodov +-2min.
 4' *Moyzesova
 7' Veľká pošta
 8'
-Železničná stanica
-10'
-*Nový Solivar
-11'
-*Košická
-12'
-*Chalupkova
-13'
-Švábska
-14'
-Lomnická
-15'
+Železničná stanica 10'
+*Nový Solivar 11'
+*Košická 12'
+*Chalupkova 13'
+Švábska 14'
+Lomnická 15'
 Čierny most
 9' Lomnická
 10' Švábska
@@ -2505,8 +2247,7 @@ Lomnická
 21' L.Novomeského
 22' *Kysucká
 24' Solivar
-1
-23' *Kukučínova
+1 23' *Kukučínova
 07
 00
 00
@@ -2570,50 +2311,23 @@ Lomnická
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-2
-*Gribľovec
-6'
-2
-(*Ihrisko)
-(5')
-2
-*Červený mostík
-4'
-2
-*Námestie J.Kolarčíka
-3'
-2
-*V kopci
-2'
-2
-*Pri lipe
-1'
-2
-Fintice
-26'
-2
-*Pri lipe
-25'
-2
-*V kopci
-24'
-2
-23'*Námestie J.Kolarčíka
-2
-*Červený mostík
-22'
-2
-(*Ihrisko)
-(21')
-2
-*Gribľovec
-20'
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk2 *Gribľovec 6'
+2 (*Ihrisko) (5')
+2 *Červený mostík 4'
+2 *Námestie J.Kolarčíka 3'
+2 *V kopci 2'
+2 *Pri lipe 1'
+2 Fintice 26'
+2 *Pri lipe 25'
+2 *V kopci 24'
+2 23'*Námestie J.Kolarčíka
+2 *Červený mostík 22'
+2 (*Ihrisko) (21')
+2 *Gribľovec 20'
 smer Fintice
 Odchody zo zastávky Trojica
 Linka 21
-min. pásmo
-zastávka
+min. pásmo zastávka
 4 47H 47H
 5 15H 20 50 15H 20 50 37H
 6 20 50 20 50B 10
@@ -2698,32 +2412,22 @@ Linka 21
 17' *Fintická 1
 18' *Išľa 1
 19' *Za traťou 1
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie; A po zast. Šarišské Lúky;
-min. pásmo
-zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie; A po zast. Šarišské Lúky;
+min. pásmo zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
 D ďalej ako linka 23; E zo zast. Dopravný podnik; Platnosť od 1.9.2026
 h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie; H zo zast. Šarišské Lúky;
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie; H zo zast. Šarišské Lúky;
 B po zast. Dopravný podnik; W čaká na prestup cestujúcich z linky 1; Platnosť od 1.10.2026
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Teriakovce
-31' 2
-*OcÚ Teriakovce
-30' 2
-*Na Kruhu
-29' 2
-*Rázcestie Teriakovce
-2' 2
-*Na Kruhu
-2' 2
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skTeriakovce 31' 2
+*OcÚ Teriakovce 30' 2
+*Na Kruhu 29' 2
+*Rázcestie Teriakovce 2' 2
+*Na Kruhu 2' 2
 1' *OcÚ Teriakovce
 smer Šidlovec
 Odchody zo zastávky Teriakovce
 Linka 22
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 školský prázdniny
 sobota,
@@ -2761,8 +2465,7 @@ Tolerancia odchodov +-2min. Platnosť od 1.1.2026
 smer Teriakovce
 Odchody zo zastávky Šidlovec
 Linka 22
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 4
 5
@@ -2908,52 +2611,28 @@ Tolerancia odchodov +-2min. Platnosť od 1.1.2026
 1
 1
 1
-*Šalgovia
-3' 2
+*Šalgovia 3' 2
 2
 *Rázcestie Teriakovce
 *Šalgovia
 29'
 28'
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-2
-Malý Šariš
-21'
-2
-*Šľachtiteľská stanica
-20'
-2
-19' *Nákupné stredisko
-2
-*OcÚ Malý Šariš
-18'
-2
-*Rázcestie Malý Šariš
-17'
-2
-*Telekča
-15'
-2
-*Telekča
-6'
-2
-*Rázcestie Malý Šariš
-4'
-2
-*OcÚ Malý Šariš
-3'
-2
-*Nákupné stredisko
-2'
-2
-*Šľachtiteľská stanica
-1'
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk2 Malý Šariš 21'
+2 *Šľachtiteľská stanica 20'
+2 19' *Nákupné stredisko
+2 *OcÚ Malý Šariš 18'
+2 *Rázcestie Malý Šariš 17'
+2 *Telekča 15'
+2 *Telekča 6'
+2 *Rázcestie Malý Šariš 4'
+2 *OcÚ Malý Šariš 3'
+2 *Nákupné stredisko 2'
+2 *Šľachtiteľská stanica 1'
 2
 smer Trojica
 Odchody zo zastávky Malý Šariš
 Linka 23
-min. pásmo
-zastávka
+min. pásmo zastávka
 5 00 25 00 25
 6 00 20 00 20 00 40
 7 00 20ZAN 00 20AN
@@ -3050,25 +2729,18 @@ h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 Linka 23
-min. pásmo
-zastávka
+min. pásmo zastávka
 E zo zastávky Na Rúrkach (Mýto +2´, nadväzuje na spoj linky 11)
 Z cez zastávku Októbrová, vynechá zastávku Levočská;
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-2
-Haniska
-28'
-*Lemešianska
-27' 2
-*Priecestie
-26' 2
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk2 Haniska 28'
+*Lemešianska 27' 2
+*Priecestie 26' 2
 *Priecestie
 *Lemešianska
 smer Obrancov mieru
 Odchody zo zastávky Haniska
 Linka 24
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Haniska 2
 2
 2
@@ -3104,13 +2776,11 @@ zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,s
 1
 1
 VYSVETLIVKY: & midibus * zastávka na znamenie; Tolerancia odchodov +-2min.
-Platnosť od 13.10.2025
-T-po Trojicu; V-po Čierny most; Z-po Železničnú stanicu
+Platnosť od 13.10.2025 T-po Trojicu; V-po Čierny most; Z-po Železničnú stanicu
 smer Haniska
 Odchody zo zastávky Obrancov mieru
 Linka 24
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Obrancov mieru 1
 1
 1
@@ -3148,8 +2818,7 @@ zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,s
 1
 1
 VYSVETLIVKY: & midibus; Tolerancia odchodov +-2min.
-Platnosť od 8.1.2025
-A-po zastávku Košická; H-zo zastávky Veľká pošta.
+Platnosť od 8.1.2025 A-po zastávku Košická; H-zo zastávky Veľká pošta.
 1'
 2'
 4' *Čistička
@@ -3182,16 +2851,14 @@ A-po zastávku Košická; H-zo zastávky Veľká pošta.
 22' *ZVL
 23' *Gemor
 24' *Čistička 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-09B
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk09B
 Tolerancia odchodov +-2min.
 E po zastávku Petrovianska, neobslúži zastávku Spinea-Záturecká
 VYSVETLIVKY: * zastávka na znamenie
 smer Spinea - Záturecká
 Odchody zo zastávky Veľká pošta
 Linka 26
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' 4
 5 35 37
 6 30
@@ -3215,8 +2882,7 @@ Platnosť od 1.7.2026
 smer Čierny most
 Odchody zo zastávky Spinea - Záturecká
 Linka 26
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' 4
 5
 6 17 42C 17B
@@ -3235,8 +2901,7 @@ zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,s
 19
 20
 21
-22 09B
-! nástupisko smer Záborské
+22 09B ! nástupisko smer Záborské
 VYSVETLIVKY: * zastávka na znamenie; P zo zast. Petrovianska
 A ďalej ako linka 41; B ďalej ako linka 15; C po zast. Železničná stanica
 Tolerancia odchodov +-2min.
@@ -3285,15 +2950,12 @@ Veľká pošta
 *Nový Solivar
 *Košická
 Platnosť od 1.7.2026
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-D zo zastávky Duklianska; E zo zastávky Veľká pošta; V po Veľkú poštu
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie; A po DJZ; B zo zast. DJZ
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skD zo zastávky Duklianska; E zo zastávky Veľká pošta; V po Veľkú poštu
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie; A po DJZ; B zo zast. DJZ
 smer Hviezdna
 Odchody zo zastávky Terchovská
 Linka 27
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 00
 6 00
@@ -3317,8 +2979,7 @@ Z zo zastávky Za Kalváriou (Slávičia +4´) Na linke premáva midibus. Platno
 smer Terchovská
 Odchody zo zastávky Hviezdna
 Linka 27
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 23
 6 23
@@ -3446,16 +3107,13 @@ Tolerancia odchodov +-2min.
 1
 5' *Duklianska 1
 9' *Pekárne 1
-10' *Priemyselné centrum
-1
+10' *Priemyselné centrum 1
 12' Čierny most
 Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-16' *Pekárne 1
-smer Ľubotice
+16' *Pekárne 1smer Ľubotice
 Odchody zo zastávky Delňa
 Linka 28
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 školský prázdniny
 sobota,
@@ -3491,8 +3149,7 @@ Tolerancia odchodov +-2min. Platnosť od 1.10.2026
 smer Delňa
 Odchody zo zastávky Ľubotice
 Linka 28
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 4
 5
@@ -3597,14 +3254,11 @@ od 1.10.2026
 31' *Jesenná 1
 32' *Jelšová 1
 33' Delňa 1 23 06M 06M
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skTolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Nemocnica
 Odchody zo zastávky Sídlisko III
 Linka 29
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5
 6 15
@@ -3628,8 +3282,7 @@ N po zastávku Detská nemocnica Platnosť od 1.10.2026
 smer Sídlisko III
 Odchody zo zastávky Fakultná nemocnica
 Linka 29
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 1'
 Divadlo J.Záborského
 4
@@ -3664,28 +3317,20 @@ Detská nemocnica
 *Moyzesova
 7' Na Hlavnej
 9'
-Poliklinika
-11'
-Clementisova
-13'
+Poliklinika 11'
+Clementisova 13'
 Trojica
 11' *Floriánova
 13' *Okružná
 15' *Grešova
 18' Fakultná nemocnica
 0' Sídlisko III
-Volgogradská
-14'
-Nám. Kráľ. pokoja
-15'
-VUKOV
-16'
-Centrum
-18'
-Prostějovská
-19'
-Sídlisko III
-20'
+Volgogradská 14'
+Nám. Kráľ. pokoja 15'
+VUKOV 16'
+Centrum 18'
+Prostějovská 19'
+Sídlisko III 20'
 1' Prostějovská
 2' Centrum
 4' VUKOV
@@ -3764,14 +3409,11 @@ Sídlisko III
 1
 10' Poliklinika 1
 0' Fakultná nemocnica 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie A ďalej ako linka 46
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skTolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie A ďalej ako linka 46
 smer Jilemnického - Žel. stanica
 Odchody zo zastávky Železničná stanica
 Linka 30
-min. pásmo
-zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. školský pracovný deň pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Železničná stanica 1
 1
 1
@@ -3811,8 +3453,7 @@ B po zast. Pekárne, ďalej ako linka 7 do Širpa Platnosť od 8.1.2025
 00 11A
 6' *Štúrova
 10' Železničná stanica
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skTolerancia odchodov +-2min.
 VYSVETLIVKY:
 * zastávka na znamenie
 D ďalej ako linka 18
@@ -3821,8 +3462,7 @@ F ďalej ako linka 45 do V.Šariša
 smer Trojica
 Odchody zo zastávky Sibírska
 Linka 32
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sibírska 4
 5 00 20 41E 54 41D
 6 36F 50E
@@ -3846,8 +3486,7 @@ Platnosť od 1.10.2026
 smer Sibírska
 Odchody zo zastávky Okružná
 Linka 32
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 5' Trojica
 4
 5
@@ -3877,8 +3516,7 @@ Tolerancia odchodov +-2min.
 13' *Rusínska
 15' Jurkovičova
 16'
-Sibírska
-18'
+Sibírska 18'
 Karpatská
 2' Karpatská
 3' Jurkovičova
@@ -3924,14 +3562,11 @@ Karpatská
 1
 1
 6' *Hobby park 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skTolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Okružná
 Odchody zo zastávky Sibírska
 Linka 32A
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sibírska 4
 5
 6
@@ -3977,15 +3612,12 @@ ako linka 32
 1
 1
 6' *Hobby park 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-B zo zastávky Karpatská
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie; A po zast. Pod nadjazdom
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skB zo zastávky Karpatská
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie; A po zast. Pod nadjazdom
 smer Širpo
 Odchody zo zastávky Delňa
 Linka 33
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5
 6 03 33
@@ -4009,8 +3641,7 @@ B z výstupnej zast. Sibírska (Hinrichs +5´, Pod nadjazdom +6´), čaká L38 P
 smer Delňa
 Odchody zo zastávky Širpo
 Linka 33
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 15B
 6 05 00
@@ -4107,15 +3738,12 @@ Tolerancia odchodov +-2min.
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-D-po Chalupkovu a Stanicu; E-zo Sibírskej (M.Benku+5´); H-zo Sibírskej 8´skôr
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: A ďalej na Sibírsku
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skD-po Chalupkovu a Stanicu; E-zo Sibírskej (M.Benku+5´); H-zo Sibírskej 8´skôr
+Tolerancia odchodov +-2min. VYSVETLIVKY: A ďalej na Sibírsku
 smer Pod Šalgovíkom
 Odchody zo zastávky Sídlisko III
 Linka 34
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 25 55B
 6 25B
@@ -4139,8 +3767,7 @@ B neobslúži zast. Levočská, Jilemnického, Košická Platnosť od 1.10.2026
 smer Sídlisko III
 Odchody zo zastávky Pod Šalgovíkom
 Linka 34
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 10HC 22EC 33C
 6 03D 22EC 33C
@@ -4163,21 +3790,14 @@ zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,s
 VYSVETLIVKY: * zastávka na znamenie; C cez zast. Clementisova;
 Platnosť od 1.10.2026
 Tolerancia odchodov +-2min.
-Levočská
-24'
+Levočská 24'
 0' Sídlisko III
-Volgogradská
-26'
-Nám. Kráľ. pokoja
-27'
-VUKOV
-28'
-Centrum
-30'
-Prostějovská
-31'
-Sídlisko III
-32'
+Volgogradská 26'
+Nám. Kráľ. pokoja 27'
+VUKOV 28'
+Centrum 30'
+Prostějovská 31'
+Sídlisko III 32'
 1' Prostějovská
 2' Centrum
 4' VUKOV
@@ -4281,14 +3901,11 @@ Sídlisko III
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skTolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Širpo
 Odchody zo zastávky Delňa
 Linka 35
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 28
 6 28
@@ -4351,8 +3968,7 @@ Platnosť od 1.11.2024
 1
 1
 12' *Hobby park 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-E po zastávku Vyšné lúky; V zo zastávky Veľká pošta
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skE po zastávku Vyšné lúky; V zo zastávky Veľká pošta
 41AZ
 Tolerancia odchodov +-2min.
 VYSVETLIVKY:
@@ -4365,8 +3981,7 @@ H ďalej ako linka 28 do Ľubotíc
 smer Trojica
 Odchody zo zastávky Pod Šalgovíkom
 Linka 36
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Pod Šalgovíkom 4 41AZ
 5 19D
 6 17 40D
@@ -4390,8 +4005,7 @@ Platnosť od 1.9.2025
 smer Pod Šalgovíkom
 Odchody zo zastávky Trojica
 Linka 36
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Trojica 4
 5
 6 25E 55 18V
@@ -4420,8 +4034,7 @@ Tolerancia odchodov +-2min.
 6' *Pod Táborom
 10' L.Novomeského
 11'
-Pod Šalgovíkom
-12'
+Pod Šalgovíkom 12'
 Vansovej
 1' Vansovej
 2' L.Novomeského
@@ -4471,8 +4084,7 @@ Vansovej
 8' *Vyšné lúky
 7' *Lesík delostrelcov
 8' *Kpt. Nálepku
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-A premáva len v pracovných dňoch Hinrichsu
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skA premáva len v pracovných dňoch Hinrichsu
 Tolerancia odchodov +-2min.
 VYSVETLIVKY:
 * zastávka na znamenie
@@ -4480,8 +4092,7 @@ E ďalej ako linka 13 do Severnej
 smer Nižná Šebastová
 Odchody zo zastávky Železničná stanica
 Linka 37
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 18E
 6 18E
@@ -4505,8 +4116,7 @@ Platnosť od 1.1.2024
 smer Železničná stanica
 Odchody zo zastávky Hinrichs
 Linka 37
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5
 6
@@ -4586,12 +4196,10 @@ Lesnícka
 1
 1
 40 40A
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-smer Sídlisko III
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sksmer Sídlisko III
 Odchody zo zastávky Sibírska
 Linka 38
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sibírska 4 55 55
 5 25 48 25 48
 6 08 28 46 08 28 48 18 48
@@ -4619,8 +4227,7 @@ Tolerancia odchodov +-2min.
 smer Sibírska
 Odchody zo zastávky Sídlisko III
 Linka 38
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Sídlisko III 4 55 55
 5 15 35 55 15 35 55 15A 45
 6 13 28 43 58 15 35 55 15 48
@@ -4723,15 +4330,12 @@ Sibírska 1
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-T po zast. Čierny most; Z po zast. Žel. stanica
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skT po zast. Čierny most; Z po zast. Žel. stanica
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Švábska
 Odchody zo zastávky Sídlisko III
 Linka 39
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 1
 4
 5 15
@@ -4757,8 +4361,7 @@ V - zo zastávky Jazdecká po zastávku Železničná stanica Platnosť od 1.10.
 smer Sídlisko III
 Odchody zo zastávky Lomnická
 Linka 39
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0'
 Divadlo J.Záborského
 4
@@ -4815,12 +4418,9 @@ Lomnická
 16'
 Železničná stanica
 18'
-Centrum
-20'
-Prostějovská
-21'
-Sídlisko III
-22'
+Centrum 20'
+Prostějovská 21'
+Sídlisko III 22'
 1' Prostějovská
 2' Centrum
 4' VUKOV
@@ -4911,16 +4511,13 @@ Na Hlavnej
 20'
 Veľká pošta
 Čierny most
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-D ďalej ako linka 42; E po zastávku Na Hlavnej
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.skD ďalej ako linka 42; E po zastávku Na Hlavnej
 50A
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Surdok
 Odchody zo zastávky Divadlo Jonáša Záborského
 Linka 41
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Divadlo J.Záborského 4 50A
 5 42
 6 42 20
@@ -4944,8 +4541,7 @@ A zo zastávky K Surdoku. Na linke premáva midibus. Platnosť od 11.12.2021
 smer Veľká pošta
 Odchody zo zastávky Surdok
 Linka 41
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Surdok 4
 5 00
 6 00D 38D
@@ -5059,15 +4655,12 @@ Na Hlavnej
 1
 1
 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Na linke premáva midibus.
-Tolerancia odchodov +-2min.
-VYSVETLIVKY: * zastávka na znamenie
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skNa linke premáva midibus.
+Tolerancia odchodov +-2min. VYSVETLIVKY: * zastávka na znamenie
 smer Kpt. Nálepku
 Odchody zo zastávky Borkút
 Linka 42
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Borkút 4
 5
 6 28
@@ -5091,8 +4684,7 @@ Na linke premáva midibus. Platnosť od 8.1.2023
 smer Borkút
 Odchody zo zastávky Veľká pošta
 Linka 42
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' Veľká pošta 4
 5
 6 15 56
@@ -5165,10 +4757,8 @@ Tolerancia odchodov +-2min.
 9' *Štúrova
 11' Čierny most
 13' *Kpt. Nálepku
-1
-7' *Petöfiho pamätník
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-VYSVETLIVKY:
+1 7' *Petöfiho pamätník
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skVYSVETLIVKY:
 * zastávka na znamenie
 B po zast. F.nemocnica,
 ďalej ako linka 12 smer
@@ -5176,8 +4766,7 @@ Sibírska
 smer Nemocnica
 Odchody zo zastávky Železničná stanica
 Linka 43
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 4
 5
@@ -5253,16 +4842,14 @@ Tolerancia odchodov +-2min. Platnosť od 13.10.2025
 1
 1
 Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-4' *Pekárne 1
-Tolerancia odchodov +-2min.
+4' *Pekárne 1Tolerancia odchodov +-2min.
 VYSVETLIVKY:
 * zastávka na znamenie
 A neobsluhuje zastávku Eperia (jazdný čas -2 min.)
 smer Dulova Ves
 Odchody zo zastávky Veľká pošta
 Linka 44
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5
 6 02A
@@ -5289,8 +4876,7 @@ Platnosť od 12.4.2023
 smer Kpt. Nálepku
 Odchody zo zastávky Dulova Ves
 Linka 44
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 0' 2
 2
 2
@@ -5393,33 +4979,17 @@ E zo zastávky Solivar (nástupisko na otočke); F ďalej ako linka 28
 1
 1
 05
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk
-2
-*Varoš
-1'
-2
-Veľký Šariš
-33'
-2
-*Varoš
-32'
-2
-*Námestie sv.Jakuba
-31'
-2
-*Medulienka
-30'
-2
-*Staničná
-29'
-2
-*Pivovar
-28'
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764201 - www.dpmp.sk2 *Varoš 1'
+2 Veľký Šariš 33'
+2 *Varoš 32'
+2 *Námestie sv.Jakuba 31'
+2 *Medulienka 30'
+2 *Staničná 29'
+2 *Pivovar 28'
 smer Veľký Šariš
 Odchody zo zastávky Delňa
 Linka 45
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 školský prázdniny
 sobota,
@@ -5455,8 +5025,7 @@ Tolerancia odchodov +-2min. Platnosť od 12.3.2026
 smer Delňa
 Odchody zo zastávky Veľký Šariš
 Linka 45
-min. pásmo
-zastávka
+min. pásmo zastávka
 h.
 4
 5
@@ -5519,8 +5088,7 @@ Tolerancia odchodov +-2min. Platnosť od 1.6.2025
 14' Divadlo J.Záborského1
 15' Na Hlavnej 1
 17' Trojica 1
-20' Sabinovská, futbal aréna
-1
+20' Sabinovská, futbal aréna 1
 21' *Mičurinova 1
 22' *Pod Skalkou 1
 23' *Rázcestie Šidlovec 1
@@ -5534,8 +5102,7 @@ Tolerancia odchodov +-2min. Platnosť od 1.6.2025
 11' *Rázcestie Šidlovec 1
 12' *Pod Skalkou 1
 13' *Mičurinova 1
-14' Sabinovská, futbal aréna
-1
+14' Sabinovská, futbal aréna 1
 17' Trojica 1
 19' Na Hlavnej 1
 21' Veľká pošta 1
@@ -5548,8 +5115,7 @@ Tolerancia odchodov +-2min. Platnosť od 1.6.2025
 32' *Jesenná 1
 33' *Jelšová 1
 34' Delňa 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-+ premáva v nedeľu a sviatky; B zo zastávky Železničná stanica
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk+ premáva v nedeľu a sviatky; B zo zastávky Železničná stanica
 Tolerancia odchodov +-2min.
 VYSVETLIVKY:
 * zastávka na znamenie
@@ -5561,8 +5127,7 @@ Z po zastávku Železničná stanica, ďalej ako linka 28 do Ľubotíc
 smer Kpt.Nálepku
 Odchody zo zastávky Ruská Nová Ves
 Linka 46
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4
 5 00Z 55F 55D@
 6
@@ -5586,8 +5151,7 @@ Platnosť od 8.1.2023
 smer Ruská Nová Ves
 Odchody zo zastávky Veľká pošta
 Linka 46
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 4 42
 5 35 37@
 6 35 45+
@@ -5687,16 +5251,14 @@ Tolerancia odchodov +-2min.
 17' *Hulica
 18' Ruská Nová Ves
 0' Veľká pošta
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skTolerancia odchodov +-2min.
 VYSVETLIVKY:
 * všetky zastávky NA ZNAMENIE
 A po zastávku Železničná stanica
 smer Solivar - Pod Šalgovíkom
 Odchody zo zastávky Sídlisko III
 Linka N1
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 20
 21
 22
@@ -5711,8 +5273,7 @@ Platnosť od 9.11.2025
 smer Sídlisko III
 Odchody zo zastávky Pod Šalgovíkom
 Linka N1
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 Platnosť od 9.11.2025
 Tolerancia odchodov +-2min.
 *Clementisova
@@ -5878,22 +5439,19 @@ B ďalej pokračuje cez Sabinovskú po Dopravný podnik
 1
 1
 1
-min. pásmo
-zastávka
+min. pásmo zastávka
 4' *Pavla Horova 1
 5' *Lesnícka 1
 12' *Čierny most 1
 12' *Čierny most 1
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-Tolerancia odchodov +-2min.
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skTolerancia odchodov +-2min.
 VYSVETLIVKY:
 * všetky zastávky NA ZNAMENIE
 A po zastávku Trojica
 smer Sídlisko III
 Odchody zo zastávky Nižná Šebastová
 Linka N2
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 20
 21
 22
@@ -5908,8 +5466,7 @@ Platnosť od 1.6.2025
 smer Sibírska - Nižná Šebastová
 Odchody zo zastávky Sídlisko III
 Linka N2
-min. pásmo
-zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
+min. pásmo zastávka h. pracovný deň-školský pracovný deň-prázdniny sobota,nedeľa,sviatok
 Platnosť od 8.1.2025
 Tolerancia odchodov +-2min.
 07
@@ -6023,10 +5580,8 @@ D zo zastávky Trojica po zastávku Sibírska
 10' *Na Hlavnej
 11' *Veľká pošta
 12'
-*Železničná stanica
-14'
-*Nový Solivar
-15'
+*Železničná stanica 14'
+*Nový Solivar 15'
 16' *Košická
 17' *Chalupkova
 18' *Švábska
@@ -6052,8 +5607,7 @@ D zo zastávky Trojica po zastávku Sibírska
 1
 1
 1
-min. pásmo
-zastávka
+min. pásmo zastávka
 1
 1
 1
@@ -6068,8 +5622,7 @@ zastávka
 32'
 *Pažica
 Nižná Šebastová
-*Jurkovičova
-23'
+*Jurkovičova 23'
 24' *Karpatská
 25' *Sibírska
 28' *Pod nadjazdom
@@ -6082,10 +5635,8 @@ Nižná Šebastová
 1
 1
 1
-min. pásmo
-zastávka
-Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.sk
-čas zastávka čas zastávka čas zastávka čas zastávka čas zastávka čas zastávka čas čas zastávka
+min. pásmo zastávka
+Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764 201 - www.dpmp.skčas zastávka čas zastávka čas zastávka čas zastávka čas zastávka čas zastávka čas čas zastávka
 6:59 Za Kalváriou 7:07 Nám.J.Kolarčíka* 7:02 Teriakovce 7:10 Záborské 13:39 Karpatská - 13:56 Veľká pošta
 7:00 Hôrka * 7:08 Červený mostík * 7:03 OcÚ Teriakovce * 7:11 Záborské - stred * 13:40 Jurkovičova - 13:57 Čierny most
 7:01 Záhradkár. osada * 7:10 Gribľovec * 7:04 Na Kruhu * 7:08 Sibírska 7:12 Rázc. Záborské * 13:43 L. Novomeského - 13:59 Železničná stanica
@@ -6129,8 +5680,7 @@ Dopravný podnik mesta Prešov, a.s., Bardejovská 7, Ľubotice - tel.: 051 7764
 Pri preprave z I. tarifného pásma do II. tarifného pásma alebo opačným smerom 14:06
 je cestujúci povinný používať cestovné lístky platné pre celú sieť MHD. 15:06
 Dopravný podnik mesta Prešov, akciová spoločnosť www.dpmp.sk
-Bardejovská 7 ☎
-️ 051/7764201
+Bardejovská 7 ☎ ️ 051/7764201
 080 06 Ľubotice www.facebook.com/dpmpo
 nadväzuje na spoj linky č.
 13 z Podhradíka
@@ -6138,12 +5688,10 @@ nadväzuje na spoj linky č.
 žiakov z linky 21
 J
 Vysvetlivky:
-Zachádzky k základným školám, vykonávané v rámci riadnych spojov ráno
-S
+Zachádzky k základným školám, vykonávané v rámci riadnych spojov ráno S
 Zachádzky k základným školám, vykonávané v rámci riadnych spojov popoludní
 odvoz do Malého Šariša
-odvoz do Kanaša
-14
+odvoz do Kanaša 14
 23
 ZŠ Veľký Šariš
 ZŠ Čsl. Armády
@@ -6151,15 +5699,9 @@ ZŠ Čsl. Armády
 R
 ŠKOLSKÉ SPOJE PLATNÉ OD 1. 9. 2026
 ŠKOLSKÉ SPOJE PREMÁVAJÚ LEN V DŇOCH ŠKOLSKÉHO VYUČOVANIA
-T
-E D
-F C
-P
-A
+T E D F C P A
 čaká na prestup
 žiakov z linky 27
 II. tarifné pásmo
-M
-K
-H
-
+M K
+H
