@@ -16,6 +16,7 @@ Klikateľná ukážka návrhu: [`jednoduchy-rezim-ukazka.html`](jednoduchy-rezim
 5. **Karta nepovie, kedy vyraziť z domu, a neoznačí spoj na zajtra.** Chôdza na prvú zastávku (medián 4 min) na karte chýba a ranný spoj vyzerá ako dnešný.
 6. **Našlo sa 6 chýb v plánovači a 5 na obrazovke** (kapitoly 3.6 a 4.3). Najvážnejšia z nich sa medzi vyťaženými zastávkami neprejavila ani raz.
 7. **Pre deti a seniorov navrhujem „jednoduchý režim“:** veľké dlaždice cieľov, jedna odpoveď vo vetách, sprevádzanie krok za krokom, tlačidlá „Kde som?“ a „Zavolať“. Ukážka je priložená.
+8. **Režim človeka na zastávku aj dovedie** (doplnené, kapitola 5.5): veľká šípka so vzdialenosťou, mapka, obrázok tabule zastávky a jedna kontrolná otázka, či stojí na správnom mieste. Až 61 % nástupíšť má do 60 m ďalšie nástupište s rovnakým menom, preto samotná poloha nestačí.
 
 ## 2. Ako sa meralo
 
@@ -186,6 +187,20 @@ Obrazovky sú v priloženej ukážke. Používa skutočné spoje zo štvrtka 12.
 |---|---|---|---|
 | ![](obrazky/jr-guide-ride.png) | ![](obrazky/jr-alert.png) | ![](obrazky/jr-where.png) | ![](obrazky/jr-night.png) |
 
+Navádzanie pešo na zastávku (kapitola 5.5):
+
+| Úvod | Šípka | Mapka | Pri zastávke |
+|---|---|---|---|
+| ![](obrazky/jr-nav-uvod.png) | ![](obrazky/jr-nav-sipka.png) | ![](obrazky/jr-nav-mapka.png) | ![](obrazky/jr-nav-tabula.png) |
+
+| Kontrola čísla | Kontrola smeru | Odpoveď „Nie“ | Odpoveď „Neviem“ |
+|---|---|---|---|
+| ![](obrazky/jr-nav-kontrola.png) | ![](obrazky/jr-nav-strana.png) | ![](obrazky/jr-nav-oprava.png) | ![](obrazky/jr-nav-neviem.png) |
+
+| Zlý smer | Ťukol priskoro | Nestíha | Pešo do cieľa |
+|---|---|---|---|
+| ![](obrazky/jr-nav-zle.png) | ![](obrazky/jr-nav-daleko.png) | ![](obrazky/jr-nav-nestiha.png) | ![](obrazky/jr-nav-ciel.png) |
+
 ### 5.1 Zásady
 
 1. **Žiadne písanie pri bežnom použití.** Úvod tvorí 4–6 veľkých dlaždíc cieľov (obrázok + slovo), ktoré raz nastaví dospelý.
@@ -225,7 +240,109 @@ Konkrétne hodnoty (3 minúty, tempo, 400–500 m) sú návrh. Treba ich potvrdi
 3. **Tlačidlo „Zavolať“.** Stačí otvoriť telefón s uloženým číslom, nové povolenie netreba. Poslanie polohy SMS-kou navrhujem nechať na neskôr.
 4. **Minimálna rezerva na prestup aj v bežnom režime.** 2 minúty by znamenali neskorší príchod v 7 % hľadaní (medián o 5 min). Odporúčam aspoň tesný prestup na karte označiť.
 
+### 5.5 Navádzanie pešo na zastávku (doplnené 11. 11. 2026)
+
+Dieťa ani senior často nevie, ako sa zastávka volá, ani kde je. Pokyn „Choď na zastávku Sibírska“ im preto nestačí. Jednoduchý režim má človeka na zastávku **doviesť** a pomôcť mu **spoznať správne nástupište**. V ukážke je to prvý krok po ťuknutí na „Sprevádzaj ma“; chôdza sa v nej krokuje žltým tlačidlom „Idem ďalej“ v hornej lište.
+
+**Čo je na obrazovke**
+
+1. **Úvod pri prvých cestách.** „Najprv sa zastav. Drž telefón pred sebou, displejom hore. Šípka sa otáča spolu s tebou.“ A hneď aj pravidlo: pri chôdzi sa pozerať pred seba, nie do telefónu.
+2. **Veľká šípka a vzdialenosť.** Šípka v kruhu (104 px, na nízkom displeji 96 px) ukazuje priamo na nástupište. Vedľa nej sú metre, minúty a „✓ stíhaš“. Pod ňou jedna krátka veta („Choď rovno.“, „Otoč sa trochu doľava.“, „Otoč sa. Zastávka je za tebou.“) a stála pripomienka **„Cez cestu len po priechode.“**
+3. **Zlý smer.** Keď sa vzdialenosť zväčšuje, karta sčervenie, telefón zavibruje a povie „Ideš opačným smerom. Otoč sa.“ Porovnáva sa len vzdialenosť, takže to funguje aj bez kompasu a s telefónom vo vrecku.
+4. **Mapka na jedno ťuknutie.** Otáča sa s človekom: čo má pred sebou, je hore. Sú na nej ulice (s názvom, kde sa zmestí), modrá bodka (ty), zelený štvorec s fajkou (tvoja zastávka), sivý krúžok s krížikom a nápisom „tu nie“ (iné nástupište s rovnakým menom) a čierna šípka smeru, ktorým autobus odíde. Čiara od človeka k zastávke sa zámerne nekreslí, aby nikoho neviedla cez cestu.
+5. **Blízko zastávky (do 40 m) sa obrazovka zmení** na obrázok tabule s názvom zastávky. Číslo autobusu sa na nej zvýrazní len tam, kde ním zastávku naozaj spozná; pri zastávkach oproti sebe majú to isté číslo obe, preto tam appka napíše „Zastávky Na Hlavnej sú tu dve, oproti sebe. Pri zastávke sa ťa opýtam, či stojíš na správnej strane.“ Na takú vzdialenosť je poloha nepresná, preto ďalej vedie zrak, nie šípka.
+6. **Jedna kontrolná otázka pri zastávke** (ďalej).
+7. **Hlas a vibrácie.** Krátky pokyn sa povie sám pri každej zmene: na začiatku, cestou, blízko zastávky, pri zlom smere a pri otázke. Hlas povie aj to, že medzi človekom a zastávkou je ulica, a pripomenie priechod. Tlačidlo „Čítaj“ pokyn zopakuje. Sám od seba hovorí len telefón, ktorý má slovenský alebo český hlas (tak je to aj v dnešnej appke).
+8. **Tá istá obrazovka pri presadaní a na ceste do cieľa:** „Teraz choď na zastávku …“ a „Choď do cieľa“.
+
+**Prečo nestačí doviesť na súradnice**
+
+Merané nad celým cestovným poriadkom (459 nástupíšť s odchodmi, 260 mien zastávok):
+
+- 85,6 % nástupíšť má ďalšie nástupište s rovnakým menom; 43,4 % ho má do 30 m a 61,0 % do 60 m. Poloha telefónu kolíše o 10–20 m, takže stranu cesty spoľahlivo nerozlíši. Dnešný režim cesty pritom považuje človeka za „na zastávke“ už 45 m od nej.
+- Zastávka sa väčšinou volá inak ako ulica, na ktorej stojí (zastávka Sibírska je na Vihorlatskej). Názov ulice sa dá uviesť pri 75,4 % nástupíšť.
+- Orientačný bod, ktorý spozná aj dieťa (škola, kostol, veľký obchod), je do 60 m asi pri pätine nástupíšť. Vetu „zastávka je pri …“ preto appka použije len tam, kde taký bod naozaj je; v ukážke nie je ani raz.
+
+Čím sa nástupištia s rovnakým menom dajú odlíšiť (1 644 kombinácií nástupište × linka × smer; ďalšie nástupište sa berie do 150 m):
+
+| Prípad | Podiel | Čo appka urobí |
+|---|---|---|
+| Iné nástupište s rovnakým menom do 150 m nie je | 19,3 % | nič sa nepýta, stačí poloha |
+| Iné nástupište túto linku nemá | 21,5 % | „Pozri sa na tabuľu zastávky. Je na nej číslo 8?“ |
+| Z iného nástupišťa ide linka opačným smerom (rozdiel smeru viac než 90°; v 45,3 % takmer presne oproti) | 55,4 % | „Postav sa tvárou k ceste. Kam ukazuje šípka?“ |
+| Linka ide z oboch nástupíšť podobným smerom (19 zastávok) | 3,8 % | v 57 zo 62 prípadov rozhodne názov nasledujúcej zastávky; vo zvyšných ide linka z oboch na tú istú zastávku, takže je jedno, kde nastúpi |
+
+Otázka sa kladie, keď je iné nástupište bližšie než 60 m (51 % kombinácií) alebo keď človek ťukol „Som na zastávke“ sám. Ak ho priviedla poloha a iné nástupište je ďalej, otázka netreba. V ukážke sú tri najčastejšie situácie: Sibírska (číslo linky, 38 m), Na Hlavnej (smer, 46 m) a Škára (smer, 106 m).
+
+**Otázka pri zastávkach oproti sebe.** Šípka na obrazovke ukazuje smer, ktorým autobus odíde, a otáča sa s telefónom. Jazdí sa vpravo, takže kto stojí pri správnej zastávke tvárou k ceste, tomu autobus odchádza **doprava**; na opačnej strane by šípka ukazovala doľava. Otázka má preto len dve veľké odpovede, „Doľava“ a „Doprava“, a netreba pri nej sledovať premávku. V dátach to sedí: nástupište leží vpravo od osi ulice v smere jazdy v 94 % merateľných prípadov (487 z 518).
+
+**Odpovede na kontrolnú otázku**
+
+- **Áno / Doprava** → „✓ Si na správnej zastávke“ a čakanie. Fajka sa ukáže len po správnej odpovedi alebo keď správne miesto potvrdí poloha; inak je čakanie bez nej.
+- **Nie / Doľava** → krátke vysvetlenie („Odtiaľto ide autobus 1 opačným smerom. Tvoja zastávka je na druhej strane cesty, asi 45 m.“), navedenie šípkou s výstrahou „Zastávka je za cestou. Prejdi len po priechode.“ a po príchode tá istá otázka znova. Druhé „Nie“ už nikam neposiela.
+- **Neviem** → nikam ho neposiela. Pri zastávkach oproti sebe: „Ostaň stáť tu. Keď príde autobus, pozri sa naň spredu. Nastúp, len ak má číslo 1 a nápis Solivar.“ Pri otázke na číslo: „Na tabuli alebo na papieri s časmi autobusov má byť číslo 8. Ak tam nie je, tvoja zastávka je asi 40 m odtiaľto.“ s tlačidlami „Počkám tu“, „Ukáž mi druhú zastávku“ a „Zavolať“.
+- **„Som na zastávke“ ťuknuté priskoro** (poloha ukazuje viac než 40 m) → „Telefón si myslí, že si ešte 95 m od zastávky. Stojíš pri tabuli s názvom Sibírska?“ Prvá voľba je „Nie, veď ma ďalej“.
+
+**Čas a ďalšie stavy**
+
+- Stav sa má počítať z odchodu autobusu a zostávajúcej chôdze: „✓ stíhaš“; pri tesnej rezerve „Autobus príde o chvíľu. Nebež.“; keď to už nevyjde, „Tento autobus už nestihneš. Nič sa nedeje. Nebež. Ďalší autobus ide o 7:41.“ a plán sa prepne na ďalší spoj. Pokyn „bež“ appka nedá nikdy. V ukážke je „stíhaš“ napevno a „nestihneš“ sa vyvolá tlačidlom „Meškám“.
+- Zastávka na znamenie pri nástupe: „Keď prichádza autobus 46, zdvihni ruku.“ Presné znenie treba zosúladiť s prepravným poriadkom DPMP.
+- Obrazovka čakania ukazuje číslo autobusu a nápis, ktorý má vpredu.
+- Stavy, ktoré ukážka nemá a appka ich potrebuje: poloha ešte nie je známa („Ešte hľadám, kde si. Postoj chvíľu vonku.“); telefón bez kompasu („Urob pár krokov rovno“ a potom len „blížiš sa / vzďaľuješ sa“); telefón držaný pri tele alebo naležato („Podrž telefón pred sebou“); človek už stojí na zastávke, keď cestu spustí (rovno kontrolná otázka).
+- Navrhujem aj poistku po nástupe. Dnes appka v prípade, že človek nastúpi do iného autobusu, najskôr minútu po odchode napíše „Spoj ti pravdepodobne ušiel“ a naplánuje cestu z miesta, kde práve je – teda z idúceho autobusu. Nepovie mu, že sedí v inom autobuse. Má povedať: „Si v inom autobuse. Vystúp na ďalšej zastávke.“
+
+**Ako sa to zapojí do appky**
+
+Navádzanie je prvý krok dnešného režimu cesty, len inak nakreslený. Väčšina potrebného v appke už je:
+
+| Čo treba | Stav vo v1.7.3 |
+|---|---|
+| Poloha, kompas, vibrácie, hlas | je |
+| Sledovanie cesty pri zhasnutom displeji | len v Android appke |
+| Kroky cesty „na zastávku → čakaj → jazda → do cieľa“ | je (režim cesty) |
+| Šípka na zastávku so vzdialenosťou | je, ale malá (kruh 38 px, text 13–15 px); bez kompasu ukazuje „voči severu“ |
+| Mapa bez internetu s ulicami a názvami | je, ale so severom hore; otáčať sa nevie |
+| Súradnice každého nástupišťa a linky na ňom | je v dátach |
+| Smer odchodu autobusu z nástupišťa | je, ale ako vzdušný smer k ďalšej zastávke; pri Sibírskej sa od ulice líši o 48° |
+| Automatické „si na zastávke“, „nastúpil si“, „spoj ti ušiel“ | je |
+
+Dorobiť treba:
+
+1. veľkú obrazovku so šípkou, vetami, stavom času a úvodom,
+2. rozpoznanie zlého smeru zo zmeny vzdialenosti,
+3. obrázok tabule, výber kontrolnej otázky podľa tabuľky vyššie a jej odpovede,
+4. overenie ručného „Som na zastávke“ a fajku len po overení,
+5. pri zostavovaní dát: názov ulice pri nástupišti, smer odchodu zrovnaný s ulicou, čím sa nástupište líši od ostatných a ktoré ulice a potoky sú v ceste (v ukážke to už počíta skript v podkladoch),
+6. otáčanú mapku (vlastné kreslenie z uložených ulíc) – najprácnejšia časť,
+7. náhradu pre telefón bez kompasu a poistku „si v inom autobuse“,
+8. texty v dvoch podobách: tykanie pre deti, vykanie pre dospelých a seniorov, bez rodových koncoviek („Som v autobuse“ namiesto „Nastúpil som“). Voľba je v chránených nastaveniach; ukážka zatiaľ tyká.
+
+Odkaz do Google Maps sa v jednoduchom režime nepoužije (zásada z 5.3: žiadny odchod z appky jedným ťuknutím).
+
+**Obmedzenia**
+
+- **Šípka vedie vzdušnou čiarou.** Sieť chodníkov a priechodov appka nemá (v dátach je pre celé mesto 119 úsekov peších ciest – chodníky, cestičky, schody, cyklotrasy – bez priechodov a bez nadväznosti). Nepovie „prejdi cez priechod tu“ a neobíde dom ani plot. Vie len upozorniť, že medzi človekom a zastávkou je ulica alebo potok („Medzi tebou a zastávkou je ulica Tekeľova“), a stále pripomínať priechod.
+- **Otázka „Kam ukazuje šípka?“ potrebuje kompas** a predpokladá bežnú ulicu, kde autobus stojí pri pravom okraji. V zálive, na konečnej s viacerými stanovišťami alebo pri rozladenom kompase pomôže len odpoveď „Neviem“ a nápis na autobuse. Treba ju vyskúšať v teréne.
+- **Kompas telefónu býva nepresný** pri autách a kove a niektoré lacnejšie telefóny ho nemajú. Preto poistka zo vzdialenosti a náhrada bez kompasu.
+- **Prahy 40 m (zmena obrazovky), 15 m (príchod) a 60 m (kedy sa pýtať) sú odhad** a treba ich doladiť v teréne.
+- **Neoveril som, čo je na označníkoch DPMP.** Otázka „Je na tabuli číslo 8?“ predpokladá, že na označníku alebo na vyvesenom cestovnom poriadku sú čísla liniek.
+- **Veľké uzly** (Železničná stanica, Trojica, Veľká pošta) majú v dátach menej nástupíšť než v skutočnosti.
+- **Bez ľudí.** Ani táto časť nebola skúšaná s deťmi a seniormi.
+
+**Ako bol návrh preverený.** Obrazovky prešli dvoma kolami nezávislého posudku: z pohľadu dieťaťa, seniora a technického overovateľa, ktorý prepočítal čísla vlastnými skriptmi a porovnal tvrdenia s kódom appky. Prvé kolo našlo štyri vážne veci: fajku „si na správnej zastávke“ bez overenia, odpoveď „neviem“, ktorá človeka poslala cez cestu, čiaru na mapke vedúcu cez vozovku a chýbajúci pokyn pozerať pred seba. Druhé kolo potvrdilo, že žiadny z 18 nálezov neostal neopravený (13 úplne, 5 čiastočne), a našlo ďalšie: zvýraznené číslo linky pri zastávkach oproti sebe, upozornenie na priechod chýbajúce v hlase a pri oprave, šípku autobusu mieriacu na človeka. Aj tie sú zapracované. Posledná úprava – otázka „Kam ukazuje šípka?“ namiesto porovnávania s premávkou – vznikla až po druhom kole; prešla automatickým testom ukážky (220 obrazoviek na štyroch veľkostiach displeja) a kontrolou na dátach, posudzovatelia ju už nevideli.
+
+**Druhá etapa:** doplniť do dát chodníky a priechody z OpenStreetMap. Mapka by potom ukázala skutočnú cestu a appka by vedela povedať „prejdi cez priechod“. Je to väčšia práca a zväčší appku; veľkosť treba najprv zmerať.
+
+**Čo treba rozhodnúť alebo overiť**
+
+1. Čo je na označníkoch zastávok v Prešove (čísla liniek?) – podľa toho znenie kontrolnej otázky.
+2. Či má byť mapka už v prvej verzii, alebo stačí šípka a obrázok tabule.
+3. Tykanie a vykanie: či stačí voľba v nastaveniach, alebo sa má režim pýtať pri prvom spustení.
+4. Skúška v teréne aspoň na troch zastávkach z ukážky (Sibírska, Na Hlavnej, Škára), najmä otázka „Kam ukazuje šípka?“.
+
 ## 6. Odporúčané poradie prác
+
+**Rozhodnutie z 11. 11. 2026: rieši sa teraz len balík C (jednoduchý režim).** Balíky A a B počkajú.
 
 **A. Opravy bez zmeny vzhľadu (malé, dajú sa vydať ako 1.7.4)**
 
@@ -249,9 +366,10 @@ Konkrétne hodnoty (3 minúty, tempo, 400–500 m) sú návrh. Treba ich potvrdi
 
 1. Tlačidlo „Sprevádzaj ma“ na každej karte spojenia (predpoklad pre celý režim, užitočné aj v bežnom).
 2. Úvodná obrazovka režimu, odpoveď vo vetách, pravidlá plánovania z 5.2.
-3. „Kde som?“ a „Zavolať“.
-4. Chránené nastavenia a ochrany z 5.3.
-5. Skúška s 3–5 seniormi a 3–5 deťmi pred vydaním.
+3. Navádzanie pešo na zastávku z 5.5: najprv šípka, zlý smer, tabuľa a kontrolná otázka; mapka a náhrada bez kompasu ako druhý krok.
+4. „Kde som?“ a „Zavolať“.
+5. Chránené nastavenia a ochrany z 5.3.
+6. Skúška s 3–5 seniormi a 3–5 deťmi pred vydaním, vrátane cesty na zastávku v teréne.
 
 ## 7. Obmedzenia analýzy
 
@@ -270,3 +388,5 @@ Konkrétne hodnoty (3 minúty, tempo, 400–500 m) sú návrh. Treba ich potvrdi
 - `podklady/harness.mjs` – spustí skutočné plánovanie appky mimo prehliadača.
 - `podklady/oracle.mjs` – nezávislý výpočet najlepšieho spojenia.
 - `podklady/raptor-oprava-stitkov.diff` – skúšobná oprava chýb 1 a 2 (nie je nasadená).
+- `podklady/nastupistia-rozlisenie.mjs` – čísla z kapitoly 5.5: nástupištia s rovnakým menom, čím sa dajú odlíšiť, názvy ulíc a orientačné body.
+- `podklady/navadzanie-data.mjs` – príprava skutočných dát pre obrazovky navádzania v ukážke (vzdialenosti, smery, mapky).

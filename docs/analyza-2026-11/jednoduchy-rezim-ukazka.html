@@ -153,6 +153,54 @@
   .big-msg .ico { font-size: 4rem; }
   .big-msg h2 { font-size: 2rem; line-height: 1.15; margin: .4rem 0; }
   .big-msg p { font-size: 1.35rem; margin: .4rem 0; }
+  /* navádzanie pešo na zastávku */
+  .walk { background: var(--card); border-radius: var(--r); padding: .7rem .9rem .85rem; border: 3px solid var(--green); }
+  .walk.bad { border-color: var(--red); background: #fff4f1; }
+  .w-lbl { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--muted); }
+  .plate { display: inline-flex; align-items: center; gap: .5rem; margin-top: .25rem; padding: .15rem .7rem .15rem .35rem; border: 3px solid var(--ink); border-radius: 10px; background: #fff; font-weight: 800; font-size: 1.4rem; letter-spacing: .02em; text-transform: uppercase; line-height: 1.2; }
+  .plate .pi { background: var(--blue); border-radius: 6px; padding: 0 .25rem; font-size: 1.3rem; }
+  .w-row { display: flex; align-items: center; gap: 1rem; margin-top: .65rem; }
+  .compass { flex: none; width: 104px; height: 104px; border-radius: 50%; border: 5px solid var(--green); background: var(--green-soft); display: grid; place-items: center; }
+  .compass svg { width: 72px; height: 72px; transition: transform .5s ease; fill: var(--green); }
+  .compass.sm { width: 64px; height: 64px; border-width: 4px; } .compass.sm svg { width: 44px; height: 44px; }
+  .compass.bus { border-color: #9a4a00; background: #fff1dd; } .compass.bus svg { fill: #9a4a00; }
+  .walk.bad .compass { border-color: var(--red); background: #ffe1d9; } .walk.bad .compass svg { fill: var(--red); }
+  .w-dist b { display: block; font-size: 2.7rem; line-height: 1; font-weight: 800; white-space: nowrap; }
+  .w-dist > span { display: block; margin-top: .2rem; font-size: 1.2rem; font-weight: 600; color: var(--muted); }
+  .w-dist > span.ok { color: var(--green); font-weight: 800; }
+  .w-say { margin: .6rem 0 0; font-size: 1.3rem; font-weight: 800; line-height: 1.25; }
+  .walk.bad .w-say { color: var(--red); }
+  .w-safe { margin: .45rem 0 0; font-size: 1rem; font-weight: 700; line-height: 1.3; color: var(--warn-ink); background: var(--warn-bg); border-radius: 10px; padding: .25rem .6rem; }
+  .now .w-safe { text-align: left; font-size: 1.1rem; }
+  .line-badge.sm { font-size: 1.1rem; min-width: 1.9rem; padding: 0 .35rem; border-radius: 7px; }
+  .busdir { width: 108px; height: 108px; margin: .6rem auto .4rem; border-radius: 50%; border: 4px dashed var(--ink); background: #fff; display: grid; place-items: center; }
+  .busdir svg { width: 78px; height: 78px; fill: var(--ink); transition: transform .5s ease; }
+  .now .q { font-size: 1.5rem; font-weight: 700; }
+  .actions { position: relative; }
+  .more { display: none; position: absolute; top: 2px; left: 50%; transform: translateX(-50%); border: 0; background: var(--ink); color: #fff; border-radius: 999px; padding: 0 1rem; font-size: 1rem; line-height: 1.6; font-weight: 700; white-space: nowrap; }
+  .screen.has-more .more { display: block; }
+  .screen.has-more .actions { padding-top: 32px; }
+  .pair.big .secondary { min-height: 72px; font-size: 1.35rem; font-weight: 800; }
+  .now .pre { margin: 0 0 .15rem; font-size: 1.2rem; font-weight: 700; color: var(--muted); }
+  .w-ok { margin-top: 10px; background: var(--green-soft); color: var(--green); font-weight: 800; border-radius: 14px; padding: .55rem .9rem; font-size: 1.15rem; line-height: 1.3; }
+  .w-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .3rem .75rem; }
+  .w-head > :first-child { flex: 1 1 8rem; min-width: 0; }
+  .w-head b { display: block; font-size: 2rem; line-height: 1.05; font-weight: 800; }
+  .sign { border: 3px solid var(--ink); border-radius: 12px; overflow: hidden; margin-top: .35rem; background: #fff; }
+  .sign-top { background: var(--blue); color: #fff; padding: .3rem .7rem; font-weight: 800; font-size: 1.4rem; text-transform: uppercase; letter-spacing: .02em; display: flex; gap: .5rem; align-items: center; line-height: 1.2; }
+  .sign-lines { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: .3rem .5rem; }
+  .sign-lines span { min-width: 2.3rem; text-align: center; border: 2px solid var(--line); border-radius: 8px; font-weight: 700; padding: 0 .3rem; font-size: 1.05rem; color: var(--muted); }
+  .sign-lines em { font-style: normal; font-weight: 600; font-size: 1rem; color: var(--muted); }
+  .sign-lines span.on { background: var(--green); color: #fff; border-color: var(--green); font-size: 1.6rem; font-weight: 800; min-width: 2.9rem; }
+  .warn-box { margin-top: 10px; background: var(--warn-bg); color: var(--warn-ink); border-radius: 14px; padding: .6rem .9rem; font-size: 1.1rem; font-weight: 600; border: 2px solid #b98a1e; line-height: 1.35; }
+  .mapbox { margin-top: .5rem; border-radius: 14px; overflow: hidden; border: 2px solid var(--line); background: #dfe4dc; }
+  .mapbox svg { display: block; width: 100%; height: auto; }
+  .mapbox text { font: 700 16px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; fill: #263033; paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; text-anchor: middle; dominant-baseline: central; }
+  .legend { display: flex; flex-wrap: wrap; gap: .1rem .9rem; font-size: 1rem; font-weight: 700; color: var(--ink); margin: .4rem 0 0; padding: 0; list-style: none; }
+  .legend i { display: inline-block; width: 1rem; height: 1rem; border-radius: 50%; vertical-align: -.12rem; margin-right: .3rem; }
+  .legend .lg-me { background: #1a5fd0; } .legend .lg-st { background: #075c2b; border-radius: 3px; } .legend .lg-no { background: #5d6568; }
+  .demo .sim { background: #ffd24a; color: #1d2a22; border-color: #ffd24a; font-weight: 800; }
+  .demo.many { flex-wrap: wrap; row-gap: .3rem; gap: .35rem; } .demo.many > span { display: none; } .demo.many button { padding: .2rem .55rem; font-size: .9rem; }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .pair .secondary { font-size: 1.08rem; line-height: 1.2; padding: .3rem .5rem; }
   /* nízke displeje: menšie dlaždice, aby sa zmestili štyri ciele */
@@ -161,6 +209,9 @@
     .tile { min-height: 104px; } .tile .ico { font-size: 2rem; } .tile .name { font-size: 1.4rem; }
     .tile.wide { min-height: 76px; }
     .now { padding: .8rem .75rem; } .now .ico { font-size: 2.4rem; } .now h2 { font-size: 1.6rem; }
+    .walk { padding: .55rem .75rem .7rem; } .compass { width: 96px; height: 96px; } .compass svg { width: 66px; height: 66px; }
+    .w-dist b { font-size: 2.3rem; } .w-row { margin-top: .5rem; gap: .8rem; } .plate { font-size: 1.25rem; } .w-say { font-size: 1.2rem; margin-top: .45rem; }
+    .dots { padding-top: .4rem; } .w-lbl { font-size: 1.05rem; } .busdir { width: 92px; height: 92px; } .busdir svg { width: 64px; height: 64px; }
     .primary { min-height: 64px; font-size: 1.35rem; } .actions { padding: 10px .75rem; gap: 8px; }
     .help { padding: 8px .75rem calc(8px + env(safe-area-inset-bottom)); } .help button { min-height: 60px; }
     .scroll { padding: .75rem .75rem 1rem; }
@@ -173,6 +224,9 @@
     <span class="d-long"><b>Ukážka návrhu</b> · reálne spoje zo štvrtka 12. 11. 2026</span><span class="d-short"><b>Ukážka</b></span>
     <button id="demoDay" aria-pressed="true">Ráno 7:10</button>
     <button id="demoNight" aria-pressed="false">Noc 23:40</button>
+    <button id="simNext" class="sim" hidden>▶ Idem ďalej</button>
+    <button id="simBad" hidden>↺ Idem zle</button>
+    <button id="simLate" hidden>⏱ Meškám</button>
   </div>
 
   <div class="phone" id="phone">
@@ -254,27 +308,27 @@
 // Vybrané podľa navrhovaných pravidiel jednoduchého režimu: radšej bez presadania,
 // na presadnutie aspoň 3 minúty, pomalšia chôdza (0,9 m/s) + 1 min rezerva na zastávku.
 const DEMO = {
-  skola: { ico: '🏫', name: 'Škola', dest: 'Trojica', options: [
+  skola: { ico: '🏫', name: 'Škola', to: 'do školy', dest: 'Trojica', options: [
     { leave: '7:21', inMin: 11, walk: 2, stop: 'Sibírska', arr: '7:43', rides: [
       { line: '8', board: '7:25', sign: 'Sídlisko III', out: 'Trojica', nth: 11, outAt: '7:43', request: false } ] },
     { leave: '7:37', inMin: 27, walk: 2, stop: 'Sibírska', arr: '7:54', rides: [
       { line: '32', board: '7:41', sign: 'Trojica', out: 'Trojica', nth: 8, outAt: '7:54', request: false } ] } ] },
-  lekar: { ico: '🏥', name: 'Lekár', dest: 'Fakultná nemocnica', options: [
+  lekar: { ico: '🏥', name: 'Lekár', to: 'k lekárovi', dest: 'Fakultná nemocnica', options: [
     { leave: '7:24', inMin: 14, walk: 2, stop: 'Sibírska', arr: '7:37', rides: [
       { line: '12', board: '7:28', sign: 'Šidlovec', out: 'Fakultná nemocnica', nth: 7, outAt: '7:37', request: false } ] },
     { leave: '7:33', inMin: 23, walk: 2, stop: 'Sibírska', arr: '7:59', rides: [
       { line: '10', board: '7:37', sign: 'Nemocnica', out: 'Fakultná nemocnica', nth: 14, outAt: '7:59', request: false } ] } ] },
-  babka: { ico: '👵', name: 'Babka', dest: 'Solivar', options: [
-    { leave: '7:21', inMin: 11, walk: 2, stop: 'Sibírska', arr: '7:50', finalWalk: 6, rides: [
+  babka: { ico: '👵', name: 'Babka', to: 'k babke', dest: 'Solivar', options: [
+    { leave: '7:21', inMin: 11, walk: 2, stop: 'Sibírska', arr: '7:50', finalWalk: 4, rides: [
       { line: '8', board: '7:25', sign: 'Sídlisko III', out: 'Škára', nth: 6, outAt: '7:34', request: true },
       { line: '46', board: '7:40', sign: 'Ruská Nová Ves', out: 'Múzeum Solivar', nth: 3, outAt: '7:44', request: true, changeWalk: 2, spare: 3 } ] },
     { leave: '7:37', inMin: 27, walk: 2, stop: 'Sibírska', arr: '8:09', rides: [
       { line: '32', board: '7:41', sign: 'Trojica', out: 'Na Hlavnej', nth: 7, outAt: '7:52', request: false },
-      { line: '1', board: '7:57', sign: 'Solivar', out: 'Solivar', nth: 8, outAt: '8:09', request: false, changeWalk: 2, spare: 3 } ] } ] },
-  obchod: { ico: '🛒', name: 'Obchod', dest: 'Eperia', options: [
-    { leave: '7:27', inMin: 17, walk: 2, stop: 'Sibírska', arr: '7:41', finalWalk: 5, rides: [
+      { line: '1', board: '7:57', sign: 'Solivar', out: 'Solivar', nth: 8, outAt: '8:09', request: false, changeWalk: 1, spare: 3 } ] } ] },
+  obchod: { ico: '🛒', name: 'Obchod', to: 'do obchodu', dest: 'Eperia', options: [
+    { leave: '7:27', inMin: 17, walk: 2, stop: 'Sibírska', arr: '7:41', finalWalk: 3, rides: [
       { line: '32A', board: '7:31', sign: 'Okružná – Trojica', out: 'Rusínska', nth: 3, outAt: '7:36', request: true } ] },
-    { leave: '7:14', inMin: 4, walk: 2, stop: 'Sibírska', arr: '7:32', finalWalk: 9, rides: [
+    { leave: '7:14', inMin: 4, walk: 2, stop: 'Sibírska', arr: '7:32', finalWalk: 8, rides: [
       { line: '38', board: '7:18', sign: 'Sídlisko III', out: 'Martina Benku', nth: 3, outAt: '7:23', request: false } ] } ] },
 };
 const NIGHT = { stop: 'Cemjata', line: '18', first: '5:03' }; // reálne: po 23:40 ide prvý spoj až 5:03
@@ -288,9 +342,10 @@ function show(id) {
   for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
   const sc = document.querySelector(`#${id} .scroll`); if (sc) sc.scrollTop = 0;
   const h = document.querySelector(`#${id} h1`); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
+  if (typeof simBar === 'function') simBar();
 }
-function sheet(html) { $('sheet').innerHTML = html; $('veil').hidden = false; const b = $('sheet').querySelector('button'); if (b) b.focus(); }
-function closeSheet() { $('veil').hidden = true; }
+function sheet(html) { $('sheet').innerHTML = html; $('veil').hidden = false; simBar(); const b = $('sheet').querySelector('button'); if (b) b.focus(); }
+function closeSheet() { $('veil').hidden = true; simBar(); }
 $('veil').addEventListener('click', (e) => { if (e.target === $('veil')) closeSheet(); });
 
 // ── domov ──
@@ -315,8 +370,8 @@ function renderPlan() {
   $('planTitle').textContent = `${d.ico} ${d.name}`;
   const steps = [`<li><span class="ico" aria-hidden="true">🚶</span><div><div class="main">Choď na zastávku ${o.stop}</div><div class="sub">${mins(o.walk)} pešo</div></div></li>`];
   o.rides.forEach((r, i) => {
-    if (i > 0) steps.push(`<li><span class="ico" aria-hidden="true">🔁</span><div><div class="main">Prejdi na druhé nástupište</div><div class="sub">${mins(r.changeWalk)} pešo · potom máš ešte ${mins(r.spare)} čas</div></div></li>`);
-    steps.push(`<li><span class="ico" aria-hidden="true">🚌</span><div><div class="main">Nastúp do autobusu <span class="line-badge">${r.line}</span> o ${r.board}</div><div class="sub">Na tabuli má napísané: <b>${r.sign}</b></div></div></li>`);
+    if (i > 0) steps.push(`<li><span class="ico" aria-hidden="true">🔁</span><div><div class="main">Prejdi k ďalšiemu autobusu</div><div class="sub">${mins(r.changeWalk)} pešo, dovediem ťa · potom máš ešte ${mins(r.spare)} času</div></div></li>`);
+    steps.push(`<li><span class="ico" aria-hidden="true">🚌</span><div><div class="main">Nastúp do autobusu <span class="line-badge">${r.line}</span> o ${r.board}</div><div class="sub">Vpredu má napísané: <b>${r.sign}</b></div></div></li>`);
     steps.push(`<li><span class="ico" aria-hidden="true">🔔</span><div><div class="main">Vystúp na zastávke ${r.out}</div><div class="sub">Je to ${r.nth}. zastávka · o ${r.outAt}${r.request ? ' · pred ňou <b>stlač STOP</b>' : ''}</div></div></li>`);
   });
   if (o.finalWalk) steps.push(`<li><span class="ico" aria-hidden="true">🚶</span><div><div class="main">Dôjdi pešo do cieľa</div><div class="sub">${mins(o.finalWalk)} pešo</div></div></li>`);
@@ -328,71 +383,398 @@ function renderPlan() {
     <ol class="steps">${steps.join('')}</ol>`;
   const other = d.options[1 - optIdx];
   $('planActions').innerHTML = `<button class="primary" id="btnGo">▶ Sprevádzaj ma</button>
-    <button class="secondary" id="btnLater">${optIdx === 0 ? 'Neskorší autobus' : 'Skorší autobus'} (vyraziť o ${other.leave})</button>`;
+    <button class="secondary" id="btnLater">${tm(other.leave) > tm(o.leave) ? 'Neskorší autobus' : 'Skorší autobus'} (vyraziť o ${other.leave})</button>`;
   $('btnGo').onclick = startGuide;
   $('btnLater').onclick = () => { optIdx = 1 - optIdx; renderPlan(); $('planBody').scrollTop = 0; };
 }
 
+// ── Reálne podklady pre navádzanie pešo (dataset appky v1.7.3 + jej offline mapa z OpenStreetMap) ──
+// walks: vzdušná vzdialenosť (m) a azimut k nástupišťu, smer odchodu autobusu zrovnaný s osou ulice (bus), nasledujúca zastávka,
+// linky na nástupišti, ďalšie nástupištia s rovnakým menom (sibs) a čím sa od nich dá správne odlíšiť (cue), ulice a potoky,
+// ktoré vzdušná čiara pretína, so vzdialenosťou od cieľa (cross; „~“ = vodný tok), across = presadá sa na protiľahlé nástupište.
+// maps: ulice a plochy v metroch (x = východ, y = sever), počiatok = cieľ úseku.
+// Sieť chodníkov a priechodov v dátach nie je – šípka aj mapka vedú vzdušnou čiarou. Generuje podklady/navadzanie-data.mjs.
+const NAV = {"walks":{"w0":{"kind":"stop","stop":"Sibírska","idx":30,"request":false,"street":"Vihorlatská","dist":95,"brg":197,"secs":126,"line":"8","sign":"Sídlisko III","dep":"7:25","bus":252,"busRaw":204,"next":"Karpatská","lines":["8","10","12","32","32A","34","38","E","N2"],"cue":{"type":"line","dist":38,"ref":{"idx":181,"dist":38,"x":-33,"y":-19}},"across":false,"cross":[["Tekeľova",72]],"sibs":[{"idx":181,"dist":38,"brg":240,"lines":["N2","P"],"hasLine":false,"sameDir":true,"lineBearings":[],"x":-33,"y":-19}],"a":[27,90],"map":"m0"},"w1":{"kind":"stop","stop":"Sibírska","idx":30,"request":false,"street":"Vihorlatská","dist":95,"brg":197,"secs":126,"line":"32","sign":"Trojica","dep":"7:41","bus":252,"busRaw":204,"next":"Karpatská","lines":["8","10","12","32","32A","34","38","E","N2"],"cue":{"type":"line","dist":38,"ref":{"idx":181,"dist":38,"x":-33,"y":-19}},"across":false,"cross":[["Tekeľova",72]],"sibs":[{"idx":181,"dist":38,"brg":240,"lines":["N2","P"],"hasLine":false,"sameDir":true,"lineBearings":[],"x":-33,"y":-19}],"a":[27,90],"map":"m0"},"w2":{"kind":"stop","stop":"Sibírska","idx":30,"request":false,"street":"Vihorlatská","dist":95,"brg":197,"secs":126,"line":"12","sign":"Šidlovec","dep":"7:28","bus":252,"busRaw":204,"next":"Karpatská","lines":["8","10","12","32","32A","34","38","E","N2"],"cue":{"type":"line","dist":38,"ref":{"idx":181,"dist":38,"x":-33,"y":-19}},"across":false,"cross":[["Tekeľova",72]],"sibs":[{"idx":181,"dist":38,"brg":240,"lines":["N2","P"],"hasLine":false,"sameDir":true,"lineBearings":[],"x":-33,"y":-19}],"a":[27,90],"map":"m0"},"w3":{"kind":"stop","stop":"Sibírska","idx":30,"request":false,"street":"Vihorlatská","dist":95,"brg":197,"secs":126,"line":"10","sign":"Nemocnica","dep":"7:37","bus":252,"busRaw":204,"next":"Karpatská","lines":["8","10","12","32","32A","34","38","E","N2"],"cue":{"type":"line","dist":38,"ref":{"idx":181,"dist":38,"x":-33,"y":-19}},"across":false,"cross":[["Tekeľova",72]],"sibs":[{"idx":181,"dist":38,"brg":240,"lines":["N2","P"],"hasLine":false,"sameDir":true,"lineBearings":[],"x":-33,"y":-19}],"a":[27,90],"map":"m0"},"w4":{"kind":"change","stop":"Škára","idx":427,"request":true,"street":"Solivarská","dist":106,"brg":135,"secs":141,"line":"46","sign":"Ruská Nová Ves","dep":"7:40","bus":129,"busRaw":121,"next":"Solivarská","lines":["1","4","8","28","38","39","45","46","T"],"cue":{"type":"dir","dist":106,"ref":{"idx":426,"dist":106,"x":-74,"y":75}},"across":true,"cross":[],"sibs":[{"idx":426,"dist":106,"brg":315,"lines":["1","4","8","28","37","38","45","46"],"hasLine":true,"sameDir":false,"lineBearings":[302],"x":-74,"y":75}],"a":[-74,75],"map":"m1"},"w5":{"kind":"dest","name":"Solivar","dist":198,"brg":132,"secs":263,"cross":[["~Soľný potok",109]],"a":[-147,132],"map":"m2"},"w6":{"kind":"change","stop":"Na Hlavnej","idx":191,"request":false,"street":"Hlavná","dist":46,"brg":324,"secs":62,"line":"1","sign":"Solivar","dep":"7:57","bus":151,"busRaw":152,"next":"Veľká pošta","lines":["1","2","4","5","7","8","11","12","14","15","18","21","22","23","24","27","28","32","36","39","41","45","N2"],"cue":{"type":"dir","dist":46,"ref":{"idx":1,"dist":46,"x":27,"y":-38}},"across":true,"cross":[],"sibs":[{"idx":1,"dist":46,"brg":144,"lines":["1","2","4","5","5D","7","8","11","12","14","15","18","22","24","27","28","29","32","36","39","41","45","N2"],"hasLine":true,"sameDir":false,"lineBearings":[338],"x":27,"y":-38}],"a":[27,-38],"map":"m3"},"w7":{"kind":"stop","stop":"Sibírska","idx":30,"request":false,"street":"Vihorlatská","dist":95,"brg":197,"secs":126,"line":"32A","sign":"Okružná-Trojica","dep":"7:31","bus":252,"busRaw":204,"next":"Karpatská","lines":["8","10","12","32","32A","34","38","E","N2"],"cue":{"type":"line","dist":38,"ref":{"idx":181,"dist":38,"x":-33,"y":-19}},"across":false,"cross":[["Tekeľova",72]],"sibs":[{"idx":181,"dist":38,"brg":240,"lines":["N2","P"],"hasLine":false,"sameDir":true,"lineBearings":[],"x":-33,"y":-19}],"a":[27,90],"map":"m0"},"w8":{"kind":"dest","name":"Eperia","dist":147,"brg":167,"secs":197,"cross":[["Rusínska",137]],"a":[-34,143],"map":"m4"},"w9":{"kind":"stop","stop":"Sibírska","idx":30,"request":false,"street":"Vihorlatská","dist":95,"brg":197,"secs":126,"line":"38","sign":"Sídlisko III","dep":"7:18","bus":252,"busRaw":204,"next":"Karpatská","lines":["8","10","12","32","32A","34","38","E","N2"],"cue":{"type":"line","dist":38,"ref":{"idx":181,"dist":38,"x":-33,"y":-19}},"across":false,"cross":[["Tekeľova",72]],"sibs":[{"idx":181,"dist":38,"brg":240,"lines":["N2","P"],"hasLine":false,"sameDir":true,"lineBearings":[],"x":-33,"y":-19}],"a":[27,90],"map":"m0"},"w10":{"kind":"dest","name":"Eperia","dist":350,"brg":346,"secs":467,"cross":[],"a":[83,-338],"map":"m5"}},"maps":{"m0":{"s":[["Vihorlatská","r",[64,13,81,-54,93,-126]],["Vihorlatská","r",[-110,-40,-7,-8]],["Sibírska","r",[69,14,167,45]],["Vihorlatská","r",[-77,-155,-110,-40]],["Tekeľova","r",[-5,109,14,144,28,162]],["Tekeľova","r",[14,144,70,105,82,128]],["Tekeľova","r",[-35,205,1,91,12,77,50,43]],["Vihorlatská","r",[-201,-69,-110,-40]],["Vihorlatská","r",[47,10,64,13]],["Sibírska","r",[64,13,69,14]],["Vihorlatská","r",[-7,-8,3,-5]],["Vihorlatská","r",[3,-5,47,10]]],"w":[],"a":[["pitch",[127,-53,145,-50,151,-83,133,-86,127,-53]],["pitch",[17,-53,23,-52,28,-71,22,-72,17,-53]],["pitch",[120,-22,133,-37,137,-35,139,-18,129,-17,120,-22]]]},"m1":{"s":[["Solivarská","t",[76,-52,115,-83]],["Solivarská","t",[115,-83,304,-234]],["Košická","v",[-97,-54,-110,-76,-127,-89,-205,-104]],["Pri mlyne","r",[-96,84,-173,5]],["Ku Škáre","t",[-36,38,7,104,29,144,38,170]],["Košická","t",[-97,-54,-36,38]],["Solivarská","t",[-36,38,76,-52]],["Solivarská","t",[-167,142,-36,38]],["Košická","t",[-172,-4,-97,-54]]],"w":[["Sekčov",[126,368,108,-31,89,-96,63,-155]]],"a":[["water",[115,-30,96,-103,56,-192,-43,-292,-346,-513,-349,-496,-53,-280,43,-184,82,-97,100,-28,123,399,137,461,257,672,279,737,318,943,343,1119,359,1117,334,940,294,733,271,666,151,456,139,396,115,-30]],["water",[-47,-39,-50,-26,-29,-4,26,-50,28,-62,19,-79,12,-78,-39,-51,-47,-39]],["water",[-71,-54,-48,-57,-45,-54,18,-89,9,-106,-36,-96,-50,-97,-47,-102,5,-112,-27,-158,-34,-157,-96,-118,-95,-105,-83,-73,-71,-54]]]},"m2":{"s":[["Kysucká","t",[-153,294,-78,179]],["Zlatobanská","t",[21,13,21,-41,15,-139,21,-231,31,-280]],["Soľnobanská","t",[-78,179,-77,165]],["Zlatobanská","t",[-77,165,-70,165]],["Zborovská","r",[-231,-108,-225,-97,-168,-61,-137,-31,-85,-12,-69,-10,-30,-11]],["Banícka","r",[264,10,165,99,153,105,145,104,127,94,79,51,21,13]],["Gápľová","r",[17,-118,85,-144,108,-145,139,-139,175,-154,187,-156,265,-135]],["Tokajícka","r",[-26,-258,-10,-220,8,-192,17,-188]],["Lidická","r",[200,-51,244,-12,264,10]],["Pod Turňou","r",[45,29,103,29,161,21,172,24,183,32,188,30]],["Čipkárska","r",[31,20,67,2,94,-17,137,-21,164,-29,172,-38,218,-61,237,-75]],["Zborovská","v",[-30,-11,-30,-20,-23,-28,-9,-23,1,-12]],["Gápľová","r",[16,-167,30,-172,61,-201,90,-223,119,-241]],["Padlých hrdinov","r",[149,235,124,213]],["Ondavská","r",[-169,96,-161,85,-164,77,-167,76,-232,78,-245,75]],["Zlatobanská","t",[-7,120,3,104]],["Zlatobanská","t",[3,104,14,69,21,13]],["Zborovská","r",[1,-1,21,13]],["Padlých hrdinov","r",[124,213,115,206]],["Padlých hrdinov","r",[115,206,99,192,-10,126]],["Soľnobanská","t",[-78,179,-70,182,72,286]],["Pod Turňou","r",[188,30,229,7,245,-10]],["Námestie osloboditeľov","t",[-240,94,-107,156]],["Ondavská","r",[-169,96,-183,120]],["Pod Turňou","r",[188,30,164,-29]],["Soľnobanská","r",[36,259,84,183]],["Gápľová","f",[32,-124,46,-91,104,-18]],["Gápľová","r",[167,-150,178,-120,187,-106,199,-91,226,-67]],["Gápľová","v",[47,-129,64,-103,88,-88]],["Gápľová","v",[85,-144,91,-123,98,-125,88,-133]],["Gápľová","v",[98,-125,99,-122,90,-117,106,-84,115,-74,121,-77,118,-82,111,-78]],["Gápľová","r",[244,-12,251,-20]],["Ondavská","v",[-213,78,-204,43,-232,13]],["Banícka","v",[160,102,172,122,186,138]],["Námestie osloboditeľov","w",[-126,135,-98,87,-95,88,-106,109,-44,147,-47,150,-108,114,-120,137,-126,135]],["Zborovská","v",[-137,-31,-149,-9,-109,12]],["Zborovská","v",[1,-12,1,-1]],["Zborovská","r",[-30,-11,-5,-4]],["Zborovská","r",[-5,-4,1,-1]],["Zlatobanská","t",[-70,165,-58,164,-39,156,-28,148,-7,120]],["Námestie osloboditeľov","t",[-107,156,-93,162,-77,165]]],"w":[["Soľný potok",[120,227,115,186,104,171,41,143,-69,74,-143,67,-201,38,-283,-45]]],"a":[["grass",[-66,-111,-112,-167,-139,-135,-198,-177,-216,-144,-93,-61,-51,-97,-66,-111]],["cemetery",[-84,-206,-26,-258,-7,-214,-59,-177,-84,-206]],["park",[-5,2,-27,-7,-88,-13,-97,14,-145,114,-122,125,-88,70,-3,117,16,88,22,45,15,18,8,9,-5,2]],["pitch",[-39,21,-14,6,-4,21,-30,36,-39,21]],["water",[-180,-86,-171,-84,-163,-91,-162,-97,-169,-105,-181,-104,-185,-98,-180,-86]]]},"m3":{"s":[["Jarková","r",[-7,-182,-49,-114,-70,-93,-110,-60,-167,10]],["Hlavná","w",[15,-23,1,-21,-47,41,-84,99,-127,160]],["Svätoplukova","w",[150,-10,44,-76]],["Tkáčska","w",[19,-82,-40,-114,-49,-114]],["Františkánske námestie","r",[150,-10,142,-7,134,1,111,51]],["Slovenská","r",[111,51,32,237]],["Tkáčska","r",[-49,-114,-109,-144]],["Hlavná","r",[133,-240,15,-23]],["Pasáž Krámiky","f",[-33,112,-4,124]],["Slovenská","v",[87,108,64,97,67,92,47,82,48,77]],["Hlavná","r",[15,-23,-26,52,-81,185]],["Tkáčska","w",[19,-82,34,-73]],["Jarková","v",[-87,-78,-50,-57]],["Ulička Via Magna","f",[4,-75,23,-63]],["Ulička Via Magna","f",[4,-75,-40,-98]],["Dvor Balpataky","w",[53,-12,86,4,94,-9,82,-14,77,-9,55,-20,53,-12]],["Františkánske námestie","v",[115,1,82,-14]],["Dvor Balpataky","f",[82,-14,79,-8,55,-18]],["Slovenská","v",[77,129,12,97]],["Nádvorie Čierny orol","w",[21,63,23,57,18,55,22,48,31,53,34,49,47,55,50,49,64,56,59,56,49,77,21,63]],["Františkánske námestie","w",[112,46,142,33,150,35]],["Františkánske námestie","w",[142,33,138,23,142,15,146,13,158,15]],["Hlavná","f",[-78,61,-101,50]],["Jarková","f",[-101,50,-133,33]],["Jarková","v",[-133,33,-156,21]],["Slovenská","v",[104,69,55,45]],["Slovenská","f",[-4,124,60,157]],["Františkánske námestie","w",[147,35,140,31,138,23,143,14,153,13]],["Jarková","v",[-151,-2,-135,6,-129,-4,-94,13]],["Jarková","v",[-69,-34,-86,-45,-96,-31,-86,-24,-76,-39]],["Pasáž Hlavná 34","f",[118,-8,63,-34]],["Slovenská","v",[109,53,57,29]],["Svätoplukova","f",[114,-36,121,-49]],["Svätoplukova","f",[121,-49,131,-66]],["Slovenská","v",[-7,129,63,164]],["Pasáž Hlavná 34","f",[63,-34,42,-44]],["Pasáž Hlavná 40","f",[25,-11,48,0]],["Pasáž Hlavná 40","f",[48,0,72,11]],["Pasáž Hlavná 34","f",[64,-36,107,-15,107,-13]]],"w":[],"a":[["park",[-118,160,-86,177,-82,175,-31,53,-42,46,-118,160]]]},"m4":{"s":[["Rusínska","p",[-158,149,-103,144]],["Rusínska","p",[-103,144,-75,140]],["Armádneho generála Svobodu","p",[180,86,178,77]],["Armádneho generála Svobodu","p",[174,107,158,99,145,101]],["Rusínska","p",[34,122,77,108]],["Rusínska","t",[77,108,91,99,136,88,153,78,162,67,170,49]],["Armádneho generála Svobodu","t",[175,8,187,30,202,42]],["Rusínska","p",[180,86,170,93,145,101]],["Armádneho generála Svobodu","t",[160,-3,152,-42]],["Armádneho generála Svobodu","t",[175,8,188,70]],["Rusínska","p",[178,77,188,70]],["Rusínska","p",[77,108,166,85,178,77]],["Rusínska","p",[145,101,34,122]],["Armádneho generála Svobodu","r",[147,-249,194,-21]],["Rusínska","p",[-75,140,6,127]],["Rusínska","p",[6,127,34,122]],["Armádneho generála Svobodu","v",[62,75,132,60,140,55,144,41,137,4]],["Armádneho generála Svobodu","v",[75,-84,4,-66,0,-64,-4,-54,31,109]],["Armádneho generála Svobodu","v",[0,-64,-14,-60]],["Armádneho generála Svobodu","v",[115,-96,129,-104,135,-116]],["Armádneho generála Svobodu","v",[-126,-171,-78,31]],["Armádneho generála Svobodu","v",[59,60,23,67]],["Armádneho generála Svobodu","t",[159,-70,175,8]],["Armádneho generála Svobodu","v",[75,-84,86,-90,115,-96]],["Armádneho generála Svobodu","t",[136,-175,151,-102]],["Armádneho generála Svobodu","t",[151,-102,159,-70]],["Armádneho generála Svobodu","t",[130,-144,110,-243]],["Armádneho generála Svobodu","t",[145,-73,140,-98]],["Armádneho generála Svobodu","v",[137,4,132,-1]],["Armádneho generála Svobodu","t",[135,-116,130,-144]],["Armádneho generála Svobodu","t",[140,-98,135,-116]],["Armádneho generála Svobodu","v",[132,-1,152,-42]],["Armádneho generála Svobodu","t",[152,-42,145,-73]],["Armádneho generála Svobodu","v",[160,-3,145,-8,132,-1]],["Armádneho generála Svobodu","t",[178,77,167,34]],["Armádneho generála Svobodu","t",[167,34,160,-3]]],"w":[],"a":[["grass",[99,-81,123,-86,137,-75,143,-32,121,2,108,-19,99,-81]],["park",[7,33,19,107,-9,116,-50,116,-63,105,-80,42,-60,46,7,33]],["pitch",[-11,-85,55,-102,48,-129,52,-133,50,-138,-12,-92,-11,-85]],["pitch",[-203,84,-178,83,-189,34,-210,38,-203,84]],["water",[-367,-997,-386,-1070,-426,-1160,-524,-1259,-827,-1480,-830,-1464,-534,-1247,-438,-1152,-399,-1065,-381,-995,-358,-568,-344,-506,-224,-295,-202,-230,-163,-24,-138,151,-123,149,-147,-28,-188,-234,-210,-302,-330,-512,-342,-571,-367,-997]],["water",[-101,347,-52,438,1,512,242,765,270,822,281,872,282,979,266,1052,214,1123,180,1161,57,1212,-36,1227,-33,1244,62,1225,188,1173,226,1132,280,1058,297,980,297,870,285,818,254,757,12,503,-39,430,-87,340,-114,216,-123,149,-138,151,-128,219,-101,347]],["water",[-49,74,-52,82,-62,85,-69,63,-33,62,-37,72,-49,74]]]},"m5":{"s":[["Armádneho generála Svobodu","p",[191,78,205,125]],["Ladislava Novomeského","t",[341,-67,376,-104]],["L. Novomeského","r",[248,-14,359,-124]],["Rusínska","p",[-158,149,-103,144]],["Rusínska","p",[-103,144,-75,140]],["Bratislavská","v",[321,-88,302,-186]],["L. Novomeského","r",[359,-124,375,-141]],["Popradská","r",[375,-141,305,-211]],["Popradská","r",[305,-211,300,-220,324,-345]],["Popradská","v",[384,-150,320,-217]],["Bratislavská","v",[305,-211,214,-190]],["Pod Táborom","r",[-67,340,-116,340]],["Armádneho generála Svobodu","p",[180,86,178,77]],["Ladislava Novomeského","t",[256,22,220,63,212,77,204,106,205,125]],["Armádneho generála Svobodu","p",[197,148,187,132,180,114,174,107,158,99,145,101]],["Ladislava Novomeského","t",[341,-67,332,-54,306,-28]],["Rusínska","p",[34,122,77,108]],["Rusínska","t",[77,108,91,99,136,88,153,78,162,67,170,49]],["Armádneho generála Svobodu","t",[175,8,187,30,202,42,208,43,225,39]],["Rusínska","p",[180,86,170,93,145,101]],["Ladislava Novomeského","t",[188,70,199,64,225,39]],["Šrobárova","f",[316,30,391,241]],["Ladislava Novomeského","t",[376,-104,390,-117]],["Pod Táborom","r",[253,327,205,329,98,339,-67,340]],["Armádneho generála Svobodu","r",[110,-243,122,-245]],["Šrobárova","r",[324,41,397,245]],["Martina Benku","r",[147,-249,151,-265,161,-274,239,-290]],["Šrobárova","v",[244,126,308,284]],["Armádneho generála Svobodu","v",[-77,-253,-74,-277,-126,-494]],["Armádneho generála Svobodu","v",[69,-237,61,-229,-58,-200,-67,-206,-77,-253]],["Armádneho generála Svobodu","p",[188,70,191,78]],["Armádneho generála Svobodu","t",[160,-3,152,-42]],["Armádneho generála Svobodu","t",[175,8,188,70]],["Armádneho generála Svobodu","p",[197,148,180,86]],["Armádneho generála Svobodu","p",[267,324,238,263,197,148]],["Ladislava Novomeského","p",[191,78,180,86]],["Ladislava Novomeského","t",[256,22,204,71,191,78]],["Rusínska","p",[178,77,188,70]],["Rusínska","p",[77,108,166,85,178,77]],["Armádneho generála Svobodu","t",[85,-359,75,-410]],["Armádneho generála Svobodu","t",[117,-269,122,-245]],["Armádneho generála Svobodu","t",[105,-268,94,-319]],["Armádneho generála Svobodu","t",[97,-363,117,-269]],["Ladislava Novomeského","t",[225,39,273,-9]],["Ladislava Novomeského","t",[327,-59,341,-67]],["Ladislava Novomeského","t",[306,-28,256,22]],["Ladislava Novomeského","t",[273,-9,327,-59]],["Rusínska","p",[-307,153,-201,153,-158,149]],["Rusínska","p",[145,101,34,122]],["Armádneho generála Svobodu","p",[205,125,242,242,278,318]],["Armádneho generála Svobodu","r",[147,-249,194,-21]],["Martina Benku","r",[239,-290,251,-293,252,-296,240,-354]],["Martina Benku","r",[122,-245,147,-249]],["Sekčovská","t",[403,-59,378,-91,376,-104]],["Sekčovská","t",[376,-104,392,-96]],["Sekčovská","t",[403,-59,387,-70,373,-74,363,-74,341,-67]],["Rusínska","p",[-75,140,6,127]],["Rusínska","p",[6,127,34,122]],["Armádneho generála Svobodu","t",[86,-412,97,-363]],["Armádneho generála Svobodu","v",[62,75,132,60,140,55,144,41,137,4]],["Pod Táborom","v",[-294,238,-302,338]],["Pod Táborom","r",[-116,340,-218,340]],["Armádneho generála Svobodu","v",[75,-84,4,-66,0,-64,-4,-54,31,109]],["Armádneho generála Svobodu","v",[0,-64,-14,-60]],["Armádneho generála Svobodu","v",[115,-96,129,-104,135,-116]],["Rusínska","t",[-394,149,-388,85,-383,63,-362,40,-357,31,-356,22,-370,-82]],["Rusínska","v",[-370,-82,-342,-105,-335,-102,-334,-46,-321,-19,-299,108,-348,117,-355,86,-388,85]],["Pod Táborom","v",[75,340,69,337,61,325,45,256,35,243,18,235,6,238,-44,260]],["Šrobárova","v",[329,125,278,143]],["Pod Táborom","v",[196,331,156,182]],["Pod Táborom","v",[-199,340,-287,495]],["Rusínska","v",[-216,122,-274,135,-321,135,-344,129,-348,117]],["Rusínska","v",[-357,4,-373,11,-457,84]],["Rusínska","v",[-527,53,-370,-82]],["Rusínska","v",[-307,-106,-247,-117,-210,109,-216,122]],["Rusínska","v",[-446,97,-363,22]],["Rusínska","v",[-399,87,-388,85]],["Dirt Park Prešov","f",[-204,29,-208,29,-210,24,-219,-22,-215,-28,-210,-23,-204,29]],["Dirt Park Prešov","f",[-210,-21,-208,-30,-205,-31,-198,19]],["Armádneho generála Svobodu","v",[-112,-175,-126,-171,-78,31]],["Armádneho generála Svobodu","v",[59,60,23,67]],["Armádneho generála Svobodu","t",[159,-70,175,8]],["Pod Táborom","v",[-47,269,-43,275,-33,280,-20,281,-11,276,-2,296,53,292]],["Zemplínska","w",[187,-334,209,-339,207,-345,199,-344,197,-353,184,-349,187,-334]],["Armádneho generála Svobodu","v",[123,-181,104,-234,99,-238,83,-239]],["Armádneho generála Svobodu","v",[75,-84,86,-90,115,-96]],["Armádneho generála Svobodu","t",[136,-175,151,-102]],["Armádneho generála Svobodu","t",[151,-102,159,-70]],["Armádneho generála Svobodu","t",[130,-144,110,-243]],["Armádneho generála Svobodu","t",[145,-73,140,-98]],["Armádneho generála Svobodu","v",[137,4,132,-1]],["Armádneho generála Svobodu","t",[135,-116,130,-144]],["Armádneho generála Svobodu","t",[140,-98,135,-116]],["Armádneho generála Svobodu","v",[132,-1,152,-42]],["Armádneho generála Svobodu","t",[152,-42,145,-73]],["Armádneho generála Svobodu","v",[160,-3,145,-8,132,-1]],["Armádneho generála Svobodu","t",[178,77,167,34]],["Armádneho generála Svobodu","t",[167,34,160,-3]],["Rusínska","p",[-394,149,-307,153]],["Armádneho generála Svobodu","t",[110,-243,105,-262]],["Armádneho generála Svobodu","t",[105,-262,105,-268]],["Armádneho generála Svobodu","t",[122,-245,136,-175]],["Armádneho generála Svobodu","t",[94,-319,85,-359]],["Martina Benku","r",[223,-369,239,-290]]],"w":[["Šalgovícky potok",[215,122,184,140]],["Šalgovícky potok",[377,-55,240,103,215,122]],["Šalgovícky potok",[416,-98,377,-55]],["Šalgovícky potok",[184,140,88,206,53,216,-41,231,-101,235]],["Sekčov",[-56,426,-91,355,-104,311,-120,237,-200,-249,-220,-301,-316,-469]],["Šalgovícky potok",[-107,235,-120,237]],["Šalgovícky potok",[-101,235,-107,235]]],"a":[["grass",[99,-81,123,-86,137,-75,143,-32,121,2,108,-19,99,-81]],["park",[7,33,19,107,-9,116,-50,116,-63,105,-80,42,-60,46,7,33]],["park",[-221,-30,-230,-83,-212,-86,-202,-33,-221,-30]],["pitch",[-11,-85,55,-102,48,-129,52,-133,50,-138,-12,-92,-11,-85]],["pitch",[334,235,356,228,350,211,328,220,334,235]],["pitch",[353,80,369,73,359,43,342,49,353,80]],["pitch",[-203,84,-178,83,-189,34,-210,38,-203,84]],["pitch",[248,-139,266,-143,275,-118,262,-113,261,-118,252,-116,248,-139]],["pitch",[221,-144,233,-146,239,-119,226,-116,221,-144]],["pitch",[341,45,357,40,348,13,332,19,341,45]],["pitch",[383,66,413,56,397,12,367,22,383,66]],["pitch",[285,76,300,71,308,93,294,98,285,76]],["pitch",[371,124,360,95,370,92,381,119,371,124]],["pitch",[276,-282,289,-284,294,-250,281,-248,276,-282]],["pitch",[312,90,328,84,317,56,301,63,312,90]],["pitch",[249,-253,262,-256,265,-264,247,-261,249,-253]],["pitch",[231,-234,229,-244,245,-248,247,-238,231,-234]],["pitch",[319,220,348,210,337,180,308,190,319,220]],["pitch",[355,74,365,71,357,48,347,52,355,74]],["pitch",[367,22,358,-2,388,-12,397,12,367,22]],["pitch",[308,190,297,159,326,149,337,180,308,190]],["pitch",[224,-128,237,-132,239,-122,226,-119,224,-128]],["pitch",[268,-214,265,-229,274,-231,277,-217,268,-214]],["pitch",[226,-117,221,-143,232,-145,238,-120,226,-117]],["water",[-367,-997,-386,-1070,-426,-1160,-524,-1259,-827,-1480,-830,-1464,-534,-1247,-438,-1152,-399,-1065,-381,-995,-358,-568,-344,-506,-224,-295,-202,-230,-163,-24,-138,151,-123,149,-147,-28,-188,-234,-210,-302,-330,-512,-342,-571,-367,-997]],["water",[-101,347,-52,438,1,512,242,765,270,822,281,872,282,979,266,1052,214,1123,180,1161,57,1212,-36,1227,-33,1244,62,1225,188,1173,226,1132,280,1058,297,980,297,870,285,818,254,757,12,503,-39,430,-87,340,-114,216,-123,149,-138,151,-128,219,-101,347]],["water",[-49,74,-52,82,-62,85,-69,63,-33,62,-37,72,-49,74]]]}}};
+const NAVOF = {
+  skola: [{ nav: ['w0'] }, { nav: ['w1'] }],
+  lekar: [{ nav: ['w2'] }, { nav: ['w3'] }],
+  babka: [{ nav: ['w0', 'w4'], fin: 'w5' }, { nav: ['w1', 'w6'] }],
+  obchod: [{ nav: ['w7'], fin: 'w8' }, { nav: ['w9'], fin: 'w10' }],
+};
+
 // ── sprevádzanie: jeden pokyn na obrazovku ──
-// fázy: 0 choď na zastávku, 1 čakaj, 2 jazda, 3 (prestup: prejdi) … , posledná: cieľ
-function startGuide() { phase = 0; rideIdx = 0; renderGuide(); show('scrGuide'); }
-function say() {
-  const t = $('guideBody').innerText.replace(/\s+/g, ' ');
-  if ('speechSynthesis' in window) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'sk-SK'; speechSynthesis.speak(u); }
+// fázy: 0 choď pešo (na zastávku / pri presadaní), 1 čakaj, 2 jazda, 3 vystúp, 5 pešo do cieľa, 4 cieľ
+let wk = null, okStop = false, introSeen = false, lastVoice = '', spoken = '';
+function tm(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
+function startGuide() {
+  rideIdx = 0; left = 0; okStop = false; spoken = '';
+  startWalk(NAVOF[cur][optIdx].nav[0]); if (!introSeen) wk.mode = 'intro';
+  phase = 0; show('scrGuide'); renderGuide();
 }
-$('btnSpeak').onclick = say;
+// Hlas: sám sa ozve len so slovenským alebo českým hlasom v telefóne (tak to robí aj appka); tlačidlo „Čítaj“ pokyn zopakuje.
+function speak(t, manual) {
+  try {
+    const s = window.speechSynthesis; if (!s || !t) return;
+    const v = s.getVoices().find((x) => /^sk/i.test(x.lang)) || s.getVoices().find((x) => /^cs/i.test(x.lang));
+    if (!v && !manual) return;
+    s.cancel(); const u = new SpeechSynthesisUtterance(t); if (v) u.voice = v; u.lang = v ? v.lang : 'sk-SK'; u.rate = 0.95; s.speak(u);
+  } catch {}
+}
+$('btnSpeak').onclick = () => speak(lastVoice || $('guideBody').innerText.replace(/\s+/g, ' '), true);
+
+// ── navádzanie pešo: šípka + vzdialenosť, mapka, spoznanie zastávky, kontrola správneho nástupišťa ──
+// V appke polohu dáva GPS a natočenie kompas telefónu; v ukážke sa chôdza krokuje tlačidlom „Idem ďalej“ v hornej lište.
+function walkSteps(d0) {
+  const out = [[d0, -55]], rels = [12, -6, 4, -3, 2]; let d = d0, k = 0;
+  while (d * 0.68 > 45) { d *= 0.68; out.push([d, rels[k++ % rels.length]]); }
+  if (d0 > 30) out.push([28, 3]);
+  out.push([6, 0]);
+  return out;
+}
+function startWalk(id, fix) {
+  const w = NAV.walks[id], from = fix ? [fix.x, fix.y] : w.a, d0 = Math.hypot(from[0], from[1]);
+  wk = { id, w, i: 0, bad: false, view: 'arrow', mode: 'walk', fix: !!fix, atWrong: false, from, d0, prev: null,
+    steps: fix ? [[d0, 35], [d0 * 0.45, -5], [5, 0]] : walkSteps(d0) };
+}
+function walkGeo() {
+  const [d0, rel0] = wk.steps[wk.i];
+  const d = wk.bad ? d0 + 30 : d0, rel = wk.bad ? 165 : rel0;
+  const pos = [wk.from[0] / wk.d0 * d, wk.from[1] / wk.d0 * d];
+  const brg = (Math.atan2(-pos[0], -pos[1]) * 180 / Math.PI + 360) % 360;
+  return { pos, d, rel, heading: (brg - rel + 360) % 360 };
+}
+const arrowSvg = (rot) => `<svg viewBox="0 0 100 100" style="transform:rotate(${rot}deg)" aria-hidden="true"><path d="M50 5 L87 88 L50 69 L13 88 Z"/></svg>`;
+// smer autobusu sa kreslí inak než šípka chôdze (rovná šípka v prerušovanom kruhu), aby ju nikto nenasledoval
+const busSvg = (rot) => `<svg viewBox="0 0 100 100" style="transform:rotate(${rot}deg)" aria-hidden="true"><path d="M43 92 V40 H22 L50 6 L78 40 H57 V92 Z"/></svg>`;
+const roundM = (d) => (d >= 100 ? Math.round(d / 10) * 10 : Math.max(5, Math.round(d / 5) * 5));
+const fmtM = (d) => `${roundM(d)} m`;
+function walkMin(d) { const n = Math.max(1, Math.round(d * 1.2 / 0.9 / 60)); return `${n} ${n === 1 ? 'minúta' : n < 5 ? 'minúty' : 'minút'}`; } // pomalšia chôdza 0,9 m/s, obchádzky ×1,2
+function turnText(rel, dest) {
+  const a = Math.abs(rel), side = rel > 0 ? 'doprava' : 'doľava';
+  if (a <= 20) return 'Choď rovno.';
+  if (a <= 70) return `Otoč sa trochu ${side}.`;
+  if (a <= 135) return `Otoč sa ${side}.`;
+  return `Otoč sa. ${dest ? 'Cieľ' : 'Zastávka'} je za tebou.`;
+}
+const SAFE_T = 'Cez cestu choď len po priechode pre chodcov.'; // hlasom celé, na obrazovke krátko v jednom riadku
+const SAFE = '<p class="w-safe">Cez cestu len po priechode.</p>';
+const ACROSS_T = 'Zastávka je na druhej strane cesty. Prejdi len po priechode pre chodcov.';
+const ACROSS = '<p class="w-safe"><span aria-hidden="true">⚠️</span> Zastávka je za cestou. Prejdi len po priechode.</p>';
+// čo je ešte pred človekom medzi ním a cieľom (z mapových dát, vzdušnou čiarou); čo už prešiel, sa nespomína
+function crossAhead(w, d) {
+  const a = (w.cross || []).filter((x) => x[1] < d - 5), tgt = w.kind === 'dest' ? 'cieľom' : 'zastávkou';
+  const road = a.find((x) => x[0][0] !== '~'), water = a.find((x) => x[0][0] === '~');
+  let t = '';
+  if (road) t += ` Medzi tebou a ${tgt} je ${road[0] ? `ulica ${road[0]}` : 'cesta'}.`;
+  if (water) t += ` Medzi tebou a ${tgt} tečie ${water[0].length > 1 ? water[0].slice(1) : 'potok'}. Prejdi cez most alebo po lávke.`;
+  return t;
+}
+function mapHtml(g, W0) {
+  const w = wk.w, M = NAV.maps[w.map], dest = w.kind === 'dest', W = W0 - 4, H = Math.round(W * 0.68), cx = W / 2, cy = H - 40;
+  const rr = g.rel * Math.PI / 180, sn = Math.abs(Math.sin(rr));
+  let reach = cy - 60; if (sn > 0.05) reach = Math.min(reach, (cx - 48) / sn); // cieľ nesmie vyjsť z mapky do strany
+  const s = Math.max(0.7, Math.min(3, reach / Math.max(g.d, 30)));
+  const th = g.heading * Math.PI / 180, co = Math.cos(th), si = Math.sin(th);
+  const P = (x, y) => { const dx = x - g.pos[0], dy = y - g.pos[1]; return [cx + s * (dx * co - dy * si), cy - s * (dx * si + dy * co)]; };
+  const f1 = (n) => n.toFixed(1);
+  const dpath = (fl, close) => { let o = ''; for (let i = 0; i < fl.length; i += 2) { const p = P(fl[i], fl[i + 1]); o += `${i ? 'L' : 'M'}${f1(p[0])} ${f1(p[1])}`; } return o + (close ? 'Z' : ''); };
+  const segD = (px, py, ax, ay, bx, by) => { const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy; let t = l2 ? ((px - ax) * dx + (py - ay) * dy) / l2 : 0; t = Math.max(0, Math.min(1, t)); return Math.hypot(px - ax - t * dx, py - ay - t * dy); };
+  // bod mimo mapky sa posunie po polpriamke od „ty“ na okraj, aby smer ostal správny
+  const edge = (q, m) => {
+    if (q[0] >= m && q[0] <= W - m && q[1] >= m && q[1] <= H - m) return q;
+    const dx = q[0] - cx, dy = q[1] - cy; let t = 1;
+    if (dx > 0) t = Math.min(t, (W - m - cx) / dx); if (dx < 0) t = Math.min(t, (m - cx) / dx);
+    if (dy > 0) t = Math.min(t, (H - m - cy) / dy); if (dy < 0) t = Math.min(t, (m - cy) / dy);
+    return [cx + dx * t, cy + dy * t];
+  };
+  // farby volené na kontrast aj na slnku: podklad #dfe4dc, lem ciest #5f6b63 (3,9 : 1), cesty biele
+  const AREA = { water: '#a9cdea', park: '#bcdcae', grass: '#cfe2c2', forest: '#b1d2a4', pitch: '#c3dfae', cemetery: '#cdd8c6' };
+  const WID = { m: 16, p: 16, s: 14, t: 13, r: 11, w: 9, v: 7 }, k = Math.max(0.8, Math.min(1.5, s / 1.4));
+  let o = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Mapka: ty, ${dest ? 'cieľ' : 'zastávka'} a okolité ulice. Mapka sa otáča s tebou.">`;
+  for (const [c, fl] of M.a) o += `<path d="${dpath(fl, true)}" fill="${AREA[c] || '#cfe2c2'}"/>`;
+  for (const [, fl] of M.w) o += `<path d="${dpath(fl)}" fill="none" stroke="#5aa2d6" stroke-width="${f1(6 * k)}" stroke-linecap="round"/>`;
+  const road = M.s.filter((x) => x[1] !== 'f'), foot = M.s.filter((x) => x[1] === 'f');
+  for (const [, , fl] of foot) o += `<path d="${dpath(fl)}" fill="none" stroke="#5f6b63" stroke-width="3" stroke-dasharray="5 5"/>`;
+  for (const [, c, fl] of road) o += `<path d="${dpath(fl)}" fill="none" stroke="#5f6b63" stroke-width="${f1((WID[c] || 9) * k + 4)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  for (const [, c, fl] of road) o += `<path d="${dpath(fl)}" fill="none" stroke="#fff" stroke-width="${f1((WID[c] || 9) * k)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const T = edge(P(0, 0), 24);
+  // iné nástupištia s rovnakým menom do 150 m; keby vyšli tesne k modrej bodke (sú za chrbtom), nekreslia sa
+  const sibP = dest ? [] : (w.sibs || []).filter((sb) => sb.dist <= 150).map((sb) => edge(P(sb.x, sb.y), 18)).filter((q) => Math.hypot(q[0] - cx, q[1] - cy) > 44);
+  // šípka smeru autobusu: skráti sa pri okraji a pri značke „tu nie“; nekreslí sa, keby mierila cez modrú bodku, ani pri oprave
+  let bus = null;
+  if (!dest && !wk.fix) {
+    const rb = (w.bus - g.heading) * Math.PI / 180, ux = Math.sin(rb), uy = -Math.cos(rb); let L = 58;
+    const tip = (l) => [T[0] + ux * (l + 18), T[1] + uy * (l + 18)];
+    const bad = (l) => { const p = tip(l); return p[0] < 6 || p[0] > W - 6 || p[1] < 6 || p[1] > H - 6 || sibP.some((q) => segD(q[0], q[1], T[0], T[1], p[0], p[1]) < 26); };
+    while (L > 30 && bad(L)) L -= 4;
+    const p = tip(L);
+    if (!bad(L) && segD(cx, cy, T[0], T[1], p[0], p[1]) > 36) bus = { ux, uy, a: [T[0] + ux * 26, T[1] + uy * 26], b: [T[0] + ux * L, T[1] + uy * L] };
+  }
+  const sibL = sibP.map((q) => (q[0] < W - 96 ? { x: q[0] + 20, y: q[1], a: 'start', mx: q[0] + 48 } : { x: q[0] - 20, y: q[1], a: 'end', mx: q[0] - 48 }));
+  const obst = [[T[0], T[1], 30], [cx, cy - 8, 36], ...sibP.map((q) => [q[0], q[1], 24]), ...sibL.map((l) => [l.mx, l.y, 34])];
+  if (bus) obst.push([(bus.a[0] + bus.b[0]) / 2, (bus.a[1] + bus.b[1]) / 2, 22], [bus.b[0] + bus.ux * 10, bus.b[1] + bus.uy * 10, 22]);
+  // názvy ulíc: najprv ulica zastávky (smie byť bližšie pri značkách), potom najviac jedna ďalšia; nikdy cez značky
+  const cand = new Map();
+  for (const [name, , fl] of road) {
+    if (!name) continue;
+    const rk = name === w.street ? 0.72 : 1;
+    for (let i = 0; i + 3 < fl.length; i += 2) {
+      const a = P(fl[i], fl[i + 1]), b = P(fl[i + 2], fl[i + 3]);
+      if (Math.hypot(b[0] - a[0], b[1] - a[1]) < 34) continue;
+      let ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI; if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
+      const ca = Math.cos(ang * Math.PI / 180), sa = Math.sin(ang * Math.PI / 180);
+      const half = name.length * 4.9 + 8, ex = Math.abs(ca) * half + Math.abs(sa) * 13 + 3, ey = Math.abs(sa) * half + Math.abs(ca) * 13 + 3;
+      for (const t of [0.5, 0.35, 0.65, 0.2, 0.8, 0.1, 0.9]) {
+        const x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t;
+        if (x - ex < 0 || x + ex > W || y - ey < 0 || y + ey > H) continue;
+        if (obst.some(([px, py, r]) => segD(px, py, x - ca * half, y - sa * half, x + ca * half, y + sa * half) < r * rk)) continue;
+        const sc = Math.hypot(x - cx, y - H / 2) - (name === w.street ? 1000 : 0), old = cand.get(name);
+        if (!old || sc < old.sc) cand.set(name, { name, x, y, ang, sc, half, ca, sa });
+      }
+    }
+  }
+  const labs = [];
+  for (const c of [...cand.values()].sort((a, b) => a.sc - b.sc)) {
+    if (labs.length >= 2) break;
+    if (labs.some((l) => segD(c.x, c.y, l.x - l.ca * l.half, l.y - l.sa * l.half, l.x + l.ca * l.half, l.y + l.sa * l.half) < 26 || segD(l.x, l.y, c.x - c.ca * c.half, c.y - c.sa * c.half, c.x + c.ca * c.half, c.y + c.sa * c.half) < 26 || Math.hypot(l.x - c.x, l.y - c.y) < 40)) continue;
+    labs.push(c);
+  }
+  for (const l of labs) o += `<text x="${f1(l.x)}" y="${f1(l.y)}" transform="rotate(${f1(l.ang)} ${f1(l.x)} ${f1(l.y)})">${l.name}</text>`;
+  if (bus) { // smer, ktorým autobus zo zastávky odíde: čierna šípka s bielym lemom
+    const { ux, uy, a, b } = bus, n = [-uy, ux];
+    const head = `${f1(b[0] + ux * 16)},${f1(b[1] + uy * 16)} ${f1(b[0] + n[0] * 11)},${f1(b[1] + n[1] * 11)} ${f1(b[0] - n[0] * 11)},${f1(b[1] - n[1] * 11)}`;
+    o += `<path d="M${f1(a[0])} ${f1(a[1])}L${f1(b[0])} ${f1(b[1])}" stroke="#fff" stroke-width="12" stroke-linecap="round"/><polygon points="${head}" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>`;
+    o += `<path d="M${f1(a[0])} ${f1(a[1])}L${f1(b[0])} ${f1(b[1])}" stroke="#14181a" stroke-width="7" stroke-linecap="round"/><polygon points="${head}" fill="#14181a"/>`;
+  }
+  // iné nástupište: sivý krúžok s krížikom a nápisom „tu nie“; tvoja zastávka: väčší zelený štvorec s fajkou (líšia sa tvarom, nielen farbou)
+  for (const l of sibL) o += `<text x="${f1(l.x)}" y="${f1(l.y)}" style="text-anchor:${l.a}">tu nie</text>`;
+  for (const q of sibP) o += `<circle cx="${f1(q[0])}" cy="${f1(q[1])}" r="14" fill="#5d6568" stroke="#fff" stroke-width="3"/><path d="M${f1(q[0] - 6)} ${f1(q[1] - 6)}l12 12m0 -12l-12 12" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>`;
+  o += `<rect x="${f1(T[0] - 19)}" y="${f1(T[1] - 19)}" width="38" height="38" rx="9" fill="#075c2b" stroke="#fff" stroke-width="3"/><path d="M${f1(T[0] - 9)} ${f1(T[1])}l7 7l11 -13" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  o += `<polygon points="${cx},${cy - 27} ${cx - 10},${cy - 9} ${cx + 10},${cy - 9}" fill="#1a5fd0"/><circle cx="${cx}" cy="${cy}" r="11" fill="#1a5fd0" stroke="#fff" stroke-width="3"/>`;
+  const legend = `<ul class="legend"><li><i class="lg-me"></i>ty</li><li><i class="lg-st"></i>${dest ? 'cieľ' : 'zastávka'}</li>${bus ? '<li><b aria-hidden="true">➜</b> smer autobusu</li>' : ''}</ul>`;
+  return `<div class="mapbox">${o}</svg></div>${legend}`;
+}
+function walkView(d, o, r) {
+  const w = wk.w, g = walkGeo(), dest = w.kind === 'dest', cue = dest ? { type: 'none' } : w.cue;
+  const stopBtn = dest ? 'Som v cieli' : 'Som na zastávke';
+  const end = `<button class="secondary danger" id="gEnd">Ukončiť cestu</button>`;
+  const badge = `<span class="line-badge">${w.line}</span>`;
+  const asks = (cue.type === 'line' || cue.type === 'dir') && cue.dist < 60; // pri zastávke sa bude pýtať
+  if (wk.mode === 'intro') return { g,
+    voice: 'Najprv sa zastav. Drž telefón pred sebou, displejom hore. Šípka sa otáča spolu s tebou. Pri chôdzi sa pozeraj pred seba, nie do telefónu.',
+    body: `<div class="now"><div class="ico" aria-hidden="true">📱</div><h2>Najprv sa zastav</h2><p>Drž telefón <b>pred sebou, displejom hore</b>. Šípka sa otáča spolu s tebou.</p></div>
+      <div class="next">Pri chôdzi sa pozeraj <b>pred seba</b>, nie do telefónu. Keď pôjdeš zle alebo budeš pri zastávke, poviem ti to a zavibrujem.</div>`,
+    act: `<button class="primary" id="wGo">Rozumiem, ideme</button>${end}` };
+  if (wk.mode === 'check') { // pri zastávke: over, že je na správnom nástupišti
+    if (cue.type === 'line') return { g, voice: `Pozri sa na tabuľu zastávky. Je na nej číslo ${w.line}?`,
+      body: `<div class="now"><h2>Pozri sa na tabuľu zastávky</h2><p class="q">Je na nej číslo ${badge}?</p></div>
+        <div class="next">Číslo hľadaj na tabuli zastávky alebo na papieri s časmi autobusov, ktorý na nej visí.</div>`,
+      act: `<button class="primary" id="cYes">Áno, je tam ${w.line}</button><div class="pair"><button class="secondary" id="cNo">Nie, nie je</button><button class="secondary" id="cIdk">Neviem</button></div>${end}` };
+    // Zastávky oproti sebe: kto stojí tvárou k ceste na správnej strane, tomu autobus odchádza doprava (jazdí sa vpravo).
+    // V ukážke šípka ukazuje doprava; doľava vtedy, keď človek ťukol „Som na zastávke“ ešte na protiľahlom nástupišti.
+    return { g, voice: 'Postav sa tvárou k ceste. Kam ukazuje šípka, doprava alebo doľava?',
+      body: `<div class="now"><p class="pre">Postav sa tvárou k ceste.</p><h2>Kam ukazuje šípka?</h2><div class="busdir">${busSvg(wk.atWrong ? -90 : 90)}</div><p><span aria-hidden="true">🚌</span> Tadiaľ pôjde autobus <b>${w.line}</b>.</p></div>
+        <div class="next">Drž telefón pred sebou. Šípka ukazuje, ktorým smerom autobus odíde.</div>`,
+      act: `<div class="pair big"><button class="secondary" id="cNo">⬅ Doľava</button><button class="secondary" id="cYes">Doprava ➜</button></div><div class="pair"><button class="secondary" id="cIdk">Neviem</button>${end}</div>` };
+  }
+  if (wk.mode === 'nofix') { // odpoveď ukázala, že stojí na inom nástupišti s rovnakým menom
+    const dm = fmtM(cue.ref.dist), other = cue.type === 'dir';
+    return { g, voice: other ? `To nevadí. Odtiaľto ide autobus ${w.line} opačným smerom. ${ACROSS_T}` : `To nevadí. Tu autobus ${w.line} nezastavuje. Tvoja zastávka je kúsok ďalej.`,
+      body: `<div class="now"><div class="ico" aria-hidden="true">🙂</div><h2>To nevadí</h2>${other
+        ? `<p>Odtiaľto ide autobus <b>${w.line}</b> opačným smerom. Tvoja zastávka je <b>na druhej strane cesty</b>, asi ${dm}.</p>${SAFE}`
+        : `<p>Tu autobus <b>${w.line}</b> nezastavuje. Tvoja zastávka je kúsok ďalej, asi <b>${dm}</b>.</p>`}</div>`,
+      act: `<button class="primary" id="fGo">Ukáž mi ju</button>${end}` };
+  }
+  if (wk.mode === 'unsure') { // „Neviem“ (alebo druhé „Nie“ po oprave): nikam neposielať
+    const run = `Ak autobus ${w.line} zastaví o kúsok ďalej, nebež k nemu. Ťukni „Autobus mi ušiel“ a nájdem ti ďalší.`;
+    if (cue.type === 'line' && !wk.fix) return { g, voice: `Nevadí. Na tabuli alebo na papieri s časmi autobusov má byť číslo ${w.line}. Ak tam nie je, tvoja zastávka je kúsok ďalej.`,
+      body: `<div class="now"><h2>Nevadí</h2><p>Na tabuli alebo na papieri s časmi autobusov má byť číslo ${badge}.</p><p>Ak tam nie je, tvoja zastávka je asi <b>${fmtM(cue.ref.dist)}</b> odtiaľto.</p></div>
+        <div class="next">${run} Ak nevieš, čo ďalej, ťukni Zavolať.</div>`,
+      act: `<button class="primary" id="uOk">Počkám tu</button><div class="pair"><button class="secondary" id="fGo">Ukáž mi druhú zastávku</button><button class="secondary" id="uCall">📞 Zavolať</button></div>` };
+    return { g, voice: `Nevadí. Ostaň stáť tu. Keď príde autobus, pozri sa naň spredu. Nastúp, len ak má číslo ${w.line} a nápis ${w.sign}.`,
+      body: `<div class="now"><div class="ico" aria-hidden="true">🙂</div><h2>Nevadí. Ostaň stáť tu</h2><p>Keď príde autobus, pozri sa naň spredu. Nastúp, len ak má číslo ${badge} a nápis <b>${w.sign}</b>.</p></div>
+        <div class="next">Ak má iný nápis, nenastupuj. Ak nevieš, čo ďalej, ťukni Zavolať.</div>`,
+      act: `<button class="primary" id="uOk">Dobre, počkám tu</button><div class="pair"><button class="secondary" id="uCall">📞 Zavolať</button>${end}</div>` };
+  }
+
+  const last = wk.i >= wk.steps.length - 1, near = !last && g.d <= 40, map = wk.view === 'map';
+  const across = !dest && cue.type === 'dir' && (wk.fix || w.across); // ide na protiľahlé nástupište → určite cez cestu
+  const lbl = wk.fix ? 'Prejdi na správnu zastávku' : dest ? 'Choď do cieľa' : w.kind === 'change' ? 'Teraz choď na zastávku' : 'Choď na zastávku';
+  const plate = dest ? `<div class="plate"><span aria-hidden="true">${d.ico}</span>${d.name}</div>` : `<div class="plate"><span class="pi" aria-hidden="true">🚌</span>${w.stop}</div>`;
+  const okLine = dest || wk.fix ? '' : '<span class="ok">✓ stíhaš</span>';
+  const where = dest ? `Cieľ: <b>${d.dest}</b>. Budeš tam o ${o.arr}.` : `Autobus <b>${w.line}</b> ide o <b>${w.dep}</b>.${w.street ? ` Zastávka je na ulici <b>${w.street}</b>.` : ''}`;
+  const safe = across ? ACROSS : SAFE;
+  let body, voice;
+  if (wk.bad) {
+    voice = 'Ideš opačným smerom. Otoč sa.';
+    body = `<div class="walk bad"><p class="w-lbl">${lbl}</p>${plate}
+      <div class="w-row"><div class="compass">${arrowSvg(g.rel)}</div><div class="w-dist"><b>${fmtM(g.d)}</b><span>vzďaľuješ sa</span></div></div>
+      <p class="w-say">Ideš opačným smerom. Otoč sa.</p></div>
+      <div class="next">Nič sa nedeje. Stačí sa otočiť – šípka ťa povedie ďalej.</div>`;
+  } else if (near && !dest && !wk.fix) { // do 40 m vedie zrak, nie šípka: obrázok tabule
+    // číslo linky sa zvýrazní len vtedy, keď ním nástupište naozaj spozná; pri zastávkach oproti sebe ho majú obe
+    const byNum = cue.type === 'line' || cue.type === 'none';
+    const oth = w.lines.filter((l) => l !== w.line), shown = oth.slice(0, 3);
+    const sign = `<div class="sign"><div class="sign-top"><span aria-hidden="true">🚌</span>${w.stop}</div>${byNum ? `<div class="sign-lines"><span class="on">${w.line}</span>${shown.map((l) => `<span>${l}</span>`).join('')}${oth.length > shown.length ? '<em>…</em>' : ''}</div>` : ''}</div>`;
+    const sayT = cue.type === 'line' ? [`Sú tu dve zastávky ${w.stop}. Tvoja má na tabuli číslo `, '.']
+      : cue.type === 'none' ? ['Hľadaj tabuľu zastávky s číslom ', '.']
+      : asks ? [`Zastávky ${w.stop} sú tu dve, oproti sebe. Pri zastávke sa ťa opýtam, či stojíš na správnej strane.`, '']
+      : [`Hľadaj tabuľu zastávky ${w.stop}. Keď k nej prídeš, poviem ti to.`, ''];
+    const say = byNum ? `${sayT[0]}${badge}${sayT[1]}` : sayT[0];
+    voice = `Už si blízko. ${byNum ? `${sayT[0]}${w.line}${sayT[1]}` : sayT[0]} ${SAFE_T}`;
+    body = `<div class="walk"><div class="w-head"><div><p class="w-lbl">Už si blízko</p><b>${fmtM(g.d)}</b></div><div class="compass sm">${arrowSvg(g.rel)}</div></div>
+      ${map ? '<div id="wMap"></div>' : sign}<p class="w-say">${say}</p>${SAFE}</div>
+      <div class="next">${w.request ? 'Zastávka je na znamenie. ' : ''}${where}${byNum && asks ? ' Pri zastávke sa ťa ešte opýtam, či stojíš správne.' : ''}</div>`;
+  } else {
+    const say = turnText(g.rel, dest), ahead = crossAhead(w, g.d);
+    const warnV = across ? ` ${ACROSS_T}` : ahead ? `${ahead.replace(/<\/?b>/g, '')} ${SAFE_T}` : wk.i === 0 ? ` ${SAFE_T}` : '';
+    voice = wk.fix ? `Ešte ${roundM(g.d)} metrov. ${say}${warnV}`
+      : wk.i === 0 ? `${dest ? `Choď ${d.to}. Je to ${roundM(g.d)} metrov.` : `${lbl} ${w.stop}. Je ${roundM(g.d)} metrov od teba.`} ${say}${warnV}`
+      : `Ešte ${roundM(g.d)} metrov. ${say}${warnV}`;
+    const tail = wk.fix ? (cue.type === 'dir' ? 'Zastávka je oproti. Pri nej sa ťa znova opýtam, či stojíš správne.' : `Tu, kde si teraz, autobus ${w.line} nezastavuje. Pri zastávke sa ťa znova opýtam.`)
+      : `${where}${ahead} Šípka ukazuje priamo na ${dest ? 'cieľ' : 'zastávku'}. Dom alebo plot obíď po chodníku.`;
+    body = `<div class="walk"><p class="w-lbl">${near && dest ? 'Už si skoro v cieli' : lbl}</p>${map ? `<div class="w-head">${plate}<div class="w-dist"><b>${fmtM(g.d)}</b></div></div>${across ? safe : ''}<div id="wMap"></div>${across ? '' : safe}`
+      : `${plate}
+      <div class="w-row"><div class="compass">${arrowSvg(g.rel)}</div><div class="w-dist"><b>${fmtM(g.d)}</b><span>asi ${walkMin(g.d)}</span>${okLine}</div></div>
+      <p class="w-say">${say}</p>${safe}`}</div>
+      <div class="next">${tail}</div>`;
+  }
+  const viewBtn = wk.bad ? '' : `<button class="secondary" id="wView">${map ? (near && !dest && !wk.fix ? '🚏 Tabuľa' : '🧭 Šípka') : '🗺️ Mapa'}</button>`;
+  const act = wk.bad ? `<button class="secondary" id="wHere">${stopBtn}</button>${end}`
+    : near ? `<button class="primary" id="wHere">${stopBtn}</button><div class="pair">${viewBtn}${end}</div>`
+    : `<div class="pair">${viewBtn}<button class="secondary" id="wHere">${stopBtn}</button></div>${end}`;
+  return { body, act, g, voice };
+}
+function toWait(ok) { wk = null; okStop = ok; phase = 1; renderGuide(); }
+// manual = ťukol „Som na zastávke“; inak prišiel podľa polohy (do 15 m)
+function walkArrive(manual) {
+  const w = wk.w;
+  if (w.kind === 'dest') { wk = null; phase = 4; return renderGuide(); }
+  const cue = w.cue;
+  if (cue.type === 'line' || cue.type === 'dir') {
+    // bez otázky len vtedy, keď ho priviedla poloha a iné nástupište je ďalej než 60 m (poloha ich rozozná)
+    if (!manual && !wk.fix && cue.dist >= 60) return toWait(true);
+    wk.mode = 'check'; return renderGuide();
+  }
+  toWait(cue.type === 'none' && !manual); // jediné nástupište: stačí poloha; „ask“ sa overiť nedá → bez fajky
+}
+function hereTap() { // ručné „Som na zastávke“ ďaleko od cieľa najprv overiť
+  const g = walkGeo(), w = wk.w, dest = w.kind === 'dest';
+  const go = () => {
+    // v ukážke: ak ťukol ešte na protiľahlom nástupišti (hneď po vystúpení), šípka v kontrole ukáže doľava
+    wk.atWrong = !dest && !!w.cue.ref && Math.hypot(g.pos[0] - w.cue.ref.x, g.pos[1] - w.cue.ref.y) < 10;
+    wk.bad = false; wk.i = wk.steps.length - 1; walkArrive(true);
+  };
+  if (g.d <= 40) return go();
+  sheet(`<h2>Naozaj si už ${dest ? 'v cieli' : 'pri zastávke'}?</h2><p>Telefón si myslí, že si ešte <b>${fmtM(g.d)}</b> ${dest ? 'od cieľa' : 'od zastávky'}.</p>${dest ? '' : `<p>Stojíš pri tabuli s názvom <b>${w.stop}</b>?</p>`}
+    <div class="stack"><button class="primary" id="hNo">Nie, veď ma ďalej</button><button class="secondary" id="hYes">${dest ? 'Áno, som v cieli' : 'Áno, stojím pri nej'}</button></div>`);
+  $('hNo').onclick = closeSheet;
+  $('hYes').onclick = () => { closeSheet(); go(); };
+}
+function simStep() {
+  if (phase === 2) { const o = DEMO[cur].options[optIdx], r = o.rides[rideIdx]; left--; if (left <= 1) exitAlert(r, rideIdx === o.rides.length - 1); else renderGuide(); return; }
+  if (!wk || wk.mode !== 'walk') return;
+  if (wk.bad) { wk.bad = false; return renderGuide(); }
+  if (wk.i >= wk.steps.length - 2) { wk.i = wk.steps.length - 1; return walkArrive(false); }
+  wk.i++; renderGuide();
+}
+// neskorší spoj z ukážky (ak je): ponúka sa pri „Meškám“ a „Autobus mi ušiel“
+function laterOpt() { const os = DEMO[cur].options, o = os[1 - optIdx]; return tm(o.rides[0].board) > tm(os[optIdx].rides[0].board) ? 1 - optIdx : -1; }
+$('simNext').onclick = simStep;
+$('simBad').onclick = () => { if (!wk || wk.mode !== 'walk') return; wk.bad = true; if (navigator.vibrate) navigator.vibrate([200, 100, 200]); renderGuide(); };
+$('simLate').onclick = () => { // ukážka stavu „tento autobus už nestihneš“
+  const li = laterOpt(); if (li < 0) return; const other = DEMO[cur].options[li].rides[0];
+  sheet(`<div class="big-msg"><div class="ico" aria-hidden="true">🙂</div><h2>Tento autobus už nestihneš</h2><p>Nič sa nedeje. <b>Nebež.</b></p><p>Ďalší autobus <span class="line-badge">${other.line}</span> ide o <b>${other.board}</b>.</p></div><div class="stack"><button class="primary" id="lOk">Ukáž ďalší autobus</button></div>`);
+  $('lOk').onclick = () => { closeSheet(); optIdx = li; wk = null; renderPlan(); show('scrPlan'); };
+};
+function simBar() {
+  const guide = !$('scrGuide').hidden, free = guide && $('alert').hidden && $('veil').hidden;
+  const walking = free && (phase === 0 || phase === 5) && wk && wk.mode === 'walk', riding = free && phase === 2;
+  $('simNext').hidden = !(walking || riding); $('simNext').textContent = riding ? '▶ Autobus ide ďalej' : '▶ Idem ďalej';
+  $('simBad').hidden = !(walking && !wk.bad);
+  $('simLate').hidden = !(walking && !wk.bad && phase === 0 && rideIdx === 0 && !wk.fix && wk.i === 0 && laterOpt() >= 0);
+  $('demoDay').hidden = $('demoNight').hidden = guide; // počas cesty sa deň a noc neprepína
+  document.querySelector('.demo').classList.toggle('many', !$('simLate').hidden);
+}
+
 function renderGuide() {
   const d = DEMO[cur], o = d.options[optIdx], r = o.rides[rideIdx], last = rideIdx === o.rides.length - 1;
   $('guideTitle').textContent = `${d.ico} ${d.name}`;
-  const total = 4; const on = phase >= 4 ? 4 : phase + 1;
-  $('dots').innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < on ? 'on' : ''}"></span>`).join('');
-  let body = '', act = '';
-  if (phase === 0) {
-    const where = rideIdx === 0 ? `Choď na zastávku ${o.stop}` : 'Prejdi na druhé nástupište';
-    const sub = rideIdx === 0 ? `${mins(o.walk)} pešo` : `${mins(r.changeWalk)} pešo, cez priechod`;
-    body = `<div class="now"><div class="ico" aria-hidden="true">🚶</div><h2>${where}</h2><p>${sub}</p><p class="ok">✓ Stíhaš. Autobus ${r.line} ide o ${r.board}.</p></div>
-      <div class="next">Potom: <b>nastúp do autobusu ${r.line}</b> (na tabuli ${r.sign}).</div>`;
-    act = `<button class="primary" id="gNext">Som na zastávke</button>`;
+  const on = { 0: 1, 1: 2, 2: 3, 3: 3, 5: 4, 4: 4 }[phase];
+  $('dots').innerHTML = Array.from({ length: 4 }, (_, i) => `<span class="${i < on ? 'on' : ''}"></span>`).join('');
+  let body = '', act = '', g = null, full = false, voice = '';
+  if (phase === 0 || phase === 5) {
+    ({ body, act, g, voice } = walkView(d, o, r)); full = true;
   } else if (phase === 1) {
-    body = `<div class="now"><div class="ico" aria-hidden="true">🚏</div><h2>Čakaj na autobus <span class="line-badge">${r.line}</span></h2><p>Príde o <b>${r.board}</b></p><p>Na tabuli má napísané: <b>${r.sign}</b></p></div>
-      <div class="next">Iné autobusy nechaj odísť. Keď nastúpiš, ťukni dole.</div>`;
-    act = `<button class="primary" id="gNext">Nastúpil som</button><button class="secondary" id="gMiss">Autobus mi ušiel</button>`;
+    const nw = NAV.walks[NAVOF[cur][optIdx].nav[rideIdx]];
+    body = `<div class="now">${okStop ? '<p class="ok">✓ Si na správnej zastávke</p>' : '<div class="ico" aria-hidden="true">🚏</div>'}<h2>Čakaj na autobus <span class="line-badge">${r.line}</span></h2><p>Príde o <b>${r.board}</b></p><p>Vpredu má napísané: <b>${r.sign}</b></p>
+      ${nw && nw.request ? `<p class="w-safe">Zastávka na znamenie: keď prichádza autobus ${r.line}, zdvihni ruku.</p>` : ''}</div>
+      ${nw && nw.cue.type === 'ask' ? `<div class="warn-box">Pri nástupe sa spýtaj vodiča, či ide na zastávku ${r.out}.</div>` : ''}
+      <div class="next">${nw ? `Autobus pôjde smerom na zastávku <b>${nw.next}</b>. ` : ''}Iné autobusy nechaj odísť${nw && nw.request ? ', ruku pri nich nedvíhaj' : ''}.${okStop ? '' : ` Ak autobus ${r.line} zastaví o kúsok ďalej, nebež k nemu.`} Keď nastúpiš, ťukni dole.</div>`;
+    act = `<button class="primary" id="gNext">Som v autobuse</button><button class="secondary" id="gMiss">Autobus mi ušiel</button>`;
   } else if (phase === 2) {
     if (!left) left = r.nth;
     body = `<div class="now"><div class="ico" aria-hidden="true">🚌</div><h2>Seď, ešte nevystupuj</h2><p>Vystúpiš na zastávke <b>${r.out}</b></p><p class="count">${left}</p><p>${left === 1 ? 'zastávka' : left < 5 ? 'zastávky' : 'zastávok'} do výstupu</p></div>
       <div class="next">Pred výstupom ti <b>zazvoním a zavibrujem</b>. Telefón môžeš schovať.</div>`;
-    act = `<button class="secondary" id="gSim">Ukážka: autobus ide ďalej ▶</button>`;
   } else if (phase === 3) {
-    body = `<div class="now"><div class="ico" aria-hidden="true">🔔</div><h2>Vystúp teraz: ${r.out}</h2>${last ? (o.finalWalk ? `<p>Potom ${mins(o.finalWalk)} pešo do cieľa.</p>` : '<p>Si pri cieli.</p>') : '<p>Budeš presadať na ďalší autobus.</p>'}</div>`;
-    act = `<button class="primary" id="gNext">Vystúpil som</button>`;
+    body = `<div class="now"><div class="ico" aria-hidden="true">🔔</div><h2>Vystúp teraz: ${r.out}</h2>${last ? (o.finalWalk ? `<p>Potom ťa dovediem pešo do cieľa (${mins(o.finalWalk)}).</p>` : '<p>Si pri cieli.</p>') : '<p>Potom ťa dovediem k ďalšiemu autobusu.</p>'}</div>`;
+    act = `<button class="primary" id="gNext">Som vonku z autobusu</button>`;
   } else {
-    body = `<div class="big-msg"><div class="ico" aria-hidden="true">🎉</div><h2>Si v cieli</h2><p>${d.dest} · ${o.arr}</p><p>Výborne, zvládol si to.</p></div>`;
+    body = `<div class="big-msg"><div class="ico" aria-hidden="true">🎉</div><h2>Si v cieli</h2><p>${d.dest} · ${o.arr}</p><p>Výborne, cesta je za tebou.</p></div>`;
     act = `<button class="primary" data-go="home">Hotovo</button>`;
   }
   $('guideBody').innerHTML = body;
-  const endBtn = phase < 4 ? `<button class="secondary danger" id="gEnd">Ukončiť cestu</button>` : '';
+  const endBtn = phase !== 4 ? `<button class="secondary danger" id="gEnd">Ukončiť cestu</button>` : '';
   const m = act.match(/^(.*?)(<button class="secondary".*)$/s);
-  $('guideActions').innerHTML = m && endBtn ? `${m[1]}<div class="pair">${m[2]}${endBtn}</div>` : act + endBtn;
+  $('guideActions').innerHTML = (full ? act : m && endBtn ? `${m[1]}<div class="pair">${m[2]}${endBtn}</div>` : act + endBtn) + '<button type="button" class="more" id="moreBtn" tabindex="-1" aria-hidden="true">▼ ďalej nižšie</button>';
+  // mapka sa kreslí v skutočnej šírke karty (text na nej má potom presne 16 px)
+  const mb = $('wMap'); if (mb && g) mb.innerHTML = mapHtml(g, Math.max(240, mb.clientWidth));
+  // šípka sa na nový smer plynulo dotočí
+  if (wk && g && wk.mode === 'walk') { const a = $('guideBody').querySelector('.compass svg'); if (a && wk.prev != null && wk.prev !== g.rel) { a.style.transform = `rotate(${wk.prev}deg)`; requestAnimationFrame(() => requestAnimationFrame(() => { a.style.transform = `rotate(${g.rel}deg)`; })); } wk.prev = g.rel; }
+  // hlas: pri chôdzi sa krátky pokyn povie sám pri každej zmene; „Čítaj“ ho zopakuje
+  lastVoice = voice || $('guideBody').innerText.replace(/\s+/g, ' ');
+  if (voice && voice !== spoken) { spoken = voice; speak(voice); }
+  // keď sa obsah nezmestí, nad tlačidlami sa ukáže záložka „ďalej nižšie“ (ťuknutím posunie)
+  const sc = $('guideBody'), more = () => $('scrGuide').classList.toggle('has-more', sc.scrollHeight - sc.scrollTop - sc.clientHeight > 14);
+  $('scrGuide').classList.remove('has-more'); sc.scrollTop = 0; sc.onscroll = more; more(); setTimeout(more, 400);
+  $('moreBtn').onclick = () => sc.scrollBy({ top: sc.clientHeight * 0.7, behavior: 'smooth' });
+
   const nx = $('gNext'); if (nx) nx.onclick = () => {
-    if (phase === 3) { if (last) phase = 4; else { rideIdx++; phase = 0; } } else phase++;
+    const nav = NAVOF[cur][optIdx];
+    if (phase === 3) {
+      if (last) { if (nav.fin) { startWalk(nav.fin); phase = 5; } else phase = 4; }
+      else { rideIdx++; okStop = false; if (nav.nav[rideIdx]) { startWalk(nav.nav[rideIdx]); phase = 0; } else phase = 1; }
+    } else phase++;
     left = 0; renderGuide();
   };
-  const sim = $('gSim'); if (sim) sim.onclick = () => {
-    left--; if (left <= 1) exitAlert(r, last); else renderGuide();
-  };
-  const miss = $('gMiss'); if (miss) miss.onclick = () => {
-    sheet(`<div class="big-msg"><div class="ico" aria-hidden="true">🙂</div><h2>Nič sa nedeje</h2><p>Nájdem ti ďalší autobus.</p></div><div class="stack"><button class="primary" id="mOk">Ukáž ďalší autobus</button></div>`);
-    $('mOk').onclick = () => { closeSheet(); optIdx = 1 - optIdx; renderPlan(); show('scrPlan'); };
-  };
-  const end = $('gEnd'); if (end) end.onclick = () => {
+  const on1 = (id, fn) => { const e = $(id); if (e) e.onclick = fn; };
+  on1('wGo', () => { introSeen = true; wk.mode = 'walk'; renderGuide(); });
+  on1('wView', () => { wk.view = wk.view === 'map' ? 'arrow' : 'map'; renderGuide(); });
+  on1('wHere', hereTap);
+  on1('cYes', () => toWait(true));
+  // „Nie“: stojí na inom nástupišti → vysvetliť a doviesť; druhé „Nie“ po oprave už nikam neposiela
+  on1('cNo', () => { wk.mode = wk.fix ? 'unsure' : 'nofix'; renderGuide(); });
+  on1('cIdk', () => { wk.mode = 'unsure'; renderGuide(); });
+  on1('fGo', () => { startWalk(wk.id, wk.w.cue.ref); renderGuide(); });
+  on1('uOk', () => toWait(false));
+  on1('uCall', callSheet);
+  on1('gMiss', () => {
+    const li = rideIdx === 0 ? laterOpt() : -1;
+    if (li >= 0) {
+      sheet(`<div class="big-msg"><div class="ico" aria-hidden="true">🙂</div><h2>Nič sa nedeje</h2><p>Nájdem ti ďalší autobus.</p></div><div class="stack"><button class="primary" id="mOk">Ukáž ďalší autobus</button></div>`);
+      $('mOk').onclick = () => { closeSheet(); optIdx = li; wk = null; renderPlan(); show('scrPlan'); };
+    } else sheet(`<div class="big-msg"><div class="ico" aria-hidden="true">🙂</div><h2>Nič sa nedeje</h2><p>Appka by ti teraz našla ďalší autobus z miesta, kde stojíš.</p></div><p class="note">V ukážke sú pripravené len dva spoje z domu.</p><div class="stack"><button class="primary" data-close>Dobre</button></div>`);
+  });
+  on1('gEnd', () => {
     sheet(`<h2>Naozaj ukončiť cestu?</h2><p>Prestanem ťa sprevádzať a <b>nezazvoním pred výstupom</b>.</p><div class="stack"><button class="primary" data-close>Nie, pokračovať v ceste</button><button class="secondary danger" id="eYes">Áno, ukončiť</button></div>`);
-    $('eYes').onclick = () => { closeSheet(); left = 0; show('scrHome'); };
-  };
+    $('eYes').onclick = () => { closeSheet(); left = 0; wk = null; show('scrHome'); };
+  });
+  simBar();
 }
 function exitAlert(r, last) {
   $('alertT').textContent = last ? 'VYSTÚP NA ĎALŠEJ ZASTÁVKE' : 'PRESADNUTIE NA ĎALŠEJ ZASTÁVKE';
   $('alertP').textContent = `Vystúp: ${r.out}.${r.request ? ' Stlač tlačidlo STOP.' : ''}`;
-  $('alert').hidden = false; $('alertOk').focus();
+  $('alert').hidden = false; $('alertOk').focus(); simBar();
   if (navigator.vibrate) navigator.vibrate([400, 200, 400]);
 }
 $('alertOk').onclick = () => { $('alert').hidden = true; left = 0; phase = 3; renderGuide(); };
@@ -403,7 +785,7 @@ function callSheet() {
 }
 $('btnCall').onclick = callSheet;
 $('btnWhere').onclick = () => {
-  const where = night ? { s: 'Cemjata', u: 'pri zastávke Cemjata' } : { s: 'Sibírska', u: 'na ulici Sibírska' };
+  const where = night ? { s: 'Cemjata', u: 'pri zastávke Cemjata' } : { s: 'Sibírska', u: 'na ulici Tekeľova' };
   sheet(`<h2>📍 Tu si</h2><p>Najbližšia zastávka: <b>${where.s}</b></p><p>Si ${where.u}, Prešov.</p><div class="stack"><button class="primary" id="wHome">🏠 Chcem ísť domov</button><button class="secondary" id="wCall">📞 Zavolať mame</button><button class="secondary" data-close>Zavrieť</button></div><p class="note">Poloha zostáva v telefóne. Nikam sa neposiela.</p>`);
   $('wHome').onclick = () => { closeSheet(); openTile('domov'); };
   $('wCall').onclick = callSheet;
@@ -419,7 +801,9 @@ $('btnParent').onclick = () => {
       <label class="field">Tempo chôdze<select><option>Pomalšie (odporúčané)</option><option>Bežné</option></select></label>
       <label class="field">Presadanie<select><option>Len keď inak nejde, aspoň 3 minúty času</option><option>Vôbec nepresadať</option><option>Povoliť, aspoň 2 minúty času</option></select></label>
       <label class="field">Najviac pešo k zastávke<select><option>400 m</option><option>700 m</option><option>1 km</option></select></label>
+      <label class="field">Oslovenie<select><option>Tykať (deti)</option><option>Vykať (dospelí a seniori)</option></select></label>
       <label class="field">Telefón na tlačidlo „Zavolať“<input type="tel" placeholder="číslo rodiča alebo opatrovateľa" autocomplete="off"></label>
+      <label class="field">Meno na tlačidle „Zavolať“<input placeholder="napr. mame, dcére, synovi" autocomplete="off"></label>
       <label class="field">Veľkosť písma<select><option>Veľké</option><option>Najväčšie</option></select></label>
       <div class="stack"><button class="secondary">Upraviť ciele (Domov, Škola…)</button><button class="secondary">Vypnúť jednoduchý režim</button><button class="primary" data-close>Hotovo</button></div>
       <p class="note">Ukážka: voľby sa neukladajú. V jednoduchom režime nie je nákup Plus ani platená SMS.</p>`);
