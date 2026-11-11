@@ -6,6 +6,20 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-11 15:40 – Od chatu (zápis za Code – workflow robil chat v tomto repe)
+- Hotové: nový workflow **„iOS TestFlight“** (`.github/workflows/mhd-ios-testflight.yml`). Prvý podpísaný build **v1.7.3 (build 261111435)** nahratý do App Store Connect 11. 11. 2026, Apple ho spracúva.
+  - Spúšťanie: ručne (workflow_dispatch) a automaticky po úspešnom workflowe „Android (APK + AAB)“ na `main`.
+  - Podpis: archive len s lokálnym podpisom (`CODE_SIGN_IDENTITY=-`), distribučný certifikát a App Store profil vytvorí v cloude `xcodebuild -exportArchive` s API kľúčom (`-allowProvisioningUpdates`). Automatický podpis už pri archive zlyhá: tím nemá registrované zariadenie, takže Apple nevydá vývojársky profil.
+  - Číslo buildu = rovnaká 9-ciferná schéma ako Android versionCode (počíta sa pri builde, vždy rastie).
+  - Info.plist: `CFBundleDisplayName` „Odkiaľ Kam“ (bez verzie), `ITSAppUsesNonExemptEncryption = false`, poloha len „pri používaní“ (bez polohy na pozadí; na iPhone upozornenie na výstup funguje, kým je appka otvorená).
+  - Privacy manifest bez sledovania a zberu údajov (UserDefaults `CA92.1`), ikony zlúčené bez alfa kanála, **len iPhone** (`TARGETED_DEVICE_FAMILY = 1`; iPad sa dá pridať neskôr, po vydaní odobrať nie), od ďalšieho buildu minimálne iOS 15 (Apple od apríla 2027 nižšie neprijme).
+  - Secrets `APP_STORE_CONNECT_*` vložil Vlado; kľúč sa zapisuje len na runneri a po behu maže. Podpísaná IPA sa necommituje.
+- Zlyhalo: nič (prvý pokus s automatickým podpisom pri archive – opravené).
+- Ďalej (chat): po spracovaní buildu Test Information a externá skupina testerov v TestFlighte.
+- **Google Play (chat, 11. 11.):** deklarácia služby v popredí uložená s videom (YouTube, nezaradené); **prvé produkčné vydanie 1.7.3 (261102542) odoslané na kontrolu**, všetky krajiny, rýchle kontroly prešli. Spravované zverejňovanie je vypnuté → po schválení sa appka zverejní sama. Odteraz schválenie jobu „produkcia“ v GitHube reálne vydá nový build do produkcie.
+
+---
+
 ### 2026-11-02 20:09 – Od chatu
 - **Odpoveď na otázku z 2. 11. 19:15 (dočasne znížené cestovné DPMP 12. 10. – 10. 11. 2026): rozhodnutie Vlada B** – nechať tak, appka ukazuje plné ceny, poznámku o zľave nedopĺňať a novú verziu kvôli tomu nevydávať.
 

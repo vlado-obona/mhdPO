@@ -133,9 +133,10 @@ jobs:
               t.add_resources([ref])
             end
             # len iPhone (iPad sa dá pridať neskôr, odobrať po vydaní nie)
-            t.build_configurations.each { |c| c.build_settings["TARGETED_DEVICE_FAMILY"] = "1" }
+            # od apríla 2027 App Store Connect prijme len appky s iOS 15+
+            t.build_configurations.each { |c| c.build_settings["TARGETED_DEVICE_FAMILY"] = "1"; c.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = "15.0" }
             p.save
-            puts "privacy manifest v targete App, TARGETED_DEVICE_FAMILY=1"
+            puts "privacy manifest v targete App, TARGETED_DEVICE_FAMILY=1, iOS 15.0+"
           '
 
       - name: Ikony (bez priehľadnosti)
