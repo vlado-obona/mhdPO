@@ -1,9 +1,9 @@
 // Service worker — offline cache aplikácie aj cestovných poriadkov.
 // Shell: cache-first s aktualizáciou na pozadí. Dataset: podľa version.json.
-const SHELL = 'mhd-shell-v1';
+const SHELL = 'mhd-shell-v2';
 const DATA = 'mhd-data-v1';
 const SHELL_FILES = [
-  './', 'index.html', 'app.css', 'app.js', 'raptor.js',
+  './', 'index.html', 'app.css', 'app.js', 'raptor.js', 'simple.css', 'simple.js',
   'vendor/leaflet.js', 'vendor/leaflet.css', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png',
 ];

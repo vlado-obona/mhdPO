@@ -1,5 +1,6 @@
 // MHD Prešov — plánovač spojení nad oficiálnymi GTFS dátami DPMP.
 import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './raptor.js';
+import { initSimple } from './simple.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
@@ -998,15 +999,23 @@ async function watchPos(cb, onErr) {
 }
 
 // ── kompas (zdieľa ho navigačná lišta aj režim cesty) ───────────────
-let compassHeading = null, compassOn = false;
+let compassHeading = null, compassOn = false, compassAbs = false;
 
 function onHeading(e) {
-  const h = (e.webkitCompassHeading != null) ? e.webkitCompassHeading
-    : (e.alpha != null ? 360 - e.alpha : null);
+  // iOS dáva skutočný sever vo webkitCompassHeading; inde ho nesie udalosť
+  // deviceorientationabsolute. Obyčajná deviceorientation má na Androide uhol
+  // od natočenia pri štarte, nie od severu — berie sa len kým absolútna neprišla.
+  let h = null;
+  if (e.webkitCompassHeading != null) h = e.webkitCompassHeading;
+  else if (e.alpha != null) {
+    const abs = e.type === 'deviceorientationabsolute' || e.absolute === true;
+    if (abs) compassAbs = true;
+    if (abs || !compassAbs) h = 360 - e.alpha;
+  }
   if (h == null) return;
   compassHeading = h;
   if (nav) renderNavArrow();
-  if (trip) renderTripNav();
+  if (trip) { if (trip.simple) simple.heading(); else renderTripNav(); }
 }
 
 // musí sa zavolať v používateľskom geste — iOS inak povolenie nevypýta
@@ -1016,7 +1025,10 @@ function compassStart() {
   const DOE = window.DeviceOrientationEvent;
   if (DOE && typeof DOE.requestPermission === 'function') {
     DOE.requestPermission().then((s) => {
-      if (s === 'granted' && compassOn) window.addEventListener('deviceorientation', onHeading);
+      if (s === 'granted' && compassOn) {
+        window.addEventListener('deviceorientationabsolute', onHeading);
+        window.addEventListener('deviceorientation', onHeading);
+      }
     }).catch(() => {});
   } else if (DOE) {
     window.addEventListener('deviceorientationabsolute', onHeading);
@@ -1028,6 +1040,7 @@ function compassStop() {
   if (!compassOn || nav || trip) return;
   compassOn = false;
   compassHeading = null;
+  compassAbs = false;
   window.removeEventListener('deviceorientation', onHeading);
   window.removeEventListener('deviceorientationabsolute', onHeading);
 }
@@ -1184,7 +1197,7 @@ let popSilently = 0; // history.back() po zatvorení dialógu tlačidlom — nie
 function setInertBehind() {
   const dlg = !$('favDlg').hidden, tk = !$('tktDlg').hidden, gm = !$('gmDlg').hidden, tr = !$('trip').hidden, al = !$('tripAlert').hidden;
   const pl = !$('plusDlg').hidden;
-  for (const el of document.querySelectorAll('body > header, body > main, body > footer, #navBar')) el.inert = dlg || tk || gm || tr || al || pl;
+  for (const el of document.querySelectorAll('body > header, body > main, body > footer, #navBar, #sm')) el.inert = dlg || tk || gm || tr || al || pl;
   $('plusDlg').inert = al;
   $('trip').inert = al || tk || gm;
   $('favDlg').inert = al || tr;
@@ -1796,6 +1809,7 @@ const NOTIF_CHANNEL = 'mhd-vystup';
 const GOOD_ACC = 150;      // m — horšia presnosť sa na postup jazdy nepoužije
 const GPS_STALE = 45000;   // ms — dlhšie bez dobrej polohy = odhad podľa CP
 // programové posuny mapy (Leaflet animovaný zoom spúšťa „zoomstart“ až v ďalšom snímku)
+let simple = null; // jednoduchý režim (simple.js), vzniká v main()
 let trip = null, tripMap = null, tripLayer = null, tripUserLayer = null, tripMapAutoUntil = 0;
 const tripMapAuto = () => { tripMapAutoUntil = Date.now() + 900; };
 
@@ -1873,8 +1887,11 @@ function destDistance(t, la, lo) {
   return haversine(la, lo, p.la, p.lo);
 }
 
-async function startTrip(i) {
-  const f = favs[i];
+// opt.simple: cesta v jednoduchom režime (vlastná obrazovka, plán podľa simple.js);
+// opt.fav: jednorazový cieľ mimo uložených („Iné miesto“)
+async function startTrip(i, opt = {}) {
+  const f = opt.fav || favs[i];
+  if (!f) return;
   if (!f.target) { openFavDlg(i); return; }
   if (!D) return;
   // v geste používateľa: odomknúť zvuk a kompas (iOS to inak nedovolí)
@@ -1889,9 +1906,10 @@ async function startTrip(i) {
     alerted: new Set(), seated: new Set(), alertTimer: null, follow: true, speedAvg: 0, openedAt: Date.now(),
     missNote: null, missSince: null, replanned: new Set(), notifAt: new Map(),
     t0Epoch: Date.now(), t0Secs: nowSecsSk(),
+    simple: opt.simple ?? !!simple?.isOn(),
   };
   compassStart();
-  openTripUi();
+  if (t.simple) { simple.tripOpened(); try { history.pushState({ trip: 1 }, ''); } catch {} } else openTripUi();
   keepAwake(true);
   renderTrip();
   try {
@@ -1906,6 +1924,11 @@ async function startTrip(i) {
   }
   if (trip !== t) return;
   planFromHere();
+  if (t.simple) return; // najprv náhľad plánu; sledovanie sa spustí až po „Sprevádzaj ma“ (beginTrip)
+  beginTrip(t);
+}
+function beginTrip(t = trip) {
+  if (!t || trip !== t) return;
   startTripWatch(t);
   // oprávnenie na notifikácie až po polohe — Android nedovolí dve žiadosti naraz
   prepareNotifications(t);
@@ -1925,9 +1948,28 @@ async function startTripWatch(t) {
   if (trip === t) startBgTracker(t);
 }
 
+// nový plán z aktuálnej polohy; keď je posledná poloha stará, najprv sa zistí nová
+async function replanTrip(reason) {
+  const t = trip;
+  if (!t) return;
+  unlockAudio();
+  if (!t.pos || Date.now() - t.pos.t > 60000) {
+    t.phase = 'locating'; renderTrip();
+    let pos = null;
+    try { pos = await getPositionFull(); } catch {}
+    if (trip !== t) return;
+    if (!pos) { t.phase = 'error'; t.error = 'Polohu sa nepodarilo zistiť.'; renderTrip(); return; }
+    t.pos = pos;
+    if (pos.acc <= GOOD_ACC) t.good = pos;
+    if (!t.simple || t.sm?.started) startTripWatch(t);
+  }
+  planFromHere(reason);
+}
+
 function planFromHere(reason) {
   const t = trip;
   if (!t || !t.pos) return;
+  if (t.simple) { simple.plan(reason); return; } // jednoduchý režim vyberá spoj vlastnými pravidlami
   cancelTripNotifs();
   t.t0Epoch = Date.now();
   t.t0Secs = nowSecsSk();
@@ -2182,6 +2224,7 @@ function exitAlert(atStop = false) {
     sub = `Vystúp: ${exitName}${t.j.finalWalk > 30 ? ` · potom pešo ~${fmtDur(t.j.finalWalk)} do cieľa` : ''}.`;
     say = atStop ? `Pozor! Teraz vystúpte na zastávke ${exitName}.` : `Pozor! Na ďalšej zastávke ${exitName} vystupujete.`;
   }
+  if (t.simple) ({ title, sub, say } = simple.alertText(t, k, atStop));
   $('taTitle').textContent = title;
   $('taSub').textContent = sub;
   if ($('tripAlert').hidden) {
@@ -2516,11 +2559,14 @@ function endTrip(silent) {
   trip = null;
   keepAwake(false);
   compassStop();
-  $('trip').hidden = true;
-  document.body.classList.remove('trip-open');
-  layerClosed();
-  // modrá bodka na hlavnej mape sa počas cesty neaktualizovala
-  if (map && !$('mapWrap').hidden) autoCenterMap();
+  if (t.simple) simple.tripEnded(); // jednoduchý režim má vlastnú obrazovku, #trip sa neotváral
+  else {
+    $('trip').hidden = true;
+    document.body.classList.remove('trip-open');
+    layerClosed();
+    // modrá bodka na hlavnej mape sa počas cesty neaktualizovala
+    if (map && !$('mapWrap').hidden) autoCenterMap();
+  }
   if (!silent) { try { if (history.state && history.state.trip) history.back(); } catch {} }
 }
 
@@ -2543,7 +2589,7 @@ function tripTarget() {
 }
 
 function drawTripJourney() {
-  if (!tripMap || !trip) return;
+  if (!tripMap || !trip || trip.simple) return;
   tripLayer.clearLayers();
   const t = trip;
   const pts = [];
@@ -2591,7 +2637,7 @@ function drawTripJourney() {
 }
 
 function updateTripUser() {
-  if (!tripMap || !trip || !trip.pos) return;
+  if (!tripMap || !trip || !trip.pos || trip.simple) return;
   const t = trip;
   tripUserLayer.clearLayers();
   const ll = [t.pos.la, t.pos.lo];
@@ -2688,6 +2734,7 @@ function renderTrip() {
   syncBg(t);
   const key = `${t.phase}|${t.ri}|${t.jIdx}`;
   if (key !== t.phaseKey) { t.phaseKey = key; t.phaseAt = Date.now(); }
+  if (t.simple) { simple.render(); return; }
   $('tripDestName').textContent = `${t.fav.icon} ${t.fav.label}`;
   $('tripDestSub').textContent = targetLabel(t.dest);
   const legs = $('tripLegs');
@@ -2724,6 +2771,7 @@ function renderTrip() {
 function renderTripLive() {
   const t = trip;
   if (!t) return;
+  if (t.simple) { simple.render(); return; }
   renderTripNav();
   let main = '', sub = '', cls = '';
   const now = t.phase === 'locating' ? 0 : tripNowSecs();
@@ -2886,6 +2934,21 @@ async function main() {
   loadFavs();
   loadWidgetCfg();
   initPlus(); // načíta stav Plus a nakreslí rýchle ciele
+  // jednoduchý režim: veľké dlaždice a sprevádzanie krok za krokom (simple.js)
+  simple = initSimple({
+    $, esc, fmtTime, haversine, bearingTo, norm, nowSecsSk, nowInSk, dateInfoFor, leaveTime,
+    WALK_SPEED,
+    D: () => D, raptor: () => raptor, favs: () => favs, prefs: () => prefs, trip: () => trip, groups: () => groups,
+    compassHeading: () => compassHeading,
+    favVisible, resolveTarget, targetLabel, savePrefs,
+    startTrip, endTrip, useJourney, boardRide, alight, arrived, beginTrip, renderTrip,
+    replan: replanTrip, cancelTripNotifs,
+    stopSetFor, destStopsFor, planWithPrefs, walkStraight, destDistance, destPoint, tripNowSecs, goodFix,
+    speak, buzz, unlockAudio, nearestStop, loadMapbase, loadPlaces, searchPlaces, getPositionFull,
+    refreshMain: () => { if (map) setTimeout(() => map.invalidateSize(), 60); },
+  });
+  simple.init();
+  $('simpleLink').addEventListener('click', () => simple.turnOn());
   // „Bez prestupu“ (uložené v telefóne, platí aj pre rýchle ciele)
   $('directChk').checked = !!prefs.direct;
   $('directChk').addEventListener('change', (e) => {
@@ -2975,22 +3038,7 @@ async function main() {
     trip.info = null;
     drawTripJourney(); renderTrip();
   });
-  $('tripReplan').addEventListener('click', async () => {
-    const t = trip;
-    if (!t) return;
-    unlockAudio();
-    if (!t.pos || Date.now() - t.pos.t > 60000) {
-      t.phase = 'locating'; renderTrip();
-      let pos = null;
-      try { pos = await getPositionFull(); } catch {}
-      if (trip !== t) return;
-      if (!pos) { t.phase = 'error'; t.error = 'Polohu sa nepodarilo zistiť.'; renderTrip(); return; }
-      t.pos = pos;
-      if (pos.acc <= GOOD_ACC) t.good = pos;
-      startTripWatch(t);
-    }
-    planFromHere('Prepočítané z tvojej aktuálnej polohy.');
-  });
+  $('tripReplan').addEventListener('click', () => replanTrip('Prepočítané z tvojej aktuálnej polohy.'));
   window.addEventListener('popstate', () => {
     if (popSilently) { popSilently--; return; }
     // Späť zatvorí len najvrchnejšiu vrstvu
@@ -2999,6 +3047,9 @@ async function main() {
       // záznam histórie pre vrstvu, ktorá ostala otvorená
       const keep = !$('tktDlg').hidden ? { tkt: 1 } : trip ? { trip: 1 } : null;
       if (keep) { try { history.pushState(keep, ''); } catch {} }
+    } else if (simple.back(true)) {
+      // jednoduchý režim: Späť zavrie hárok alebo sa opýta; cesta beží ďalej → záznam vrátiť
+      if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
     } else if (!$('gmDlg').hidden) {
       closeGmDlg();
       if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
@@ -3010,6 +3061,7 @@ async function main() {
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (!$('tripAlert').hidden) dismissAlert();
+    else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
     else if (!$('gmDlg').hidden) closeGmDlg();
     else if (!$('tktDlg').hidden) closeTktDlg();
     else if (!$('plusDlg').hidden) closePlusDlg();
@@ -3027,6 +3079,8 @@ async function main() {
   if (CapApp) {
     CapApp.addListener('backButton', ({ canGoBack }) => {
       if (!$('tripAlert').hidden) dismissAlert();
+      else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
+      else if (simple.isOn()) CapApp.minimizeApp().catch(() => CapApp.exitApp()); // úvod jednoduchého režimu
       else if (!$('gmDlg').hidden) closeGmDlg();
       else if (!$('tktDlg').hidden) closeTktDlg();
       else if (!$('plusDlg').hidden) closePlusDlg();
