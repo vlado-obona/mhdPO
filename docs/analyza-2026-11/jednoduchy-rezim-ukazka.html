@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jednoduchý režim – ukážka návrhu (Odkiaľ Kam)</title>
+<style>
+  :root {
+    --green: #075c2b;        /* tmavšia zelená: biely text 8,3:1 */
+    --green-soft: #e6f3ea;
+    --ink: #14181a;
+    --muted: #454c50;        /* 8,6:1 na bielej */
+    --bg: #f2f5f2;
+    --card: #ffffff;
+    --line: #7d887f;         /* okraje 3,7:1 */
+    --warn-bg: #fff3d6;
+    --warn-ink: #5a3d00;
+    --red: #a3210f;
+    --blue: #0b4a8f;
+    --r: 18px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font: 1.125rem/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* 18 px */
+    color: var(--ink); background: #dfe6e0;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible, a:focus-visible { outline: 4px solid #ffbf00; outline-offset: 3px; }
+  [hidden] { display: none !important; }
+
+  /* rám telefónu na širokej obrazovke, na mobile celá plocha */
+  .stage { height: 100vh; height: 100dvh; display: flex; flex-direction: column; align-items: center; }
+  .demo {
+    width: 100%; background: #1d2a22; color: #fff; padding: .3rem .6rem; flex: none;
+    display: flex; flex-wrap: nowrap; gap: .5rem; align-items: center; justify-content: center; font-size: .95rem;
+  }
+  .demo b { font-weight: 700; }
+  .demo button {
+    min-height: 40px; padding: .2rem .8rem; border-radius: 999px; border: 2px solid #9fc9ad;
+    background: transparent; color: #fff; font-weight: 600; white-space: nowrap;
+  }
+  .demo button[aria-pressed="true"] { background: #fff; color: #1d2a22; border-color: #fff; }
+  .phone {
+    position: relative; width: 100%; max-width: 430px; flex: 1 1 auto; min-height: 0;
+    background: var(--bg); display: flex; flex-direction: column; overflow: hidden;
+  }
+  .demo .d-long { display: none; }
+  @media (min-width: 700px) {
+    .stage { height: auto; min-height: 100%; }
+    .demo { padding: .5rem .75rem; } .demo .d-long { display: inline; } .demo .d-short { display: none; }
+    .phone { flex: none; height: 800px; margin: 1rem 0 2rem; border-radius: 28px; box-shadow: 0 12px 40px rgb(0 0 0 / 25%); }
+  }
+
+  .screen { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .scroll { flex: 1; overflow-y: auto; padding: 1rem 1rem 1.25rem; }
+  .bar-top {
+    background: var(--green); color: #fff; padding: .9rem 1rem; display: flex; align-items: center; gap: .75rem;
+  }
+  .bar-top h1 { font-size: 1.6rem; line-height: 1.15; margin: 0; flex: 1; }
+  .bar-top .clock { font-size: 1.05rem; font-weight: 600; text-align: right; line-height: 1.2; }
+  .btn-text {
+    min-height: 56px; padding: .5rem 1rem; border-radius: 14px; border: 2px solid #fff; background: transparent; color: #fff; font-weight: 700;
+  }
+
+  /* dlaždice cieľov */
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tile {
+    min-height: 132px; border: 0; border-radius: var(--r); color: #fff; padding: .75rem .5rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .15rem;
+    box-shadow: 0 3px 0 rgb(0 0 0 / 22%);
+  }
+  .tile .ico { font-size: 2.6rem; line-height: 1; }
+  .tile .name { font-size: 1.6rem; font-weight: 800; line-height: 1.15; }
+  .tile .sub { font-size: 1rem; font-weight: 600; text-align: center; overflow-wrap: anywhere; }
+  .tile.wide { grid-column: 1 / -1; min-height: 104px; flex-direction: row; gap: 1rem; }
+  .tile.wide .txt { display: flex; flex-direction: column; align-items: flex-start; }
+  .t-home { background: #075c2b; } .t-school { background: #0b4a8f; } .t-doc { background: #8a1c3c; }
+  .t-gran { background: #6a3d00; } .t-shop { background: #4b2a80; }
+  .row-btn {
+    width: 100%; min-height: 64px; margin-top: 12px; border-radius: var(--r); border: 2px solid var(--line);
+    background: var(--card); font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: .75rem; padding: .6rem 1rem; text-align: left;
+  }
+  .row-btn .ico { font-size: 1.7rem; }
+  .row-btn small { display: block; font-weight: 500; font-size: 1rem; color: var(--muted); }
+
+  /* spodná lišta pomoci – vždy viditeľná */
+  .help {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 1rem calc(12px + env(safe-area-inset-bottom));
+    background: var(--card); border-top: 2px solid #c9d2cb;
+  }
+  .help button {
+    min-height: 64px; border-radius: 16px; border: 2px solid var(--green); background: var(--card); color: var(--green);
+    font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; gap: .5rem; padding: .4rem .5rem; line-height: 1.15; text-align: left;
+  }
+  .help button .ico { font-size: 1.6rem; flex: none; }
+  .help button small { display: block; font-size: 1rem; font-weight: 600; }
+  .help button.call { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  /* plán – jedna odpoveď */
+  .leave { background: var(--card); border-radius: var(--r); padding: 1rem; border: 2px solid #c9d2cb; }
+  .leave .lbl { font-size: 1.15rem; font-weight: 700; color: var(--muted); }
+  .leave .big { font-size: 3rem; font-weight: 800; line-height: 1.05; }
+  .leave .in { font-size: 1.25rem; font-weight: 700; color: var(--green); }
+  .leave .bus { font-size: 1.2rem; margin-top: .5rem; line-height: 1.5; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: .75rem 0 0; }
+  .tag { background: var(--green-soft); color: var(--green); font-weight: 700; border-radius: 999px; padding: .3rem .8rem; font-size: 1.05rem; }
+  .tag.warn { background: var(--warn-bg); color: var(--warn-ink); }
+  ol.steps { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  ol.steps li { background: var(--card); border-radius: var(--r); padding: .85rem 1rem; display: flex; gap: .85rem; align-items: flex-start; border: 2px solid #c9d2cb; }
+  ol.steps .ico { font-size: 2rem; line-height: 1.1; width: 2.4rem; text-align: center; flex: none; }
+  ol.steps .main { font-size: 1.3rem; font-weight: 700; line-height: 1.25; }
+  ol.steps .sub { font-size: 1.1rem; color: var(--muted); }
+  .line-badge { display: inline-block; min-width: 2.6rem; text-align: center; background: var(--green); color: #fff; font-weight: 800; border-radius: 10px; padding: .05rem .5rem; font-size: 1.5rem; }
+  .actions { padding: 12px 1rem; background: var(--card); border-top: 2px solid #c9d2cb; display: flex; flex-direction: column; gap: 10px; }
+  .primary {
+    min-height: 72px; border: 0; border-radius: 18px; background: var(--green); color: #fff; font-size: 1.5rem; font-weight: 800; width: 100%;
+    box-shadow: 0 3px 0 rgb(0 0 0 / 25%);
+  }
+  .secondary { min-height: 60px; border-radius: 16px; border: 2px solid var(--green); background: var(--card); color: var(--green); font-size: 1.2rem; font-weight: 700; width: 100%; }
+  .danger { color: var(--red); border-color: var(--red); }
+
+  /* sprevádzanie */
+  .dots { display: flex; gap: 6px; padding: .6rem 1rem 0; }
+  .dots span { flex: 1; height: 10px; border-radius: 5px; background: #c3cdc5; }
+  .dots span.on { background: var(--green); }
+  .now { background: var(--card); border-radius: var(--r); padding: 1.1rem 1rem; border: 3px solid var(--green); text-align: center; }
+  .now .ico { font-size: 3.4rem; line-height: 1; }
+  .now h2 { font-size: 1.9rem; line-height: 1.15; margin: .4rem 0 .3rem; }
+  .now p { margin: .2rem 0; font-size: 1.3rem; }
+  .now .ok { color: var(--green); font-weight: 800; }
+  .now .count { font-size: 3.2rem; font-weight: 800; line-height: 1; }
+  .next { margin-top: 12px; background: #e9eeea; border-radius: var(--r); padding: .8rem 1rem; font-size: 1.1rem; color: var(--muted); }
+  .next b { color: var(--ink); }
+
+  /* upozornenie na výstup – ako v appke: celá obrazovka */
+  .alert { position: absolute; inset: 0; background: var(--red); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.5rem; z-index: 20; }
+  .alert .ico { font-size: 5rem; }
+  .alert h2 { font-size: 2.3rem; line-height: 1.1; margin: .5rem 0; }
+  .alert p { font-size: 1.5rem; font-weight: 700; margin: .3rem 0 1.5rem; }
+  .alert button { min-height: 76px; min-width: 240px; border: 0; border-radius: 18px; background: #fff; color: var(--red); font-size: 1.5rem; font-weight: 800; }
+
+  /* hárky a dialógy */
+  .veil { position: absolute; inset: 0; background: rgb(0 0 0 / 55%); z-index: 30; display: flex; align-items: flex-end; }
+  .sheet { background: var(--card); width: 100%; border-radius: 24px 24px 0 0; padding: 1.25rem 1rem calc(1rem + env(safe-area-inset-bottom)); max-height: 92%; overflow-y: auto; }
+  .sheet h2 { font-size: 1.7rem; margin: 0 0 .5rem; line-height: 1.2; }
+  .sheet p { font-size: 1.25rem; margin: .4rem 0; }
+  .sheet .stack { display: flex; flex-direction: column; gap: 10px; margin-top: 1rem; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-top: .9rem; font-weight: 700; }
+  .field select, .field input { min-height: 56px; font: inherit; border-radius: 12px; border: 2px solid var(--line); padding: .4rem .7rem; background: #fff; }
+  .note { font-size: 1rem; color: var(--muted); margin-top: .9rem; }
+  .big-msg { text-align: center; padding: 1.2rem .5rem; }
+  .big-msg .ico { font-size: 4rem; }
+  .big-msg h2 { font-size: 2rem; line-height: 1.15; margin: .4rem 0; }
+  .big-msg p { font-size: 1.35rem; margin: .4rem 0; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pair .secondary { font-size: 1.08rem; line-height: 1.2; padding: .3rem .5rem; }
+  /* nízke displeje: menšie dlaždice, aby sa zmestili štyri ciele */
+  @media (max-height: 700px) {
+    .bar-top { padding: .6rem 1rem; } .bar-top h1 { font-size: 1.4rem; }
+    .tile { min-height: 104px; } .tile .ico { font-size: 2rem; } .tile .name { font-size: 1.4rem; }
+    .tile.wide { min-height: 76px; }
+    .now { padding: .8rem .75rem; } .now .ico { font-size: 2.4rem; } .now h2 { font-size: 1.6rem; }
+    .primary { min-height: 64px; font-size: 1.35rem; } .actions { padding: 10px .75rem; gap: 8px; }
+    .help { padding: 8px .75rem calc(8px + env(safe-area-inset-bottom)); } .help button { min-height: 60px; }
+    .scroll { padding: .75rem .75rem 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="demo" role="group" aria-label="Ovládanie ukážky">
+    <span class="d-long"><b>Ukážka návrhu</b> · reálne spoje zo štvrtka 12. 11. 2026</span><span class="d-short"><b>Ukážka</b></span>
+    <button id="demoDay" aria-pressed="true">Ráno 7:10</button>
+    <button id="demoNight" aria-pressed="false">Noc 23:40</button>
+  </div>
+
+  <div class="phone" id="phone">
+    <!-- 1. DOMOV -->
+    <section class="screen" id="scrHome">
+      <header class="bar-top">
+        <h1>Kam ideš?</h1>
+        <div class="clock"><span id="clock">7:10</span><br>štvrtok</div>
+      </header>
+      <div class="scroll">
+        <div class="tiles">
+          <button class="tile wide t-home" data-tile="domov"><span class="ico" aria-hidden="true">🏠</span><span class="txt"><span class="name">Domov</span><span class="sub">Sibírska</span></span></button>
+          <button class="tile t-school" data-tile="skola"><span class="ico" aria-hidden="true">🏫</span><span class="name">Škola</span><span class="sub">Trojica</span></button>
+          <button class="tile t-doc" data-tile="lekar"><span class="ico" aria-hidden="true">🏥</span><span class="name">Lekár</span><span class="sub">Fakultná nemocnica</span></button>
+          <button class="tile t-gran" data-tile="babka"><span class="ico" aria-hidden="true">👵</span><span class="name">Babka</span><span class="sub">Solivar</span></button>
+          <button class="tile t-shop" data-tile="obchod"><span class="ico" aria-hidden="true">🛒</span><span class="name">Obchod</span><span class="sub">Eperia</span></button>
+        </div>
+        <button class="row-btn" id="btnOther"><span class="ico" aria-hidden="true">🔎</span><span>Iné miesto<small>vyber zo zoznamu</small></span></button>
+        <button class="row-btn" id="btnParent"><span class="ico" aria-hidden="true">⚙️</span><span>Nastavenia<small>pre rodiča alebo pomocníka</small></span></button>
+      </div>
+    </section>
+
+    <!-- 2. PLÁN – jedna odpoveď -->
+    <section class="screen" id="scrPlan" hidden>
+      <header class="bar-top">
+        <button class="btn-text" data-go="home">← Späť</button>
+        <h1 id="planTitle"></h1>
+      </header>
+      <div class="scroll" id="planBody"></div>
+      <div class="actions" id="planActions"></div>
+    </section>
+
+    <!-- 3. SPREVÁDZANIE -->
+    <section class="screen" id="scrGuide" hidden>
+      <header class="bar-top">
+        <h1 id="guideTitle"></h1>
+        <button class="btn-text" id="btnSpeak" aria-label="Prečítať pokyn nahlas">🔊 Čítaj</button>
+      </header>
+      <div class="dots" id="dots" aria-hidden="true"></div>
+      <div class="scroll" id="guideBody" aria-live="polite"></div>
+      <div class="actions" id="guideActions"></div>
+    </section>
+
+    <!-- 4. INÉ MIESTO -->
+    <section class="screen" id="scrOther" hidden>
+      <header class="bar-top">
+        <button class="btn-text" data-go="home">← Späť</button>
+        <h1>Iné miesto</h1>
+      </header>
+      <div class="scroll">
+        <p style="margin:.2rem 0 .6rem;font-weight:700">Kam chceš ísť? Ťukni na miesto.</p>
+        <button class="row-btn" data-tile="skola"><span class="ico" aria-hidden="true">⛪</span><span>Trojica<small>centrum mesta</small></span></button>
+        <button class="row-btn" data-tile="lekar"><span class="ico" aria-hidden="true">🏥</span><span>Fakultná nemocnica<small>nemocnica</small></span></button>
+        <button class="row-btn" data-tile="babka"><span class="ico" aria-hidden="true">🏘️</span><span>Solivar<small>mestská časť</small></span></button>
+        <button class="row-btn" data-tile="obchod"><span class="ico" aria-hidden="true">🛒</span><span>Eperia<small>nákupné centrum</small></span></button>
+        <p class="note">V hotovej appke tu bude veľké pole na písanie s odpúšťaním preklepov („nemocnca“ nájde nemocnicu) a zoznam naposledy použitých miest.</p>
+      </div>
+    </section>
+
+    <!-- lišta pomoci: na každej obrazovke -->
+    <nav class="help" aria-label="Pomoc">
+      <button id="btnWhere"><span class="ico" aria-hidden="true">📍</span><span>Kde som?</span></button>
+      <button id="btnCall" class="call"><span class="ico" aria-hidden="true">📞</span><span>Zavolať<small>mame</small></span></button>
+    </nav>
+
+    <div class="alert" id="alert" hidden role="alertdialog" aria-labelledby="alertT" aria-describedby="alertP">
+      <div class="ico" aria-hidden="true">🔔</div>
+      <h2 id="alertT"></h2>
+      <p id="alertP"></p>
+      <button id="alertOk">Dobre, rozumiem</button>
+    </div>
+
+    <div class="veil" id="veil" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+  </div>
+</div>
+
+<script>
+// ── Reálne spojenia z cestovného poriadku platného 12. 11. 2026 (dataset appky v1.7.3) ──
+// Vybrané podľa navrhovaných pravidiel jednoduchého režimu: radšej bez presadania,
+// na presadnutie aspoň 3 minúty, pomalšia chôdza (0,9 m/s) + 1 min rezerva na zastávku.
+const DEMO = {
+  skola: { ico: '🏫', name: 'Škola', dest: 'Trojica', options: [
+    { leave: '7:21', inMin: 11, walk: 2, stop: 'Sibírska', arr: '7:43', rides: [
+      { line: '8', board: '7:25', sign: 'Sídlisko III', out: 'Trojica', nth: 11, outAt: '7:43', request: false } ] },
+    { leave: '7:37', inMin: 27, walk: 2, stop: 'Sibírska', arr: '7:54', rides: [
+      { line: '32', board: '7:41', sign: 'Trojica', out: 'Trojica', nth: 8, outAt: '7:54', request: false } ] } ] },
+  lekar: { ico: '🏥', name: 'Lekár', dest: 'Fakultná nemocnica', options: [
+    { leave: '7:24', inMin: 14, walk: 2, stop: 'Sibírska', arr: '7:37', rides: [
+      { line: '12', board: '7:28', sign: 'Šidlovec', out: 'Fakultná nemocnica', nth: 7, outAt: '7:37', request: false } ] },
+    { leave: '7:33', inMin: 23, walk: 2, stop: 'Sibírska', arr: '7:59', rides: [
+      { line: '10', board: '7:37', sign: 'Nemocnica', out: 'Fakultná nemocnica', nth: 14, outAt: '7:59', request: false } ] } ] },
+  babka: { ico: '👵', name: 'Babka', dest: 'Solivar', options: [
+    { leave: '7:21', inMin: 11, walk: 2, stop: 'Sibírska', arr: '7:50', finalWalk: 6, rides: [
+      { line: '8', board: '7:25', sign: 'Sídlisko III', out: 'Škára', nth: 6, outAt: '7:34', request: true },
+      { line: '46', board: '7:40', sign: 'Ruská Nová Ves', out: 'Múzeum Solivar', nth: 3, outAt: '7:44', request: true, changeWalk: 2, spare: 3 } ] },
+    { leave: '7:37', inMin: 27, walk: 2, stop: 'Sibírska', arr: '8:09', rides: [
+      { line: '32', board: '7:41', sign: 'Trojica', out: 'Na Hlavnej', nth: 7, outAt: '7:52', request: false },
+      { line: '1', board: '7:57', sign: 'Solivar', out: 'Solivar', nth: 8, outAt: '8:09', request: false, changeWalk: 2, spare: 3 } ] } ] },
+  obchod: { ico: '🛒', name: 'Obchod', dest: 'Eperia', options: [
+    { leave: '7:27', inMin: 17, walk: 2, stop: 'Sibírska', arr: '7:41', finalWalk: 5, rides: [
+      { line: '32A', board: '7:31', sign: 'Okružná – Trojica', out: 'Rusínska', nth: 3, outAt: '7:36', request: true } ] },
+    { leave: '7:14', inMin: 4, walk: 2, stop: 'Sibírska', arr: '7:32', finalWalk: 9, rides: [
+      { line: '38', board: '7:18', sign: 'Sídlisko III', out: 'Martina Benku', nth: 3, outAt: '7:23', request: false } ] } ] },
+};
+const NIGHT = { stop: 'Cemjata', line: '18', first: '5:03' }; // reálne: po 23:40 ide prvý spoj až 5:03
+
+const $ = (id) => document.getElementById(id);
+const mins = (n) => `${n} ${n === 1 ? 'minútu' : n < 5 ? 'minúty' : 'minút'}`;
+const el = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; };
+let night = false, cur = null, optIdx = 0, phase = 0, rideIdx = 0, left = 0;
+
+function show(id) {
+  for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
+  const sc = document.querySelector(`#${id} .scroll`); if (sc) sc.scrollTop = 0;
+  const h = document.querySelector(`#${id} h1`); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
+}
+function sheet(html) { $('sheet').innerHTML = html; $('veil').hidden = false; const b = $('sheet').querySelector('button'); if (b) b.focus(); }
+function closeSheet() { $('veil').hidden = true; }
+$('veil').addEventListener('click', (e) => { if (e.target === $('veil')) closeSheet(); });
+
+// ── domov ──
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-tile]'); if (t) return openTile(t.dataset.tile);
+  const g = e.target.closest('[data-go]'); if (g) return show('scrHome');
+  if (e.target.closest('[data-close]')) closeSheet();
+});
+function openTile(k) {
+  if (night) return nightMsg();
+  if (k === 'domov') return sheet(`<div class="big-msg"><div class="ico" aria-hidden="true">🏠</div><h2>Si blízko domu</h2><p>Domov to máš <b>2 minúty pešo</b>. Autobus netreba.</p></div><div class="stack"><button class="primary" data-close>Dobre</button></div>`);
+  cur = k; optIdx = 0; renderPlan(); show('scrPlan');
+}
+function nightMsg() {
+  sheet(`<div class="big-msg"><div class="ico" aria-hidden="true">🌙</div><h2>Dnes už autobus nejde</h2><p>Najbližší autobus <b>${NIGHT.line}</b> ide <b>zajtra ráno o ${NIGHT.first}</b> zo zastávky ${NIGHT.stop}.</p><p>Zavolaj, nech po teba niekto príde.</p></div><div class="stack"><button class="primary" id="nCall">📞 Zavolať mame</button><button class="secondary" data-close>Zavrieť</button></div>`);
+  $('nCall').onclick = callSheet;
+}
+
+// ── plán: jedna odpoveď vo vetách ──
+function renderPlan() {
+  const d = DEMO[cur], o = d.options[optIdx], many = o.rides.length > 1;
+  $('planTitle').textContent = `${d.ico} ${d.name}`;
+  const steps = [`<li><span class="ico" aria-hidden="true">🚶</span><div><div class="main">Choď na zastávku ${o.stop}</div><div class="sub">${mins(o.walk)} pešo</div></div></li>`];
+  o.rides.forEach((r, i) => {
+    if (i > 0) steps.push(`<li><span class="ico" aria-hidden="true">🔁</span><div><div class="main">Prejdi na druhé nástupište</div><div class="sub">${mins(r.changeWalk)} pešo · potom máš ešte ${mins(r.spare)} čas</div></div></li>`);
+    steps.push(`<li><span class="ico" aria-hidden="true">🚌</span><div><div class="main">Nastúp do autobusu <span class="line-badge">${r.line}</span> o ${r.board}</div><div class="sub">Na tabuli má napísané: <b>${r.sign}</b></div></div></li>`);
+    steps.push(`<li><span class="ico" aria-hidden="true">🔔</span><div><div class="main">Vystúp na zastávke ${r.out}</div><div class="sub">Je to ${r.nth}. zastávka · o ${r.outAt}${r.request ? ' · pred ňou <b>stlač STOP</b>' : ''}</div></div></li>`);
+  });
+  if (o.finalWalk) steps.push(`<li><span class="ico" aria-hidden="true">🚶</span><div><div class="main">Dôjdi pešo do cieľa</div><div class="sub">${mins(o.finalWalk)} pešo</div></div></li>`);
+  steps.push(`<li><span class="ico" aria-hidden="true">🏁</span><div><div class="main">V cieli budeš o ${o.arr}</div><div class="sub">${d.dest}</div></div></li>`);
+  $('planBody').innerHTML = `
+    <div class="leave"><div class="lbl">Vyraz o</div><div class="big">${o.leave}</div><div class="in">to je o ${mins(o.inMin)}</div>
+      <div class="bus">Autobus <span class="line-badge">${o.rides[0].line}</span> ide o <b>${o.rides[0].board}</b> zo zastávky <b>${o.stop}</b></div>
+      <div class="tags"><span class="tag">${many ? '1× presadneš' : 'Bez presadania'}</span><span class="tag">dnes</span>${many ? '<span class="tag warn">na presadnutie máš 3 minúty</span>' : ''}</div></div>
+    <ol class="steps">${steps.join('')}</ol>`;
+  const other = d.options[1 - optIdx];
+  $('planActions').innerHTML = `<button class="primary" id="btnGo">▶ Sprevádzaj ma</button>
+    <button class="secondary" id="btnLater">${optIdx === 0 ? 'Neskorší autobus' : 'Skorší autobus'} (vyraziť o ${other.leave})</button>`;
+  $('btnGo').onclick = startGuide;
+  $('btnLater').onclick = () => { optIdx = 1 - optIdx; renderPlan(); $('planBody').scrollTop = 0; };
+}
+
+// ── sprevádzanie: jeden pokyn na obrazovku ──
+// fázy: 0 choď na zastávku, 1 čakaj, 2 jazda, 3 (prestup: prejdi) … , posledná: cieľ
+function startGuide() { phase = 0; rideIdx = 0; renderGuide(); show('scrGuide'); }
+function say() {
+  const t = $('guideBody').innerText.replace(/\s+/g, ' ');
+  if ('speechSynthesis' in window) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'sk-SK'; speechSynthesis.speak(u); }
+}
+$('btnSpeak').onclick = say;
+function renderGuide() {
+  const d = DEMO[cur], o = d.options[optIdx], r = o.rides[rideIdx], last = rideIdx === o.rides.length - 1;
+  $('guideTitle').textContent = `${d.ico} ${d.name}`;
+  const total = 4; const on = phase >= 4 ? 4 : phase + 1;
+  $('dots').innerHTML = Array.from({ length: total }, (_, i) => `<span class="${i < on ? 'on' : ''}"></span>`).join('');
+  let body = '', act = '';
+  if (phase === 0) {
+    const where = rideIdx === 0 ? `Choď na zastávku ${o.stop}` : 'Prejdi na druhé nástupište';
+    const sub = rideIdx === 0 ? `${mins(o.walk)} pešo` : `${mins(r.changeWalk)} pešo, cez priechod`;
+    body = `<div class="now"><div class="ico" aria-hidden="true">🚶</div><h2>${where}</h2><p>${sub}</p><p class="ok">✓ Stíhaš. Autobus ${r.line} ide o ${r.board}.</p></div>
+      <div class="next">Potom: <b>nastúp do autobusu ${r.line}</b> (na tabuli ${r.sign}).</div>`;
+    act = `<button class="primary" id="gNext">Som na zastávke</button>`;
+  } else if (phase === 1) {
+    body = `<div class="now"><div class="ico" aria-hidden="true">🚏</div><h2>Čakaj na autobus <span class="line-badge">${r.line}</span></h2><p>Príde o <b>${r.board}</b></p><p>Na tabuli má napísané: <b>${r.sign}</b></p></div>
+      <div class="next">Iné autobusy nechaj odísť. Keď nastúpiš, ťukni dole.</div>`;
+    act = `<button class="primary" id="gNext">Nastúpil som</button><button class="secondary" id="gMiss">Autobus mi ušiel</button>`;
+  } else if (phase === 2) {
+    if (!left) left = r.nth;
+    body = `<div class="now"><div class="ico" aria-hidden="true">🚌</div><h2>Seď, ešte nevystupuj</h2><p>Vystúpiš na zastávke <b>${r.out}</b></p><p class="count">${left}</p><p>${left === 1 ? 'zastávka' : left < 5 ? 'zastávky' : 'zastávok'} do výstupu</p></div>
+      <div class="next">Pred výstupom ti <b>zazvoním a zavibrujem</b>. Telefón môžeš schovať.</div>`;
+    act = `<button class="secondary" id="gSim">Ukážka: autobus ide ďalej ▶</button>`;
+  } else if (phase === 3) {
+    body = `<div class="now"><div class="ico" aria-hidden="true">🔔</div><h2>Vystúp teraz: ${r.out}</h2>${last ? (o.finalWalk ? `<p>Potom ${mins(o.finalWalk)} pešo do cieľa.</p>` : '<p>Si pri cieli.</p>') : '<p>Budeš presadať na ďalší autobus.</p>'}</div>`;
+    act = `<button class="primary" id="gNext">Vystúpil som</button>`;
+  } else {
+    body = `<div class="big-msg"><div class="ico" aria-hidden="true">🎉</div><h2>Si v cieli</h2><p>${d.dest} · ${o.arr}</p><p>Výborne, zvládol si to.</p></div>`;
+    act = `<button class="primary" data-go="home">Hotovo</button>`;
+  }
+  $('guideBody').innerHTML = body;
+  const endBtn = phase < 4 ? `<button class="secondary danger" id="gEnd">Ukončiť cestu</button>` : '';
+  const m = act.match(/^(.*?)(<button class="secondary".*)$/s);
+  $('guideActions').innerHTML = m && endBtn ? `${m[1]}<div class="pair">${m[2]}${endBtn}</div>` : act + endBtn;
+  const nx = $('gNext'); if (nx) nx.onclick = () => {
+    if (phase === 3) { if (last) phase = 4; else { rideIdx++; phase = 0; } } else phase++;
+    left = 0; renderGuide();
+  };
+  const sim = $('gSim'); if (sim) sim.onclick = () => {
+    left--; if (left <= 1) exitAlert(r, last); else renderGuide();
+  };
+  const miss = $('gMiss'); if (miss) miss.onclick = () => {
+    sheet(`<div class="big-msg"><div class="ico" aria-hidden="true">🙂</div><h2>Nič sa nedeje</h2><p>Nájdem ti ďalší autobus.</p></div><div class="stack"><button class="primary" id="mOk">Ukáž ďalší autobus</button></div>`);
+    $('mOk').onclick = () => { closeSheet(); optIdx = 1 - optIdx; renderPlan(); show('scrPlan'); };
+  };
+  const end = $('gEnd'); if (end) end.onclick = () => {
+    sheet(`<h2>Naozaj ukončiť cestu?</h2><p>Prestanem ťa sprevádzať a <b>nezazvoním pred výstupom</b>.</p><div class="stack"><button class="primary" data-close>Nie, pokračovať v ceste</button><button class="secondary danger" id="eYes">Áno, ukončiť</button></div>`);
+    $('eYes').onclick = () => { closeSheet(); left = 0; show('scrHome'); };
+  };
+}
+function exitAlert(r, last) {
+  $('alertT').textContent = last ? 'VYSTÚP NA ĎALŠEJ ZASTÁVKE' : 'PRESADNUTIE NA ĎALŠEJ ZASTÁVKE';
+  $('alertP').textContent = `Vystúp: ${r.out}.${r.request ? ' Stlač tlačidlo STOP.' : ''}`;
+  $('alert').hidden = false; $('alertOk').focus();
+  if (navigator.vibrate) navigator.vibrate([400, 200, 400]);
+}
+$('alertOk').onclick = () => { $('alert').hidden = true; left = 0; phase = 3; renderGuide(); };
+
+// ── pomoc: Kde som? / Zavolať ──
+function callSheet() {
+  sheet(`<h2>📞 Zavolať mame?</h2><p>Číslo nastavil rodič v Nastaveniach.</p><div class="stack"><button class="primary" data-close>Áno, zavolať</button><button class="secondary" data-close>Nie</button></div><p class="note">V ukážke sa nevolá. V appke sa otvorí telefón s uloženým číslom; volanie potvrdíš ešte raz tam.</p>`);
+}
+$('btnCall').onclick = callSheet;
+$('btnWhere').onclick = () => {
+  const where = night ? { s: 'Cemjata', u: 'pri zastávke Cemjata' } : { s: 'Sibírska', u: 'na ulici Sibírska' };
+  sheet(`<h2>📍 Tu si</h2><p>Najbližšia zastávka: <b>${where.s}</b></p><p>Si ${where.u}, Prešov.</p><div class="stack"><button class="primary" id="wHome">🏠 Chcem ísť domov</button><button class="secondary" id="wCall">📞 Zavolať mame</button><button class="secondary" data-close>Zavrieť</button></div><p class="note">Poloha zostáva v telefóne. Nikam sa neposiela.</p>`);
+  $('wHome').onclick = () => { closeSheet(); openTile('domov'); };
+  $('wCall').onclick = callSheet;
+};
+
+// ── iné miesto, nastavenia pre rodiča ──
+$('btnOther').onclick = () => night ? nightMsg() : show('scrOther');
+$('btnParent').onclick = () => {
+  sheet(`<h2>⚙️ Len pre dospelých</h2><p>Koľko je <b>7 × 8</b>?</p><div class="field"><input id="gate" inputmode="numeric" autocomplete="off" aria-label="Výsledok"></div><div class="stack"><button class="primary" id="gateOk">Pokračovať</button><button class="secondary" data-close>Späť</button></div><p class="note" id="gateMsg">Nastavenia sú chránené, aby ich dieťa nezmenilo omylom.</p>`);
+  $('gateOk').onclick = () => {
+    if ($('gate').value.trim() !== '56') { $('gateMsg').textContent = 'To nie je správne. Skús to znova.'; return; }
+    sheet(`<h2>Nastavenia jednoduchého režimu</h2>
+      <label class="field">Tempo chôdze<select><option>Pomalšie (odporúčané)</option><option>Bežné</option></select></label>
+      <label class="field">Presadanie<select><option>Len keď inak nejde, aspoň 3 minúty času</option><option>Vôbec nepresadať</option><option>Povoliť, aspoň 2 minúty času</option></select></label>
+      <label class="field">Najviac pešo k zastávke<select><option>400 m</option><option>700 m</option><option>1 km</option></select></label>
+      <label class="field">Telefón na tlačidlo „Zavolať“<input type="tel" placeholder="číslo rodiča alebo opatrovateľa" autocomplete="off"></label>
+      <label class="field">Veľkosť písma<select><option>Veľké</option><option>Najväčšie</option></select></label>
+      <div class="stack"><button class="secondary">Upraviť ciele (Domov, Škola…)</button><button class="secondary">Vypnúť jednoduchý režim</button><button class="primary" data-close>Hotovo</button></div>
+      <p class="note">Ukážka: voľby sa neukladajú. V jednoduchom režime nie je nákup Plus ani platená SMS.</p>`);
+  };
+};
+
+// ── prepínač ukážky ──
+function setNight(n) { night = n; $('demoDay').setAttribute('aria-pressed', String(!n)); $('demoNight').setAttribute('aria-pressed', String(n)); $('clock').textContent = n ? '23:40' : '7:10'; closeSheet(); $('alert').hidden = true; show('scrHome'); }
+$('demoDay').onclick = () => setNight(false);
+$('demoNight').onclick = () => setNight(true);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+</script>
+</body>
+</html>

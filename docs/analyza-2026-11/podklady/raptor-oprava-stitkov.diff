@@ -1,0 +1,173 @@
+--- /home/user/mhdpo/mhd-app/raptor.js	2026-11-03 13:22:50.234120646 +0000
++++ raptor-fixed.mjs	2026-11-11 12:23:07.330220876 +0000
+@@ -1,3 +1,7 @@
++// !!! R1: EXPERIMENTÁLNA KÓPIA mhd-app/raptor.js (v1.7.3) s opravou štítkov jazda/chôdza.
++// Zmenené sú LEN query(), _relaxFootSplit() (nové), _extract() a _path() — označené „R1-FIX“.
++// Slúži na overenie koreňovej príčiny nálezov; originál sa nemení.
++//
+ // Vyhľadávanie spojení nad GTFS datasetom — algoritmus RAPTOR
+ // (Delling, Pajor, Werneck: Round-Based Public Transit Routing).
+ //
+@@ -64,7 +68,9 @@
+   query(fromStops, toStops, dateInfo, depTime, opts = {}) {
+     const N = this.d.stops.length;
+     const best = new Float64Array(N).fill(Infinity);
+-    // parent[k][stop] = ako sme sa sem dostali v kole k
++    // R1-FIX: samostatný štítok príchodu JAZDOU (ride) a PEŠO (walk) v každom kole;
++    // arr = min z oboch (na nástup v ďalšom kole). bestRide orezáva len jazdy.
++    const bestRide = new Float64Array(N).fill(Infinity);
+     const rounds = [];
+     const arr0 = new Float64Array(N).fill(Infinity);
+     const parent0 = new Array(N).fill(null);
+@@ -77,12 +83,13 @@
+       }
+     }
+     // pešia relaxácia už v kole 0 (od východiska k susedným zastávkam)
+-    this._relaxFoot(arr0, best, parent0, null);
++    const ride0 = arr0.slice(), walk0 = new Float64Array(N).fill(Infinity), walkP0 = new Array(N).fill(null);
++    this._relaxFootSplit(ride0, walk0, walkP0, arr0, best, null);
+     // cieľová zastávka dosiahnuteľná pešo nesmie zablokovať príchod autobusom
+     // (inak vyhrá okolitá zastávka a chôdza späť); spojenia horšie ako chôdza
+     // rovno do cieľa vyradí planJourneys
+     for (const si of toStops.keys()) best[si] = Infinity;
+-    rounds.push({ arr: arr0, parent: parent0 });
++    rounds.push({ arr: arr0, ride: ride0, rideP: parent0, walk: walk0, walkP: walkP0 });
+ 
+     let marked = new Set();
+     for (let i = 0; i < N; i++) if (arr0[i] < Infinity) marked.add(i);
+@@ -101,7 +108,8 @@
+       const prevStays = stays;
+       stays = new Map();
+       const arr = new Float64Array(N).fill(Infinity);
+-      const parent = new Array(N).fill(null);
++      const ride = new Float64Array(N).fill(Infinity), rideP = new Array(N).fill(null);
++      const walk = new Float64Array(N).fill(Infinity), walkP = new Array(N).fill(null);
+ 
+       // ktoré patterny obsahujú označenú zastávku (s najskoršou pozíciou)
+       const queue = new Map(); // patternIdx -> najmenšia pozícia
+@@ -122,14 +130,15 @@
+           // vystúpenie
+           if (onTrip) {
+             const a = onTrip.trip.t[2 * pos] + onTrip.o * DAY;
+-            if (a < arr[si] && a < best[si] && a <= depTime + HORIZON) {
+-              arr[si] = a;
+-              best[si] = a;
+-              parent[si] = {
++            // R1-FIX: príchod jazdou sa eviduje aj vtedy, keď je na zastávke skorší PEŠÍ štítok
++            if (a < ride[si] && a < bestRide[si] && a <= depTime + HORIZON) {
++              ride[si] = a;
++              bestRide[si] = a;
++              rideP[si] = {
+                 type: 'ride', pattern: pi, trip: onTrip.trip, day: onTrip.o,
+                 boardPos: onTrip.boardPos, alightPos: pos, viaStay: onTrip.viaStay,
+               };
+-              marked.add(si);
++              if (a < best[si]) { best[si] = a; arr[si] = a; marked.add(si); }
+             }
+             // na konečnej spoja, ktorý pokračuje ako iná linka: cestujúci sedí
+             // ďalej → v ďalšom kole pokračuje práve nadväzujúcim spojom (nie
+@@ -168,13 +177,32 @@
+         }
+       }
+ 
+-      this._relaxFoot(arr, best, parent, marked);
+-      rounds.push({ arr, parent, stays });
++      this._relaxFootSplit(ride, walk, walkP, arr, best, marked);
++      rounds.push({ arr, ride, rideP, walk, walkP, stays });
+     }
+ 
+     return this._extract(rounds, toStops, opts.toExtra, opts.accept);
+   }
+ 
++  // R1-FIX: pešo sa relaxuje VÝHRADNE z príchodov jazdou (alebo z východiska) — zo samostatného
++  // poľa ride, takže skorší peší štítok zastávky nezruší jej peší prestup (žiadna závislosť od poradia)
++  _relaxFootSplit(ride, walk, walkP, arr, best, marked) {
++    for (let si = 0; si < ride.length; si++) {
++      const a = ride[si];
++      if (a === Infinity) continue;
++      for (const [to, secs] of this.foot[si]) {
++        const t = a + secs;
++        if (t < walk[to] && t < best[to]) {
++          walk[to] = t;
++          walkP[to] = { type: 'walk', from: si, secs };
++          best[to] = t;
++          arr[to] = t;
++          if (marked) marked.add(to);
++        }
++      }
++    }
++  }
++
+   _relaxFoot(arr, best, parent, marked) {
+     const changed = [];
+     for (let i = 0; i < arr.length; i++) if (arr[i] < Infinity) changed.push(i);
+@@ -218,17 +246,19 @@
+       const cands = [];
+       for (const [si, walk] of toStops) {
+         // cieľ musí byť dosiahnutý jazdou/prestupom v kole k
+-        const a = rounds[k].arr[si];
+-        if (a === Infinity) continue;
+         // okolitá zastávka len priamo z autobusu (nie pešo z inej + ďalej pešo)
++        // R1-FIX: pri okolitej zastávke sa berie štítok JAZDY (peší štítok ho už neprekryje)
+         const x = toExtra?.get(si) || 0;
+-        if (x && rounds[k].parent[si]?.type === 'walk') continue;
+-        cands.push({ si, sc: a + walk + x, arr: a + walk, walk });
++        const ra = rounds[k].ride[si], wa = rounds[k].walk[si];
++        const viaWalk = !x && wa < ra;
++        const a = x ? ra : Math.min(ra, wa);
++        if (a === Infinity) continue;
++        cands.push({ si, sc: a + walk + x, arr: a + walk, walk, viaWalk });
+       }
+       cands.sort((p, q) => p.sc - q.sc);
+       for (const c of cands) {
+         if (c.sc >= bestSoFar) break;
+-        const legs = this._path(rounds, k, c.si);
++        const legs = this._path(rounds, k, c.si, c.viaWalk ? 'walk' : 'ride');
+         if (!legs) continue;
+         const j = {
+           depTime: legs[0].dep,
+@@ -248,13 +278,20 @@
+     return journeys;
+   }
+ 
+-  _path(rounds, k, stop) {
++  // R1-FIX: mode = ktorý štítok (kolo, zastávka) sledovať: 'ride' | 'walk' | 'any' (ten, čo poslúžil na nástup)
++  _path(rounds, k, stop, mode = 'any') {
+     const legs = [];
+     let si = stop, round = k;
+     let guard = 0;
+     while (round >= 0 && guard++ < 50) {
+-      const par = rounds[round].parent[si];
++      const R = rounds[round];
++      let par;
++      if (mode === 'ride') par = R.rideP[si];
++      else if (mode === 'walk') par = R.walkP[si];
++      else if (R.arr[si] === Infinity) par = null; // v tomto kole sa nezlepšil → skoršie kolo
++      else par = R.walk[si] < R.ride[si] ? R.walkP[si] : R.rideP[si];
+       if (!par) {
++        if (mode !== 'any') return null;
+         // dosiahnutý už v skoršom kole rovnakou cestou
+         round--;
+         continue;
+@@ -263,10 +300,11 @@
+       if (par.type === 'walk') {
+         legs.unshift({
+           type: 'walk', from: par.from, to: si, secs: par.secs,
+-          dep: rounds[round].arr[si] - par.secs, arr: rounds[round].arr[si],
++          dep: R.walk[si] - par.secs, arr: R.walk[si],
+         });
+         si = par.from;
+-        // chôdza neminie kolo — parent v tom istom kole
++        // chôdza neminie kolo — zdroj je príchod JAZDOU (alebo východisko) v tom istom kole
++        mode = 'ride';
+         continue;
+       }
+       // jazda; ak sa do nej len „sedelo ďalej“, pred ňou je jazda po konečnú
+@@ -284,6 +322,7 @@
+       }
+       si = p.stops[rp.boardPos];
+       round--;
++      mode = 'any';
+     }
+     if (guard >= 50) return null;
+     return legs.length ? legs : null;

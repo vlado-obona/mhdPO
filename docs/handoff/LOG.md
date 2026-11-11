@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-11 16:20 – Od Code
+- Na pokyn Vlada hotová **hĺbková analýza plánovania trás a obrazovky v1.7.3** + návrh **jednoduchého režimu** pre deti a seniorov: `docs/analyza-2026-11/ANALYZA.md`, klikateľná ukážka `docs/analyza-2026-11/jednoduchy-rezim-ukazka.html`. **V appke sa nič nemenilo** (žiadna nová verzia, žiadny build).
+- Postup: 5 oblastí, každú nezávisle preveril druhý agent (žiadny nález nevyvrátený). Plánovanie porovnané s nezávislým výpočtom na ~12 000 hľadaniach.
+- Hlavné závery: žiadny vymyslený spoj (26 187 kariet); medzi 25 najvyťaženejšími zastávkami je najskoršia karta do 1 min od optima v 97–98 %. Slabiny: úzky výber zastávok pri ceste z adresy (strop 8 nástupíšť, pevných 700 m → 1,6–2,6 % „Žiadne spojenie“, ~5 % spoj až na druhý deň), prestupy bez rezervy (7,5 % odporúčaní má prestup 0–1 min), karta bez „Vyraz o…“ a bez „zajtra“, chýba „Neskôr/Skôr“.
+- Nájdené chyby (zatiaľ **neopravené**): 6 v plánovači (najvážnejšia: prepis príchodu autobusom príchodom pešo, ~1 % hľadaní medzi okrajovými zastávkami; skúšobná oprava v `docs/analyza-2026-11/podklady/raptor-oprava-stitkov.diff`, prešla test-router 19/19) a 5 na obrazovke (návrhy prekrývajú pole „Kam“, presne napísaný názov sa neprijme, preklepy, nečitateľný pokyn v tmavom vzhľade, skloňovanie).
+- Pozor: v Android APK je vypnuté priblíženie dvoma prstami (v konfigurácii Capacitoru chýba `zoomEnabled`).
+- 136 možných chýbajúcich väzieb „zostaň sedieť“ je len hypotéza z dát – **u DPMP neoverené, nedopĺňať**.
+- **Otázka pre Vlada:** Čím začať? (A) malé opravy ako 1.7.4 – chyba plánovača, „zajtra“, „Vyraz o…“, prijatie napísaného názvu; (B) lepší výber zastávok a rezerva na prestup; (C) jednoduchý režim. Odporúčam A → B → C. Pozn.: 1.7.3 je na kontrole v produkcii Play – ďalší build radšej až po schválení.
+- **Otázka pre Vlada:** Koľko cieľov má byť v jednoduchom režime zadarmo (dnes 2, režim potrebuje 4–6) a pre koho ho oficiálne ponúknuť (Play deklarácia je 13+, „nie pod 13“)?
+
 ### 2026-11-11 15:40 – Od chatu (zápis za Code – workflow robil chat v tomto repe)
 - Hotové: nový workflow **„iOS TestFlight“** (`.github/workflows/mhd-ios-testflight.yml`). Prvý podpísaný build **v1.7.3 (build 261111435)** nahratý do App Store Connect 11. 11. 2026, Apple ho spracúva.
   - Spúšťanie: ručne (workflow_dispatch) a automaticky po úspešnom workflowe „Android (APK + AAB)“ na `main`.
