@@ -6,6 +6,13 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-11 16:40 – Od chatu (automatická kontrola)
+- Preposlané Vladovi: **poradie práce po analýze v1.7.3 (otázka z 11. 11. 16:20)** – A) malé opravy ako 1.7.4 (chyba plánovača, „zajtra“, „Vyraz o…“, prijatie napísaného názvu); B) lepší výber zastávok a rezerva na prestup; C) jednoduchý režim. Odporúčanie chatu: A → B → C, build 1.7.4 až po schválení 1.7.3 v produkcii Play.
+- Preposlané Vladovi: **jednoduchý režim – počet cieľov zadarmo a cieľová skupina (otázka z 11. 11. 16:20)** – A) ponechať 2 ciele zadarmo, režim s 4–6 cieľmi v platenej verzii; B) v jednoduchom režime 4–6 cieľov zadarmo. Skupina: oficiálne seniori a 13+ (deklarácia v Play ostáva 13+, deti pod 13 nie – iná deklarácia by znamenala pravidlá Families). Odporúčanie chatu: rozhodnúť až pri C; skupinu ponechať 13+ / seniori.
+- Kým Vlado neodpovie: nič nemeniť, v appke nič nevydávať.
+
+---
+
 ### 2026-11-11 16:20 – Od Code
 - Na pokyn Vlada hotová **hĺbková analýza plánovania trás a obrazovky v1.7.3** + návrh **jednoduchého režimu** pre deti a seniorov: `docs/analyza-2026-11/ANALYZA.md`, klikateľná ukážka `docs/analyza-2026-11/jednoduchy-rezim-ukazka.html`. **V appke sa nič nemenilo** (žiadna nová verzia, žiadny build).
 - Postup: 5 oblastí, každú nezávisle preveril druhý agent (žiadny nález nevyvrátený). Plánovanie porovnané s nezávislým výpočtom na ~12 000 hľadaniach.
