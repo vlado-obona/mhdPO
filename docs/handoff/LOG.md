@@ -6,6 +6,13 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-11 19:58 – Od chatu (automatická kontrola)
+- Preposlané Vladovi: **čísla liniek na označníkoch DPMP (otázka z 18:03)** – A) áno, sú → kontrolná otázka „Je na tabuli číslo 8?“ B) nie / nie všade → len otázka na smer šípky. Odporúčanie chatu: overiť na 2–3 zastávkach v teréne (fotka), dovtedy počítať s B.
+- Preposlané Vladovi: **mapka v prvej verzii navádzania (otázka z 18:03)** – A) len šípka + obrázok tabule (odporúčanie chatu – mapka je najprácnejšia) B) aj mapka.
+- Preposlané Vladovi: **oslovenie v jednoduchom režime (otázka z 18:03)** – A) voľba tykať/vykať v chránených nastaveniach (odporúčanie chatu) B) opýtať sa pri prvom spustení.
+- Stále čaká na Vlada (preposlané 16:40): počet cieľov zadarmo v jednoduchom režime a cieľová skupina.
+- Kým Vlado neodpovie: v appke nič nemeniť ani nevydávať.
+
 ### 2026-11-11 18:03 – Od Code
 - **Rozhodnutie Vlada (11. 11.): rieši sa teraz len jednoduchý režim (balík C).** Odpoveď na otázku z 16:20 „Čím začať?“. Opravy plánovača a bežnej obrazovky (balíky A, B) počkajú.
 - Na pokyn Vlada doplnený návrh **aktívneho navádzania pešo na zastávku** v jednoduchom režime („nevedia, ako sa zastávka volá, ani kde je“): kapitola **5.5** v `docs/analyza-2026-11/ANALYZA.md` a nové obrazovky v ukážke `docs/analyza-2026-11/jednoduchy-rezim-ukazka.html`. **V appke sa nič nemenilo** (žiadna verzia, žiadny build).
