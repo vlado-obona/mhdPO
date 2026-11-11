@@ -1610,6 +1610,13 @@ function initWidget() {
   const CapApp = window.Capacitor?.Plugins?.App;
   const onUrl = (url) => {
     if (!url || !url.startsWith('odkialkam://')) return;
+    if (simple?.isOn()) {
+      // jednoduchý režim: žiadne okno Plus nad veľkými tlačidlami a rozbehnutú cestu widget neprepíše
+      const i = widgetCfg.fav;
+      if (url.startsWith('odkialkam://widget') && !url.startsWith('odkialkam://widget-refresh')
+        && plus && favs[i]?.target && !(trip?.simple && trip.sm?.started)) startTrip(i);
+      return;
+    }
     if (url.startsWith('odkialkam://plus')) { if ($('plusDlg').hidden) openPlusDlg(); return; }
     if (url.startsWith('odkialkam://widget-refresh')) { if (plus) refreshWidgetFromHere(); else if ($('plusDlg').hidden) openPlusDlg(); return; }
     const i = widgetCfg.fav;
@@ -1909,7 +1916,7 @@ async function startTrip(i, opt = {}) {
     simple: opt.simple ?? !!simple?.isOn(),
   };
   compassStart();
-  if (t.simple) { simple.tripOpened(); try { history.pushState({ trip: 1 }, ''); } catch {} } else openTripUi();
+  if (t.simple) { simple.tripOpened(); try { if (!history.state?.trip) history.pushState({ trip: 1 }, ''); } catch {} } else openTripUi();
   keepAwake(true);
   renderTrip();
   try {
@@ -2073,7 +2080,15 @@ function evaluateTrip() {
   const g = goodFix(t);
 
   if (t.phase === 'final') {
-    if (g && destDistance(t, g.la, g.lo) < 40) arrived();
+    if (g && destDistance(t, g.la, g.lo) < 40) {
+      // jednoduchý režim: „si v cieli“ až po dvoch presných polohách za sebou — jeden skok GPS
+      // nesmie ukončiť sprevádzanie ďaleko od cieľa (ručne sa dá vždy: „Som v cieli“)
+      if (!t.simple) arrived();
+      else if (g.acc <= 30) {
+        if (t.arrFix !== g.t) { t.arrFix = g.t; t.arrN = (t.arrN || 0) + 1; }
+        if (t.arrN >= 2) arrived();
+      }
+    } else if (g) t.arrN = 0;
     return;
   }
   const r = t.rides[t.ri];
@@ -2083,13 +2098,22 @@ function evaluateTrip() {
     const st = D.stops[r.from];
     const d = g ? haversine(g.la, g.lo, st.la, st.lo) : Infinity;
     if (g && t.phase === 'toStop' && d < 45) t.phase = 'wait';
+    // jednoduchý režim: nástup až po dvoch presnejších polohách za sebou (jeden skok GPS pri
+    // čakaní na zastávke nesmie prepnúť na „seď, ešte nevystupuj“)
+    if (g && d <= 70) t.brdN = 0;
+    const boardOk = () => {
+      if (!t.simple) return true;
+      if (g.acc > 50) return false;
+      if (t.brdFix !== g.t) { t.brdFix = g.t; t.brdN = (t.brdN || 0) + 1; }
+      return t.brdN >= 2;
+    };
     // nástup: okolo času odchodu sa vzďaľuje od nástupišťa po trase linky
     // rýchlejšie ako chodec (meškajúci autobus sa počíta tiež)
     let onRoute = false;
     if (g && now >= r.dep - 150 && d > 70) {
       const pr = routeProgress(r.stops, g.la, g.lo, 0, Math.min(n - 1, 3));
       onRoute = pr.d < 120 && pr.p > 0.02;
-      if (onRoute && (t.speedAvg > 2.5 || pr.p >= 0.9)) { boardRide(pr.p); return; }
+      if (onRoute && (t.speedAvg > 2.5 || pr.p >= 0.9) && boardOk()) { boardRide(pr.p); return; }
       // po návrate do appky (napr. z Google Maps) môže už sedieť v autobuse ďalej
       // na trase: je na trase linky, autobus tam podľa CP mohol byť (meškanie
       // najviac 15 min) a pohybuje sa po trase rýchlejšie ako chodec — človek,
@@ -2102,7 +2126,7 @@ function evaluateTrip() {
           const pv = t.farProbe;
           const fast = pv && g.t - pv.t >= 3000 && g.t - pv.t <= 60000 && far.p > pv.p
             && haversine(pv.la, pv.lo, g.la, g.lo) / ((g.t - pv.t) / 1000) >= 3;
-          if (fast || t.speedAvg > 2.5) { t.farProbe = null; boardRide(far.p); return; }
+          if ((fast || t.speedAvg > 2.5) && boardOk()) { t.farProbe = null; boardRide(far.p); return; }
           if (!pv || g.t - pv.t > 60000) t.farProbe = { p: far.p, la: g.la, lo: g.lo, t: g.t };
         }
       }
@@ -2166,6 +2190,15 @@ function boardRide(p = 0) {
   evaluateTrip();
 }
 
+// chôdza po poslednej jazde: peší úsek na konci spojenia (cieľová zastávka dosiahnutá
+// pešo z inej zastávky) + úsek od zastávky do cieľa
+function tailWalk(t) {
+  if (!t.j) return 0;
+  let s = t.j.finalWalk || 0;
+  for (let i = t.j.legs.length - 1; i >= 0 && t.j.legs[i].type !== 'ride'; i--) if (t.j.legs[i].type === 'walk') s += t.j.legs[i].secs;
+  return s;
+}
+
 // keepAlert: upozornenie a výstup v tom istom kroku (GPS skočil až k výstupu)
 // — výrazné upozornenie „TERAZ“ nechať na obrazovke
 function alight(keepAlert = false) {
@@ -2180,7 +2213,7 @@ function alight(keepAlert = false) {
     if (stay) { t.phase = 'ride'; buzz([60]); } else { t.delay = 0; t.phase = 'toStop'; }
     renderTrip();
     evaluateTrip();
-  } else if (t.j.finalWalk > 30) {
+  } else if (tailWalk(t) > 30) {
     t.phase = 'final'; t.follow = true;
     renderTrip();
   } else {
@@ -2221,7 +2254,7 @@ function exitAlert(atStop = false) {
       : `Pozor! Na ďalšej zastávke ${exitName} vystupujete a prestupujete na linku ${nr.s}.`;
   } else {
     title = `VYSTUPUJ ${when}`;
-    sub = `Vystúp: ${exitName}${t.j.finalWalk > 30 ? ` · potom pešo ~${fmtDur(t.j.finalWalk)} do cieľa` : ''}.`;
+    sub = `Vystúp: ${exitName}${tailWalk(t) > 30 ? ` · potom pešo ~${fmtDur(tailWalk(t))} do cieľa` : ''}.`;
     say = atStop ? `Pozor! Teraz vystúpte na zastávke ${exitName}.` : `Pozor! Na ďalšej zastávke ${exitName} vystupujete.`;
   }
   if (t.simple) ({ title, sub, say } = simple.alertText(t, k, atStop));
@@ -2232,7 +2265,7 @@ function exitAlert(atStop = false) {
     layerOpened($('taOk'));
   }
   // aplikácia v pozadí: overlay nikto nevidí → systémová notifikácia hneď
-  if (pageHidden()) notifyNow(k, title, `${exitName}${next ? ' — prestup' : ''}`);
+  if (pageHidden()) notifyNow(k, title, t.simple ? sub : `${exitName}${next ? ' — prestup' : ''}`);
   else cancelTripNotif(k);
   let rounds = 0;
   const ring = () => {
@@ -2295,6 +2328,7 @@ function notifDue(t, k) {
 function notifPayload(t, k, at, title, body) {
   const r = t.rides[k];
   const last = k === t.rides.length - 1;
+  if (t.simple && !title) { const s = simple.alertText(t, k, false); title = `🔔 ${s.title}`; body = s.sub; }
   return {
     id: TRIP_NOTIF_BASE + k,
     title: title || (last ? '🔔 Vystupuj na ďalšej zastávke' : '🔔 Prestup na ďalšej zastávke'),
@@ -2413,6 +2447,11 @@ function bgTargets(t) {
     const n = r.stops.length;
     const pv = D.stops[r.stops[Math.max(0, n - 2)]], ex = D.stops[r.to];
     const next = t.rides[k + 1];
+    if (t.simple) {
+      const a = simple.alertText(t, k, false);
+      out.push({ k, la: pv.la, lo: pv.lo, ela: ex.la, elo: ex.lo, title: `🔔 ${a.title}`, titleNow: `🔔 ${simple.alertText(t, k, true).title}`, body: a.sub });
+      return;
+    }
     out.push({
       k, la: pv.la, lo: pv.lo, ela: ex.la, elo: ex.lo,
       title: next ? '🔔 Prestup na ďalšej zastávke' : '🔔 Vystupuj na ďalšej zastávke',
@@ -2425,6 +2464,7 @@ function bgTargets(t) {
 function bgText(t) {
   if (!t.j || ['locating', 'error'].includes(t.phase)) return 'Hľadám spojenie…';
   if (t.phase === 'final') return 'Posledný úsek pešo do cieľa.';
+  if (t.simple) return simple.bgText(t);
   const r = t.rides[Math.min(t.ri, t.rides.length - 1)];
   const line = D.routes[r.route].s;
   return t.phase === 'ride'
@@ -2434,7 +2474,7 @@ function bgText(t) {
 function bgUntil(t) {
   if (!t.j) return Date.now() + 3 * 3600000;
   const last = t.rides[t.rides.length - 1];
-  return tripEpoch(last.arr + Math.max(0, t.delay || 0) + (t.j.finalWalk || 0)) + 30 * 60000;
+  return tripEpoch(last.arr + Math.max(0, t.delay || 0) + tailWalk(t)) + 30 * 60000;
 }
 const bgSig = (t) => JSON.stringify([bgText(t), t.jIdx, t.t0Epoch, bgTargets(t).map((x) => x.k), Math.round(bgUntil(t) / 600000)]);
 const bgGpsLive = (t) => !!(t && t.bg && t.bg.on && Date.now() - t.bg.lastFix < 30000 && goodFix(t));
@@ -2944,11 +2984,12 @@ async function main() {
     startTrip, endTrip, useJourney, boardRide, alight, arrived, beginTrip, renderTrip,
     replan: replanTrip, cancelTripNotifs,
     stopSetFor, destStopsFor, planWithPrefs, walkStraight, destDistance, destPoint, tripNowSecs, goodFix,
+    tailWalk, stopNav,
     speak, buzz, unlockAudio, nearestStop, loadMapbase, loadPlaces, searchPlaces, getPositionFull,
     refreshMain: () => { if (map) setTimeout(() => map.invalidateSize(), 60); },
   });
   simple.init();
-  $('simpleLink').addEventListener('click', () => simple.turnOn());
+  $('simpleLink')?.addEventListener('click', () => simple.turnOn()); // ?. – stará index.html z cache tlačidlo nemá
   // „Bez prestupu“ (uložené v telefóne, platí aj pre rýchle ciele)
   $('directChk').checked = !!prefs.direct;
   $('directChk').addEventListener('change', (e) => {
@@ -3047,25 +3088,25 @@ async function main() {
       // záznam histórie pre vrstvu, ktorá ostala otvorená
       const keep = !$('tktDlg').hidden ? { tkt: 1 } : trip ? { trip: 1 } : null;
       if (keep) { try { history.pushState(keep, ''); } catch {} }
-    } else if (simple.back(true)) {
-      // jednoduchý režim: Späť zavrie hárok alebo sa opýta; cesta beží ďalej → záznam vrátiť
-      if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
     } else if (!$('gmDlg').hidden) {
       closeGmDlg();
       if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
     } else if (!$('tktDlg').hidden) closeTktDlg(true);
     else if (!$('plusDlg').hidden) closePlusDlg(true);
     else if (!$('favDlg').hidden) closeFavDlg(true);
-    else if (trip) endTrip(true);
+    else if (simple.back(true)) {
+      // jednoduchý režim: Späť zavrie hárok alebo sa opýta; cesta beží ďalej → záznam vrátiť
+      if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
+    } else if (trip) endTrip(true);
   });
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (!$('tripAlert').hidden) dismissAlert();
-    else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
     else if (!$('gmDlg').hidden) closeGmDlg();
     else if (!$('tktDlg').hidden) closeTktDlg();
     else if (!$('plusDlg').hidden) closePlusDlg();
     else if (!$('favDlg').hidden) closeFavDlg();
+    else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
     else if (trip) endTrip();
     else return;
     e.preventDefault();
@@ -3079,12 +3120,12 @@ async function main() {
   if (CapApp) {
     CapApp.addListener('backButton', ({ canGoBack }) => {
       if (!$('tripAlert').hidden) dismissAlert();
-      else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
-      else if (simple.isOn()) CapApp.minimizeApp().catch(() => CapApp.exitApp()); // úvod jednoduchého režimu
       else if (!$('gmDlg').hidden) closeGmDlg();
       else if (!$('tktDlg').hidden) closeTktDlg();
       else if (!$('plusDlg').hidden) closePlusDlg();
       else if (!$('favDlg').hidden) closeFavDlg();
+      else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
+      else if (simple.isOn()) CapApp.minimizeApp().catch(() => CapApp.exitApp()); // úvod jednoduchého režimu
       else if (trip) endTrip();
       else if (canGoBack) history.back();
       else CapApp.minimizeApp().catch(() => CapApp.exitApp());
