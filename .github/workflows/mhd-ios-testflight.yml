@@ -164,21 +164,19 @@ jobs:
           chmod 600 ~/private_keys/AuthKey_$KID.p8
           echo "ASC_KEY_PATH=$HOME/private_keys/AuthKey_$KID.p8" >> "$GITHUB_ENV"
 
-      - name: Archive (podpis v cloude)
+      - name: Archive (lokálny podpis, distribučný podpis až pri exporte)
         working-directory: cap-build/ios/App
-        env:
-          KID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          ISS: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         run: |
+          # Automatický podpis pri archive chce vývojársky profil, a ten Apple
+          # nevydá bez registrovaného zariadenia. Preto archive podpíšeme len
+          # lokálne (ad hoc „-“) a distribučný certifikát + App Store profil
+          # (bez zariadení) vytvorí v cloude až export s API kľúčom.
           set -o pipefail
           xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath "$PWD/App.xcarchive" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$ASC_KEY_PATH" \
-            -authenticationKeyID "$KID" \
-            -authenticationKeyIssuerID "$ISS" \
-            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY=- AD_HOC_CODE_SIGNING_ALLOWED=YES PROVISIONING_PROFILE_SPECIFIER= \
             archive 2>&1 | tee archive.log | grep -E -i 'error|warning: .*sign|ARCHIVE|provision' | tail -40
 
       - name: Export a nahratie do App Store Connect
