@@ -1,0 +1,222 @@
+name: iOS TestFlight
+
+# Zostaví PODPÍSANÚ iOS verziu „Odkiaľ Kam“ a nahrá ju do App Store Connect
+# (TestFlight). Podpisuje sa automaticky v cloude cez App Store Connect API
+# kľúč (rola Admin) zo secrets:
+#   APP_STORE_CONNECT_API_KEY_P8   – obsah súboru AuthKey_<KEY_ID>.p8
+#   APP_STORE_CONNECT_KEY_ID       – Key ID
+#   APP_STORE_CONNECT_ISSUER_ID    – Issuer ID
+# Kľúč sa zapíše len na runneri a po behu sa zmaže; podpísaná IPA sa do
+# verejného repa NEcommituje (nepodpísanú IPA robí workflow „iOS (IPA)“).
+# Číslo buildu (CFBundleVersion) = rovnaká 9-ciferná schéma ako Android
+# versionCode (YYMMDD*1000 + minúta dňa/2) → vždy rastie.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Verzia (prázdne = APP_VERSION z mhd-app/app.js)'
+        required: false
+        type: string
+  workflow_run:
+    workflows: ['Android (APK + AAB)']
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mhd-ios-testflight
+  cancel-in-progress: false
+
+env:
+  TEAM_ID: NQ4963YWGC
+  BUNDLE_ID: sk.operatorsystem.mhdpresov
+
+jobs:
+  testflight:
+    # po Android builde len ak bol úspešný; ručné spustenie vždy
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Verzia a číslo buildu
+        run: |
+          V="${{ inputs.version }}"
+          [ -n "$V" ] || V=$(sed -n "s/^const APP_VERSION = '\([0-9.]*\)';/\1/p" mhd-app/app.js)
+          D=$(date -u +%y%m%d); HM=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
+          B=$(( 10#$D * 1000 + HM / 2 ))
+          echo "VERSION=$V" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=$B" >> "$GITHUB_ENV"
+          echo "verzia $V, build $B"
+
+      - name: Kontrola secrets
+        env:
+          P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          KID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISS: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          [ -n "$P8" ] && [ -n "$KID" ] && [ -n "$ISS" ] || { echo "::error::Chýbajú secrets APP_STORE_CONNECT_*"; exit 1; }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Capacitor iOS projekt
+        run: |
+          mkdir cap-build && cd cap-build
+          npm init -y >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/ios@6 @capacitor/geolocation@6 @capacitor/local-notifications@6.1.3 @capacitor/haptics@6.0.3 @capacitor/app@6.0.3 @capacitor-community/keep-awake@5.0.1 @capacitor-community/text-to-speech@4.1.1 >/dev/null
+          cat > capacitor.config.json <<EOF
+          {
+            "appId": "$BUNDLE_ID",
+            "appName": "Odkiaľ Kam",
+            "webDir": "www"
+          }
+          EOF
+          cp -r ../mhd-app www
+          grep -q "APP_VERSION = '$VERSION'" www/app.js || { echo "::error::APP_VERSION v app.js nesedí s $VERSION"; exit 1; }
+          npx cap add ios
+          npx cap sync ios
+
+      - name: Info.plist
+        working-directory: cap-build
+        run: |
+          P=ios/App/App/Info.plist
+          setp() { /usr/libexec/PlistBuddy -c "Set :$1 $3" "$P" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :$1 $2 $3" "$P"; }
+          setp NSLocationWhenInUseUsageDescription string "'Poloha sa používa na nájdenie najbližšej zastávky a na upozornenie pred výstupom počas cesty. Nikam sa neposiela.'"
+          setp CFBundleShortVersionString string "$VERSION"
+          setp CFBundleVersion string "$BUILD_NUMBER"
+          setp CFBundleDisplayName string "'Odkiaľ Kam'"
+          setp ITSAppUsesNonExemptEncryption bool false
+          plutil -lint "$P"
+          plutil -p "$P" | grep -E 'Location|Version|DisplayName|Encryption'
+
+      - name: Privacy manifest (žiadne sledovanie ani zber údajov)
+        working-directory: cap-build/ios/App
+        run: |
+          cat > App/PrivacyInfo.xcprivacy <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>NSPrivacyTracking</key>
+            <false/>
+            <key>NSPrivacyTrackingDomains</key>
+            <array/>
+            <key>NSPrivacyCollectedDataTypes</key>
+            <array/>
+            <key>NSPrivacyAccessedAPITypes</key>
+            <array>
+              <dict>
+                <key>NSPrivacyAccessedAPIType</key>
+                <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+                <key>NSPrivacyAccessedAPITypeReasons</key>
+                <array><string>CA92.1</string></array>
+              </dict>
+            </array>
+          </dict>
+          </plist>
+          EOF
+          plutil -lint App/PrivacyInfo.xcprivacy
+          ruby -e '
+            require "xcodeproj"
+            p = Xcodeproj::Project.open("App.xcodeproj")
+            t = p.targets.find { |x| x.name == "App" }
+            g = p.main_group.find_subpath("App", false)
+            unless g.files.any? { |f| f.path == "PrivacyInfo.xcprivacy" }
+              ref = g.new_reference("PrivacyInfo.xcprivacy")
+              t.add_resources([ref])
+            end
+            # len iPhone (iPad sa dá pridať neskôr, odobrať po vydaní nie)
+            t.build_configurations.each { |c| c.build_settings["TARGETED_DEVICE_FAMILY"] = "1" }
+            p.save
+            puts "privacy manifest v targete App, TARGETED_DEVICE_FAMILY=1"
+          '
+
+      - name: Ikony (bez priehľadnosti)
+        working-directory: cap-build
+        run: |
+          npm i --no-audit --no-fund -D @capacitor/assets sharp >/dev/null
+          mkdir -p assets
+          node -e "const s=require('sharp'); s('../mhd-app/icons/icon-512.png').resize(1024,1024).flatten({background:'#ffffff'}).removeAlpha().png().toFile('assets/logo.png').then(()=>console.log('logo ok'))"
+          npx capacitor-assets generate --ios
+          # App Store odmietne ikonu s alfa kanálom → zlúčiť všetky na nepriehľadné
+          node -e "
+            const fs=require('fs'),path=require('path'),s=require('sharp');
+            const d='ios/App/App/Assets.xcassets/AppIcon.appiconset';
+            (async()=>{for(const f of fs.readdirSync(d).filter(f=>f.endsWith('.png'))){
+              const p=path.join(d,f); const b=await s(p).flatten({background:'#ffffff'}).removeAlpha().png().toBuffer();
+              fs.writeFileSync(p,b); const m=await s(p).metadata(); console.log(f,m.width,'alpha',m.hasAlpha);
+            }})();"
+
+      - name: API kľúč (len na runneri)
+        env:
+          P8: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8 }}
+          KID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+        run: |
+          mkdir -p ~/private_keys
+          printf '%s\n' "$P8" > ~/private_keys/AuthKey_$KID.p8
+          chmod 600 ~/private_keys/AuthKey_$KID.p8
+          echo "ASC_KEY_PATH=$HOME/private_keys/AuthKey_$KID.p8" >> "$GITHUB_ENV"
+
+      - name: Archive (podpis v cloude)
+        working-directory: cap-build/ios/App
+        env:
+          KID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISS: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -o pipefail
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/App.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$KID" \
+            -authenticationKeyIssuerID "$ISS" \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            archive 2>&1 | tee archive.log | grep -E -i 'error|warning: .*sign|ARCHIVE|provision' | tail -40
+
+      - name: Export a nahratie do App Store Connect
+        working-directory: cap-build/ios/App
+        env:
+          KID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISS: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -o pipefail
+          cat > ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+            <key>uploadSymbols</key><true/>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild -exportArchive -archivePath "$PWD/App.xcarchive" \
+            -exportOptionsPlist ExportOptions.plist -exportPath "$PWD/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$KID" \
+            -authenticationKeyIssuerID "$ISS" 2>&1 | tee export.log | tail -40
+          echo "### TestFlight: v$VERSION (build $BUILD_NUMBER) nahraté" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Logy pri chybe
+        if: failure()
+        working-directory: cap-build/ios/App
+        run: |
+          for f in archive.log export.log; do [ -f "$f" ] && { echo "== $f"; grep -E -i 'error|failed|provision|certificate|sign' "$f" | tail -60; }; done
+          ls -la ~/Library/Logs/ 2>/dev/null | head || true
+
+      - name: Zmazať API kľúč
+        if: always()
+        run: rm -rf ~/private_keys
