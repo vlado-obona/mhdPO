@@ -217,11 +217,11 @@ const tA = Date.now(); const addrTrips = [];
 for (let k = 0; k < ADDR.length; k += 13) {
   const [la, lo] = ADDR[k]; let bs = null, bd = 700;
   for (const s of stops) { const d = dist(la, lo, s.la, s.lo); if (d < bd) { bd = d; bs = s; } }
-  if (bs) addrTrips.push(trip(la, lo, bs.la, bs.lo));
+  if (bs) addrTrips.push({ ...trip(la, lo, bs.la, bs.lo), la0: la, lo0: lo, la1: bs.la, lo1: bs.lo, stop: bs.n });
 }
 const msAddr = (Date.now() - tA) / Math.max(1, addrTrips.length);
 // b) pešie prestupy z datasetu (do 400 m)
-const xferTrips = D.transfers.filter(([a, b]) => a !== b).map(([a, b]) => trip(stops[a].la, stops[a].lo, stops[b].la, stops[b].lo));
+const xferTrips = D.transfers.filter(([a, b]) => a !== b).map(([a, b]) => ({ ...trip(stops[a].la, stops[a].lo, stops[b].la, stops[b].lo), la0: stops[a].la, lo0: stops[a].lo, la1: stops[b].la, lo1: stops[b].lo, stop: `${stops[a].n} → ${stops[b].n}` }));
 // c) vzdušná čiara cez hlavnú cestu (spodná hranica: len hlavné cesty v dátach) – adresa → zastávka
 const mainSegs = []; for (const w of walkWays) if (MAIN.test(w.tags.highway)) for (let k = 1; k < w.nodes.length; k++) { const a = nodes.get(w.nodes[k - 1]), b = nodes.get(w.nodes[k]); if (a && b) mainSegs.push([[a.la, a.lo], [b.la, b.lo]]); }
 let crossAir = 0, nAir = 0;
@@ -275,6 +275,14 @@ const tP = Date.now(); JSON.parse(cut.json); const msParse = Date.now() - tP;
 
 // ── výsledky ──
 const sA = stats(addrTrips), sX = stats(xferTrips);
+// najväčšie obchádzky (na ručnú kontrolu v mape: skutočná prekážka – rieka, trať, svah, plot –
+// alebo chýbajúca cestička v OSM); odkaz ukáže v OSM trasu pešo medzi tými istými bodmi
+const f5 = (x) => x.toFixed(5);
+const worst = (list, n) => list.filter((x) => x.net < Infinity && x.air >= 200).sort((x, y) => y.along / y.air - x.along / x.air).slice(0, n)
+  .map((x) => ({ det: r2(x.along / x.air), air: Math.round(x.air), net: Math.round(x.along), stop: x.stop,
+    from: [+f5(x.la0), +f5(x.lo0)], to: [+f5(x.la1), +f5(x.lo1)],
+    osm: `https://www.openstreetmap.org/directions?engine=fossgis_osrm_foot&route=${f5(x.la0)}%2C${f5(x.lo0)}%3B${f5(x.la1)}%2C${f5(x.lo1)}` }));
+const worstA = worst(addrTrips, 30), worstX = worst(xferTrips, 15);
 const res = {
   osmBase, generated: new Date().toISOString(), seconds: (Date.now() - T0) / 1000,
   km: { all: r1(kmAll), byClass: Object.fromEntries(Object.entries(byClass).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, r1(v)])), blocked: r1(kmBlocked), areaOutlines: r1(kmArea),
@@ -284,7 +292,7 @@ const res = {
   crossings: { nodes: crossNodes.length, onMainRoads: crossOnMain, perKmMain: r1(crossOnMain / Math.max(1, kmMain)), kinds: crossingKinds, barriers },
   graph: { nodes: N, edges: E, components: comps.length, biggestKm: r1(comps[0]?.[1] || 0), biggestShare: pct(comps[0]?.[1] || 0, kmGraph), under05km: comps.filter((c) => c[1] < 0.5).length },
   stops: { n: stops.length, within10: within(10), within25: within(25), within50: within(50), in25Biggest: inBig, medianM: r1(q(stopD, 0.5)), p90M: r1(q(stopD, 0.9)) },
-  addrToStop: { ...sA, msPerRoute: r1(msAddr) }, transfers: sX,
+  addrToStop: { ...sA, msPerRoute: r1(msAddr), worst: worstA }, transfers: { ...sX, worst: worstX },
   straightLineCrossesMainRoad: { n: nAir, crosses: crossAir, share: pct(crossAir, nAir) },
   size: { full: { km: r1(full.km), bytes: full.bytes, gzip: full.gz, junctions: full.junctions, edges: full.edges }, near1500: { km: r1(cut.km), bytes: cut.bytes, gzip: cut.gz, junctions: cut.junctions, edges: cut.edges, parseMs: msParse } },
 };
@@ -303,6 +311,8 @@ L.push(`- **Súvislosť:** ${res.graph.components} celkov, najväčší ${res.gr
 L.push(`- **Nástupištia (${stops.length}):** do 10 m od siete ${pct(res.stops.within10, stops.length)}, do 25 m ${pct(res.stops.within25, stops.length)}, do 50 m ${pct(res.stops.within50, stops.length)}; do 25 m a v najväčšom celku **${pct(inBig, stops.length)}** (prah návrhu 90 %). Medián ${res.stops.medianM} m, 90. percentil ${res.stops.p90M} m.`);
 L.push(`- **Adresa → najbližšie nástupište do 700 m** (vzorka ${sA.n}): trasa nájdená **${pct(sA.found, sA.n)}** (prah návrhu 95 %), bez siete do 100 m ${sA.snapFail}, bez spojenia ${sA.noPath}; pripojenie na sieť medián ${sA.snapMed} m, 90. percentil ${sA.snapP90} m; obchádzka (cesty nad 200 m, ${sA.nDet}) medián ${sA.detourMed}×, 90. percentil ${sA.detourP90}×, nad 1,2× ${pct(sA.over12, sA.nDet)}, nad 1,5× ${pct(sA.over15, sA.nDet)}, nad 2× ${pct(sA.over2, sA.nDet)}; ${res.addrToStop.msPerRoute} ms na trasu (počítač GitHubu).`);
 L.push(`- **Pešie prestupy z datasetu** (${sX.n}): trasa nájdená ${pct(sX.found, sX.n)}; obchádzka (nad 200 m, ${sX.nDet}) medián ${sX.detourMed}×, 90. percentil ${sX.detourP90}×, nad 1,2× ${pct(sX.over12, sX.nDet)}, nad 2× ${pct(sX.over2, sX.nDet)}.`);
+L.push(`- **Najväčšie obchádzky adresa → zastávka** (na kontrolu v mape; celý zoznam 30 v results.json): ${worstA.slice(0, 12).map((x) => `[${x.det}× (${x.air} m → ${x.net} m), ${x.stop}](${x.osm})`).join('; ')}.`);
+L.push(`- **Najväčšie obchádzky pri pešom prestupe:** ${worstX.slice(0, 6).map((x) => `[${x.det}× (${x.air} m → ${x.net} m), ${x.stop}](${x.osm})`).join('; ')}.`);
 L.push(`- **Vzdušná čiara cez hlavnú cestu** (adresa → zastávka): ${res.straightLineCrossesMainRoad.share} z ${nAir}.`);
 L.push(`- **Veľkosť súboru** (križovatky + tvar zjednodušený na 2 m): celé územie ${res.size.full.km} km = ${mb(full.bytes)} (gzip ${mb(full.gz)}); len do 1,5 km od zastávok ${res.size.near1500.km} km = **${mb(cut.bytes)} (gzip ${mb(cut.gz)})**, ${cut.junctions} uzlov, ${cut.edges} úsekov; JSON.parse ${msParse} ms.`);
 L.push('', `**Prahy návrhu:** nástupištia v sieti ≥ 90 % → ${T.stops ? 'áno' : 'nie'}; trasa adresa → zastávka ≥ 95 % → ${T.addr ? 'áno' : 'nie'}. **Výsledok:** ${res.thresholds.verdict}.`);
