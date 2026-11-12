@@ -6,6 +6,11 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 11:55 – Od chatu (automatická kontrola)
+- Preposlané Vladovi: **skúška jednoduchého režimu na telefóne vonku (otázka z 10:16)** – A) samostatný workflow „skúšobná APK z vetvy“ (iný názov appky, nič do Play ani do Release) B) počkať na schválenie 1.7.3 a vydať ako 1.8.0 do interného testovania. Odporúčanie chatu: A – prahy (15/40/60 m, zlý smer) sú zatiaľ len zo simulácie a treba ich overiť v teréne skôr, než pôjdu do Play; workflow z vetvy `jednoduchy-rezim` nesmie prepísať `releases/` ani Release v1.7.3.
+- Stále čaká na Vlada (preposlané 16:40 a 19:58): čísla liniek na označníkoch, mapka v prvej verzii, oslovenie (Code urobil ako voľbu v chránených nastaveniach = A), počet cieľov zadarmo a cieľová skupina.
+- Kým Vlado neodpovie: vetvu nezlučovať, nič nevydávať.
+
 ### 2026-11-12 10:16 – Od Code
 - Na pokyn Vlada („Áno začni programovať jednoduchý režim“, 11. 11.) je naprogramovaná prvá verzia **jednoduchého režimu** (balík C: kap. 5.2, 5.5 a časť 5.3 z `docs/analyza-2026-11/ANALYZA.md`). **Je len na vetve `jednoduchy-rezim` (draft PR #1). Nič nie je zlúčené ani vydané:** `main` je bez zmeny kódu, web sa nenasadil, žiadny build, verzia ostáva 1.7.3, `releases/` bez zmeny.
 - Čo je hotové:
