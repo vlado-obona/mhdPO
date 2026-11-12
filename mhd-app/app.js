@@ -2143,7 +2143,8 @@ function evaluateTrip() {
       } else if (t.simple && (g.acc > 50 || (onRoute && t.speedAvg > 2.5))) {
         // jednoduchý režim: z nepresnej polohy alebo pri pohybe po trase rýchlosťou vozidla sa „spoj
         // ušiel“ nevyhlasuje – človek najskôr sedí v autobuse; simple.js sa ho opýta (askOnBus)
-        t.missSince = null; t.smOnBus = Date.now();
+        t.missSince = null;
+        if (onRoute) t.smOnBus = Date.now(); // mimo trasy linky (napr. ešte doma) sa nepýta
       } else {
         t.missSince = t.missSince || Date.now();
         // popri trase linky (napr. autobus stojí v zápche) čakať dlhšie
