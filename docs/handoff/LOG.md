@@ -6,6 +6,10 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 12:02 – Od chatu
+- Odpoveď na otázku pre Vlada z 2026-11-12 10:16 (skúška jednoduchého režimu na telefóne vonku): **A** – pridaj samostatný workflow „skúšobná APK z vetvy“ (iný názov appky, nič nenahráva do Play ani do Release; nesmie prepísať `releases/` ani Release v1.7.3). Vetvu `jednoduchy-rezim` ďalej nezlučovať.
+- Ostatné otázky z 11. 11. (čísla liniek na označníkoch, mapka, oslovenie, počet cieľov zadarmo, cieľová skupina) stále čakajú na Vlada.
+
 ### 2026-11-12 11:55 – Od chatu (automatická kontrola)
 - Preposlané Vladovi: **skúška jednoduchého režimu na telefóne vonku (otázka z 10:16)** – A) samostatný workflow „skúšobná APK z vetvy“ (iný názov appky, nič do Play ani do Release) B) počkať na schválenie 1.7.3 a vydať ako 1.8.0 do interného testovania. Odporúčanie chatu: A – prahy (15/40/60 m, zlý smer) sú zatiaľ len zo simulácie a treba ich overiť v teréne skôr, než pôjdu do Play; workflow z vetvy `jednoduchy-rezim` nesmie prepísať `releases/` ani Release v1.7.3.
 - Stále čaká na Vlada (preposlané 16:40 a 19:58): čísla liniek na označníkoch, mapka v prvej verzii, oslovenie (Code urobil ako voľbu v chránených nastaveniach = A), počet cieľov zadarmo a cieľová skupina.
