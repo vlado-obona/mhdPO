@@ -1613,8 +1613,9 @@ function initWidget() {
     if (simple?.isOn()) {
       // jednoduchý režim: žiadne okno Plus nad veľkými tlačidlami a rozbehnutú cestu widget neprepíše
       const i = widgetCfg.fav;
-      if (url.startsWith('odkialkam://widget') && !url.startsWith('odkialkam://widget-refresh')
-        && plus && favs[i]?.target && !(trip?.simple && trip.sm?.started)) startTrip(i);
+      if (url.startsWith('odkialkam://widget-refresh')) { if (plus) refreshWidgetFromHere(); return; }
+      if (url.startsWith('odkialkam://widget') && plus && favs[i]?.target
+        && !(trip?.simple && trip.sm?.started && trip.phase !== 'done')) startTrip(i);
       return;
     }
     if (url.startsWith('odkialkam://plus')) { if ($('plusDlg').hidden) openPlusDlg(); return; }
@@ -2139,6 +2140,10 @@ function evaluateTrip() {
         t.missNote = now < r.dep + 360
           ? 'Autobus ešte neprišiel? Môže meškať — počkaj. Ak ti ušiel, ťukni „Prepočítať“.'
           : 'Autobus mešká viac ako 5 min alebo ti ušiel — ak nepríde, ťukni „Prepočítať“.';
+      } else if (t.simple && (g.acc > 50 || (onRoute && t.speedAvg > 2.5))) {
+        // jednoduchý režim: z nepresnej polohy alebo pri pohybe po trase rýchlosťou vozidla sa „spoj
+        // ušiel“ nevyhlasuje – človek najskôr sedí v autobuse; simple.js sa ho opýta (askOnBus)
+        t.missSince = null; t.smOnBus = Date.now();
       } else {
         t.missSince = t.missSince || Date.now();
         // popri trase linky (napr. autobus stojí v zápche) čakať dlhšie
@@ -2448,8 +2453,10 @@ function bgTargets(t) {
     const pv = D.stops[r.stops[Math.max(0, n - 2)]], ex = D.stops[r.to];
     const next = t.rides[k + 1];
     if (t.simple) {
-      const a = simple.alertText(t, k, false);
-      out.push({ k, la: pv.la, lo: pv.lo, ela: ex.la, elo: ex.lo, title: `🔔 ${a.title}`, titleNow: `🔔 ${simple.alertText(t, k, true).title}`, body: a.sub });
+      // služba má jedno telo pre obe upozornenia („na ďalšej“ aj „teraz“): pokyn STOP patrí len
+      // k prvému, preto ide do jeho nadpisu
+      const a = simple.alertText(t, k, false), b = simple.alertText(t, k, true);
+      out.push({ k, la: pv.la, lo: pv.lo, ela: ex.la, elo: ex.lo, title: `🔔 ${a.title}${a.stop ? ` – ${a.stop}` : ''}`, titleNow: `🔔 ${b.title}`, body: b.sub });
       return;
     }
     out.push({
