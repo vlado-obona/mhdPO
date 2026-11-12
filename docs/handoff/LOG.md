@@ -6,6 +6,17 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 14:09 – Od Code
+- Odpoveď na otázku Vlada z 12:59 (navádzanie po chodníkoch): **návrh je v `docs/analyza-2026-11/CHODNIKY.md`** (len posúdenie, nič sa neimplementovalo, appka sa nemenila). Návrh nezávisle prekontroloval druhý agent – prepočítal čísla a opravil 20 nepresností (licencia, veľkosť, prácnosť).
+- **Krátko:** dá sa to a dáta nebudú veľké, ale dnes nevieme, či sú chodníky a priechody v Prešove v OSM zakreslené dosť dobre. Dáta, ktoré appka už má, nestačia: sú v nich len ulice s menom (563 km, chodníkov s menom len ~16 km), žiadne priechody a značky chodníkov. Pešia sieť z nich sa rozpadá na 165 kúskov a pri 12,8 % ciest adresa → zastávka nemá spojenie.
+- **Veľkosť (odhad):** samostatný súbor 0,3–1,5 MB (zbalený 0,1–0,6 MB) → APK +2–10 %, IPA +6–36 %, jednosúborová HTML +7–35 %. Výpočet trasy v telefóne trvá zlomok sekundy, batériu navyše prakticky nemíňa (GPS beží už dnes).
+- **Navrhujem 2 kroky:** krok 1 = samostatný workflow stiahne z OSM chodníky, priechody, schody a pešie zóny a vypíše čísla (asi 1 deň, appka sa nemení, nezasahuje do dnešného workflowu „Miesta a adresy“). Krok 2 podľa čísel: A) navádzanie po chodníkoch (~13–19 dní + 2 kolá terénneho testu), B) len upozornenie na najbližší priechod (~4–6 dní), C) nechať ako dnes. Vždy so zálohou na dnešnú šípku.
+- **Riziká:** neúplné chodníky a priechody v OSM, poloha (±30 m) nerozlíši stranu ulice, trasy cez súkromné dvory a brány, schody a neosvetlené cestičky pre seniorov, zastarané dáta, väčšia appka. Ochrany sú v návrhu.
+- **Licencia ODbL – týka sa už dnešnej appky:** mapa, ulice a miesta v appke sú odvodené z OSM. (1) **Jednoduchý režim nemá pripisovanie OSM** (je cez celý displej a zakryje pätičku, pritom ukazuje názvy ulíc) – to je chyba mojej vetvy, **doplním riadok „© prispievatelia OpenStreetMap“ do jednoduchého režimu** spolu s opravami 7. kola. (2) Appka ani popis v obchode dnes neodkazujú na verejné dáta, hoci ODbL (čl. 4.6) žiada kópiu odvodenej databázy ponúknuť tým, čo appku dostanú. (3) GTFS feed uvádza ako producenta aj „OpenStreetMap contributors“ – treba overiť, či sú časti cestovných poriadkov odvodené z OSM. Odporúčam krátku právnu kontrolu (znenie ODbL a pravidiel OSMF som citoval z pamäti, online sa overiť nedalo).
+- **Otázka pre Vlada:** Spustiť krok 1 (samostatné meranie chodníkov z OSM, appka sa nemení)? A) áno B) nie. Odporúčam A.
+- **Otázka pre Vlada:** Odkaz na verejné dáta OSM (ODbL) do pätičky appky a do popisu v obchode doplniť hneď, aj bez chodníkov? A) áno – v ďalšej verzii (1.7.4) a v popise v Play (Play Console robí chat/Vlado) B) nie. Odporúčam A.
+- Ďalšie rozhodnutia pre neskôr sú v návrhu (schody obchádzať?, rozsah len jednoduchý režim alebo aj mapa, kto spraví terénny test).
+
 ### 2026-11-12 13:48 – Od Code
 - **Skúšobná APK z vetvy je hotová** (podľa odpovede A z 12:02). Nový workflow `.github/workflows/mhd-apk-skuska.yml` je len na vetve `jednoduchy-rezim` (commity `420dec9`, `724f5ae`) a spustí sa sám pri každom odoslaní zmien appky na vetvu. Prvé dva behy prešli.
   - Appka **„Odkiaľ Kam SKÚŠKA v1.7.3“**, ID `sk.operatorsystem.mhdpresov.skuska` – nainštaluje sa **vedľa** appky z Google Play, nič v nej neprepíše. Widget sa volá „Najbližší autobus (skúška)“.
