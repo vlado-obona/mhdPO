@@ -162,6 +162,9 @@ body.simple-on { overflow: hidden; }
 .sm-field { display: flex; flex-direction: column; gap: 6px; margin-top: .9rem; font-weight: 700; }
 .sm-field select, .sm-field input { min-height: 56px; font: inherit; font-weight: 500; color: var(--ink); border-radius: 12px; border: 2px solid var(--ln); padding: .4rem .7rem; background: #fff; width: 100%; }
 .sm-note { font-size: 1rem !important; color: var(--mut); margin-top: .9rem !important; }
+.sm-osm { font-size: .85rem !important; color: var(--mut); font-weight: 400; white-space: nowrap; }
+p.sm-osm { white-space: normal; margin-top: .5rem !important; }
+.sm-osm a { color: inherit; }
 .sm-tel { font-size: 1.8rem !important; font-weight: 800; letter-spacing: .03em; }
 .sm-bigmsg { text-align: center; padding: 1.2rem .5rem; }
 .sm-bigmsg h2 { font-size: 2rem; line-height: 1.15; margin: .4rem 0; }

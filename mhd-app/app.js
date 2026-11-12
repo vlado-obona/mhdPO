@@ -2086,12 +2086,16 @@ function evaluateTrip() {
   const g = goodFix(t);
 
   if (t.phase === 'final') {
-    // jednoduchý režim: skok polohy (o viac než 50 m, rýchlejšie než 8 m/s a viac než dvojnásobok
-    // súčtu presností – bežný šum polohy to nie je) – nasledujúcich 15 s sa poloha pri cieli nepočíta
-    // (krátky skok GPS až do cieľa nesmie ukončiť sprevádzanie)
+    // jednoduchý režim: skok polohy – nasledujúcich 15 s sa poloha pri cieli nepočíta (krátky skok
+    // GPS až do cieľa nesmie ukončiť sprevádzanie). Skok = krok o viac než 30 m, rýchlejšie než 8 m/s
+    // a viac než súčet presností, keď začína ďalej než 60 m od cieľa (bližšie je to bežný šum pri
+    // príchode); alebo posun o viac než 60 m (a dvojnásobok súčtu presností) do 5 s po krokoch.
     if (t.simple && g && t.arrPrev?.t !== g.t) {
       const pv = t.arrPrev;
-      if (pv && g.t > pv.t && haversine(pv.la, pv.lo, g.la, g.lo) > Math.max(50, 8 * (g.t - pv.t) / 1000, 2 * ((pv.acc || 0) + (g.acc || 0)))) t.arrJump = g.t;
+      if (pv && g.t > pv.t && haversine(pv.la, pv.lo, g.la, g.lo) > Math.max(30, 8 * (g.t - pv.t) / 1000, (pv.acc || 0) + (g.acc || 0)) && destDistance(t, pv.la, pv.lo) > 60) t.arrJump = g.t;
+      const hs = (t.arrHist = (t.arrHist || []).filter((x) => g.t - x.t <= 5000));
+      if (hs[0] && g.t > hs[0].t) { const dd = haversine(hs[0].la, hs[0].lo, g.la, g.lo); if (dd > Math.max(60, 2 * ((hs[0].acc || 0) + (g.acc || 0))) && dd / ((g.t - hs[0].t) / 1000) > 8) t.arrJump = g.t; }
+      hs.push(g);
       t.arrPrev = g;
     }
     if (g && destDistance(t, g.la, g.lo) < 40) {
@@ -2127,7 +2131,11 @@ function evaluateTrip() {
     if (g && now >= r.dep - 150 && d > 70) {
       const pr = routeProgress(r.stops, g.la, g.lo, 0, Math.min(n - 1, 3));
       onRoute = pr.d < 120 && pr.p > 0.02;
-      if (onRoute && (t.speedAvg > 2.5 || pr.p >= 0.9) && boardOk()) { boardRide(pr.p); return; }
+      // jednoduchý režim: rýchlosť vozidla len z rýchlosti GPS alebo z presunu za 8–15 s (pri chôdzi
+      // bez rýchlosti z GPS dá šum polohy aj 3–4 m/s); dve polohy za sebou naozaj za sebou
+      const fastV = t.simple ? simple.moving(t) : t.speedAvg > 2.5;
+      if (onRoute && (fastV || pr.p >= 0.9)) { if (boardOk()) { boardRide(pr.p); return; } }
+      else if (t.simple && onRoute) t.brdN = 0;
       // po návrate do appky (napr. z Google Maps) môže už sedieť v autobuse ďalej
       // na trase: je na trase linky, autobus tam podľa CP mohol byť (meškanie
       // najviac 15 min) a pohybuje sa po trase rýchlejšie ako chodec — človek,
@@ -2140,7 +2148,7 @@ function evaluateTrip() {
           const pv = t.farProbe;
           const fast = pv && g.t - pv.t >= 3000 && g.t - pv.t <= 60000 && far.p > pv.p
             && haversine(pv.la, pv.lo, g.la, g.lo) / ((g.t - pv.t) / 1000) >= 3;
-          if ((fast || t.speedAvg > 2.5) && boardOk()) { t.farProbe = null; boardRide(far.p); return; }
+          if ((fast || (t.simple ? simple.moving(t) : t.speedAvg > 2.5)) && boardOk()) { t.farProbe = null; boardRide(far.p); return; }
           if (!pv || g.t - pv.t > 60000) t.farProbe = { p: far.p, la: g.la, lo: g.lo, t: g.t };
         }
       }
