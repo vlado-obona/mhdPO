@@ -167,18 +167,50 @@ function route(a, b, limit) { // najkratšia dĺžka po sieti z uzla a do uzla b
   }
   return Infinity;
 }
-const SNAP = 60; // m – poloha → najbližší uzol siete
+// poloha → najbližší úsek siete (kolmý priemet, do 100 m); trasa ide z oboch koncov úseku
+const SNAP = 100;
+function proj(la, lo, e) { // vzdialenosť priemetu od začiatku a od konca úseku e
+  const a = EA[e], b = EB[e], L = EL[e];
+  const ax = LO[a] * KX, ay = LA[a] * KY, bx = LO[b] * KX, by = LA[b] * KY, px = lo * KX, py = la * KY;
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy;
+  const t = L2 ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / L2)) : 0;
+  return [t * L, (1 - t) * L];
+}
+function route2(src, tgt, limit) { // src/tgt: [[uzol, cena]]; vráti najkratšiu dĺžku
+  for (const i of seen) distArr[i] = Infinity; seen.length = 0; heapI.length = 0; heapD.length = 0;
+  const T = new Map(tgt.map(([i, c]) => [i, c]));
+  for (const [i, c] of src) if (c < distArr[i]) { if (distArr[i] === Infinity) seen.push(i); distArr[i] = c; push(i, c); }
+  let best = Infinity;
+  while (heapI.length) {
+    const [i, d] = pop();
+    if (d > distArr[i]) continue;
+    if (d >= best || d > limit) break;
+    if (T.has(i)) best = Math.min(best, d + T.get(i));
+    for (let k = start[i]; k < start[i + 1]; k++) {
+      const j = adj[k], e = adjE[k], nd = d + EL[e] * (EC[e] === 3 ? STEP_PEN : 1);
+      if (nd < distArr[j]) { if (distArr[j] === Infinity) seen.push(j); distArr[j] = nd; push(j, nd); }
+    }
+  }
+  return best;
+}
 function trip(la0, lo0, la1, lo1) {
-  const A = nearestNode(la0, lo0, SNAP), B = nearestNode(la1, lo1, SNAP);
+  const A = nearestEdge(la0, lo0, SNAP), B = nearestEdge(la1, lo1, SNAP);
   const air = dist(la0, lo0, la1, lo1);
   if (!A || !B) return { air, net: Infinity, why: 'snap' };
-  const net = route(A.i, B.i, 4 * air + 800) + A.d + B.d;
-  return { air, net, why: net === Infinity ? 'nopath' : '' };
+  const [a0, a1] = proj(la0, lo0, A.e), [b0, b1] = proj(la1, lo1, B.e);
+  let along;
+  if (A.e === B.e) along = Math.abs(a0 - b0); // na tom istom úseku
+  else along = route2([[EA[A.e], a0], [EB[A.e], a1]], [[EA[B.e], b0], [EB[B.e], b1]], 4 * air + 800);
+  const net = along + A.d + B.d;
+  return { air, net, along, snap: A.d + B.d, why: net === Infinity ? 'nopath' : '' };
 }
 function stats(list) {
-  const ok = list.filter((x) => x.net < Infinity && x.air > 30), det = ok.map((x) => x.net / x.air);
+  // obchádzka = dĺžka po sieti (bez pripojenia na sieť) / vzdušná čiara, len cesty nad 200 m vzdušne
+  const ok = list.filter((x) => x.net < Infinity && x.air >= 200), det = ok.map((x) => x.along / x.air);
+  const snaps = list.filter((x) => x.net < Infinity).map((x) => x.snap);
   return { n: list.length, found: list.filter((x) => x.net < Infinity).length, snapFail: list.filter((x) => x.why === 'snap').length, noPath: list.filter((x) => x.why === 'nopath').length,
-    detourMed: r2(q(det, 0.5)), detourP90: r2(q(det, 0.9)), over15: det.filter((x) => x > 1.5).length, over2: det.filter((x) => x > 2).length, nDet: det.length };
+    detourMed: r2(q(det, 0.5)), detourP90: r2(q(det, 0.9)), over12: det.filter((x) => x > 1.2).length, over15: det.filter((x) => x > 1.5).length, over2: det.filter((x) => x > 2).length, nDet: det.length,
+    snapMed: r1(q(snaps, 0.5)), snapP90: r1(q(snaps, 0.9)) };
 }
 // a) adresa → najbližšie nástupište do 700 m (vzorka: každá 13. adresa)
 const tA = Date.now(); const addrTrips = [];
@@ -269,8 +301,8 @@ L.push(`- **Chodníky:** zakreslené ako samostatná čiara (footway=sidewalk) $
 L.push(`- **Priechody:** ${res.crossings.nodes} bodov (z toho na hlavných cestách ${res.crossings.onMainRoads}, t. j. ${res.crossings.perKmMain} na km hlavnej cesty); čiar priechodov ${res.km.crossingWays} km; druhy: ${Object.entries(crossingKinds).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k, v]) => `${k} ${v}`).join(', ')}. Bariéry (brány, závory): ${barriers}.`);
 L.push(`- **Súvislosť:** ${res.graph.components} celkov, najväčší ${res.graph.biggestKm} km (${res.graph.biggestShare} siete), celkov pod 0,5 km: ${res.graph.under05km}.`);
 L.push(`- **Nástupištia (${stops.length}):** do 10 m od siete ${pct(res.stops.within10, stops.length)}, do 25 m ${pct(res.stops.within25, stops.length)}, do 50 m ${pct(res.stops.within50, stops.length)}; do 25 m a v najväčšom celku **${pct(inBig, stops.length)}** (prah návrhu 90 %). Medián ${res.stops.medianM} m, 90. percentil ${res.stops.p90M} m.`);
-L.push(`- **Adresa → najbližšie nástupište do 700 m** (vzorka ${sA.n}): trasa nájdená **${pct(sA.found, sA.n)}** (prah návrhu 95 %), bez siete do 60 m ${sA.snapFail}, bez spojenia ${sA.noPath}; obchádzka medián ${sA.detourMed}×, 90. percentil ${sA.detourP90}×, nad 1,5× ${pct(sA.over15, sA.nDet)}, nad 2× ${pct(sA.over2, sA.nDet)}; ${res.addrToStop.msPerRoute} ms na trasu (počítač GitHubu).`);
-L.push(`- **Pešie prestupy z datasetu** (${sX.n}): trasa nájdená ${pct(sX.found, sX.n)}; obchádzka medián ${sX.detourMed}×, 90. percentil ${sX.detourP90}×, nad 2× ${pct(sX.over2, sX.nDet)}.`);
+L.push(`- **Adresa → najbližšie nástupište do 700 m** (vzorka ${sA.n}): trasa nájdená **${pct(sA.found, sA.n)}** (prah návrhu 95 %), bez siete do 100 m ${sA.snapFail}, bez spojenia ${sA.noPath}; pripojenie na sieť medián ${sA.snapMed} m, 90. percentil ${sA.snapP90} m; obchádzka (cesty nad 200 m, ${sA.nDet}) medián ${sA.detourMed}×, 90. percentil ${sA.detourP90}×, nad 1,2× ${pct(sA.over12, sA.nDet)}, nad 1,5× ${pct(sA.over15, sA.nDet)}, nad 2× ${pct(sA.over2, sA.nDet)}; ${res.addrToStop.msPerRoute} ms na trasu (počítač GitHubu).`);
+L.push(`- **Pešie prestupy z datasetu** (${sX.n}): trasa nájdená ${pct(sX.found, sX.n)}; obchádzka (nad 200 m, ${sX.nDet}) medián ${sX.detourMed}×, 90. percentil ${sX.detourP90}×, nad 1,2× ${pct(sX.over12, sX.nDet)}, nad 2× ${pct(sX.over2, sX.nDet)}.`);
 L.push(`- **Vzdušná čiara cez hlavnú cestu** (adresa → zastávka): ${res.straightLineCrossesMainRoad.share} z ${nAir}.`);
 L.push(`- **Veľkosť súboru** (križovatky + tvar zjednodušený na 2 m): celé územie ${res.size.full.km} km = ${mb(full.bytes)} (gzip ${mb(full.gz)}); len do 1,5 km od zastávok ${res.size.near1500.km} km = **${mb(cut.bytes)} (gzip ${mb(cut.gz)})**, ${cut.junctions} uzlov, ${cut.edges} úsekov; JSON.parse ${msParse} ms.`);
 L.push('', `**Prahy návrhu:** nástupištia v sieti ≥ 90 % → ${T.stops ? 'áno' : 'nie'}; trasa adresa → zastávka ≥ 95 % → ${T.addr ? 'áno' : 'nie'}. **Výsledok:** ${res.thresholds.verdict}.`);
