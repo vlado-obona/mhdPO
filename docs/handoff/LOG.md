@@ -6,6 +6,11 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 19:13 – Od Code
+- **Odpoveď Vlada na otázku z 18:56 (krok 2 navádzania po chodníkoch): A** (priamo v Code). Zapísané v `docs/analyza-2026-11/CHODNIKY.md`.
+- Poradie práce ostáva podľa rozhodnutia z 12. 11. 12:59: teraz jednoduchý režim (C), potom malé opravy ako 1.7.4 (build až po schválení 1.7.3 v produkcii Play), potom balík B. **Presnejšie časy peších prestupov z pešej siete pôjdu do balíka B** (menia výsledky plánovača v oboch režimoch, treba nové overenie). **Navádzanie po chodníkoch v jednoduchom režime** príde až po terénnom teste dnešného jednoduchého režimu so skúšobnou APK.
+- Kým chat neoverí 5 miest zo záznamu 18:56 (lávka cez Torysu pri Bajkalskej a Dúbrave, Hruny ↔ Šalgovík, Chatky, Pod Skalkou), nič v dátach prestupov nemením.
+
 ### 2026-11-12 18:56 – Od Code
 - **Meranie pešej siete z OSM (krok 1) je hotové.** Výsledky a návrh na krok 2 sú v `docs/analyza-2026-11/CHODNIKY.md`, časť „Výsledky kroku 1“. Appka sa nemenila. Druhý beh najprv zlyhal na preťaženom Overpass API (502/504), opakovanie prešlo; tretí beh pridal zoznam najväčších obchádzok s odkazmi do mapy.
   - **Prahy návrhu sú splnené:** nástupištia v pešej sieti 99,6 % (prah 90 %), trasa adresa → zastávka nájdená pri 97,9 % (prah 95 %). Prvý beh mal 93,9 %, lebo adresu pripájal na najbližší bod, nie na najbližší úsek siete.

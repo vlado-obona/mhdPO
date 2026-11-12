@@ -162,7 +162,7 @@ Dni sú odhad pri bežnom programovaní, podľa rozsahu dnešného navádzania (
 ## Čo treba rozhodnúť
 
 1. ~~Spustiť krok 1?~~ **Rozhodnuté 12. 11.: áno** – výsledky v časti „Výsledky kroku 1“.
-2. Po meraní: A) navádzanie po chodníkoch B) len priechody C) nechať ako dnes – **otvorené**, odporúčanie Code: najprv presnejšie časy peších prestupov zo siete (balík B), potom A v jednoduchom režime (pozri „Návrh na krok 2“).
+2. ~~Po meraní: A) navádzanie po chodníkoch B) len priechody C) nechať ako dnes~~ **Rozhodnuté 12. 11.: A** – najprv presnejšie časy peších prestupov z pešej siete (v balíku B, s novým overením plánovača), potom navádzanie po chodníkoch v jednoduchom režime, až po terénnom teste dnešného jednoduchého režimu (pozri „Návrh na krok 2“).
 3. Schody: A) obchádzať (seniori, kočík), ak je obchádzka do ~100 m B) neobchádzať
 4. Rozsah: A) len jednoduchý režim B) aj mapa v bežnom režime C) aj časy chôdze v plánovači (treba nové overenie)
 5. ~~Pripisovanie OSM a odkaz na verejné dáta?~~ **Rozhodnuté 12. 11.: áno** – v jednoduchom režime je doplnené (vetva `jednoduchy-rezim`), odkaz v pätičke appky príde v 1.7.4, text pre Play je v `store/ZAZNAM-V-OBCHODE.md`.
