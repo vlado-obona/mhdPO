@@ -35,7 +35,7 @@ Cestovné poriadky, mapa aj vyhľadávanie sú priamo v telefóne. Žiadne rekla
 ODKIAĽ KAM PLUS (voliteľný jednorazový nákup)
 Základné funkcie sú zadarmo. Plus pridáva až 6 rýchlych cieľov, tmavý režim a widget „Najbližší autobus“ na plochu. Žiadne predplatné.
 
-Neoficiálna aplikácia. Nie je prevádzkovaná dopravným podnikom ani mestom. Údaje pochádzajú z verejne zverejnených cestovných poriadkov MHD Prešov; mapa, miesta a adresy © prispievatelia OpenStreetMap (ODbL). Cestovné poriadky aktualizujeme s novými verziami appky – pri výlukách sleduj aj oznámenia dopravcu.
+Neoficiálna aplikácia. Nie je prevádzkovaná dopravným podnikom ani mestom. Údaje pochádzajú z verejne zverejnených cestovných poriadkov MHD Prešov; mapa, miesta a adresy © prispievatelia OpenStreetMap, licencia ODbL 1.0 – dáta na stiahnutie: github.com/vlado-obona/mhdPO/tree/main/data/osm-places. Cestovné poriadky aktualizujeme s novými verziami appky – pri výlukách sleduj aj oznámenia dopravcu.
 
 Vyvinula BEDEKA, s.r.o., Prešov.
 ```
@@ -66,7 +66,7 @@ Timetables, map and search are stored in your phone. No ads, no account, no trac
 ODKIAĽ KAM PLUS (optional one-time purchase)
 The core features are free. Plus adds up to 6 quick destinations, dark mode and the "Next bus" home-screen widget. No subscription.
 
-Unofficial app, not operated by the transport company or the city. Data come from publicly available Prešov public transport timetables; map, places and addresses © OpenStreetMap contributors (ODbL).
+Unofficial app, not operated by the transport company or the city. Data come from publicly available Prešov public transport timetables; map, places and addresses © OpenStreetMap contributors, licensed under ODbL 1.0 – data download: github.com/vlado-obona/mhdPO/tree/main/data/osm-places.
 
 Developed by BEDEKA, s.r.o., Prešov, Slovakia.
 ```

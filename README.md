@@ -32,7 +32,7 @@ v telefóne. Prevádzkovateľ: BEDEKA, s.r.o.
 | `data/gtfs-presov/` | surový GTFS feed DPMP (provenience v `SOURCE.txt`) |
 | `data/gtfs-patches/` | zmeny CP vyhlásené DPMP, ktoré ešte nie sú vo feede (overené proti PDF), a väzby „zostaň sedieť“ (GTFS nemá block_id); každá oprava platí len pre svoj feed (`baseFeedVersion`) |
 | `data/dpmp-lcp/`, `data/dpmp-info/` | oficiálne podklady DPMP (linkové CP v PDF, stránky o lístkoch) na overenie |
-| `data/osm-places/` | miesta a adresy z OpenStreetMap (© prispievatelia OSM, ODbL) |
+| `data/osm-places/` | miesta a adresy z OpenStreetMap (© prispievatelia OSM, ODbL 1.0; popis a licencia v `README.md`) |
 | `web/` | stránky na GitHub Pages: `sukromie/` = zásady ochrany súkromia |
 | `releases/` | hotové verzie (`vX.Y.Z/`) a `CHANGELOG.txt` |
 
@@ -72,4 +72,8 @@ Záloha kľúča je mimo repozitára.
   (GTFS, vydavateľ R&G PLUS) a ním zverejnené zmeny CP.
 - Miesta, ulice, adresy a mapové podklady: © prispievatelia
   [OpenStreetMap](https://www.openstreetmap.org/copyright), ODbL 1.0.
+  Databázy z nich odvodené, ktoré appka nosí v sebe (`mhd-app/data/places.json`,
+  `mhd-app/data/mapbase.json`), sú tiež pod ODbL 1.0 a dajú sa voľne stiahnuť z tohto
+  repozitára spolu so skriptami, ktorými vznikli – pozri
+  [`data/osm-places/README.md`](data/osm-places/README.md).
 - Aplikácia nie je oficiálnou aplikáciou DPMP ani mesta Prešov.
