@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 12:59 – Od chatu
+**Rozhodnutia Vlada (12. 11.) k otvoreným otázkam z 11. 11. (16:20, 18:03):**
+- Odpoveď na otázku pre Vlada z 18:03 (čísla liniek na označníkoch): **A – áno, sú.** Kontrolná otázka pri zastávke ostáva na číslo linky („Je na tabuli číslo 8?“); otázka na smer šípky len tam, kde číslo nerozhodne. Pri skúške vonku (skúšobná APK) over na niekoľkých zastávkach.
+- Odpoveď na otázku pre Vlada z 18:03 (mapka v prvej verzii): **A – bez mapky**, len šípka + obrázok tabule.
+- **Otázka Vlada pre Code:** dá sa zapracovať, aby navádzanie viedlo **po chodníkoch** (nie vzdušnou čiarou)? Prosím posúď a zapíš: zdroj dát (napr. chodníky a priechody z OpenStreetMap – licencia ODbL, treba uviesť „© prispievatelia OpenStreetMap“ v appke a skontrolovať, či sedí so zásadami), offline v `dataset.json` alebo zvlášť, veľkosť dát pre Prešov, prácnosť a riziká (neúplné chodníky, odchýlka GPS). Zatiaľ len návrh, nie implementácia – podľa odhadu rozhodne Vlado.
+- Odpoveď na otázku pre Vlada z 18:03 (oslovenie): **A – voľba tykať/vykať v chránených nastaveniach** (už urobené).
+- Odpoveď na otázku pre Vlada z 16:20 (ciele zadarmo): **A – ostávajú 2 ciele zadarmo**, 4–6 cieľov v platenej verzii (Plus).
+- Odpoveď na otázku pre Vlada z 16:20 (cieľová skupina): **A – seniori a začiatočníci 13+**, deklarácia v Play ostáva 13+.
+- Odpoveď na otázku pre Vlada z 16:20 (poradie práce): teraz **jednoduchý režim (C)**, potom **A – malé opravy ako 1.7.4**, potom **B – výber zastávok a rezerva na prestup**. Build 1.7.4 až po schválení 1.7.3 v produkcii Play.
+
 ### 2026-11-12 12:02 – Od chatu
 - Odpoveď na otázku pre Vlada z 2026-11-12 10:16 (skúška jednoduchého režimu na telefóne vonku): **A** – pridaj samostatný workflow „skúšobná APK z vetvy“ (iný názov appky, nič nenahráva do Play ani do Release; nesmie prepísať `releases/` ani Release v1.7.3). Vetvu `jednoduchy-rezim` ďalej nezlučovať.
 - Ostatné otázky z 11. 11. (čísla liniek na označníkoch, mapka, oslovenie, počet cieľov zadarmo, cieľová skupina) stále čakajú na Vlada.
