@@ -1,6 +1,6 @@
 # Navádzanie po chodníkoch – návrh (len posúdenie, bez implementácie)
 
-Stav k 2026-11-12 14:09 (Europe/Bratislava). Na otázku Vlada z LOG 2026-11-12 12:59. Vypracoval Claude Code, druhý agent návrh nezávisle prekontroloval (prepočítal čísla, licenciu a prácnosť). Appka sa nemenila.
+Stav k 2026-11-12 14:09 (Europe/Bratislava), výsledky merania doplnené 2026-11-12 večer. Na otázku Vlada z LOG 2026-11-12 12:59. Vypracoval Claude Code, druhý agent návrh nezávisle prekontroloval (prepočítal čísla, licenciu a prácnosť). Appka sa nemenila.
 
 Merania: z dát, ktoré už sú v repe (`data/osm-places/`, stav OSM z 2. 10. 2026, `mhd-app/data/dataset.json`). Na OpenStreetMap, Overpass ani Geofabrik sa z prostredia Code nedá dostať, preto je dĺžka úplnej pešej siete len odhad – presné čísla dá krok 1. Znenie ODbL a pravidiel OSMF je citované z pamäti (online sa overiť nedalo).
 
@@ -24,6 +24,48 @@ Merania: z dát, ktoré už sú v repe (`data/osm-places/`, stav OSM z 2. 10. 20
 Krok 1 by som spravil hneď. Medzi A a B rozhodnú čísla. Vždy so zálohou: keď trasa nevyjde, appka ukáže dnešnú šípku. Dnešný jednoduchý režim ešte nebol v teréne. Jeho terénny test pomôže aj chodníkom, lebo navádzanie po trase stavia naň.
 
 **Prečo nestačia dáta, ktoré appka už má.** Appka dnes sťahuje z OSM len ulice s menom: 3 675 úsekov, 563 km. Pomenovaných chodníkov, peších zón a cestičiek je v nich len asi 16 km, k tomu 5 km poľných ciest. Priechody ani značky chodníkov v nich nie sú vôbec. Pešia sieť poskladaná z týchto dát sa rozpadla na 165 kúskov a pri 12,8 % ciest „adresa → najbližšia zastávka“ v nej nebolo spojenie. Chýbajú totiž práve nepomenované chodníky, skratky cez sídliská a priechody. Preto treba nové sťahovanie.
+
+## Výsledky kroku 1 – meranie z OSM (12. 11. 2026)
+
+Krok 1 spustený na pokyn Vlada (12. 11., „1 áno“). Workflow [`mhd-osm-walk.yml`](../../.github/workflows/mhd-osm-walk.yml), skript `scripts/mhd/osm-walk-measure.mjs`, len meranie (appka ani jej dáta sa nemenili). Behy: [1](https://github.com/vlado-obona/mhdPO/actions/runs/43242885910) (stav OSM 12. 11. 15:03 UTC), [2](https://github.com/vlado-obona/mhdPO/actions/runs/43244992296) (16:37 UTC, presnejšie pripojenie adresy na sieť), [3](https://github.com/vlado-obona/mhdPO/actions/runs/43265962808) (zoznam najväčších obchádzok). Čísla nižšie sú z behov 2 a 3 (sú rovnaké). Údaje © prispievatelia OpenStreetMap, ODbL 1.0.
+
+**Sieť**
+- Pešia sieť 2 614 km (vrátane ciest pre autá a 899 km poľných ciest), s menom 550 km. Súvislá: najväčší celok má 99 % dĺžky.
+- **Chodníky popri cestách väčšinou chýbajú:** ako samostatná čiara je zakreslených len 79 km chodníkov. Hlavné cesty majú značku chodníka len pri 4,7 % dĺžky (9,9 z 210 km). Trasa teda povedie „po ulici“, nie po konkrétnom chodníku.
+- Priechody: 2 327 bodov (na hlavných cestách 321, t. j. 1,5 na km; so semaformi 141). Brány a závory 562, schody 6 km.
+
+**Prahy návrhu – oba splnené**
+- Nástupištia do 25 m od siete a v najväčšom celku: **99,6 %** (prah 90 %), medián 2,4 m.
+- Trasa adresa → najbližšia zastávka (vzorka 1 700 adries): nájdená pri **97,9 %** (prah 95 %), pripojenie na sieť medián 15 m.
+
+**Obchádzky (dĺžka po sieti oproti vzdušnej čiare, cesty nad 200 m)**
+- Adresa → zastávka (637 ciest): medián 1,42×, 90. percentil 2,57×, nad 2× **19 %**.
+- Pešie prestupy z datasetu (838): medián 1,21×, 90. percentil 1,66×, nad 2× **6,7 % (56)**, bez spojenia 8.
+- Najväčšie obchádzky (z výpisu 3. behu) – čo pretína vzdušná čiara podľa podkladovej mapy appky (`mapbase.json`):
+
+| Odkiaľ → kam | Vzdušne → po sieti | Vzdušná čiara pretína |
+|---|---|---|
+| prestup Bajkalská → Dúbrava | 212 m → 937 m (4,4×) | rieku Torysa, Sabinovskú |
+| prestup Dúbrava → Sídlisko III | 276 m → 994 m (3,6×) | Torysu, Sabinovskú, Bajkalskú |
+| prestup Hruny → Šalgovík | 296 m → 1 151 m (3,9×) | nič z mapy appky (svah? chýbajúca cestička?) |
+| prestup Na brehu → Valkovská | 325 m → 1 220 m (3,8×) | potok |
+| adresa → Kamenná baňa | 234 m → 1 288 m (5,5×) | Torysu |
+| adresa → Chatky | 284 m → 1 485 m (5,2×) | nič (les, lúka) |
+| adresa → Jesenná | 220 m → 1 072 m (4,9×) | Petroviansku (hlavná cesta) |
+| adresa → Pod Skalkou | 207 m → 945 m (4,6×) | nič |
+| adresa → Košická | 332 m → 1 466 m (4,4×) | rieku Sekčov, Košickú |
+| adresa → Pod Wilec. hôrkou | 234 m → 1 026 m (4,4×) | Torysu, Pražskú |
+| adresa → Tulčícka | 211 m → 908 m (4,3×) | nič |
+| adresa → Hruny | 218 m → 924 m (4,2×) | nič |
+
+  Z 21 najväčších obchádzok asi polovica pretína rieku alebo potok (Torysa, Sekčov) – tam je obchádzka cez most pravdepodobne skutočná a dnešná šípka vzdušnou čiarou ukazuje cez vodu. Pri ostatných (Hruny, Chatky, Pod Skalkou, Tulčícka, Pod Šibeňou, Nákupné stredisko) mapa appky nič neukazuje – môže ísť o svah, plot, záhrady, alebo o chodník, ktorý v OSM chýba. Celý zoznam s odkazmi na pešiu trasu v openstreetmap.org je v súhrne 3. behu. **Treba pozrieť v mape**, či tam nie je lávka alebo cestička, ktorá v OSM chýba (opraviť sa dá len z vlastnej znalosti alebo obhliadky, nie z Google máp).
+- Veľkosť súboru pre appku (do 1,5 km od zastávok): **1,04 MB, zbalený 0,35 MB**, načítanie 8–9 ms, jedna trasa 0,1 ms.
+
+**Zistenie mimo chodníkov – časy peších prestupov v plánovači.** Dataset počíta pešie prestupy zo vzdušnej čiary (`scripts/mhd/build-data.mjs`: vzdialenosť / 1,25 m/s + 1 min, do 400 m vzdušne). Pri prestupoch cez rieku je to príliš krátko: Bajkalská → Dúbrava má v datasete 3 min 50 s, po sieti je to 937 m, teda asi 12–13 min bežnou chôdzou (17 min pomalou). Ak je obchádzka skutočná, plánovač (bežný aj jednoduchý režim) tam môže ponúknuť presadnutie, ktoré sa nedá stihnúť. Týka sa to asi 56 prestupov (6,7 % prestupov nad 200 m). Ak naopak v OSM chýba lávka, presný je dnešný čas a chybná je sieť – preto najprv ručná kontrola v mape.
+
+**Návrh na krok 2 (odporúčanie Code)**
+1. **Najprv presnejšie časy peších prestupov z pešej siete** (pri zostavení dát, appka nezväčší; 2–3 dni + ručná kontrola najväčších obchádzok v mape). Mení výsledky plánovača v oboch režimoch, preto patrí do balíka B (výber zastávok a rezerva na prestup) s novým overením (`test-router`, náhodné hľadania).
+2. **Potom navádzanie po chodníkoch v jednoduchom režime (variant A)** – dáta ho podporujú (prahy splnené), ale s dvoma obmedzeniami: trasa ide po osi ulice (chodníky väčšinou nie sú zakreslené zvlášť) a pri obchádzke nad ~2× sa najprv overí, či nejde o chýbajúci chodník. Upozornenie na priechod (variant B) bude jeho súčasťou. Až po terénnom teste dnešného jednoduchého režimu.
 
 ## Zdroj dát a licencia
 
@@ -119,10 +161,10 @@ Dni sú odhad pri bežnom programovaní, podľa rozsahu dnešného navádzania (
 
 ## Čo treba rozhodnúť
 
-1. Spustiť krok 1, teda samostatné meranie z OSM bez zmeny appky? A) áno B) nie
-2. Po meraní: A) navádzanie po chodníkoch B) len priechody C) nechať ako dnes
+1. ~~Spustiť krok 1?~~ **Rozhodnuté 12. 11.: áno** – výsledky v časti „Výsledky kroku 1“.
+2. Po meraní: A) navádzanie po chodníkoch B) len priechody C) nechať ako dnes – **otvorené**, odporúčanie Code: najprv presnejšie časy peších prestupov zo siete (balík B), potom A v jednoduchom režime (pozri „Návrh na krok 2“).
 3. Schody: A) obchádzať (seniori, kočík), ak je obchádzka do ~100 m B) neobchádzať
 4. Rozsah: A) len jednoduchý režim B) aj mapa v bežnom režime C) aj časy chôdze v plánovači (treba nové overenie)
-5. Pripisovanie OSM a odkaz na verejné dáta doplniť hneď, aj bez chodníkov? A) riadok na obrazovke chôdze a odkaz v pätičke (odporúčam) B) len v nastaveniach jednoduchého režimu
+5. ~~Pripisovanie OSM a odkaz na verejné dáta?~~ **Rozhodnuté 12. 11.: áno** – v jednoduchom režime je doplnené (vetva `jednoduchy-rezim`), odkaz v pätičke appky príde v 1.7.4, text pre Play je v `store/ZAZNAM-V-OBCHODE.md`.
 6. Právna kontrola licencie pred vydaním: A) áno (odporúčam) B) nie
 7. Kto spraví terénny test a kde (centrum, sídlisko, hlavná cesta s priechodom, okraj mesta)?

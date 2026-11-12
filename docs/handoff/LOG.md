@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 18:56 – Od Code
+- **Meranie pešej siete z OSM (krok 1) je hotové.** Výsledky a návrh na krok 2 sú v `docs/analyza-2026-11/CHODNIKY.md`, časť „Výsledky kroku 1“. Appka sa nemenila. Druhý beh najprv zlyhal na preťaženom Overpass API (502/504), opakovanie prešlo; tretí beh pridal zoznam najväčších obchádzok s odkazmi do mapy.
+  - **Prahy návrhu sú splnené:** nástupištia v pešej sieti 99,6 % (prah 90 %), trasa adresa → zastávka nájdená pri 97,9 % (prah 95 %). Prvý beh mal 93,9 %, lebo adresu pripájal na najbližší bod, nie na najbližší úsek siete.
+  - **Ale chodníky popri cestách v OSM väčšinou chýbajú** (samostatne 79 km, hlavné cesty so značkou chodníka 4,7 %) – trasa by viedla po osi ulice, nie po konkrétnom chodníku. Priechodov je 2 327 (na hlavných cestách 1,5 na km). Súbor pre appku 0,35 MB zbalený.
+  - **Obchádzky:** pri 19 % ciest adresa → zastávka nad 200 m je trasa po sieti viac než 2× dlhšia než vzdušne. Asi polovica najväčších vedie cez Torysu alebo Sekčov (obchádzka cez most je asi skutočná a dnešná šípka tam ukazuje cez vodu); pri ostatných (Hruny, Chatky, Pod Skalkou, Tulčícka, Pod Šibeňou) môže v OSM chýbať cestička.
+- **Zistenie pre plánovač (bežný aj jednoduchý režim, nič som nemenil):** pešie prestupy v datasete sa rátajú zo vzdušnej čiary (1,25 m/s + 1 min). Pri 56 prestupoch (6,7 % prestupov nad 200 m) je cesta po pešej sieti viac než 2× dlhšia. Príklad: Bajkalská → Dúbrava má v datasete 3 min 50 s, po sieti je to 937 m cez Torysu, asi 12–13 min. Ak tam lávka naozaj nie je, plánovač môže ponúknuť presadnutie, ktoré sa nedá stihnúť.
+- **Pre chat (prehliadač):** prosím over 5 miest, či je tam lávka alebo chodník, ktorý trasa obišla: prestup Bajkalská ↔ Dúbrava a Dúbrava ↔ Sídlisko III (lávka cez Torysu?), Hruny ↔ Šalgovík, adresy pri Chatkách a pri Pod Skalkou. Odkazy na pešiu trasu sú v súhrne 3. behu workflowu „Pešia sieť (OpenStreetMap) – meranie“ (run 43265962808) a súradnice v `CHODNIKY.md`. Na overenie stačí mapa alebo letecký snímok; do OSM sa z Google máp nesmie nič odkresľovať. Zapíš výsledok do LOG.
+- **Otázka pre Vlada:** Krok 2 navádzania po chodníkoch – A) najprv presnejšie časy peších prestupov z pešej siete (pri zostavení dát, appka nezväčší, 2–3 dni, mení výsledky plánovača v oboch režimoch → patrí do balíka B s novým overením), potom navádzanie po chodníkoch v jednoduchom režime (13–19 dní, až po terénnom teste dnešného jednoduchého režimu) B) len upozornenie na najbližší priechod (4–6 dní) C) nechať ako dnes. Odporúčam A.
+- Jednoduchý režim: úplný výsledok 7. kola kontroly mal ešte 3 drobné nálezy. Dva („Nahlas“ prečíta aj varovanie a radu k tabuli; po krátkej jazde iným vozidlom od zastávky a chôdzi preč ho appka znova vedie na zastávku) mám opravené, overujú ich kontrolóri – na vetvu pôjdu, až keď prejdú. Tretí (zápcha s rozbiehaním a státím okolo 2 m/s bez rýchlosti z GPS sa nerozlíši od chôdze) sa bez zhoršenia iných prípadov opraviť nedá – pôjde do známych obmedzení v PR #1.
+
 ### 2026-11-12 16:49 – Od Code
 - **Odpovede Vlada (12. 11., priamo v Code: „1 áno 2 áno 3 60“):**
   - otázka z 14:09 (krok 1 chodníkov): **A – áno**, meranie beží (nižšie);
