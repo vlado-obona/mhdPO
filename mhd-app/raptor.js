@@ -63,11 +63,14 @@ export class Raptor {
    *                  a prípadnej chôdzi); predvolene 0 (jednoduchý režim: 180)
    * @param opts.walkFactor násobok času peších prestupov medzi zastávkami
    *                  (pomalšia chôdza); predvolene 1
+   * @param opts.footPrune false = príchod pešo na zastávku neorezáva neskorší príchod
+   *                  autobusom (pešo sa z nej ďalej nejde a okolitá cieľová zastávka
+   *                  sa pešo neráta); predvolene true (jednoduchý režim: false)
    * @returns pole journey objektov (pareto podľa počtu prestupov)
    */
   query(fromStops, toStops, dateInfo, depTime, opts = {}) {
     const N = this.d.stops.length;
-    const pad = opts.transferPad || 0, wf = opts.walkFactor || 1;
+    const pad = opts.transferPad || 0, wf = opts.walkFactor || 1, fp = opts.footPrune !== false;
     const best = new Float64Array(N).fill(Infinity);
     // parent[k][stop] = ako sme sa sem dostali v kole k
     const rounds = [];
@@ -82,7 +85,7 @@ export class Raptor {
       }
     }
     // pešia relaxácia už v kole 0 (od východiska k susedným zastávkam)
-    this._relaxFoot(arr0, best, parent0, null, wf);
+    this._relaxFoot(arr0, best, parent0, null, wf, fp);
     // cieľová zastávka dosiahnuteľná pešo nesmie zablokovať príchod autobusom
     // (inak vyhrá okolitá zastávka a chôdza späť); spojenia horšie ako chôdza
     // rovno do cieľa vyradí planJourneys
@@ -175,14 +178,14 @@ export class Raptor {
         }
       }
 
-      this._relaxFoot(arr, best, parent, marked, wf);
+      this._relaxFoot(arr, best, parent, marked, wf, fp);
       rounds.push({ arr, parent, stays });
     }
 
     return this._extract(rounds, toStops, opts.toExtra, opts.accept);
   }
 
-  _relaxFoot(arr, best, parent, marked, wf = 1) {
+  _relaxFoot(arr, best, parent, marked, wf = 1, fp = true) {
     const changed = [];
     for (let i = 0; i < arr.length; i++) if (arr[i] < Infinity) changed.push(i);
     for (const si of changed) {
@@ -192,7 +195,7 @@ export class Raptor {
         const t = arr[si] + (wf === 1 ? secs : Math.round(secs * wf));
         if (t < arr[to] && t < best[to]) {
           arr[to] = t;
-          best[to] = t;
+          if (fp) best[to] = t;
           parent[to] = { type: 'walk', from: si, secs };
           if (marked) marked.add(to);
         }

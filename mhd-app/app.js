@@ -597,7 +597,7 @@ function stopSetFor(s, radius = POINT_RADIUS) {
 // Vranovskej 430 m odtiaľ). Peší prestup v RAPTORe siaha len 400 m.
 // m.extra: pri výbere výstupu sa chôdza z okolitej zastávky počíta dvojnásobne
 // — autobus priamo na zastávku má prednosť, ak príde len o chvíľu neskôr.
-function destStopsFor(s, radius = POINT_RADIUS) {
+function destStopsFor(s, radius = POINT_RADIUS, cap = 12) {
   const m = stopSetFor(s, radius);
   m.extra = new Map();
   if (!s || s.kind !== 'group' || !m.size) return m;
@@ -610,7 +610,7 @@ function destStopsFor(s, radius = POINT_RADIUS) {
     if (d <= radius) cand.push([i, d]);
   });
   cand.sort((a, b) => a[1] - b[1]);
-  for (const [i, d] of cand.slice(0, 12)) {
+  for (const [i, d] of cand.slice(0, cap)) {
     const w = Math.round(d * WALK_DETOUR / WALK_SPEED);
     m.set(i, w);
     m.extra.set(i, w);
@@ -696,9 +696,10 @@ function planWithPrefs(fromStops, toStops, di, depTime, walkOnly) {
   js.push(later);
   return { js, direct: false, later };
 }
-// jednoduchý režim: hľadanie s rezervou na presadnutie (sekundy) a pomalšou chôdzou medzi zastávkami
+// jednoduchý režim: hľadanie s rezervou na presadnutie (sekundy) a pomalšou chôdzou medzi zastávkami;
+// príchod pešo na zastávku tu neorezáva neskorší príchod autobusom (footPrune)
 function planReserve(fromStops, toStops, di, depTime, walkOnly, transferPad, walkFactor) {
-  return planJourneys(raptor, fromStops, toStops, di, depTime, 4, { toExtra: toStops.extra, walkOnly, transferPad, walkFactor });
+  return planJourneys(raptor, fromStops, toStops, di, depTime, 4, { toExtra: toStops.extra, walkOnly, transferPad, walkFactor, footPrune: false });
 }
 function directLaterText(j) {
   const dep = j.legs.find((l) => l.type === 'ride').dep;
@@ -2085,11 +2086,18 @@ function evaluateTrip() {
   const g = goodFix(t);
 
   if (t.phase === 'final') {
+    // jednoduchý režim: skok polohy (rýchlejšie než 8 m/s medzi dvoma polohami) – nasledujúcich 15 s
+    // sa poloha pri cieli nepočíta (krátky skok GPS až do cieľa nesmie ukončiť sprevádzanie)
+    if (t.simple && g && t.arrPrev?.t !== g.t) {
+      const pv = t.arrPrev;
+      if (pv && g.t > pv.t && haversine(pv.la, pv.lo, g.la, g.lo) / ((g.t - pv.t) / 1000) > 8) t.arrJump = g.t;
+      t.arrPrev = g;
+    }
     if (g && destDistance(t, g.la, g.lo) < 40) {
       // jednoduchý režim: „si v cieli“ až po dvoch presných polohách za sebou — jeden skok GPS
       // nesmie ukončiť sprevádzanie ďaleko od cieľa (ručne sa dá vždy: „Som v cieli“)
       if (!t.simple) arrived();
-      else if (g.acc <= 30) {
+      else if (g.acc <= 30 && !(t.arrJump && g.t - t.arrJump < 15000)) {
         if (t.arrFix !== g.t) { t.arrFix = g.t; t.arrN = (t.arrN || 0) + 1; }
         if (t.arrN >= 2) arrived();
       }
