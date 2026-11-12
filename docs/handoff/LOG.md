@@ -6,6 +6,28 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 13:48 – Od Code
+- **Skúšobná APK z vetvy je hotová** (podľa odpovede A z 12:02). Nový workflow `.github/workflows/mhd-apk-skuska.yml` je len na vetve `jednoduchy-rezim` (commity `420dec9`, `724f5ae`) a spustí sa sám pri každom odoslaní zmien appky na vetvu. Prvé dva behy prešli.
+  - Appka **„Odkiaľ Kam SKÚŠKA v1.7.3“**, ID `sk.operatorsystem.mhdpresov.skuska` – nainštaluje sa **vedľa** appky z Google Play, nič v nej neprepíše. Widget sa volá „Najbližší autobus (skúška)“.
+  - Podpis ladiacim kľúčom (žiadne secrets, nie je to kľúč pre Play). Kľúč sa drží v cache, takže ďalšia skúšobná APK sa nainštaluje cez starú; ak cache vyprší (7 dní bez behu), treba starú skúšobnú appku najprv odinštalovať.
+  - **Nič sa necommituje** (`releases/` bez zmeny), nič nejde do GitHub Release ani do Google Play. Produkčný workflow „Android (APK + AAB)“ sa nezmenil a z vetvy sa nespúšťa.
+  - Stiahnutie: GitHub → Actions → „Android – skúšobná APK z vetvy“ → posledný beh → Artifacts → `odkial-kam-skuska-v1.7.3-<commit>` (zip s .apk, drží sa 30 dní) → rozbaliť a nainštalovať (povoliť inštaláciu z neznámych zdrojov). Repo je verejné, takže artefakt si môže stiahnuť každý prihlásený používateľ GitHubu (je to tá istá appka ako na vetve, bez tajných údajov). Nákup Plus v skúšobnej appke nefunguje.
+- **Čo vyskúšať vonku:** navedenie na zastávku (šípka, vzdialenosť, „stíhaš“), kontrolná otázka s číslom linky na niekoľkých zastávkach (aj tam, kde sú dve oproti sebe), „ideš opačným smerom“, čakanie a nástup, počet zastávok a upozornenie pred výstupom (aj pri zamknutom displeji), pešo do cieľa a „Si v cieli“, hlas a vibrácie, „Kde som?“ a „Zavolať“.
+- **6. kolo kontroly jednoduchého režimu dobehlo** a opravy sú na vetve (`530aca7`). Opravené chyby, ktoré vznikli opravami z 5. kola:
+  - po presadnutí na inej zastávke mohla karta ukázať nápis spoja-dvojníka, ktorý v ten deň nejde (napr. linka 18 ráno z Cemjaty „Teriakovce“ namiesto „Veľká pošta“ a k tomu „ak má iný nápis, nenastupuj“);
+  - „Ísť neskôr“ končilo „Neskôr dnes už nič nejde“ aj ráno alebo cez deň;
+  - presadnutie so zbytočnou chôdzou (napr. späť na zastávku, ktorou autobus práve prešiel);
+  - „Si v autobuse?“ ostávala na obrazovke minúty, keď telefón nehlási rýchlosť z GPS;
+  - ručne potvrdená zastávka sa pri posunutej polohe po 20 s sama zrušila;
+  - „Si v cieli“ pri nepresnej polohe neprišlo;
+  - prvá veta po „Rozumiem, ideme“ a „Ukáž mi ju“ sa nepovedala.
+- **Zmena pravidla (moje rozhodnutie, čaká na Vlada):** na prestupe sa čaká najviac 45 min; dlhšie čakanie (najviac 60 min) appka ponúkne, len keď nič lepšie nejde – v poradí sa ráta ako príchod o viac než pol hodiny neskôr. Bez toho by napr. v sobotu o 10:00 z Hôrky na Kozí rožok napísala „Teraz tam nič nejde“, hoci ide 27 + 14 s čakaním 48 min.
+- Overenie: tých istých 1100 náhodných prípadov ako v 5. kole (14 809 kariet, 735 prepočítaní) – 0 nesprávnych nápisov, predčasné konce „Ísť neskôr“ 65 namiesto 80, 0 porušení pravidiel plánu; skripty kontrolórov na sprevádzanie (vozidlo na červenej, v zastávke aj na ceste späť: nič neprikáže; ručné potvrdenie pri polohe o 85–120 m vedľa ostáva; „Si v cieli“ po oprave polohy do 1 s; prvá veta po ťuknutí zaznie). `test-router` prechádza, jednosúborová verzia beží. Teraz beží 7. (úzke) kolo kontroly.
+- Známe obmedzenia pribudli do popisu PR #1 (vozidlo v zápche rýchlosťou chôdze, pomalé vozidlo okolo 3,3 m/s, bez rýchlosti z GPS zmizne „Si v autobuse?“ až po 45–90 s).
+- Beriem rozhodnutia z 12:59: bez mapky (tak to je), kontrolná otázka ostáva na číslo linky, 2 ciele zadarmo, cieľová skupina 13+, poradie práce C → 1.7.4 → B. **Navádzanie po chodníkoch posudzujem**, návrh zapíšem v ďalšom zázname (zatiaľ bez implementácie).
+- **Otázka pre Vlada:** Čakanie na prestupe – A) do 60 min, keď nič lepšie nejde (tak je to teraz) B) prísne najviac 45 min (appka potom v takých prípadoch napíše „dnes už nič nejde“ alebo ponúkne až oveľa neskorší spoj). Odporúčam A.
+- Ďalej (Code): dokončím 7. kolo kontroly a návrh chodníkov; vetvu nezlučujem, nič nevydávam.
+
 ### 2026-11-12 12:59 – Od chatu
 **Rozhodnutia Vlada (12. 11.) k otvoreným otázkam z 11. 11. (16:20, 18:03):**
 - Odpoveď na otázku pre Vlada z 18:03 (čísla liniek na označníkoch): **A – áno, sú.** Kontrolná otázka pri zastávke ostáva na číslo linky („Je na tabuli číslo 8?“); otázka na smer šípky len tam, kde číslo nerozhodne. Pri skúške vonku (skúšobná APK) over na niekoľkých zastávkach.
