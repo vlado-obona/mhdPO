@@ -59,10 +59,15 @@ export class Raptor {
    *                  aby autobus priamo na zastávku nevyhral len o pár sekúnd)
    * @param opts.accept (journey) => bool — spojenie, ktoré neprejde (napr. horšie
    *                  ako chôdza), sa nevráti a neblokuje ďalšie ciele ani kolá
+   * @param opts.transferPad sekundy — rezerva na každé presadnutie (po vystúpení
+   *                  a prípadnej chôdzi); predvolene 0 (jednoduchý režim: 180)
+   * @param opts.walkFactor násobok času peších prestupov medzi zastávkami
+   *                  (pomalšia chôdza); predvolene 1
    * @returns pole journey objektov (pareto podľa počtu prestupov)
    */
   query(fromStops, toStops, dateInfo, depTime, opts = {}) {
     const N = this.d.stops.length;
+    const pad = opts.transferPad || 0, wf = opts.walkFactor || 1;
     const best = new Float64Array(N).fill(Infinity);
     // parent[k][stop] = ako sme sa sem dostali v kole k
     const rounds = [];
@@ -77,7 +82,7 @@ export class Raptor {
       }
     }
     // pešia relaxácia už v kole 0 (od východiska k susedným zastávkam)
-    this._relaxFoot(arr0, best, parent0, null);
+    this._relaxFoot(arr0, best, parent0, null, wf);
     // cieľová zastávka dosiahnuteľná pešo nesmie zablokovať príchod autobusom
     // (inak vyhrá okolitá zastávka a chôdza späť); spojenia horšie ako chôdza
     // rovno do cieľa vyradí planJourneys
@@ -98,6 +103,8 @@ export class Raptor {
 
     for (let k = 1; k < MAX_ROUNDS && (marked.size || stays.size); k++) {
       const prev = rounds[k - 1].arr;
+      // od druhej jazdy sa nastupuje až po rezerve na presadnutie (prvá jazda: chôdza z východiska)
+      const wait = k > 1 ? pad : 0;
       const prevStays = stays;
       stays = new Map();
       const arr = new Float64Array(N).fill(Infinity);
@@ -148,13 +155,13 @@ export class Raptor {
               }
             }
             // skorší príchod na si umožňuje skorší nástup ďalej
-            const reach = prev[si];
+            const reach = prev[si] + wait;
             if (reach < a - 0.5) {
               const cand = this._earliestTrip(p, pos, reach, dayOffsets);
               if (cand && (cand.trip.t[2 * pos + 1] + cand.o * DAY) < a) onTrip = { ...cand, boardPos: pos };
             }
           } else {
-            let cand = prev[si] < Infinity ? this._earliestTrip(p, pos, prev[si], dayOffsets) : null;
+            let cand = prev[si] < Infinity ? this._earliestTrip(p, pos, prev[si] + wait, dayOffsets) : null;
             if (cand) cand = { ...cand, boardPos: pos };
             // sedí ďalej v tom istom autobuse (pri rovnakom odchode má prednosť)
             const sp = pos === 0 ? prevStays.get(pi) : null;
@@ -168,21 +175,21 @@ export class Raptor {
         }
       }
 
-      this._relaxFoot(arr, best, parent, marked);
+      this._relaxFoot(arr, best, parent, marked, wf);
       rounds.push({ arr, parent, stays });
     }
 
     return this._extract(rounds, toStops, opts.toExtra, opts.accept);
   }
 
-  _relaxFoot(arr, best, parent, marked) {
+  _relaxFoot(arr, best, parent, marked, wf = 1) {
     const changed = [];
     for (let i = 0; i < arr.length; i++) if (arr[i] < Infinity) changed.push(i);
     for (const si of changed) {
       // pešo len z miesta, kam sme nedošli pešo (žiadne reťazenie chôdze)
       if (parent[si] && parent[si].type === 'walk') continue;
       for (const [to, secs] of this.foot[si]) {
-        const t = arr[si] + secs;
+        const t = arr[si] + (wf === 1 ? secs : Math.round(secs * wf));
         if (t < arr[to] && t < best[to]) {
           arr[to] = t;
           best[to] = t;
@@ -437,8 +444,9 @@ export class Raptor {
  * ak ide neskorší spoj tej istej linky, ktorý prestup ešte stihne, vyberie
  * sa ten (menej čakania doma aj na prestupe). Pracuje len so spojmi z CP.
  */
-export function tightenJourney(raptor, journey, dateInfo) {
+export function tightenJourney(raptor, journey, dateInfo, opts = {}) {
   const legs = journey.legs;
+  const pad = opts.transferPad || 0, wf = opts.walkFactor || 1; // rezervy ako v Raptor.query
   const dayOffsets = [
     { o: -1, ...dateInfo.prev },
     { o: 0, num: dateInfo.num, weekday: dateInfo.weekday },
@@ -451,9 +459,9 @@ export function tightenJourney(raptor, journey, dateInfo) {
   let deadline = Infinity;
   for (let i = legs.length - 1; i >= 0; i--) {
     const l = legs[i];
-    if (l.type === 'walk') { if (deadline < Infinity) deadline -= l.secs; continue; }
+    if (l.type === 'walk') { if (deadline < Infinity) deadline -= (wf === 1 ? l.secs : Math.round(l.secs * wf)); continue; }
     if (l.type === 'stay') continue;
-    if (deadline === Infinity || l.pattern == null || locked.has(i)) { deadline = l.dep; continue; } // posledná jazda určuje príchod — ostáva
+    if (deadline === Infinity || l.pattern == null || locked.has(i)) { deadline = l.dep - pad; continue; } // posledná jazda určuje príchod — ostáva
     const p = raptor.d.patterns[l.pattern];
     let bestTrip = null, bestDep = l.dep, bestO = l.day;
     for (const day of dayOffsets) {
@@ -474,7 +482,7 @@ export function tightenJourney(raptor, journey, dateInfo) {
       l.times = bestTrip.t.slice(2 * l.boardPos, 2 * l.alightPos + 2).map((x) => x + shift);
       l.day = bestO;
     }
-    deadline = l.dep;
+    deadline = l.dep - pad;
   }
   // pešie úseky: prvý čo najneskôr (neskorší odchod z miesta), prestupové
   // hneď po vystúpení (čaká sa radšej pri nástupišti ďalšieho spoja)
@@ -575,7 +583,7 @@ export function planJourneys(raptor, fromStops, toStops, dateInfo, depTime, want
     // bez prestupu: najbližšie priame spoje (prejde všetky, nie po kolách RAPTORu)
     const js = raptor.directJourneys(fromStops, toStops, dateInfo, depTime, { ...opts, walkOnly })
       .filter((j) => beatsWalking(j, fromStops, walkOnly)).slice(0, want);
-    for (const j of js) tightenJourney(raptor, j, dateInfo);
+    for (const j of js) tightenJourney(raptor, j, dateInfo, opts);
     return js.sort((a, b) => a.arrTime - b.arrTime);
   }
   const out = [];
@@ -591,7 +599,7 @@ export function planJourneys(raptor, fromStops, toStops, dateInfo, depTime, want
     const tq = t;
     let minDep = Infinity;
     const accept = (j) => {
-      tightenJourney(raptor, j, dateInfo);
+      tightenJourney(raptor, j, dateInfo, opts);
       preferNearBoarding(j, fromStops, tq);
       const r = j.legs.find((l) => l.type === 'ride');
       if (r && r.dep < minDep) minDep = r.dep;

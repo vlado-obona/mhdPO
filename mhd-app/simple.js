@@ -338,18 +338,19 @@ export function initSimple(A) {
         // ďalšie kolo sa posúva podľa odchodov, ktoré vrátil plánovač (do 3 hodín od hľadaného času)
         lastAny = Math.max(lastAny, a0.rides[0].dep);
         if (a0.rides[0].dep - from <= FAR) lastDep = Math.max(lastDep, a0.rides[0].dep);
-        // tesné presadnutie: pohodlnejšie varianty toho istého spojenia; pôvodné len ak žiadny nevyšiel
+        // karta sa dá ponúknuť: odchod z miesta nie je v minulosti, prvý spoj nie je pred hľadaným
+        // časom (variant so skorším spojom ho mohol posunúť) a presadnutia sa dajú stihnúť
+        const fits = (j) => { const a = j === j0 ? a0 : annotate(j, q.fromStops); j.sm = a; return !!a && a.leave >= now - 30 && a.rides[0].dep >= from && usable(a); };
+        // tesné presadnutie: pohodlnejšie varianty toho istého spojenia; pôvodné len vtedy, keď sa
+        // žiadny variant nedá ponúknuť
         let cands = [j0];
         if (a0.slack < MIN_SLACK) {
-          const v = [shiftBack(j0, q.di), shiftFwd(j0, q.di)].filter(Boolean);
+          const v = [shiftBack(j0, q.di), shiftFwd(j0, q.di)].filter(Boolean).filter(fits);
           if (v.length) cands = v;
         }
         for (const j of cands) {
-          const a = j === j0 ? a0 : annotate(j, q.fromStops);
-          if (!a) continue;
-          j.sm = a;
-          // variant so skorším spojom mohol posunúť prvú jazdu pred hľadaný čas – taká karta sem nepatrí
-          if (a.leave < now - 30 || a.rides[0].dep < from || !usable(a) || seen.has(jKey(j))) continue;
+          if (!fits(j) || seen.has(jKey(j))) continue;
+          const a = j.sm;
           seen.add(jKey(j));
           // Spoj o viac než 3 hodiny neskôr (plánovač ho pridáva ako poslednú možnosť, napr. zajtrajší)
           // nesmie ukončiť hľadanie skorších ani sa medzi ne zaradiť; je len záloha, keď nie je nič iné.
@@ -393,10 +394,16 @@ export function initSimple(A) {
     if (!fromStops.size) fromStops = A.stopSetFor(origin, 1500);
     let toStops = A.destStopsFor(t.dest);
     if (!toStops.size) toStops = A.destStopsFor(t.dest, 1500);
-    const js = fromStops.size && toStops.size
-      ? A.planWithPrefs(fromStops, toStops, di, depTime, A.walkStraight(origin, t.dest, fromStops, toStops)).js : [];
+    if (!fromStops.size || !toStops.size) return { js: [], fromStops, toStops, di };
+    const walk = A.walkStraight(origin, t.dest, fromStops, toStops);
+    // Bežné hľadanie vracia najrýchlejšie spojenia (presadnutie „na sekundu“, rýchla chôdza). Druhé
+    // hľadanie ráta už pri výbere s pomalšou chôdzou medzi zastávkami a s rezervou na presadnutie –
+    // nájde tak aj pohodlnú cestu cez inú prestupnú zastávku, ktorú by najrýchlejšie spojenie zakrylo.
+    const js = [...A.planWithPrefs(fromStops, toStops, di, depTime, walk).js, ...A.planReserve(fromStops, toStops, di, depTime, walk, MIN_SLACK, K)];
     return { js, fromStops, toStops, di };
   }
+  // ďalší plán sa má hľadať až po čase `secs` (sekundy dňa terajšieho plánu) – uloží sa ako okamih
+  const setAfter = (t, secs) => { t.smAfter = secs ? t.t0Epoch + (secs - t.t0Secs) * 1000 : null; };
   // volá sa namiesto planFromHere z app.js (prvý plán, „Autobus mi ušiel“, automatické prepočítanie)
   function plan(reason) {
     const t = A.trip();
@@ -406,7 +413,10 @@ export function initSimple(A) {
     t.missNote = null; t.missSince = null; t.error = null; t.info = null; t.smErr = null;
     const u = uiOf(t), now = Math.floor(t.t0Secs);
     t.smDi = A.dateInfoFor(A.nowInSk().date); t.smPlanAt = Date.now();
-    const { list: found, fromStops, toStops, di } = gather(t, now, Math.max(now, t.smAfter || 0), t.smDi);
+    // „hľadaj až po spoji, ktorý ušiel“: okamih prepočítaný do sekúnd dňa nového plánu (po polnoci
+    // je to iný deň než ten, v ktorom vznikol starý plán)
+    const after = t.smAfter ? Math.floor(t.t0Secs + (t.smAfter - t.t0Epoch) / 1000) : 0;
+    const { list: found, fromStops, toStops, di } = gather(t, now, Math.max(now, after), t.smDi);
     t.smAfter = null;
     const D = A.D();
     if (D.meta.validTo && di.num > D.meta.validTo) { t.phase = 'error'; t.smErr = 'valid'; return A.renderTrip(); }
@@ -448,7 +458,7 @@ export function initSimple(A) {
         : tx(`Ten ${was} už odišiel. Nič sa nedeje, nebež.`, `Ten ${was} už odišiel. Nič sa nedeje, neponáhľajte sa.`);
     u.note = `${why} ${reason === 'early' ? Veh(r) : `Ďalší ${veh(r)}`} ${lineOf(r)} ide o ${fmtTime(r.dep)}.`;
     u.noteAt = Date.now();
-    A.speak(u.note);
+    u.noteSay = u.note; // povie sa spolu s prvou vetou novej obrazovky (render), aby ju tá neprerušila
   }
   // „Ísť neskôr“: ďalšia vybraná karta; keď dôjdu, hľadá sa od odchodu poslednej
   function later() {
@@ -522,8 +532,9 @@ export function initSimple(A) {
     const key = `${t.t0Epoch}|${t.jIdx}|${t.ri}|${t.phase === 'final' ? 'f' : t.phase === 'ride' ? 'r' : 's'}`;
     if (!t.sm) t.sm = { started: false, note: null, noteAt: 0, key: null };
     if (t.sm.key !== key && ['toStop', 'wait', 'final', 'ride'].includes(t.phase)) {
-      t.sm = { started: t.sm.started, note: t.sm.note, noteAt: t.sm.noteAt, key, step: 'walk', ok: false, fix: false, bad: false,
-        hist: [], hs: [], peak: 0, view: 'arrow', cue: null, geo: null, said: {}, d0: null };
+      t.sm = { started: t.sm.started, note: t.sm.note, noteAt: t.sm.noteAt, noteSay: t.sm.noteSay, key, step: 'walk', ok: false, fix: false, bad: false,
+        hist: [], hs: [], hw: null, peak: 0, view: 'arrow', cue: null, geo: null, said: {}, d0: null };
+      spoken = ''; // nový úsek alebo nový plán: prvá veta obrazovky sa povie, aj keď sa volá rovnako
     }
     return t.sm;
   }
@@ -639,16 +650,37 @@ export function initSimple(A) {
         const away = dt >= 8 ? (ds - old[1]) / dt : 0;
         u.growN = u.dsPrev != null && ds - u.dsPrev >= 2 ? (u.growN || 0) + 1 : 0; // súvislý rast, poloha za polohou
         u.dsPrev = ds;
+        // rýchlosť presunu za posledných 8–15 s (z posunu polohy; jeden skok GPS ju veľmi nezmení)
+        if (!u.trk) u.trk = [];
+        u.trk.push([p.t, p.la, p.lo]);
+        while (p.t - u.trk[0][0] > 15000) u.trk.shift();
+        const tdt = (p.t - u.trk[0][0]) / 1000;
+        const spd = tdt >= 8 ? haversine(u.trk[0][1], u.trk[0][2], p.la, p.lo) / tdt : 0;
         // Vzďaľuje sa rýchlosťou vozidla, súvisle a už vyše 100 m: vezie sa. Pri chôdzi do cieľa to
-        // znamená, že nevystúpil → „vystúp na najbližšej zastávke“. Pri chôdzi na zastávku môže sedieť
-        // v správnom spoji (nepotvrdil zastávku) aj v inom → obrazovka sa opýta, nič neprikazuje.
+        // znamená, že nevystúpil → „vystúp na najbližšej zastávke“. Pred nástupom (aj keď už stál na
+        // zastávke) môže sedieť v správnom spoji aj v inom → obrazovka sa opýta, nič neprikazuje.
         // Nový plán si človek vyžiada sám tlačidlom, keď je vonku (žiadne prepočítanie na červenej).
-        if (u.step === 'walk' && !u.riding && away > 3.5 && u.growN >= 6 && ds - minD > 100) { u.riding = true; u.bad = false; u.ridePeak = ds; }
-        else if (u.riding) { u.ridePeak = Math.max(u.ridePeak, ds); if (u.ridePeak - ds > 40) { u.riding = false; u.hs = [[p.t, ds]]; } } // vracia sa pešo
-        // zlý smer: vyhladená vzdialenosť narástla o 40 m (alebo dvojnásobok chyby polohy) nad minimum
-        // z poslednej minúty, pri dvoch polohách za sebou a rýchlosťou chôdze (pri rýchlosti vozidla sa
-        // „otoč sa“ nehovorí); zruší sa až po skutočnom priblížení; vibrácia a hlas najviac raz za 30 s
-        const over = !u.riding && away <= 3 && !(t.speedAvg > 3) && u.hist.length >= 5 && ds - minD > Math.max(40, p.acc * 2) && d > NEAR_M;
+        if (!u.riding && away > 3.5 && u.growN >= 6 && ds - minD > 100) {
+          u.riding = true; u.bad = false; u.ridePeak = ds;
+          if (!dest) u.step = 'walk'; // od zastávky je už ďaleko: po návrate sa k nej vedie znova
+        } else if (u.riding) { u.ridePeak = Math.max(u.ridePeak, ds); if (u.ridePeak - ds > 40) { u.riding = false; u.hs = [[p.t, ds]]; u.hw = null; } } // vracia sa pešo
+        // Základ pre „zlý smer“: vyhladená vzdialenosť, ktorá sa mení najviac rýchlosťou chôdze
+        // (3 m/s). Krátky skok polohy – k zastávke aj od nej – ju tak takmer neposunie. Kým sa človek
+        // vzďaľuje rýchlejšie než chôdzou (beh, vozidlo; merané z vyhladenej vzdialenosti, nie z jednej
+        // polohy), základ sa počíta odznova – potom sa neporovnáva s miestom spred minúty.
+        const fast = away > 3 || spd > 3;
+        if (!u.hw || away > 3 || u.riding) u.hw = { v: ds, t: p.t, min: [[p.t, ds]] };
+        else {
+          const cap = 3 * Math.max(0.5, (p.t - u.hw.t) / 1000);
+          u.hw.v += Math.max(-cap, Math.min(cap, ds - u.hw.v)); u.hw.t = p.t;
+          u.hw.min.push([p.t, u.hw.v]);
+          while (p.t - u.hw.min[0][0] > 60000) u.hw.min.shift();
+        }
+        const dw = u.hw.v, minW = Math.min(...u.hw.min.map((x) => x[1]));
+        // zlý smer: vzdialenosť narástla o 40 m (alebo dvojnásobok chyby polohy) nad minimum z poslednej
+        // minúty a práve teraz stále rastie rýchlosťou chôdze, pri dvoch polohách za sebou; zruší sa až
+        // po skutočnom priblížení; vibrácia a hlas najviac raz za 30 s
+        const over = !u.riding && !fast && away > 0.3 && u.hist.length >= 5 && dw - minW > Math.max(40, p.acc * 2) && d > NEAR_M;
         if (u.step === 'walk' && !u.bad) {
           u.badN = over ? (u.badN || 0) + 1 : 0;
           if (u.badN >= 2) {
@@ -656,13 +688,14 @@ export function initSimple(A) {
             u.badQuiet = p.t - (u.badAt || -1e9) < 30000;
             if (!u.badQuiet) { u.badAt = p.t; A.buzz([200, 100, 200]); }
           }
-        } else if (u.bad) { u.peak = Math.max(u.peak, ds); if (u.peak - ds > 15 || d <= NEAR_M) { u.bad = false; u.hs = [[p.t, ds]]; } }
+        } else if (u.bad) { u.peak = Math.max(u.peak, ds); if (u.peak - ds > 15 || d <= NEAR_M) { u.bad = false; u.hs = [[p.t, ds]]; u.hw = null; } }
         // po oprave („stojíš na druhej strane“) poloha obe nástupištia nerozlíši: príchod až keď sa človek pohol
         const moved = !u.fix || u.fixLa == null || (p.t - u.fixAt > 15000 && haversine(u.fixLa, u.fixLo, p.la, p.lo) >= 10);
-        if (!dest && u.step === 'walk' && d <= ARRIVE_M && p.acc <= 25 && moved) arrive(t, false);
+        // okolo zastávky sa dá aj prejsť vo vozidle: príchod len pri rýchlosti chôdze
+        if (!dest && u.step === 'walk' && !u.riding && !(spd > 3) && d <= ARRIVE_M && p.acc <= 25 && moved) arrive(t, false);
       }
     }
-    return { d, brg };
+    return { d, brg, acc: p.acc };
   }
   function atStop(u, ok) {
     u.step = 'atstop'; u.ok = ok; u.bad = false;
@@ -705,19 +738,20 @@ export function initSimple(A) {
       const here = t.smOkStop === rr.from && p && haversine(p.la, p.lo, sp.la, sp.lo) <= NEAR_M;
       if ((t.ri > 0 && rr.from === t.rides[t.ri - 1].to) || here) atStop(u, true);
     }
-    const g = walkGeo(t, u); // môže zmeniť u.step (príchod podľa polohy)
-    if (!dest && u.step === 'atstop') return waitView(t, title);
+    const g = walkGeo(t, u); // môže zmeniť u.step (príchod podľa polohy) aj u.riding
+    if (!dest && u.step === 'atstop' && !u.riding) return waitView(t, title);
     const r = dest ? null : t.rides[t.ri], st = dest ? null : D.stops[r.from];
     const cue = dest ? { type: 'none' } : cueOf(t, u), geo = dest ? {} : geoOf(t, u);
     const line = dest ? '' : lineOf(r), name = dest ? t.fav.label : clean(st.n);
     const V = dest ? '' : veh(r), missBtn = dest ? '' : `${Veh(r)} mi ušiel`;
     const base = { title, speak: true, dots: dest ? 4 : 1 };
-    if (u.step === 'intro') return { ...base, vkey: 'intro',
+    const step = u.riding ? 'walk' : u.step; // vezie sa: otázka „si v autobuse?“ má prednosť pred každým krokom
+    if (step === 'intro') return { ...base, vkey: 'intro',
       voice: tx('Najprv sa zastav. Drž telefón pred sebou, displejom hore. Šípka sa otáča spolu s tebou. Pri chôdzi sa pozeraj pred seba, nie do telefónu.', 'Najprv sa zastavte. Držte telefón pred sebou, displejom hore. Šípka sa otáča spolu s vami. Pri chôdzi sa pozerajte pred seba, nie do telefónu.'),
       body: `${big('📱', tx('Najprv sa zastav', 'Najprv sa zastavte'), `<p>${tx('Drž', 'Držte')} telefón <b>pred sebou, displejom hore</b>. Šípka sa otáča spolu s ${tx('tebou', 'vami')}.</p>`)}
         <div class="sm-next">Pri chôdzi sa ${tx('pozeraj', 'pozerajte')} <b>pred seba</b>, nie do telefónu. Keď ${tx('pôjdeš', 'pôjdete')} zle${dest ? '' : ` alebo ${tx('budeš', 'budete')} pri zastávke`}, poviem to a zavibrujem.</div>`,
       act: `${btn('introok', 'Rozumiem, ideme', 'sm-primary')}${END()}` };
-    if (u.step === 'check') { // pri zastávke: over, že je na správnom nástupišti
+    if (step === 'check') { // pri zastávke: over, že je na správnom nástupišti
       if (cue.type === 'line') return { ...base, vkey: 'check', voice: `${tx('Pozri sa', 'Pozrite sa')} na tabuľu zastávky. Je na nej číslo ${line}?`,
         body: `<div class="sm-now"><h2>${tx('Pozri sa', 'Pozrite sa')} na tabuľu zastávky</h2><p class="sm-q">Je na nej číslo ${badge(line)}?</p></div>
           <div class="sm-next">Číslo ${tx('hľadaj', 'hľadajte')} na tabuli zastávky alebo na papieri s časmi odchodov, ktorý na nej visí.</div>`,
@@ -728,7 +762,7 @@ export function initSimple(A) {
           <div class="sm-next">${tx('Drž', 'Držte')} telefón pred sebou. Šípka ukazuje, ktorým smerom ${V} odíde.</div>`,
         act: `<div class="sm-pair sm-pair-big">${btn('left', '⬅ Doľava')}${btn('right', 'Doprava ➜')}</div><div class="sm-pair">${btn('idk', 'Neviem')}${END()}</div>` };
     }
-    if (u.step === 'nofix') { // stojí na inom nástupišti s rovnakým menom
+    if (step === 'nofix') { // stojí na inom nástupišti s rovnakým menom
       const dm = `${roundM(cue.refDist)} m`, other = cue.type === 'dir';
       return { ...base, vkey: 'nofix',
         voice: other ? `To nevadí. Odtiaľto ide ${V} ${line} opačným smerom. ${tx('Tvoja', 'Vaša')} zastávka je na druhej strane cesty. ${SAFE_V()}` : `To nevadí. Tu ${V} ${line} nezastavuje. ${tx('Tvoja', 'Vaša')} zastávka je kúsok ďalej.`,
@@ -737,7 +771,7 @@ export function initSimple(A) {
           : `<p>Tu ${V} <b>${esc(line)}</b> nezastavuje. ${tx('Tvoja', 'Vaša')} zastávka je kúsok ďalej, asi <b>${dm}</b>.</p>`),
         act: `${btn('fixgo', tx('Ukáž mi ju', 'Ukážte mi ju'), 'sm-primary')}${END()}` };
     }
-    if (u.step === 'unsure') { // „Neviem“ (alebo druhé „Nie“ po oprave): nikam neposielať
+    if (step === 'unsure') { // „Neviem“ (alebo druhé „Nie“ po oprave): nikam neposielať
       const run = `Ak ${V} ${esc(line)} zastaví o kúsok ďalej, ${tx('nebež k nemu. Ťukni', 'nebežte k nemu. Ťuknite')} „${missBtn}“.`;
       if (cue.type === 'line' && !u.fix) return { ...base, vkey: 'unsure',
         voice: `Nevadí. Na tabuli alebo na papieri s časmi odchodov má byť číslo ${line}. Ak tam nie je, ${tx('tvoja', 'vaša')} zastávka je kúsok ďalej.`,
@@ -766,8 +800,10 @@ export function initSimple(A) {
     let status = '', late = false;
     if (!dest && !u.fix) {
       const slack = r.dep - now - g.d * DETOUR / SLOW;
+      // „nestihneš“ len vtedy, keď to platí aj z najbližšieho miesta, kde podľa chyby polohy môže stáť
+      const sure = r.dep - now - Math.max(0, g.d - (g.acc || 0)) * DETOUR / SLOW <= 0;
       if (slack > 90) status = `<span class="sm-ok">✓ ${tx('stíhaš', 'stíhate')}</span>`;
-      else if (slack > 0) status = `<span class="sm-tight">${Veh(r)} príde o chvíľu. ${tx('Nebež.', 'Neponáhľajte sa.')}</span>`;
+      else if (slack > 0 || !sure) status = `<span class="sm-tight">${Veh(r)} príde o chvíľu. ${tx('Nebež.', 'Neponáhľajte sa.')}</span>`;
       else { late = true; status = `<span class="sm-tight">${tx('asi nestihneš', 'asi nestihnete')}</span>`; }
     }
     if (u.vague) { late = false; status = '<span class="sm-tight">poloha je nepresná</span>'; } // z nepresnej polohy sa „nestihneš“ netvrdí
@@ -814,10 +850,14 @@ export function initSimple(A) {
         : rel == null ? tx('Urob pár krokov. Ukážem ti smer.', 'Urobte pár krokov. Ukážem vám smer.') : turnText(rel, dest);
       // hlas: na začiatku, pri 100 m a pri 50 m
       const band = late ? 'late' : g.d > 100 ? 'far' : g.d > 50 ? 'd100' : 'd50';
+      const lateSay = tx(`Tento ${V} asi nestihneš. Nič sa nedeje, nebež. Ťukni „Nájdi mi ďalší“.`, `Tento ${V} asi nestihnete. Nič sa nedeje, neponáhľajte sa. Ťuknite „Nájdite mi ďalší“.`);
       vkey = u.said.start ? band : 'start';
+      // Prvá veta povie vzdialenosť (a prípadne „nestihneš“) sama: pásmo, v ktorom chôdza začína, sa
+      // už neohlasuje – jeho hlas by prvú vetu hneď prerušil.
+      if (!u.said.start) u.said[band] = true;
       voice = !u.said.start
-        ? `${dest ? `${lbl}.` : `${lbl} ${name}.`} Je to ${fixD != null ? `asi ${fixD}` : mm} metrov. ${rel == null || across ? '' : say} ${across ? tx('Zastávka je na druhej strane cesty. Prejdi len po priechode pre chodcov.', 'Zastávka je na druhej strane cesty. Prejdite len po priechode pre chodcov.') : SAFE_V()}`
-        : band === 'late' ? tx(`Tento ${V} asi nestihneš. Nič sa nedeje, nebež. Ťukni „Nájdi mi ďalší“.`, `Tento ${V} asi nestihnete. Nič sa nedeje, neponáhľajte sa. Ťuknite „Nájdite mi ďalší“.`)
+        ? `${dest ? `${lbl}.` : `${lbl} ${name}.`} Je to ${fixD != null ? `asi ${fixD}` : mm} metrov. ${rel == null || across ? '' : say} ${across ? tx('Zastávka je na druhej strane cesty. Prejdi len po priechode pre chodcov.', 'Zastávka je na druhej strane cesty. Prejdite len po priechode pre chodcov.') : SAFE_V()}${late ? ` ${lateSay}` : ''}`
+        : band === 'late' ? lateSay
           : band === 'far' || u.fix ? '' : `Ešte ${mm} metrov.`;
       const tail = u.fix ? (cue.type === 'dir' ? `Zastávka je oproti. Pri nej sa ${tx('ťa znova opýtam, či stojíš', 'vás znova opýtam, či stojíte')} správne.` : `Tu, kde ${tx('si', 'ste')} teraz, ${V} ${esc(line)} nezastavuje. Pri zastávke sa znova opýtam.`)
         : `${where} Šípka ukazuje priamo na ${dest ? 'cieľ' : 'zastávku'}. Dom alebo plot ${tx('obíď', 'obíďte')} po chodníku.`;
@@ -935,8 +975,12 @@ export function initSimple(A) {
   }
   // Po odchode spoja sa človek vzďaľuje od zastávky, ale poloha je nepresná alebo sa hýbe po trase
   // rýchlosťou vozidla: jadro vtedy „spoj ušiel“ nevyhlási (app.js, t.smOnBus) a tu sa opýtame.
+  // hlas obrazovky; pamätá si, dokedy asi potrvá (otázka v hárku počká, aby vetu neprerušila)
+  let voiceEnd = 0;
+  function voiceOut(say) { voiceEnd = Date.now() + Math.min(9000, 800 + say.length * 65); A.speak(say); }
   function askOnBus(t) {
     const u = t.sm, r = t.rides[t.ri];
+    if (u && u.riding) { t.smOnBus = 0; return; } // to isté sa už pýta obrazovka („Si v autobuse X?“)
     if (!t.smOnBus || Date.now() - t.smOnBus > 5000 || !u || u.askedBus || !r || !['toStop', 'wait'].includes(t.phase) || sheetOpen()) return;
     u.askedBus = true; t.smOnBus = 0;
     const q = tx(`Si už v ${veh(r)}e ${lineOf(r)}?`, `Ste už v ${veh(r)}e ${lineOf(r)}?`);
@@ -944,28 +988,38 @@ export function initSimple(A) {
       <div class="sm-stack">${btn('busyes', `Áno, som v ${veh(r)}e`, 'sm-primary')}${btn('busno', `Nie, ${veh(r)} mi ušiel`)}</div>`);
     gate = {
       busyes: () => { closeSheet(); if (A.trip() === t && ['toStop', 'wait'].includes(t.phase)) A.boardRide(0); },
-      busno: () => { closeSheet(); if (A.trip() === t) { t.smAfter = r.dep + 60; A.replan('missed'); } },
+      busno: () => { closeSheet(); if (A.trip() === t) { setAfter(t, r.dep + 60); A.replan('missed'); } },
     };
-    A.speak(q);
+    // práve znie veta obrazovky („autobus môže meškať…“): otázka zaznie až po nej
+    const wait = voiceEnd - Date.now();
+    if (wait > 0) setTimeout(() => { if (A.trip() === t && gate && gate.busyes && sheetOpen()) voiceOut(q); }, wait);
+    else voiceOut(q);
   }
   function render() {
     if (!cfg().on || !root) return;
     const t = A.trip();
     if (!t || !t.simple) { if (screen === 'trip') home(); return; }
     screen = 'trip';
+    const v = tripView(t); // spracuje aj novú polohu (príchod, „vezie sa“)
     askOnBus(t);
-    const v = tripView(t);
     view(v);
     applyArrows();
     lastVoice = v.read || v.voice || '';
     const u = t.sm;
-    if (v.vkey && v.vkey !== spoken) {
+    let say = '';
+    const fresh = !!v.vkey && v.vkey !== spoken;
+    if (fresh) {
       spoken = v.vkey;
-      const again = v.once && u && u.said && u.said[v.vkey]; // pri kolísaní polohy neopakovať
+      const again = v.once && u && u.said && u.said[v.vkey] && v.vkey !== 'start'; // pri kolísaní polohy neopakovať
       if (u && u.said) u.said[v.vkey] = true;
-      if (v.voice && !again && !sheetOpen()) { const say = v.voice.replace(/\s+/g, ' ').trim(); A.speak(say); $('smSr').textContent = say; } // otázku v hárku hlas obrazovky neprekričí
-      else if (!v.voice && v.read) $('smSr').textContent = v.read.replace(/\s+/g, ' ').trim(); // čítačke obrazovky, nie nahlas
+      if (v.voice && !again && !sheetOpen()) say = v.voice; // otázku v hárku hlas obrazovky neprekričí
     }
+    // oznam po prepočítaní („ten autobus už odišiel, ďalší ide o…“) sa povie pred prvou vetou novej
+    // obrazovky ako jedna súvislá reč – samostatne by ho tá veta hneď prerušila
+    if (u && u.noteSay && !sheetOpen()) { say = `${u.noteSay} ${say}`; u.noteSay = null; }
+    say = say.replace(/\s+/g, ' ').trim();
+    if (say) { voiceOut(say); $('smSr').textContent = say; }
+    else if (fresh && !v.voice && v.read) $('smSr').textContent = v.read.replace(/\s+/g, ' ').trim(); // čítačke obrazovky, nie nahlas
   }
 
   // odpoveď na „Kam ukazuje šípka?“: rozhoduje, kam šípka v tej chvíli naozaj ukazuje;
@@ -1010,11 +1064,12 @@ export function initSimple(A) {
       // dvojité ťuknutie nesmie preskočiť aj ďalší spoj: krátko po novom pláne sa neráta
       case 'missed': if (t && Date.now() - (t.smPlanAt || 0) > 1500) {
         const r = t.rides[t.ri];
-        t.smAfter = r ? r.dep + 60 : 0;
-        A.replan(r && A.tripNowSecs() <= r.dep ? 'late' : 'missed'); // pred odchodom: „nestihneš“, nie „už odišiel“
+        const before = r && A.tripNowSecs() <= r.dep;
+        setAfter(t, r ? r.dep + 60 : 0);
+        A.replan(before ? 'late' : 'missed'); // pred odchodom: „nestihneš“, nie „už odišiel“
       } break;
       case 'alight': alightTap(t); break;
-      case 'offbus': if (t && Date.now() - (t.smPlanAt || 0) > 1500) { t.smAfter = 0; A.replan('early'); } break; // vystúpil neskôr: plán z miesta, kde je
+      case 'offbus': if (t && Date.now() - (t.smPlanAt || 0) > 1500) { t.smAfter = null; A.replan('early'); } break; // vystúpil neskôr: plán z miesta, kde je
       case 'retry': if (t && Date.now() - (t.smPlanAt || 0) > 1500) { t.smErr = null; A.replan(); } break;
       case 'done': A.endTrip(); break;
       case 'end': endAsk(); break;
@@ -1041,7 +1096,7 @@ export function initSimple(A) {
     if (left === 0 || (end === t.ri && (due || (g && haversine(g.la, g.lo, ex.la, ex.lo) < 80)))) return A.alight();
     sheet(`<h2>${tx(`Naozaj si už vonku z ${veh(r)}u?`, `Naozaj ste už vonku z ${veh(r)}u?`)}</h2><p>Do zastávky <b>${esc(clean(ex.n))}</b> ${left === 1 ? 'ostáva' : left < 5 ? 'ostávajú' : 'ostáva'} ešte ${left} ${stopsN(left)}.</p>
       <div class="sm-stack">${btn('close', 'Nie, ešte sedím', 'sm-primary')}${btn('alightyes', 'Áno, som vonku')}</div>`);
-    gate = { alightyes: () => { closeSheet(); t.smAfter = 0; A.replan('early'); } };
+    gate = { alightyes: () => { closeSheet(); t.smAfter = null; A.replan('early'); } };
   }
   function endAsk() {
     const t = A.trip(), rideAhead = t && !t.walkOnly && ['toStop', 'wait', 'ride'].includes(t.phase);
@@ -1159,6 +1214,8 @@ export function initSimple(A) {
     init() { cfg(); apply(); },
     turnOn, turnOff, render, plan, back, alertText,
     heading: applyArrows,
+    // vezie sa a obrazovka sa pýta „si v autobuse?“ – jadro vtedy „spoj ušiel“ samo nevyhlasuje
+    carried: (t) => !!(t && t.sm && t.sm.riding),
     tripOpened() { mount(); spoken = ''; lastVoice = ''; last = {}; screen = 'trip'; closeSheet(); },
     tripEnded() { spoken = ''; if (cfg().on) { last = {}; home(); } },
   };

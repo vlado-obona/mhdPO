@@ -696,6 +696,10 @@ function planWithPrefs(fromStops, toStops, di, depTime, walkOnly) {
   js.push(later);
   return { js, direct: false, later };
 }
+// jednoduchý režim: hľadanie s rezervou na presadnutie (sekundy) a pomalšou chôdzou medzi zastávkami
+function planReserve(fromStops, toStops, di, depTime, walkOnly, transferPad, walkFactor) {
+  return planJourneys(raptor, fromStops, toStops, di, depTime, 4, { toExtra: toStops.extra, walkOnly, transferPad, walkFactor });
+}
 function directLaterText(j) {
   const dep = j.legs.find((l) => l.type === 'ride').dep;
   return `Bez prestupu ide najbližšie spoj ${dep >= 86400 ? 'až na druhý deň ' : ''}o ${fmtTime(dep)} (v cieli ${fmtTime(j.arrTime)})`;
@@ -2140,11 +2144,12 @@ function evaluateTrip() {
         t.missNote = now < r.dep + 360
           ? 'Autobus ešte neprišiel? Môže meškať — počkaj. Ak ti ušiel, ťukni „Prepočítať“.'
           : 'Autobus mešká viac ako 5 min alebo ti ušiel — ak nepríde, ťukni „Prepočítať“.';
-      } else if (t.simple && (g.acc > 50 || (onRoute && t.speedAvg > 2.5))) {
-        // jednoduchý režim: z nepresnej polohy alebo pri pohybe po trase rýchlosťou vozidla sa „spoj
-        // ušiel“ nevyhlasuje – človek najskôr sedí v autobuse; simple.js sa ho opýta (askOnBus)
+      } else if (t.simple && (g.acc > 50 || t.speedAvg > 2.5 || simple.carried(t))) {
+        // jednoduchý režim: z nepresnej polohy alebo pri pohybe rýchlosťou vozidla (po trase linky aj
+        // mimo nej – možno sedí v inom autobuse) sa „spoj ušiel“ nevyhlasuje; simple.js sa opýta
+        // (askOnBus, resp. obrazovka „Si v autobuse X?“) a nový plán príde až po ťuknutí
         t.missSince = null;
-        if (onRoute) t.smOnBus = Date.now(); // mimo trasy linky (napr. ešte doma) sa nepýta
+        if (onRoute) t.smOnBus = Date.now(); // mimo trasy linky (napr. ešte doma) sa hárkom nepýta
       } else {
         t.missSince = t.missSince || Date.now();
         // popri trase linky (napr. autobus stojí v zápche) čakať dlhšie
@@ -2991,7 +2996,7 @@ async function main() {
     favVisible, resolveTarget, targetLabel, savePrefs,
     startTrip, endTrip, useJourney, boardRide, alight, arrived, beginTrip, renderTrip,
     replan: replanTrip, cancelTripNotifs,
-    stopSetFor, destStopsFor, planWithPrefs, walkStraight, destDistance, destPoint, tripNowSecs, goodFix,
+    stopSetFor, destStopsFor, planWithPrefs, planReserve, walkStraight, destDistance, destPoint, tripNowSecs, goodFix,
     tailWalk, stopNav,
     speak, buzz, unlockAudio, nearestStop, loadMapbase, loadPlaces, searchPlaces, getPositionFull,
     refreshMain: () => { if (map) setTimeout(() => map.invalidateSize(), 60); },
