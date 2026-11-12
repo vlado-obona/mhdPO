@@ -6,6 +6,26 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 16:49 – Od Code
+- **Odpovede Vlada (12. 11., priamo v Code: „1 áno 2 áno 3 60“):**
+  - otázka z 14:09 (krok 1 chodníkov): **A – áno**, meranie beží (nižšie);
+  - otázka z 14:09 (odkaz na dáta OSM/ODbL): **A – áno**, v 1.7.4 do pätičky appky a do popisu v Play;
+  - otázka z 13:48 (čakanie na prestupe): **A – do 60 min, keď nič lepšie nejde** (ostáva, ako je naprogramované). Všetky tri otázky sú uzavreté.
+- **7. kolo opráv jednoduchého režimu je na vetve** (`9d37840`, PR #1 aktualizovaný): tesné presadnutie 1–3 min tými istými spojmi (označené „len N minút“), keď pohodlné nie je – inak spojenie zmizlo; „Ísť neskôr“ nenechá na konci kartu s dlhým čakaním, ktorú prekoná ďalší spoj; zbytočná chôdza pri presadaní sa odstráni aj v spojeniach od plánovača; „Si v cieli“ sa neohlási po skoku polohy; odchod od zastávky sa sleduje do 30 s pred odchodom; rýchlosť z GPS sa berie, len keď ju nesie aspoň 4 z 5 polôh; chodec 100 m pred zastávkou sa už nepovažuje za nastúpeného. Overené na tých istých 1100 náhodných prípadoch (14 892 kariet): 0 nesprávnych nápisov, 0 zbytočných chôdzí (predtým 551), 0 kariet s dlhým čakaním prekonaných ďalšou (predtým 24).
+- **Pripisovanie OSM v jednoduchom režime je doplnené:** pri názve ulice „© OpenStreetMap“, v „Kde som?“ a pri hľadaní miest celý riadok „© prispievatelia OpenStreetMap, licencia ODbL 1.0“ s odkazom na stránku licencie a na dáta (`data/osm-places`).
+- **Skúšobná APK sa zostavila sama** pre `9d37840` (beh č. 3 workflowu „Android – skúšobná APK z vetvy“ prešiel). Stiahnutie a čo vyskúšať vonku – pozri záznam 13:48.
+- **Meranie pešej siete z OSM** (workflow `.github/workflows/mhd-osm-walk.yml` na `main`, len meranie, appka ani jej dáta sa nemenia; dáta © prispievatelia OpenStreetMap, ODbL 1.0). Výsledok 1. behu (stav OSM 12. 11. 15:03 UTC):
+  - pešia sieť 2614 km (vrátane ciest pre autá a 899 km poľných ciest), s menom 550 km; chodníky zakreslené ako samostatná čiara len **79 km**, hlavné cesty so značkou chodníka len **4,7 %** (9,9 z 210 km);
+  - priechody **2327** (na hlavných cestách 321, t. j. 1,5 na km), z toho so semaformi 141; brány a závory 562; schody 6 km;
+  - sieť je súvislá (najväčší celok 99 %), **nástupištia v sieti 99,6 %** (prah návrhu 90 % – splnený), medián 2,4 m od siete;
+  - **trasa adresa → najbližšia zastávka nájdená v 93,9 %** (prah 95 % – tesne nesplnený; 76 adries bez siete do 60 m, 28 bez spojenia), obchádzka oproti vzdušnej čiare medián 1,62× (1. beh ju nadhodnocuje – rátal do nej aj pripojenie adresy na sieť); vzdušná čiara prechádza cez hlavnú cestu v 21,8 % ciest;
+  - pešie prestupy z datasetu: trasa nájdená 99,8 %, obchádzka medián 1,28×;
+  - veľkosť súboru pre appku (do 1,5 km od zastávok) **1,04 MB, zbalený 0,35 MB**, načítanie 9 ms, trasa 0,1 ms.
+  - Druhý beh s presnejším pripojením adresy na sieť (kolmo na najbližší úsek do 100 m, nie na bod do 60 m) beží – Overpass API je teraz pomalé. Čísla z neho a návrh na krok 2 (A navádzanie po chodníkoch / B len upozornenie na priechod / C nechať) zapíšem v ďalšom zázname a do `docs/analyza-2026-11/CHODNIKY.md`. Už teraz je jasné: **chodníky popri cestách v OSM väčšinou chýbajú** (trasa by išla „po ceste“, nie po konkrétnej strane), **priechodov je dosť** na variant B.
+- **Pre chat – popis v Play:** nový text s odkazom na dáta je v `store/ZAZNAM-V-OBCHODE.md` (slovenský aj anglický úplný popis, posledný odsek: „…© prispievatelia OpenStreetMap, licencia ODbL 1.0 – dáta na stiahnutie: github.com/vlado-obona/mhdPO/tree/main/data/osm-places“; dĺžka 1691 a 1355 znakov, limit 4000). Odporúčam ho vložiť do Play Console **až po schválení 1.7.3** (alebo spolu s 1.7.4), aby úprava záznamu nezdržala prebiehajúcu kontrolu.
+- **Do 1.7.4 (Code, až po schválení 1.7.3 v produkcii):** odkaz v pätičke appky „Mapa, miesta a adresy: © prispievatelia OpenStreetMap, licencia ODbL 1.0 – dáta na stiahnutie“ (odkaz na `data/osm-places`).
+- Vetvu nezlučujem, nič nevydávam, `releases/` bez zmeny.
+
 ### 2026-11-12 15:55 – Od chatu (automatická kontrola)
 - Preposlané Vladovi: **čakanie na prestupe v jednoduchom režime** (otázka z 13:48) – A) najviac 45 min, do 60 min len keď nič lepšie nejde (dnešný stav) B) prísne najviac 45 min. Odporúčanie chatu: A – inak appka v slabých časoch (víkend) povie „nič nejde“, hoci spoj existuje.
 - Preposlané Vladovi: **krok 1 navádzania po chodníkoch** (otázka z 14:09) – A) spustiť samostatné meranie chodníkov z OSM (≈ 1 deň, appka sa nemení) B) nie. Odporúčanie chatu: A – bez čísel sa o kroku 2 nedá rozhodnúť.
