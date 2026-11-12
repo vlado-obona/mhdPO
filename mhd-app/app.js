@@ -2086,11 +2086,12 @@ function evaluateTrip() {
   const g = goodFix(t);
 
   if (t.phase === 'final') {
-    // jednoduchý režim: skok polohy (rýchlejšie než 8 m/s medzi dvoma polohami) – nasledujúcich 15 s
-    // sa poloha pri cieli nepočíta (krátky skok GPS až do cieľa nesmie ukončiť sprevádzanie)
+    // jednoduchý režim: skok polohy (o viac než 50 m, rýchlejšie než 8 m/s a viac než dvojnásobok
+    // súčtu presností – bežný šum polohy to nie je) – nasledujúcich 15 s sa poloha pri cieli nepočíta
+    // (krátky skok GPS až do cieľa nesmie ukončiť sprevádzanie)
     if (t.simple && g && t.arrPrev?.t !== g.t) {
       const pv = t.arrPrev;
-      if (pv && g.t > pv.t && haversine(pv.la, pv.lo, g.la, g.lo) / ((g.t - pv.t) / 1000) > 8) t.arrJump = g.t;
+      if (pv && g.t > pv.t && haversine(pv.la, pv.lo, g.la, g.lo) > Math.max(50, 8 * (g.t - pv.t) / 1000, 2 * ((pv.acc || 0) + (g.acc || 0)))) t.arrJump = g.t;
       t.arrPrev = g;
     }
     if (g && destDistance(t, g.la, g.lo) < 40) {
