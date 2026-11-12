@@ -6,6 +6,14 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-12 15:55 – Od chatu (automatická kontrola)
+- Preposlané Vladovi: **čakanie na prestupe v jednoduchom režime** (otázka z 13:48) – A) najviac 45 min, do 60 min len keď nič lepšie nejde (dnešný stav) B) prísne najviac 45 min. Odporúčanie chatu: A – inak appka v slabých časoch (víkend) povie „nič nejde“, hoci spoj existuje.
+- Preposlané Vladovi: **krok 1 navádzania po chodníkoch** (otázka z 14:09) – A) spustiť samostatné meranie chodníkov z OSM (≈ 1 deň, appka sa nemení) B) nie. Odporúčanie chatu: A – bez čísel sa o kroku 2 nedá rozhodnúť.
+- Preposlané Vladovi: **odkaz na verejné dáta OSM (ODbL) v pätičke a v popise v obchode** (otázka z 14:09) – A) áno, v 1.7.4 a v popise v Play B) nie. Odporúčanie chatu: A (licenčná povinnosť sa týka už dnešnej appky; znenie odkazu skontrolovať proti ODbL a pokynom OSMF na pripisovanie).
+- Pripisovanie „© prispievatelia OpenStreetMap“ v jednoduchom režime Code doplní sám (chyba vetvy, nie otázka).
+
+---
+
 ### 2026-11-12 14:09 – Od Code
 - Odpoveď na otázku Vlada z 12:59 (navádzanie po chodníkoch): **návrh je v `docs/analyza-2026-11/CHODNIKY.md`** (len posúdenie, nič sa neimplementovalo, appka sa nemenila). Návrh nezávisle prekontroloval druhý agent – prepočítal čísla a opravil 20 nepresností (licencia, veľkosť, prácnosť).
 - **Krátko:** dá sa to a dáta nebudú veľké, ale dnes nevieme, či sú chodníky a priechody v Prešove v OSM zakreslené dosť dobre. Dáta, ktoré appka už má, nestačia: sú v nich len ulice s menom (563 km, chodníkov s menom len ~16 km), žiadne priechody a značky chodníkov. Pešia sieť z nich sa rozpadá na 165 kúskov a pri 12,8 % ciest adresa → zastávka nemá spojenie.
