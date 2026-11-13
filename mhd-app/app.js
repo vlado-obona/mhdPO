@@ -1835,6 +1835,7 @@ function posFromGeo(p) {
   return {
     la: p.coords.latitude, lo: p.coords.longitude,
     acc: p.coords.accuracy ?? 30, speed: p.coords.speed, t: Date.now(),
+    prov: p.prov ?? null, // zdroj polohy zo služby na pozadí (gps / network); inak nie je známy
   };
 }
 
@@ -2547,7 +2548,7 @@ function onBgLocation(d) {
   t.bg.lastFix = Date.now();
   // na obrazovke dodáva polohy watchPosition — služba len keď appka nie je vidieť
   if (!pageHidden() && Date.now() - (t.webFixAt || 0) < 10000) return;
-  onTripPos({ coords: { latitude: d.latitude, longitude: d.longitude, accuracy: d.accuracy, speed: d.speed ?? null } });
+  onTripPos({ coords: { latitude: d.latitude, longitude: d.longitude, accuracy: d.accuracy, speed: d.speed ?? null }, prov: d.provider ?? null });
 }
 // služba upozornila sama (JS spal) — to isté upozornenie znova nespúšťať
 function onBgFired(t, k) {
