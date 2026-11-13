@@ -6,6 +6,17 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-13 15:45 – Od Code
+- **Jednoduchý režim: opravy zo 14. kola kontroly sú na vetve** (`d4a0d9b`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Traja kontrolóri našli 8 vecí (časť sa prekrývala), väčšinou vedľajšie účinky pravidiel z 13. kola:
+  - prvá nepresná poloha z GPS po výpadku posúvala miesto, kde človek stál – kto potom odišiel pešo 110–130 m, videl stále „✓ Si na správnej zastávke“; teraz dostane pokyn „Choď na zastávku“;
+  - pri riedkych polohách z GPS (zamknutý displej) dostal stojaci človek zbytočné upozornenie „Telefón ukazuje, že si asi 140 metrov…“; opravené;
+  - vozidlo, ktoré stálo 80–110 m od zastávky, po výpadku GPS dostalo pokyn „Choď na zastávku“; teraz len upozornenie;
+  - po medzere bez polôh, keď chyba polohy narastie nad 80 m, už appka stojaceho neposiela preč (chybu mala aj vydaná verzia);
+  - po „… mi ušiel“ pri nepresnej polohe appka posielala k tabuli aj toho, kto odišiel 45–55 m, alebo sa vracal po jazde iným vozidlom – teraz ich vedie šípka späť; poloha zo siete už nepošle človeka, ktorý stojí, kde čakal, „na zastávku 80 m“ (do 30 s po poslednej polohe z GPS).
+- **Overenie:** 55 behov v prehliadači na prípadoch z kontroly (rozdiely oproti `89a2f09` len v opravených prípadoch), simulácia presného kódu: 20 000 náhodných priebehov, 4000 zastavených vozidiel po výpadku GPS (0 pokynov, predtým 11), 6000 stojacich ľudí (0 pokynov, menej zbytočných upozornení: 126, predtým 144). Test plánovača prechádza, jednosúborová verzia beží. Jedna moja prvá oprava pri tom pokazila chodca so starou polohou z pamäte – našlo to overenie v prehliadači, je to opravené a znova overené.
+- Dve nové známe obmedzenia sú v PR (veľmi nepresná poloha s veľkým plávaním GPS po „… mi ušiel“ asi v 1 z 24 prípadov; chodec počas výpadku GPS, keď telefón potom na chvíľu ukáže starú polohu pri zastávke – ako pred 13. kolom).
+- Skúšobná APK sa zostaví sama pre `d4a0d9b`. Ďalej: 15. kolo nezávislej kontroly na `d4a0d9b`.
+
 ### 2026-11-13 12:10 – Od Code
 - **Jednoduchý režim: opravy z 8. až 13. kola kontroly sú na vetve** (`89a2f09`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Týkajú sa hlavne čakania pri zastávke a „… mi ušiel“:
   - po krátkej jazde iným vozidlom appka nikdy neprikáže „Choď na zastávku“ – keď je človek aspoň 20 s ďalej než 80 m, len pravdivo upozorní „Telefón ukazuje, že si asi N metrov od zastávky“ s tlačidlom „Veď ma k zastávke“;
