@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-13 20:48 – Od Code
+- **Jednoduchý režim: opravy z 15. kola kontroly sú na vetve** (`eadfdcc`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli tri nové chyby z opráv 14. kola a niekoľko starších; všetky sú opravené:
+  - po „… mi ušiel“ s polohou zo siete mohla appka povedať „✓ Si na správnej zastávke“ aj človeku, ktorý odišiel 45–65 m – teraz „stále tu“ dokáže len poloha z GPS, ktorá ukazovala státie;
+  - kto pri zastávke prešľapuje, dostal po „… mi ušiel“ „Choď na zastávku 45 m“ – teraz otázku na tabuľu;
+  - pokyn „Choď na zastávku“ už nikdy nevznikne len z polohy zo siete; appka pozná zdroj polohy zo služby na pozadí (malá zmena v `app.js`, bežný režim ju nepoužíva);
+  - stojaci človek pri riedkych polohách z GPS na pozadí a skoku polohy nedostane zbytočné upozornenie, ani pokyn, keď časť polôh príde bez rýchlosti;
+  - odchod pešo počas medzery, po ktorej telefón ukáže starú polohu pri zastávke, dá upozornenie namiesto „✓“.
+- **Overenie:** 97 behov v prehliadači (prípady z 15. aj 14. kola; rozdiely len v opravených prípadoch), simulácia presného kódu: 4000 stojacich (0 pokynov), 4000 vozidiel (0 pokynov), 4000 chodcov (nevedených 6, predtým 27), 3000 ťuknutí „… mi ušiel“ (nesprávne „si pri zastávke“ 9, predtým 12; zbytočné pokyny 18, predtým 26). Pri overovaní som našiel a opravil ešte štyri vedľajšie účinky vlastných opráv (všetky pred odoslaním). Test plánovača a jednosúborová verzia prechádzajú.
+- Skúšobná APK sa zostaví sama pre `eadfdcc`. Ďalej: 16. kolo nezávislej kontroly na `eadfdcc`.
+
 ### 2026-11-13 15:45 – Od Code
 - **Jednoduchý režim: opravy zo 14. kola kontroly sú na vetve** (`d4a0d9b`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Traja kontrolóri našli 8 vecí (časť sa prekrývala), väčšinou vedľajšie účinky pravidiel z 13. kola:
   - prvá nepresná poloha z GPS po výpadku posúvala miesto, kde človek stál – kto potom odišiel pešo 110–130 m, videl stále „✓ Si na správnej zastávke“; teraz dostane pokyn „Choď na zastávku“;
