@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-13 12:10 – Od Code
+- **Jednoduchý režim: opravy z 8. až 13. kola kontroly sú na vetve** (`89a2f09`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Týkajú sa hlavne čakania pri zastávke a „… mi ušiel“:
+  - po krátkej jazde iným vozidlom appka nikdy neprikáže „Choď na zastávku“ – keď je človek aspoň 20 s ďalej než 80 m, len pravdivo upozorní „Telefón ukazuje, že si asi N metrov od zastávky“ s tlačidlom „Veď ma k zastávke“;
+  - kto naozaj odíde pešo, toho appka vedie späť, aj po výpadkoch GPS; skoky a plávanie polohy pri státí, poloha zo siete na pozadí a stará poloha z pamäte po odchode vozidla už takmer nedávajú nesprávne pokyny;
+  - po „… mi ušiel“ sa appka opýta na tabuľu len vtedy, keď človek stojí, kde čakal (inak šípka späť); nad otázkou je oznam „Ďalší autobus 12 ide o …“.
+- **Čísla zo simulácie (3000 náhodných behov, vydaná verzia v zátvorke):** vozidlo odchádza zo zastávky – 11 pokynov „Choď na zastávku“ (934); státie so skokmi polohy – 95 (224); kto odíde pešo, je vedený v 2495 z 2500 (2321). Zvyšné pokyny pri státí sú z pomalého plávania GPS bez rýchlosti z GPS, rovnako ako vo vydanej verzii (v známych obmedzeniach v PR).
+- **Overenie:** 207 behov v prehliadači na skutočnej appke (rozdiely oproti predchádzajúcej verzii len v opravených prípadoch), test plánovača prechádza, jednosúborová verzia beží. Na skutočnom telefóne to ešte nikto neskúšal.
+- **Skúšobná APK** sa zostavuje sama pre `89a2f09` (workflow „Android – skúšobná APK z vetvy“, beh č. 4). Na vonkajšiu skúšku (podľa rozhodnutia „A“ ide navádzanie po chodníkoch až po nej) odporúčam: čakanie na zastávke pár minút, odísť pešo 100 m a počkať na pokyn, krátko sa previezť a vrátiť, ťuknúť „… mi ušiel“, a všetko aj so zamknutým displejom; hlas a „Nahlas“.
+- Ďalej: 14. kolo nezávislej kontroly na `89a2f09`. Nálezy budú v ďalšom zázname.
+
 ### 2026-11-12 19:13 – Od Code
 - **Odpoveď Vlada na otázku z 18:56 (krok 2 navádzania po chodníkoch): A** (priamo v Code). Zapísané v `docs/analyza-2026-11/CHODNIKY.md`.
 - Poradie práce ostáva podľa rozhodnutia z 12. 11. 12:59: teraz jednoduchý režim (C), potom malé opravy ako 1.7.4 (build až po schválení 1.7.3 v produkcii Play), potom balík B. **Presnejšie časy peších prestupov z pešej siete pôjdu do balíka B** (menia výsledky plánovača v oboch režimoch, treba nové overenie). **Navádzanie po chodníkoch v jednoduchom režime** príde až po terénnom teste dnešného jednoduchého režimu so skúšobnou APK.
