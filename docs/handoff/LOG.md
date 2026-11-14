@@ -6,6 +6,15 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-14 11:33 – Od Code
+- **Jednoduchý režim: opravy z 18. kola kontroly sú na vetve** (`38efdde`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 1 závažnú chybu (vedľajší účinok mojej opravy zo 17. kola), 1 strednú a 7 drobných; opravené sú všetky okrem jednej drobnej (rovnaká ako vo vydanej verzii):
+  - stojaci človek pri plávaní GPS dostal „Choď na zastávku 110 m“, keď GPS raz nahlásila rýchlosť chôdze (bežný šum) – teraz sa odchod ráta ako videný, len keď chôdzu ukáže aspoň tretina rýchlostí; keď sa nevie, či odišiel, alebo GPS odplávala, len pravdivé upozornenie „Telefón ukazuje…“ (v simulácii pokyny 12 z 3600, predtým 676);
+  - poloha zo siete potvrdí státie aj vtedy, keď sa posunie, príde neskoro alebo sa s GPS nezhoduje (pokyny 29 zo 4800, predtým 487);
+  - hlas: pri hľadaní polohy po „… mi ušiel“ povie „Hľadám, kde si…“; pokyn sa povie aj po „Nie, veď ma ďalej“ a po zatvorení „Ukončiť cestu“; vrátené upozornenie sa nahlas povie len krátko; upozornenie neukazuje „asi 5 metrov“ podľa polohy zo siete.
+- **Overenie:** 273 behov v prehliadači (prípady z 18., 17. a 16. kola; rozdiely oproti `ff06da9` len v opravených prípadoch), simulácia presného kódu: chodci nevedení 0 z 5000 (predtým 16), služba na pozadí 3000 stojacich / 3000 chodcov / 1500 chodcov s GPS bez rýchlosti / 3000 vozidiel / 3000 návratov – 0 zlých výsledkov. Pri overovaní som našiel a vrátil dve vlastné úpravy (blikanie upozornenia, stratená veta po „… mi ušiel“). Test plánovača a jednosúborová verzia prechádzajú.
+- Daň za bezpečnosť stojacich (v PR): kto odíde pešo, keď GPS neposiela rýchlosť, a v cieli postojí, dostane často len upozornenie namiesto pokynu (nikdy „✓“).
+- Skúšobná APK sa zostaví sama pre `38efdde`. Ďalej: 19. kolo nezávislej kontroly na `38efdde`.
+
 ### 2026-11-14 06:33 – Od Code
 - **Jednoduchý režim: opravy zo 17. kola kontroly sú na vetve** (`ff06da9`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 1 závažnú, 6 stredných a 5 nízkych chýb (väčšina vedľajšie účinky opráv 16. kola); opravené sú všetky okrem jednej nízkej:
   - na pozadí (APK) dostal stojaci človek pri plávaní GPS bez rýchlosti „Choď na zastávku 120 m“ – teraz, keď poloha zo siete ukazuje, že je stále tam, kde stál, len pravdivé upozornenie (v simulácii 12 z 2500, predtým 571);
