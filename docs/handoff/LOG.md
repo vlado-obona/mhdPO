@@ -6,6 +6,18 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-14 06:33 – Od Code
+- **Jednoduchý režim: opravy zo 17. kola kontroly sú na vetve** (`ff06da9`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 1 závažnú, 6 stredných a 5 nízkych chýb (väčšina vedľajšie účinky opráv 16. kola); opravené sú všetky okrem jednej nízkej:
+  - na pozadí (APK) dostal stojaci človek pri plávaní GPS bez rýchlosti „Choď na zastávku 120 m“ – teraz, keď poloha zo siete ukazuje, že je stále tam, kde stál, len pravdivé upozornenie (v simulácii 12 z 2500, predtým 571);
+  - po medzere stará poloha z pamäte zopakovaná medzi prvými polohami posunula miesto, kde človek stál, a odchod pešo ostal na „✓“ – teraz ho appka vedie (nevedení 0 z 1440, predtým 259); ďalší skok po medzere dá len upozornenie;
+  - pri polohe každých 12–20 s čiastočne bez rýchlosti ostal odchod pešo na „✓“, lebo státie v cieli pokyn zrušilo – teraz nie (nevedení 2 z 1800, predtým 33);
+  - vozidlo pri polohe každých 9–12 s bez rýchlosti vo webovej appke sa rozozná (pokyny 0 z 2400, predtým 10); jedna stratená poloha z GPS na pozadí sa neráta ako medzera;
+  - upozornenie „Telefón ukazuje…“ sa po návrate GPS vracalo aj tomu, kto stál späť pri zastávke, a blikalo – teraz len keď je ďalej aj od miesta, kde stál;
+  - „… mi ušiel“: čakanie na polohu skončila aj poloha zo siete a stojaci človek dostal „Choď na zastávku“ – teraz rozhodne len čerstvá poloha z GPS, inak sa rozhodne ako v chvíli ťuknutia; oznam o ďalšom spoji zaznie spolu s otázkou na tabuľu; „Nahlas“ prečíta „Hľadám, kde si…“; ťuknutie „Som na zastávke“ počas hľadania appka už neprepíše.
+- **Overenie:** 172 behov v prehliadači (prípady zo 17. a 16. kola; rozdiely oproti `f6c4c16` len v opravených prípadoch), simulácia presného kódu: služba na pozadí 3000 stojacich (pokyny 0, predtým 3), 3000 chodcov a 1500 chodcov s GPS bez rýchlosti (nevedení 0), 3000 vozidiel a 3000 návratov (0); webová appka 4000 stojacich a 4000 vozidiel (0), 4000 chodcov (nevedení 2). Pri overovaní som našiel a opravil ešte jeden vedľajší účinok vlastnej opravy (pred odoslaním). Test plánovača a jednosúborová verzia prechádzajú.
+- Ostáva ako známe obmedzenie (v PR): vozidlo, ktoré medzi dvoma riedkymi polohami prejde rýchlejšie než 8 m/s a potom minútu stojí, môže zriedka dostať pokyn na chôdzu (5 zo 4800).
+- Skúšobná APK sa zostaví sama pre `ff06da9`. Ďalej: 18. kolo nezávislej kontroly na `ff06da9`.
+
 ### 2026-11-14 01:12 – Od Code
 - **Jednoduchý režim: opravy zo 16. kola kontroly sú na vetve** (`f6c4c16`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 1 závažnú a 6 stredných chýb (väčšina vedľajšie účinky opráv 15. kola); všetky sú opravené:
   - na pozadí (APK, poloha z GPS každých 15–20 s) dostal stojaci človek pri plávaní GPS „Choď na zastávku 120 m“ – teraz nie, keď GPS pri každej polohe hlási státie; pri riedkych polohách sa pokyn dá až po troch odstupoch polôh;
