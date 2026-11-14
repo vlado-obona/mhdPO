@@ -29,11 +29,14 @@ const basemap = read('data/basemap.json');
 const placesJson = read('data/places.json');
 const mapbaseJson = read('data/mapbase.json');
 const appCss = read('app.css');
+const simpleCss = read('simple.css');
 const leafletCss = read('vendor/leaflet.css');
 const leafletJs = read('vendor/leaflet.js');
 const meta = JSON.parse(dataset).meta;
 
 const raptor = read('raptor.js').replace(/^export /gm, '');
+// jednoduchý režim: celý modul je jedna funkcia initSimple, takže sa mená s app.js nebijú
+const simple = read('simple.js').replace(/^export /gm, '');
 
 // verzia v app.js musí sedieť s verziou release
 {
@@ -45,6 +48,7 @@ const raptor = read('raptor.js').replace(/^export /gm, '');
 
 let app = read('app.js');
 app = mustReplace(app, "import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './raptor.js';\n", '', 'import');
+app = mustReplace(app, "import { initSimple } from './simple.js';\n", '', 'import simple.js');
 app = mustReplace(app,
   `  let v = '';
   try { v = (await (await fetch('data/version.json', { cache: 'no-cache' })).json()).v; } catch {}
@@ -88,6 +92,7 @@ const out = `<!doctype html>
 <style>
 ${leafletCss}
 ${appCss}
+${simpleCss}
 </style>
 </head>
 <body>
@@ -105,6 +110,7 @@ window.__PLACES__ = ${placesJson};
 window.__MAPBASE__ = ${mapbaseJson};</script>
 <script>
 ${raptor}
+${simple}
 ${app}
 </script>
 </body>

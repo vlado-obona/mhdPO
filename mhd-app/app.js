@@ -1,5 +1,6 @@
 // MHD Prešov — plánovač spojení nad oficiálnymi GTFS dátami DPMP.
 import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './raptor.js';
+import { initSimple } from './simple.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
@@ -596,7 +597,7 @@ function stopSetFor(s, radius = POINT_RADIUS) {
 // Vranovskej 430 m odtiaľ). Peší prestup v RAPTORe siaha len 400 m.
 // m.extra: pri výbere výstupu sa chôdza z okolitej zastávky počíta dvojnásobne
 // — autobus priamo na zastávku má prednosť, ak príde len o chvíľu neskôr.
-function destStopsFor(s, radius = POINT_RADIUS) {
+function destStopsFor(s, radius = POINT_RADIUS, cap = 12) {
   const m = stopSetFor(s, radius);
   m.extra = new Map();
   if (!s || s.kind !== 'group' || !m.size) return m;
@@ -609,7 +610,7 @@ function destStopsFor(s, radius = POINT_RADIUS) {
     if (d <= radius) cand.push([i, d]);
   });
   cand.sort((a, b) => a[1] - b[1]);
-  for (const [i, d] of cand.slice(0, 12)) {
+  for (const [i, d] of cand.slice(0, cap)) {
     const w = Math.round(d * WALK_DETOUR / WALK_SPEED);
     m.set(i, w);
     m.extra.set(i, w);
@@ -694,6 +695,11 @@ function planWithPrefs(fromStops, toStops, di, depTime, walkOnly) {
   const js = rankJourneys(normal.filter((j) => !dominates(later, j, lv)), fromStops);
   js.push(later);
   return { js, direct: false, later };
+}
+// jednoduchý režim: hľadanie s rezervou na presadnutie (sekundy) a pomalšou chôdzou medzi zastávkami;
+// príchod pešo na zastávku tu neorezáva neskorší príchod autobusom (footPrune)
+function planReserve(fromStops, toStops, di, depTime, walkOnly, transferPad, walkFactor) {
+  return planJourneys(raptor, fromStops, toStops, di, depTime, 4, { toExtra: toStops.extra, walkOnly, transferPad, walkFactor, footPrune: false });
 }
 function directLaterText(j) {
   const dep = j.legs.find((l) => l.type === 'ride').dep;
@@ -998,15 +1004,23 @@ async function watchPos(cb, onErr) {
 }
 
 // ── kompas (zdieľa ho navigačná lišta aj režim cesty) ───────────────
-let compassHeading = null, compassOn = false;
+let compassHeading = null, compassOn = false, compassAbs = false;
 
 function onHeading(e) {
-  const h = (e.webkitCompassHeading != null) ? e.webkitCompassHeading
-    : (e.alpha != null ? 360 - e.alpha : null);
+  // iOS dáva skutočný sever vo webkitCompassHeading; inde ho nesie udalosť
+  // deviceorientationabsolute. Obyčajná deviceorientation má na Androide uhol
+  // od natočenia pri štarte, nie od severu — berie sa len kým absolútna neprišla.
+  let h = null;
+  if (e.webkitCompassHeading != null) h = e.webkitCompassHeading;
+  else if (e.alpha != null) {
+    const abs = e.type === 'deviceorientationabsolute' || e.absolute === true;
+    if (abs) compassAbs = true;
+    if (abs || !compassAbs) h = 360 - e.alpha;
+  }
   if (h == null) return;
   compassHeading = h;
   if (nav) renderNavArrow();
-  if (trip) renderTripNav();
+  if (trip) { if (trip.simple) simple.heading(); else renderTripNav(); }
 }
 
 // musí sa zavolať v používateľskom geste — iOS inak povolenie nevypýta
@@ -1016,7 +1030,10 @@ function compassStart() {
   const DOE = window.DeviceOrientationEvent;
   if (DOE && typeof DOE.requestPermission === 'function') {
     DOE.requestPermission().then((s) => {
-      if (s === 'granted' && compassOn) window.addEventListener('deviceorientation', onHeading);
+      if (s === 'granted' && compassOn) {
+        window.addEventListener('deviceorientationabsolute', onHeading);
+        window.addEventListener('deviceorientation', onHeading);
+      }
     }).catch(() => {});
   } else if (DOE) {
     window.addEventListener('deviceorientationabsolute', onHeading);
@@ -1028,6 +1045,7 @@ function compassStop() {
   if (!compassOn || nav || trip) return;
   compassOn = false;
   compassHeading = null;
+  compassAbs = false;
   window.removeEventListener('deviceorientation', onHeading);
   window.removeEventListener('deviceorientationabsolute', onHeading);
 }
@@ -1184,7 +1202,7 @@ let popSilently = 0; // history.back() po zatvorení dialógu tlačidlom — nie
 function setInertBehind() {
   const dlg = !$('favDlg').hidden, tk = !$('tktDlg').hidden, gm = !$('gmDlg').hidden, tr = !$('trip').hidden, al = !$('tripAlert').hidden;
   const pl = !$('plusDlg').hidden;
-  for (const el of document.querySelectorAll('body > header, body > main, body > footer, #navBar')) el.inert = dlg || tk || gm || tr || al || pl;
+  for (const el of document.querySelectorAll('body > header, body > main, body > footer, #navBar, #sm')) el.inert = dlg || tk || gm || tr || al || pl;
   $('plusDlg').inert = al;
   $('trip').inert = al || tk || gm;
   $('favDlg').inert = al || tr;
@@ -1597,6 +1615,14 @@ function initWidget() {
   const CapApp = window.Capacitor?.Plugins?.App;
   const onUrl = (url) => {
     if (!url || !url.startsWith('odkialkam://')) return;
+    if (simple?.isOn()) {
+      // jednoduchý režim: žiadne okno Plus nad veľkými tlačidlami a rozbehnutú cestu widget neprepíše
+      const i = widgetCfg.fav;
+      if (url.startsWith('odkialkam://widget-refresh')) { if (plus) refreshWidgetFromHere(); return; }
+      if (url.startsWith('odkialkam://widget') && plus && favs[i]?.target
+        && !(trip?.simple && trip.sm?.started && trip.phase !== 'done')) startTrip(i);
+      return;
+    }
     if (url.startsWith('odkialkam://plus')) { if ($('plusDlg').hidden) openPlusDlg(); return; }
     if (url.startsWith('odkialkam://widget-refresh')) { if (plus) refreshWidgetFromHere(); else if ($('plusDlg').hidden) openPlusDlg(); return; }
     const i = widgetCfg.fav;
@@ -1796,6 +1822,7 @@ const NOTIF_CHANNEL = 'mhd-vystup';
 const GOOD_ACC = 150;      // m — horšia presnosť sa na postup jazdy nepoužije
 const GPS_STALE = 45000;   // ms — dlhšie bez dobrej polohy = odhad podľa CP
 // programové posuny mapy (Leaflet animovaný zoom spúšťa „zoomstart“ až v ďalšom snímku)
+let simple = null; // jednoduchý režim (simple.js), vzniká v main()
 let trip = null, tripMap = null, tripLayer = null, tripUserLayer = null, tripMapAutoUntil = 0;
 const tripMapAuto = () => { tripMapAutoUntil = Date.now() + 900; };
 
@@ -1808,6 +1835,7 @@ function posFromGeo(p) {
   return {
     la: p.coords.latitude, lo: p.coords.longitude,
     acc: p.coords.accuracy ?? 30, speed: p.coords.speed, t: Date.now(),
+    prov: p.prov ?? null, // zdroj polohy zo služby na pozadí (gps / network); inak nie je známy
   };
 }
 
@@ -1873,8 +1901,11 @@ function destDistance(t, la, lo) {
   return haversine(la, lo, p.la, p.lo);
 }
 
-async function startTrip(i) {
-  const f = favs[i];
+// opt.simple: cesta v jednoduchom režime (vlastná obrazovka, plán podľa simple.js);
+// opt.fav: jednorazový cieľ mimo uložených („Iné miesto“)
+async function startTrip(i, opt = {}) {
+  const f = opt.fav || favs[i];
+  if (!f) return;
   if (!f.target) { openFavDlg(i); return; }
   if (!D) return;
   // v geste používateľa: odomknúť zvuk a kompas (iOS to inak nedovolí)
@@ -1889,9 +1920,10 @@ async function startTrip(i) {
     alerted: new Set(), seated: new Set(), alertTimer: null, follow: true, speedAvg: 0, openedAt: Date.now(),
     missNote: null, missSince: null, replanned: new Set(), notifAt: new Map(),
     t0Epoch: Date.now(), t0Secs: nowSecsSk(),
+    simple: opt.simple ?? !!simple?.isOn(),
   };
   compassStart();
-  openTripUi();
+  if (t.simple) { simple.tripOpened(); try { if (!history.state?.trip) history.pushState({ trip: 1 }, ''); } catch {} } else openTripUi();
   keepAwake(true);
   renderTrip();
   try {
@@ -1906,6 +1938,11 @@ async function startTrip(i) {
   }
   if (trip !== t) return;
   planFromHere();
+  if (t.simple) return; // najprv náhľad plánu; sledovanie sa spustí až po „Sprevádzaj ma“ (beginTrip)
+  beginTrip(t);
+}
+function beginTrip(t = trip) {
+  if (!t || trip !== t) return;
   startTripWatch(t);
   // oprávnenie na notifikácie až po polohe — Android nedovolí dve žiadosti naraz
   prepareNotifications(t);
@@ -1925,9 +1962,28 @@ async function startTripWatch(t) {
   if (trip === t) startBgTracker(t);
 }
 
+// nový plán z aktuálnej polohy; keď je posledná poloha stará, najprv sa zistí nová
+async function replanTrip(reason) {
+  const t = trip;
+  if (!t) return;
+  unlockAudio();
+  if (!t.pos || Date.now() - t.pos.t > 60000) {
+    t.phase = 'locating'; renderTrip();
+    let pos = null;
+    try { pos = await getPositionFull(); } catch {}
+    if (trip !== t) return;
+    if (!pos) { t.phase = 'error'; t.error = 'Polohu sa nepodarilo zistiť.'; renderTrip(); return; }
+    t.pos = pos;
+    if (pos.acc <= GOOD_ACC) t.good = pos;
+    if (!t.simple || t.sm?.started) startTripWatch(t);
+  }
+  planFromHere(reason);
+}
+
 function planFromHere(reason) {
   const t = trip;
   if (!t || !t.pos) return;
+  if (t.simple) { simple.plan(reason); return; } // jednoduchý režim vyberá spoj vlastnými pravidlami
   cancelTripNotifs();
   t.t0Epoch = Date.now();
   t.t0Secs = nowSecsSk();
@@ -2031,7 +2087,27 @@ function evaluateTrip() {
   const g = goodFix(t);
 
   if (t.phase === 'final') {
-    if (g && destDistance(t, g.la, g.lo) < 40) arrived();
+    // jednoduchý režim: skok polohy – nasledujúcich 15 s sa poloha pri cieli nepočíta (krátky skok
+    // GPS až do cieľa nesmie ukončiť sprevádzanie). Skok = krok o viac než 30 m, rýchlejšie než 8 m/s
+    // a viac než súčet presností, keď začína ďalej než 60 m od cieľa (bližšie je to bežný šum pri
+    // príchode); alebo posun o viac než 60 m (a dvojnásobok súčtu presností) do 5 s po krokoch.
+    if (t.simple && g && t.arrPrev?.t !== g.t) {
+      const pv = t.arrPrev;
+      if (pv && g.t > pv.t && haversine(pv.la, pv.lo, g.la, g.lo) > Math.max(30, 8 * (g.t - pv.t) / 1000, (pv.acc || 0) + (g.acc || 0)) && destDistance(t, pv.la, pv.lo) > 60) t.arrJump = g.t;
+      const hs = (t.arrHist = (t.arrHist || []).filter((x) => g.t - x.t <= 5000));
+      if (hs[0] && g.t > hs[0].t) { const dd = haversine(hs[0].la, hs[0].lo, g.la, g.lo); if (dd > Math.max(60, 2 * ((hs[0].acc || 0) + (g.acc || 0))) && dd / ((g.t - hs[0].t) / 1000) > 8) t.arrJump = g.t; }
+      hs.push(g);
+      t.arrPrev = g;
+    }
+    if (g && destDistance(t, g.la, g.lo) < 40) {
+      // jednoduchý režim: „si v cieli“ až po dvoch presných polohách za sebou — jeden skok GPS
+      // nesmie ukončiť sprevádzanie ďaleko od cieľa (ručne sa dá vždy: „Som v cieli“)
+      if (!t.simple) arrived();
+      else if (g.acc <= 30 && !(t.arrJump && g.t - t.arrJump < 15000)) {
+        if (t.arrFix !== g.t) { t.arrFix = g.t; t.arrN = (t.arrN || 0) + 1; }
+        if (t.arrN >= 2) arrived();
+      }
+    } else if (g) t.arrN = 0;
     return;
   }
   const r = t.rides[t.ri];
@@ -2041,13 +2117,26 @@ function evaluateTrip() {
     const st = D.stops[r.from];
     const d = g ? haversine(g.la, g.lo, st.la, st.lo) : Infinity;
     if (g && t.phase === 'toStop' && d < 45) t.phase = 'wait';
+    // jednoduchý režim: nástup až po dvoch presnejších polohách za sebou (jeden skok GPS pri
+    // čakaní na zastávke nesmie prepnúť na „seď, ešte nevystupuj“)
+    if (g && d <= 70) t.brdN = 0;
+    const boardOk = () => {
+      if (!t.simple) return true;
+      if (g.acc > 50) return false;
+      if (t.brdFix !== g.t) { t.brdFix = g.t; t.brdN = (t.brdN || 0) + 1; }
+      return t.brdN >= 2;
+    };
     // nástup: okolo času odchodu sa vzďaľuje od nástupišťa po trase linky
     // rýchlejšie ako chodec (meškajúci autobus sa počíta tiež)
     let onRoute = false;
     if (g && now >= r.dep - 150 && d > 70) {
       const pr = routeProgress(r.stops, g.la, g.lo, 0, Math.min(n - 1, 3));
       onRoute = pr.d < 120 && pr.p > 0.02;
-      if (onRoute && (t.speedAvg > 2.5 || pr.p >= 0.9)) { boardRide(pr.p); return; }
+      // jednoduchý režim: rýchlosť vozidla len z rýchlosti GPS alebo z presunu za 8–15 s (pri chôdzi
+      // bez rýchlosti z GPS dá šum polohy aj 3–4 m/s); dve polohy za sebou naozaj za sebou
+      const fastV = t.simple ? simple.moving(t) : t.speedAvg > 2.5;
+      if (onRoute && (fastV || pr.p >= 0.9)) { if (boardOk()) { boardRide(pr.p); return; } }
+      else if (t.simple && onRoute) t.brdN = 0;
       // po návrate do appky (napr. z Google Maps) môže už sedieť v autobuse ďalej
       // na trase: je na trase linky, autobus tam podľa CP mohol byť (meškanie
       // najviac 15 min) a pohybuje sa po trase rýchlejšie ako chodec — človek,
@@ -2060,7 +2149,7 @@ function evaluateTrip() {
           const pv = t.farProbe;
           const fast = pv && g.t - pv.t >= 3000 && g.t - pv.t <= 60000 && far.p > pv.p
             && haversine(pv.la, pv.lo, g.la, g.lo) / ((g.t - pv.t) / 1000) >= 3;
-          if (fast || t.speedAvg > 2.5) { t.farProbe = null; boardRide(far.p); return; }
+          if ((fast || (t.simple ? simple.moving(t) : t.speedAvg > 2.5)) && boardOk()) { t.farProbe = null; boardRide(far.p); return; }
           if (!pv || g.t - pv.t > 60000) t.farProbe = { p: far.p, la: g.la, lo: g.lo, t: g.t };
         }
       }
@@ -2073,6 +2162,12 @@ function evaluateTrip() {
         t.missNote = now < r.dep + 360
           ? 'Autobus ešte neprišiel? Môže meškať — počkaj. Ak ti ušiel, ťukni „Prepočítať“.'
           : 'Autobus mešká viac ako 5 min alebo ti ušiel — ak nepríde, ťukni „Prepočítať“.';
+      } else if (t.simple && (g.acc > 50 || t.speedAvg > 2.5 || simple.carried(t))) {
+        // jednoduchý režim: z nepresnej polohy alebo pri pohybe rýchlosťou vozidla (po trase linky aj
+        // mimo nej – možno sedí v inom autobuse) sa „spoj ušiel“ nevyhlasuje; simple.js sa opýta
+        // (askOnBus, resp. obrazovka „Si v autobuse X?“) a nový plán príde až po ťuknutí
+        t.missSince = null;
+        if (onRoute) t.smOnBus = Date.now(); // mimo trasy linky (napr. ešte doma) sa hárkom nepýta
       } else {
         t.missSince = t.missSince || Date.now();
         // popri trase linky (napr. autobus stojí v zápche) čakať dlhšie
@@ -2124,6 +2219,15 @@ function boardRide(p = 0) {
   evaluateTrip();
 }
 
+// chôdza po poslednej jazde: peší úsek na konci spojenia (cieľová zastávka dosiahnutá
+// pešo z inej zastávky) + úsek od zastávky do cieľa
+function tailWalk(t) {
+  if (!t.j) return 0;
+  let s = t.j.finalWalk || 0;
+  for (let i = t.j.legs.length - 1; i >= 0 && t.j.legs[i].type !== 'ride'; i--) if (t.j.legs[i].type === 'walk') s += t.j.legs[i].secs;
+  return s;
+}
+
 // keepAlert: upozornenie a výstup v tom istom kroku (GPS skočil až k výstupu)
 // — výrazné upozornenie „TERAZ“ nechať na obrazovke
 function alight(keepAlert = false) {
@@ -2138,7 +2242,7 @@ function alight(keepAlert = false) {
     if (stay) { t.phase = 'ride'; buzz([60]); } else { t.delay = 0; t.phase = 'toStop'; }
     renderTrip();
     evaluateTrip();
-  } else if (t.j.finalWalk > 30) {
+  } else if (tailWalk(t) > 30) {
     t.phase = 'final'; t.follow = true;
     renderTrip();
   } else {
@@ -2179,9 +2283,10 @@ function exitAlert(atStop = false) {
       : `Pozor! Na ďalšej zastávke ${exitName} vystupujete a prestupujete na linku ${nr.s}.`;
   } else {
     title = `VYSTUPUJ ${when}`;
-    sub = `Vystúp: ${exitName}${t.j.finalWalk > 30 ? ` · potom pešo ~${fmtDur(t.j.finalWalk)} do cieľa` : ''}.`;
+    sub = `Vystúp: ${exitName}${tailWalk(t) > 30 ? ` · potom pešo ~${fmtDur(tailWalk(t))} do cieľa` : ''}.`;
     say = atStop ? `Pozor! Teraz vystúpte na zastávke ${exitName}.` : `Pozor! Na ďalšej zastávke ${exitName} vystupujete.`;
   }
+  if (t.simple) ({ title, sub, say } = simple.alertText(t, k, atStop));
   $('taTitle').textContent = title;
   $('taSub').textContent = sub;
   if ($('tripAlert').hidden) {
@@ -2189,7 +2294,7 @@ function exitAlert(atStop = false) {
     layerOpened($('taOk'));
   }
   // aplikácia v pozadí: overlay nikto nevidí → systémová notifikácia hneď
-  if (pageHidden()) notifyNow(k, title, `${exitName}${next ? ' — prestup' : ''}`);
+  if (pageHidden()) notifyNow(k, title, t.simple ? sub : `${exitName}${next ? ' — prestup' : ''}`);
   else cancelTripNotif(k);
   let rounds = 0;
   const ring = () => {
@@ -2252,6 +2357,7 @@ function notifDue(t, k) {
 function notifPayload(t, k, at, title, body) {
   const r = t.rides[k];
   const last = k === t.rides.length - 1;
+  if (t.simple && !title) { const s = simple.alertText(t, k, false); title = `🔔 ${s.title}`; body = s.sub; }
   return {
     id: TRIP_NOTIF_BASE + k,
     title: title || (last ? '🔔 Vystupuj na ďalšej zastávke' : '🔔 Prestup na ďalšej zastávke'),
@@ -2370,6 +2476,13 @@ function bgTargets(t) {
     const n = r.stops.length;
     const pv = D.stops[r.stops[Math.max(0, n - 2)]], ex = D.stops[r.to];
     const next = t.rides[k + 1];
+    if (t.simple) {
+      // služba má jedno telo pre obe upozornenia („na ďalšej“ aj „teraz“): pokyn STOP patrí len
+      // k prvému, preto ide do jeho nadpisu
+      const a = simple.alertText(t, k, false), b = simple.alertText(t, k, true);
+      out.push({ k, la: pv.la, lo: pv.lo, ela: ex.la, elo: ex.lo, title: `🔔 ${a.title}${a.stop ? ` – ${a.stop}` : ''}`, titleNow: `🔔 ${b.title}`, body: b.sub });
+      return;
+    }
     out.push({
       k, la: pv.la, lo: pv.lo, ela: ex.la, elo: ex.lo,
       title: next ? '🔔 Prestup na ďalšej zastávke' : '🔔 Vystupuj na ďalšej zastávke',
@@ -2382,6 +2495,7 @@ function bgTargets(t) {
 function bgText(t) {
   if (!t.j || ['locating', 'error'].includes(t.phase)) return 'Hľadám spojenie…';
   if (t.phase === 'final') return 'Posledný úsek pešo do cieľa.';
+  if (t.simple) return simple.bgText(t);
   const r = t.rides[Math.min(t.ri, t.rides.length - 1)];
   const line = D.routes[r.route].s;
   return t.phase === 'ride'
@@ -2391,7 +2505,7 @@ function bgText(t) {
 function bgUntil(t) {
   if (!t.j) return Date.now() + 3 * 3600000;
   const last = t.rides[t.rides.length - 1];
-  return tripEpoch(last.arr + Math.max(0, t.delay || 0) + (t.j.finalWalk || 0)) + 30 * 60000;
+  return tripEpoch(last.arr + Math.max(0, t.delay || 0) + tailWalk(t)) + 30 * 60000;
 }
 const bgSig = (t) => JSON.stringify([bgText(t), t.jIdx, t.t0Epoch, bgTargets(t).map((x) => x.k), Math.round(bgUntil(t) / 600000)]);
 const bgGpsLive = (t) => !!(t && t.bg && t.bg.on && Date.now() - t.bg.lastFix < 30000 && goodFix(t));
@@ -2434,7 +2548,7 @@ function onBgLocation(d) {
   t.bg.lastFix = Date.now();
   // na obrazovke dodáva polohy watchPosition — služba len keď appka nie je vidieť
   if (!pageHidden() && Date.now() - (t.webFixAt || 0) < 10000) return;
-  onTripPos({ coords: { latitude: d.latitude, longitude: d.longitude, accuracy: d.accuracy, speed: d.speed ?? null } });
+  onTripPos({ coords: { latitude: d.latitude, longitude: d.longitude, accuracy: d.accuracy, speed: d.speed ?? null }, prov: d.provider ?? null });
 }
 // služba upozornila sama (JS spal) — to isté upozornenie znova nespúšťať
 function onBgFired(t, k) {
@@ -2516,11 +2630,14 @@ function endTrip(silent) {
   trip = null;
   keepAwake(false);
   compassStop();
-  $('trip').hidden = true;
-  document.body.classList.remove('trip-open');
-  layerClosed();
-  // modrá bodka na hlavnej mape sa počas cesty neaktualizovala
-  if (map && !$('mapWrap').hidden) autoCenterMap();
+  if (t.simple) simple.tripEnded(); // jednoduchý režim má vlastnú obrazovku, #trip sa neotváral
+  else {
+    $('trip').hidden = true;
+    document.body.classList.remove('trip-open');
+    layerClosed();
+    // modrá bodka na hlavnej mape sa počas cesty neaktualizovala
+    if (map && !$('mapWrap').hidden) autoCenterMap();
+  }
   if (!silent) { try { if (history.state && history.state.trip) history.back(); } catch {} }
 }
 
@@ -2543,7 +2660,7 @@ function tripTarget() {
 }
 
 function drawTripJourney() {
-  if (!tripMap || !trip) return;
+  if (!tripMap || !trip || trip.simple) return;
   tripLayer.clearLayers();
   const t = trip;
   const pts = [];
@@ -2591,7 +2708,7 @@ function drawTripJourney() {
 }
 
 function updateTripUser() {
-  if (!tripMap || !trip || !trip.pos) return;
+  if (!tripMap || !trip || !trip.pos || trip.simple) return;
   const t = trip;
   tripUserLayer.clearLayers();
   const ll = [t.pos.la, t.pos.lo];
@@ -2688,6 +2805,7 @@ function renderTrip() {
   syncBg(t);
   const key = `${t.phase}|${t.ri}|${t.jIdx}`;
   if (key !== t.phaseKey) { t.phaseKey = key; t.phaseAt = Date.now(); }
+  if (t.simple) { simple.render(); return; }
   $('tripDestName').textContent = `${t.fav.icon} ${t.fav.label}`;
   $('tripDestSub').textContent = targetLabel(t.dest);
   const legs = $('tripLegs');
@@ -2724,6 +2842,7 @@ function renderTrip() {
 function renderTripLive() {
   const t = trip;
   if (!t) return;
+  if (t.simple) { simple.render(); return; }
   renderTripNav();
   let main = '', sub = '', cls = '';
   const now = t.phase === 'locating' ? 0 : tripNowSecs();
@@ -2886,6 +3005,22 @@ async function main() {
   loadFavs();
   loadWidgetCfg();
   initPlus(); // načíta stav Plus a nakreslí rýchle ciele
+  // jednoduchý režim: veľké dlaždice a sprevádzanie krok za krokom (simple.js)
+  simple = initSimple({
+    $, esc, fmtTime, haversine, bearingTo, norm, nowSecsSk, nowInSk, dateInfoFor, leaveTime,
+    WALK_SPEED,
+    D: () => D, raptor: () => raptor, favs: () => favs, prefs: () => prefs, trip: () => trip, groups: () => groups,
+    compassHeading: () => compassHeading,
+    favVisible, resolveTarget, targetLabel, savePrefs,
+    startTrip, endTrip, useJourney, boardRide, alight, arrived, beginTrip, renderTrip,
+    replan: replanTrip, cancelTripNotifs,
+    stopSetFor, destStopsFor, planWithPrefs, planReserve, walkStraight, destDistance, destPoint, tripNowSecs, goodFix,
+    tailWalk, stopNav,
+    speak, buzz, unlockAudio, nearestStop, loadMapbase, loadPlaces, searchPlaces, getPositionFull,
+    refreshMain: () => { if (map) setTimeout(() => map.invalidateSize(), 60); },
+  });
+  simple.init();
+  $('simpleLink')?.addEventListener('click', () => simple.turnOn()); // ?. – stará index.html z cache tlačidlo nemá
   // „Bez prestupu“ (uložené v telefóne, platí aj pre rýchle ciele)
   $('directChk').checked = !!prefs.direct;
   $('directChk').addEventListener('change', (e) => {
@@ -2975,22 +3110,7 @@ async function main() {
     trip.info = null;
     drawTripJourney(); renderTrip();
   });
-  $('tripReplan').addEventListener('click', async () => {
-    const t = trip;
-    if (!t) return;
-    unlockAudio();
-    if (!t.pos || Date.now() - t.pos.t > 60000) {
-      t.phase = 'locating'; renderTrip();
-      let pos = null;
-      try { pos = await getPositionFull(); } catch {}
-      if (trip !== t) return;
-      if (!pos) { t.phase = 'error'; t.error = 'Polohu sa nepodarilo zistiť.'; renderTrip(); return; }
-      t.pos = pos;
-      if (pos.acc <= GOOD_ACC) t.good = pos;
-      startTripWatch(t);
-    }
-    planFromHere('Prepočítané z tvojej aktuálnej polohy.');
-  });
+  $('tripReplan').addEventListener('click', () => replanTrip('Prepočítané z tvojej aktuálnej polohy.'));
   window.addEventListener('popstate', () => {
     if (popSilently) { popSilently--; return; }
     // Späť zatvorí len najvrchnejšiu vrstvu
@@ -3005,7 +3125,10 @@ async function main() {
     } else if (!$('tktDlg').hidden) closeTktDlg(true);
     else if (!$('plusDlg').hidden) closePlusDlg(true);
     else if (!$('favDlg').hidden) closeFavDlg(true);
-    else if (trip) endTrip(true);
+    else if (simple.back(true)) {
+      // jednoduchý režim: Späť zavrie hárok alebo sa opýta; cesta beží ďalej → záznam vrátiť
+      if (trip) { try { history.pushState({ trip: 1 }, ''); } catch {} }
+    } else if (trip) endTrip(true);
   });
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -3014,6 +3137,7 @@ async function main() {
     else if (!$('tktDlg').hidden) closeTktDlg();
     else if (!$('plusDlg').hidden) closePlusDlg();
     else if (!$('favDlg').hidden) closeFavDlg();
+    else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
     else if (trip) endTrip();
     else return;
     e.preventDefault();
@@ -3031,6 +3155,8 @@ async function main() {
       else if (!$('tktDlg').hidden) closeTktDlg();
       else if (!$('plusDlg').hidden) closePlusDlg();
       else if (!$('favDlg').hidden) closeFavDlg();
+      else if (simple.back(false)) { /* spracoval jednoduchý režim */ }
+      else if (simple.isOn()) CapApp.minimizeApp().catch(() => CapApp.exitApp()); // úvod jednoduchého režimu
       else if (trip) endTrip();
       else if (canGoBack) history.back();
       else CapApp.minimizeApp().catch(() => CapApp.exitApp());

@@ -1,0 +1,166 @@
+name: Android – skúšobná APK z vetvy
+
+# Skúšobná Android appka z vetvy jednoduchy-rezim (na skúšku jednoduchého
+# režimu vonku na telefóne). Zámerne je oddelená od vydania:
+#   - iné ID appky (sk.operatorsystem.mhdpresov.skuska) a názov
+#     „Odkiaľ Kam SKÚŠKA v<verzia>“ – nainštaluje sa VEDĽA appky z Google Play,
+#     nič v nej neprepíše;
+#   - podpis ladiacim kľúčom (debug) – nepoužíva žiadne secrets, nie je to
+#     kľúč pre Google Play;
+#   - výsledok je len súbor (artefakt) pri behu workflowu: NIČ sa necommituje
+#     (releases/ ostáva bez zmeny), nič sa nepridáva do GitHub Release a nič sa
+#     nenahráva do Google Play.
+# Stiahnutie: GitHub → Actions → „Android – skúšobná APK z vetvy“ → posledný
+# beh → Artifacts → odkial-kam-skuska-… (zip s .apk, drží sa 30 dní).
+# Ladiaci kľúč sa medzi behmi drží v cache, aby sa dala nová skúšobná APK
+# nainštalovať cez starú; ak cache vyprší (7 dní bez behu), treba starú
+# skúšobnú appku najprv odinštalovať.
+on:
+  push:
+    branches: [jednoduchy-rezim]
+    paths:
+      - 'mhd-app/**'
+      - 'android-native/**'
+      - '.github/workflows/mhd-apk-skuska.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mhd-apk-skuska-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verzia
+        run: |
+          V=$(sed -n "s/^const APP_VERSION = '\([0-9.]*\)';/\1/p" mhd-app/app.js)
+          [ -n "$V" ] || { echo "::error::APP_VERSION v mhd-app/app.js sa nenašla"; exit 1; }
+          SHA=$(git rev-parse --short=7 HEAD)
+          echo "VERSION=$V" >> "$GITHUB_ENV"; echo "SHA=$SHA" >> "$GITHUB_ENV"
+          echo "verzia $V, commit $SHA, vetva $GITHUB_REF_NAME"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # ten istý ladiaci kľúč pre všetky skúšobné buildy (aktualizácia bez odinštalovania)
+      - name: Ladiaci kľúč (cache)
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: mhd-skuska-debug-keystore-v1
+
+      - name: Capacitor projekt
+        run: |
+          mkdir cap-build && cd cap-build
+          npm init -y >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@8.5.2 @capacitor/cli@8.5.2 @capacitor/android@8.5.2 @capacitor/geolocation@8.2.2 @capacitor/local-notifications@8.3.1 @capacitor/haptics@8.0.2 @capacitor/app@8.1.2 @capacitor-community/keep-awake@8.0.1 @capacitor-community/text-to-speech@8.0.2 @capgo/native-purchases@8.8.1 >/dev/null
+          # appId ostáva ako v produkcii (balík Java tried z android-native/), skúšobné
+          # ID sa nastaví príponou applicationIdSuffix nižšie
+          cat > capacitor.config.json <<EOF
+          {
+            "appId": "sk.operatorsystem.mhdpresov",
+            "appName": "Odkiaľ Kam SKÚŠKA v$VERSION",
+            "webDir": "www",
+            "android": { "allowMixedContent": false }
+          }
+          EOF
+          cp -r ../mhd-app www
+          npx cap add android
+          npx cap sync android
+          M=android/app/src/main/AndroidManifest.xml
+          # rovnaké oprávnenia a natívne časti ako produkčná appka (mhd-apk-offline.yml),
+          # aby skúška vonku zodpovedala tomu, čo pôjde do Google Play
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n    <uses-permission android:name="com.android.vending.BILLING" />\n</manifest>#' "$M"
+          cp -r ../android-native/app/src/main/. android/app/src/main/
+          sed -i 's#<string name="widget_label">\([^<]*\)</string>#<string name="widget_label">\1 (skúška)</string>#' android/app/src/main/res/values/widget_strings.xml
+          sed -i 's#</application>#    <receiver android:name=".NextBusWidget" android:exported="false" android:label="@string/widget_label">\n            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>\n            <meta-data android:name="android.appwidget.provider" android:resource="@xml/next_bus_widget_info" />\n        </receiver>\n    </application>#' "$M"
+          grep -q 'xmlns:tools=' "$M" || sed -i 's#<manifest #<manifest xmlns:tools="http://schemas.android.com/tools" #' "$M"
+          sed -i 's#</application>#    <service android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery" tools:node="remove" />\n    </application>#' "$M"
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />\n    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />\n</manifest>#' "$M"
+          sed -i 's#</application>#    <service android:name=".TripTrackerService" android:exported="false" android:foregroundServiceType="location" />\n    </application>#' "$M"
+          grep -q 'NextBusWidget' "$M" && grep -q 'TripTrackerService' "$M" || { echo "::error::AndroidManifest bez widgetu alebo sledovania cesty"; exit 1; }
+          ! grep -q 'ACCESS_BACKGROUND_LOCATION' "$M" || { echo "::error::ACCESS_BACKGROUND_LOCATION nechceme"; exit 1; }
+
+      - name: Ikony aplikacie
+        working-directory: cap-build
+        run: |
+          npm i --no-audit --no-fund -D @capacitor/assets sharp >/dev/null
+          mkdir -p assets
+          node -e "const s=require('sharp'); s('../mhd-app/icons/icon-512.png').resize(1024,1024).png().toFile('assets/logo.png').then(()=>console.log('logo ok'))"
+          npx capacitor-assets generate --android || echo "generovanie ikon zlyhalo — ostane predvolena"
+
+      - name: Skúšobné ID a verzia
+        working-directory: cap-build/android
+        run: |
+          G=app/build.gradle
+          sed -i 's/^\(\s*\)applicationId "sk.operatorsystem.mhdpresov"$/&\n\1applicationIdSuffix ".skuska"/' "$G"
+          grep -q 'applicationIdSuffix ".skuska"' "$G" || { echo "::error::applicationIdSuffix sa nepodarilo nastaviť"; exit 1; }
+          D=$(date -u +%y%m%d); HM=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
+          CODE=$(( 10#$D * 1000 + HM / 2 ))
+          sed -i "s/versionCode 1$/versionCode $CODE/" "$G"
+          sed -i "s/versionName \"1.0\"$/versionName \"$VERSION-skuska.$SHA\"/" "$G"
+          grep -E 'applicationId|versionCode|versionName' "$G"
+
+      # ladiaci kľúč na pevnom mieste (ak nie je z cache, vytvorí sa a uloží do cache)
+      - name: Ladiaci kľúč
+        run: |
+          mkdir -p "$HOME/.android"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -keystore "$HOME/.android/debug.keystore" -storepass android -keypass android \
+              -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+            echo "nový ladiaci kľúč"
+          else
+            echo "ladiaci kľúč z cache"
+          fi
+          echo "ANDROID_USER_HOME=$HOME/.android" >> "$GITHUB_ENV"
+
+      - name: Build skúšobnej APK (ladiaci podpis)
+        working-directory: cap-build/android
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Kontrola APK
+        run: |
+          BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          APK=cap-build/android/app/build/outputs/apk/debug/app-debug.apk
+          "$BT/aapt2" dump badging "$APK" | grep -E "^package:|application-label:" | tee badging.txt
+          grep -q "name='sk.operatorsystem.mhdpresov.skuska'" badging.txt || { echo "::error::APK nemá skúšobné ID appky"; exit 1; }
+          grep -q "SKÚŠKA" badging.txt || { echo "::error::APK nemá v názve SKÚŠKA"; exit 1; }
+          # odtlačok podpisu – musí byť rovnaký pri každom behu (inak treba skúšobnú appku odinštalovať)
+          "$BT/apksigner" verify --print-certs "$APK" | tee certs.txt
+          K1=$(keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | sed -n 's/.*SHA256: *//p' | tr -d ':' | tr 'A-F' 'a-f')
+          grep -qi "$K1" certs.txt && echo "podpis = ladiaci kľúč z cache ($K1)" || echo "::warning::APK nie je podpísaná kľúčom z ~/.android/debug.keystore"
+          "$BT/aapt2" dump permissions "$APK" | tee perms.txt
+          ! grep -q 'ACCESS_BACKGROUND_LOCATION' perms.txt || { echo "::error::APK žiada polohu na pozadí"; exit 1; }
+          mkdir -p out
+          cp "$APK" "out/odkial-kam-skuska-v$VERSION-$SHA.apk"
+          ls -l out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: odkial-kam-skuska-v${{ env.VERSION }}-${{ env.SHA }}
+          path: out/*.apk
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Súhrn
+        run: |
+          {
+            echo "### Skúšobná APK – Odkiaľ Kam SKÚŠKA v$VERSION ($SHA, vetva $GITHUB_REF_NAME)"
+            echo ""
+            echo "- Stiahni artefakt **odkial-kam-skuska-v$VERSION-$SHA** nižšie (zip), rozbaľ a nainštaluj .apk (povoliť inštaláciu z neznámych zdrojov)."
+            echo "- Nainštaluje sa vedľa appky z Google Play (iné ID: sk.operatorsystem.mhdpresov.skuska), nič neprepíše."
+            echo "- Podpísaná ladiacim kľúčom – len na skúšku, nie na zverejnenie. Nákup Plus v nej nefunguje."
+            echo "- Nič sa necommitlo, nič nie je v GitHub Release ani v Google Play."
+          } >> "$GITHUB_STEP_SUMMARY"
