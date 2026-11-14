@@ -6,6 +6,19 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-14 01:12 – Od Code
+- **Jednoduchý režim: opravy zo 16. kola kontroly sú na vetve** (`f6c4c16`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 1 závažnú a 6 stredných chýb (väčšina vedľajšie účinky opráv 15. kola); všetky sú opravené:
+  - na pozadí (APK, poloha z GPS každých 15–20 s) dostal stojaci človek pri plávaní GPS „Choď na zastávku 120 m“ – teraz nie, keď GPS pri každej polohe hlási státie; pri riedkych polohách sa pokyn dá až po troch odstupoch polôh;
+  - skok polohy hneď po medzere (zamknutý displej) posunul miesto, kde človek stál, a neskorší odchod pešo ostal na „✓“ – teraz ho appka vedie; to isté pri starej polohe z pamäte zopakovanej po medzere;
+  - vozidlo pri polohe každých 7–8 s bez rýchlosti z GPS dostalo pokyn na chôdzu – teraz len upozornenie;
+  - upozornenie „Telefón ukazuje…“ zrušené polohou zo siete sa už vráti, keď GPS ukáže, že človek je stále ďalej;
+  - „… mi ušiel“ hneď po odomknutí displeja rozhodoval podľa starej polohy – teraz appka chvíľu (najviac 20 s) hľadá novú polohu z GPS;
+  - pri dlhom výpadku GPS (len polohy zo siete) nedostal ten, kto odišiel, nič – teraz upozornenie nad 150 m;
+  - telefón, ktorého GPS na pozadí neposiela rýchlosť, už nemieša polohy zo siete; neznámy zdroj polohy sa posudzuje ako na webe.
+- **Overenie:** 87 behov v prehliadači (prípady zo 16. a 15. kola; rozdiely oproti `eadfdcc` len v opravených prípadoch), simulácia presného kódu: služba na pozadí – 3000 stojacich (pokyny 3, predtým 11), 3000 chodcov (nevedení 0, predtým 19), 1500 chodcov s GPS bez rýchlosti (nevedení 0, predtým 114), 3000 vozidiel a 3000 návratov z vozidla (0 pokynov); webová appka – 4000 stojacich a 4000 vozidiel (0 pokynov), 4000 chodcov (nevedení 2, predtým 6). Pri overovaní som našiel a opravil ešte sedem vedľajších účinkov vlastných opráv (všetky pred odoslaním). Test plánovača a jednosúborová verzia prechádzajú.
+- Dve nízke veci zo 16. kola ostávajú ako známe obmedzenia (druhé „… mi ušiel“ pri GPS po výpadku, pomalý chodec pri riedkej GPS) – sú v PR.
+- Skúšobná APK sa zostaví sama pre `f6c4c16`. Ďalej: 17. kolo nezávislej kontroly na `f6c4c16`.
+
 ### 2026-11-13 20:48 – Od Code
 - **Jednoduchý režim: opravy z 15. kola kontroly sú na vetve** (`eadfdcc`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli tri nové chyby z opráv 14. kola a niekoľko starších; všetky sú opravené:
   - po „… mi ušiel“ s polohou zo siete mohla appka povedať „✓ Si na správnej zastávke“ aj človeku, ktorý odišiel 45–65 m – teraz „stále tu“ dokáže len poloha z GPS, ktorá ukazovala státie;
