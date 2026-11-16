@@ -6,6 +6,36 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-16 16:51 – Od chatu (Cowork)
+Len zistenie stavu, nič som neschválil, neodoslal ani neupravil (bez nového vydania, bez zmien záznamu v obchode).
+
+**Google Play – produkčné vydanie 1.7.3 (versionCode 261102542)**
+- Stav: **stále v kontrole** – Aktivita podaní: podanie č. 1 z 11. 11. 2026 13:32 (Ostrá verzia, Záznam v obchode, Obsah aplikácie, Nastavenia obchodu) = „Prebieha kontrola“; Ostrá verzia: „Vydanie 1.7.3 sa kontroluje“, 178 krajín, 0 inštalácií. Nie je schválené, zverejnené ani zamietnuté. Kontrola trvá 5 dní – pri prvom vydaní nového účtu Google uvádza aj 7 dní a viac.
+- Spravované zverejňovanie je vypnuté → po schválení sa appka zverejní automaticky.
+- **Verejne na Google Play zatiaľ nie je** (stránka obchodu pre balík vracia „Nebolo nájdené“). Testeri stále vidia dočasný názov „(unreviewed)“.
+- Stav dodržiavania pravidiel: prázdny („keď bude aplikácia skontrolovaná, zobrazia sa tu informácie“), žiadne porušenia; Úlohy týkajúce sa pravidiel: 0.
+- Centrum upozornení Play Console: od 11. 11. nič nové. Posledné: 7. 11. registrácia 15 % poplatku, 5. 11. „do 1. 2. 2027 deklarujte status obchodníka“ (**stále otvorené**), 5. 11. zmeny pravidiel.
+- E-mailové upozornenia chodia na e-mail Google účtu, ktorým je Play Console prihlásená (firemná adresa domény vývojára, nie Gmail). Pravidlá a Platby: všetky zapnuté; Aktuality o zverejňovaní a Technická kvalita: niektoré; Spätná väzba testerov a Recenzie: vypnuté.
+- Informačný panel vydania – **1 problém do feb 2027:** „Optimalizácia kódu DEX je pod naším prahom – Znejasňovanie (1 %)“ (pod 25 % môže ovplyvniť viditeľnosť). Riešenie pre Code: zapnúť R8 (`minifyEnabled`/`isMinifyEnabled true` + pravidlá pre Capacitor a pluginy) a nahrávať `mapping.txt`. Odporúčanie navyše: zobrazenie bez okrajov (edge-to-edge) nemusí byť dostupné pre všetkých.
+
+**App Store Connect – iOS 1.7.3 (build 261111435)**
+- **App Store Connect bol odhlásený** (Chrome aj vstavaný prehliadač), stránky som znova neoveril. Stav nižšie je z 11. 11. (zápis chatu) + e-maily od Apple.
+- Build: spracovaný 11. 11., „Ready to Submit“, platí 90 dní (do ~9. 2. 2027). E-mail od Apple 11. 11.: doručenie OK, upozornenie **ITMS-90068** – minimálne iOS 13.0, od apríla 2027 treba 15.0 (workflow už nastavuje 15.0 od ďalšieho buildu).
+- Testeri: interná skupina „Interní BEDEKA“ (bez testerov) a **externá skupina „Testeri MHD“** s 1 testerom a týmto buildom. Odoslané na Beta App Review 11. 11. ~15:50; **11. 11. o 20:09 prišla testerovi pozvánka z TestFlightu** („has invited you to test Odkiaľ Kam – MHD Prešov“) → kontrola bety prešla (externým testerom Apple pozvánku pošle až po schválení). Či tester pozvánku prijal a appku nainštaloval, som neoveril.
+- Informácie pre testerov (Test Information) vyplnené 11. 11.: popis bety (sk), e-mail na spätnú väzbu, marketing URL, URL zásad súkromia, kontakt pre kontrolu, review notes (en), bez prihlásenia; „What to Test“ (sk) pri builde.
+- Šifrovanie: `ITSAppUsesNonExemptEncryption = false` v Info.plist (workflow „iOS TestFlight“) → Apple sa pri builde na šifrovanie nepýta.
+- **Verzia pre App Store nie je pripravená.** V App Store Connect je verzia „iOS 1.0 – Prepare for Submission“ (stav z 11. 11.). Chýba:
+  - premenovať verziu na **1.7.3** (musí sedieť s buildom) a priradiť build 261111435 (alebo novší s iOS 15+),
+  - záznam v obchode: snímky iPhonu (6,9″ / 6,5″), popis, kľúčové slová, URL podpory, propagačný text,
+  - App Information: kategória (Navigácia / Cestovanie), hodnotenie veku (nový dotazník vrátane otázok o sociálnych sieťach), právo na obsah,
+  - App Privacy (štítky „Údaje sa nezbierajú“ – zhodne s privacy manifestom a Play Data safety) a URL zásad súkromia v App Information,
+  - Pricing and Availability (zadarmo, krajiny) a nákupy v appke: **žiadne** (Plus je len na Androide),
+  - kontakt a poznámky pre App Review pri verzii,
+  - **status obchodníka (DSA)** – bez neho Apple nedovolí vydanie v EÚ (banner v App Store Connect).
+- **Otázka pre Vlada:** Prihlásiť sa do App Store Connect, aby chat mohol overiť TestFlight a pripraviť verziu 1.7.3 na odoslanie? (A) áno, (B) zatiaľ len TestFlight.
+
+---
+
 ### 2026-11-16 16:00 – Od Code
 - **Jednoduchý režim: opravy z 19. kola kontroly sú na vetve** (`f91bf44`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 2 stredné a 5 drobných chýb (a zvyšok drobnej chyby z 18. kola); opravené sú všetky:
   - kto pred odchodom dlhšie čakal 40–80 m od miesta, kde stál (posun GPS, lavička), a potom naozaj odišiel, dostal len upozornenie namiesto pokynu „Choď na zastávku“ – teraz pokyn (v simulácii 160 zo 160, predtým 75);
