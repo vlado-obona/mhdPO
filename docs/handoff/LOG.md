@@ -6,6 +6,19 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-16 18:15 – Od Code
+- **Jednoduchý režim: opravy z 20. kola kontroly sú na vetve** (`bda12b1`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 2 stredné a 6 drobných chýb; opravených je 6, dve drobné ostávajú ako známe obmedzenia (v PR):
+  - stojaci pri zastávke dostal pokyn „Choď na zastávku“, keď GPS hlásila chybnú rýchlosť chôdze, kým poloha stála (odraz signálu) – teraz sa chôdza ráta len pri polohe, ktorá sa naozaj presúva (pokyny 1 z 240, predtým 114); na pozadí platí poloha zo siete pri mieste, kde stál, aj keď GPS práve ukazuje chôdzu (pokyny 207 z 10 800, predtým 3170, r24 197);
+  - jedna stará poloha z GPS po výpadku zrušila upozornenie „Telefón ukazuje…“ a „… mi ušiel“ sa potom pýtal na tabuľu človeka 100 m od zastávky – teraz rozhoduje až druhá poloha z GPS a appka ho vedie späť (24 z 24);
+  - upozornenie, ktoré GPS po výpadku zrušila, sa vráti, keď ďalšie polohy ukážu, že je človek ďaleko (zmizlo nadobro 0 z 50, predtým 35);
+  - drobné: poloha zo siete už upozornenie nezmenší o 40–60 m, nikdy „asi 40 metrov“, hlas zahodený otvoreným hárkom sa povie po jeho zatvorení.
+- **Overenie:** 67 prípadov v prehliadači z 20. a 19. kola (oproti `f91bf44` sa líšia len v opravených prípadoch a o jeden odstup polôh neskorším pokynom pri polohe každých 15 s), skeny kontrolórov z 20. a 19. kola a celá simulácia presného kódu z kôl 15–19 – nikde nový pokyn ani zlý výsledok; služba na pozadí 3000 stojacich / 3000 chodcov / 1500 chodcov s GPS bez rýchlosti / 3000 vozidiel / 3000 návratov – 0 zlých výsledkov. Pri overovaní som našiel a opravil zvyšok prvej verzie opravy (pri polohe každú sekundu ešte 6 zo 40 pokynov). Test plánovača a jednosúborová verzia prechádzajú. Staršia batéria v prehliadači (prípady zo 16.–18. kola, ~280 behov) ešte beží – výsledok zapíšem pri ďalšom kole.
+- Daň (v PR): kto po dlhom čakaní 40–80 m od miesta, kde stál, odíde, dostane asi o 5 % častejšie len upozornenie namiesto pokynu (nikdy „✓“); vo webovej appke, keď GPS po dlhom čakaní odpláva rýchlosťou chôdze a zároveň ju hlási, môže stojaci dostať pokyn (GPS to od chôdze nerozlíši).
+- Zo zápisu Coworku (16:51) si beriem pre 1.7.4 (až po schválení 1.7.3): zapnúť R8 (znejasňovanie kódu je pod prahom Play) a nahrávať `mapping.txt`. Status obchodníka (Play do 1. 2. 2027, Apple DSA) a prihlásenie do App Store Connect sú na Vladovi.
+- Skúšobná APK sa zostaví sama pre `bda12b1`. Ďalej: 21. kolo nezávislej kontroly na `bda12b1`.
+
+---
+
 ### 2026-11-16 16:51 – Od chatu (Cowork)
 Len zistenie stavu, nič som neschválil, neodoslal ani neupravil (bez nového vydania, bez zmien záznamu v obchode).
 
