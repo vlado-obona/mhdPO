@@ -6,6 +6,18 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-16 16:00 – Od Code
+- **Jednoduchý režim: opravy z 19. kola kontroly sú na vetve** (`f91bf44`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 2 stredné a 5 drobných chýb (a zvyšok drobnej chyby z 18. kola); opravené sú všetky:
+  - kto pred odchodom dlhšie čakal 40–80 m od miesta, kde stál (posun GPS, lavička), a potom naozaj odišiel, dostal len upozornenie namiesto pokynu „Choď na zastávku“ – teraz pokyn (v simulácii 160 zo 160, predtým 75);
+  - poloha zo siete, ktorá ukazuje, že človek je stále pri zastávke, niekedy nechala tichý „✓“ 100 m od zastávky – teraz vždy aspoň pravdivé upozornenie; to isté, keď GPS po začatom odchode hlási státie (chodci na „✓“: 0 z 2400, predtým 19; 13 zo 4800, predtým 50);
+  - stojaci, ktorému GPS raz nahlási šumovú rýchlosť chôdze, už nedostane pokyn (pokyny stojacim 198 z 2400, predtým 311; na pozadí 313 zo 6000, predtým 479; nikde nový pokyn);
+  - upozornenie po návrate GPS už neukazuje „asi 5–35 metrov“, zmizne, keď GPS ukáže, že je človek pri zastávke, a krátke „Telefón znova ukazuje…“ zaznie len vtedy, keď celé upozornenie naozaj zaznelo.
+- **Overenie:** 278 behov v prehliadači (prípady z 19., 18., 17. a 16. kola; rozdiely oproti `38efdde` len v opravených prípadoch), celá simulácia presného kódu z kôl 15–19 (služba na pozadí 3000 stojacich / 3000 chodcov / 1500 chodcov s GPS bez rýchlosti / 3000 vozidiel / 3000 návratov – 0 zlých výsledkov). Pri overovaní som našiel a opravil dve vlastné chyby (upozornenie po návrate GPS ostávalo so vzdialenosťou „asi 15 m“ a po zrušení sa hneď znova zaplo podľa polôh zo siete). Test plánovača a jednosúborová verzia prechádzajú.
+- Daň za bezpečnosť stojacich (v PR): pri riedkych polohách, keď časť z nich príde bez rýchlosti, dostane kto odíde pešo častejšie len upozornenie namiesto pokynu (pri polohe každých 15–20 s asi každý tretí až štvrtý, predtým asi každý desiaty) – nikdy „✓“.
+- Skúšobná APK pre `f91bf44` je zostavená (Actions → „Android – skúšobná APK z vetvy“, beh 10). Ďalej: 20. kolo nezávislej kontroly na `f91bf44`.
+
+---
+
 ### 2026-11-14 11:33 – Od Code
 - **Jednoduchý režim: opravy z 18. kola kontroly sú na vetve** (`38efdde`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 1 závažnú chybu (vedľajší účinok mojej opravy zo 17. kola), 1 strednú a 7 drobných; opravené sú všetky okrem jednej drobnej (rovnaká ako vo vydanej verzii):
   - stojaci človek pri plávaní GPS dostal „Choď na zastávku 110 m“, keď GPS raz nahlásila rýchlosť chôdze (bežný šum) – teraz sa odchod ráta ako videný, len keď chôdzu ukáže aspoň tretina rýchlostí; keď sa nevie, či odišiel, alebo GPS odplávala, len pravdivé upozornenie „Telefón ukazuje…“ (v simulácii pokyny 12 z 3600, predtým 676);
