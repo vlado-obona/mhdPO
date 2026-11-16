@@ -1009,7 +1009,9 @@ export function initSimple(A) {
             if (realGap && !swBack) u.mv.gp = true;
             if (sp != null) {
               u.mv.num++; if (sp > 0) u.mv.pos++; if (sp >= 0.5) u.mv.mov++; if (sp >= 2) u.mv.hard = true;
-              (u.mv.last = u.mv.last || []).push(sp); if (u.mv.last.length > 8) u.mv.last.shift(); // posledných 8 rýchlostí mimo kruhu
+              // posledných 8 rýchlostí mimo kruhu, len pri polohe, ktorá sa práve presúva (šum rýchlosti z GPS pri polohe,
+              // ktorá stojí, chôdzou nie je)
+              if (gr) { (u.mv.last = u.mv.last || []).push([sp, p.t, p.la, p.lo]); if (u.mv.last.length > 8) u.mv.last.shift(); }
               // presun o vyše 40 m počas aspoň dvoch polôh z GPS bez rýchlosti (služba na pozadí ich tak označí)
               // alebo počas medzery bez polôh: chôdzu GPS nemohla ukázať (nevidel sa); medzeru už rieši pravidlo
               // o medzere vyššie (hard / soft), preto tá ruší len ochranu „GPS hlási státie“ pri pokyne
@@ -1031,21 +1033,25 @@ export function initSimple(A) {
           // než 40 m, upozornenie je späť (ako keby ho GPS nezrušila); potom ho poloha zo siete 2 min nezruší.
           // (podľa GPS: medián len z polôh z GPS medzi posledných 5 – po výpadku GPS by ho ešte niesli polohy zo siete)
           const gT = gpsNow ? u.hist.slice(-5).filter((x) => x[2]).map((x) => x[1]).sort((x, y) => x - y) : [];
-          const dsG = gT.length ? gT[gT.length >> 1] : ds;
-          const dA = gpsNow ? dsG : ds, nearNow = dA <= NEAR_M && d <= NEAR_M;
+          // (jedna poloha z GPS hneď po polohách zo siete sama nič nerozhodne – býva stará z pamäte alebo nepresná)
+          const g2 = gT.length >= 2, dsG = g2 ? gT[gT.length >> 1] : ds;
+          const dA = gpsNow ? dsG : ds, nearNow = dA <= NEAR_M && d <= NEAR_M, farB = u.far != null;
           if (u.farNet && gpsNow) { if (d <= NEAR_M) u.farNet = false; else u.farNetN = d > NEAR_M + 5 && off > NEAR_M && p.acc <= 25 ? (u.farNetN || 0) + 1 : 0; }
-          if (!u.atVeh || !early) { u.farAt = null; u.far = null; u.farNet = false; u.farNear = null; }
+          if (!u.atVeh || !early) { u.farAt = null; u.far = null; u.farG = null; u.farNet = false; u.farNear = null; }
           else if (u.far != null) {
             // (vzdialenosť v upozornení podľa polohy zo siete len nad 40 m – inak ostane posledná podľa GPS)
             const nearN = nearNow && !(p.t - (u.farReArm ?? -1e9) < 120000);
             if (nearN && !gpsNow) { if (u.farNear == null) u.farNear = p.t; } else u.farNear = null;
-            if ((nearNow && gpsNow) || (nearN && !gpsNow && p.t - u.farNear >= 10000)) { u.far = null; u.farAt = null; u.farNear = null; u.farNet = !gpsNow; u.farNetN = 0; }
-            else if (gpsNow) u.far = dsG; // (po návrate GPS len z polôh z GPS)
-            else if (ds > NEAR_M) u.far = ds;
+            if ((nearNow && gpsNow) || (nearN && !gpsNow && p.t - u.farNear >= 10000)) { u.far = null; u.farG = null; u.farAt = null; u.farNear = null; u.farNet = !gpsNow; u.farNetN = 0; if (gpsNow) u.farAmb = true; }
+            // (zrušené podľa GPS, kým vozidlo ostáva: keď ďalšie polohy z GPS ukážu, že je predsa ďaleko, upozornenie sa vráti,
+            // aj keď GPS hlási státie – prvé polohy z GPS po výpadku bývajú staré z pamäte pri mieste, kde stál)
+            else if (gpsNow) { if (g2) u.far = u.farG = dsG; } // (po návrate GPS len z polôh z GPS, až od druhej)
+            // (podľa polohy zo siete nie o vyše 20 m menej než naposledy podľa GPS – býva o 20–60 m bližšie k zastávke)
+            else if (ds > NEAR_M && !(u.farG != null && ds < u.farG - 20)) u.far = ds;
           }
-          else if (u.farNet && u.farNetN >= 2) { u.far = d; u.farNet = false; u.farNetN = 0; u.farReArm = p.t; }
+          else if (u.farNet && u.farNetN >= 2) { u.far = u.farG = d; u.farNet = false; u.farNetN = 0; u.farReArm = p.t; }
           // (podľa GPS len z polôh z GPS – ako pri zrušení, inak by ho polohy zo siete hneď zapli znova)
-          else if (dA > 80 && off > 80 && (!still || u.farAmb)) { if ((p.acc <= 40 || netFar) && !u.farAt) u.farAt = p.t; if (u.farAt && p.t - u.farAt >= 20000) u.far = dA; }
+          else if (dA > 80 && off > 80 && (!still || u.farAmb)) { if ((p.acc <= 40 || netFar) && !u.farAt) u.farAt = p.t; if (u.farAt && p.t - u.farAt >= 20000) { u.far = dA; u.farG = gpsNow ? dA : null; } }
           else if (dA <= 60 || off <= 60 || still) u.farAt = null;
           // po upozornení už „Si na správnej zastávke“ nie: poloha do 40 m nástupištia nerozlíši (mohol
           // sa vrátiť na to oproti); znova to povie až príchod cez „Veď ma k zastávke“ (aj s otázkou)
@@ -1055,7 +1061,8 @@ export function initSimple(A) {
           // sa nový spoj z tejto zastávky len opýta na tabuľu, keď je človek stále tam; odvtedy rátať polohy
           // s rýchlosťou chôdze (kto odišiel, toho vedie šípka späť). Kto len prešľapuje do 15 m od miesta,
           // kde stál, stále tam čaká (miesto ostáva, kde naposledy stál; bez neho sa vezme toto).
-          const atW = u.step === 'atstop' && u.far == null && gpsNow;
+          // (nie pri polohe, ktorá práve zrušila upozornenie – môže byť stará z pamäte; čakanie potvrdí až ďalšia)
+          const atW = u.step === 'atstop' && u.far == null && !farB && gpsNow;
           if (atW && off <= 40 && !(sp >= 0.5)) { t.smWaitAt = { la: p.la, lo: p.lo, t: p.t, ala: u.atP.la, alo: u.atP.lo }; t.smMovN = 0; }
           else {
             if (sp >= 0.5) t.smMovN = (t.smMovN || 0) + 1;
@@ -1072,9 +1079,12 @@ export function initSimple(A) {
           // poloha sa vzďaľovala a GPS k tomu nič nepovedala (polohy bez rýchlosti) = nevie sa, či odišiel
           // (aspoň dve: jedna 0,5 m/s medzi prvými tromi je aj šum pri státí)
           const dwk = !!u.mv && u.mv.mov >= Math.max(2, 0.3 * u.mv.num);
-          // GPS ukazuje chôdzu práve teraz (aspoň 5 z posledných 8 rýchlostí mimo kruhu 0,5 m/s a viac): dlhé
-          // čakanie 40–80 m od miesta, kde stál (posun GPS, lavička), predošlé počty neprehlasuje
-          const rwk = !!u.mv && !!u.mv.last && u.mv.last.filter((x) => x >= 0.5).length >= 5;
+          // GPS ukazuje chôdzu práve teraz (aspoň 5 z posledných 8 rýchlostí mimo kruhu pri polohe, ktorá sa presúva,
+          // je 0,5 m/s a viac, a poloha sa od prvej z tých piatich naozaj posunula aspoň o 0,4 m za sekundu): dlhé
+          // čakanie 40–80 m od miesta, kde stál (posun GPS, lavička), predošlé počty neprehlasuje; nával chybných
+          // rýchlostí, kým poloha stojí (odraz signálu), chôdzou nie je
+          const rq = u.mv && u.mv.last ? u.mv.last.filter((x) => x[0] >= 0.5) : [], r5 = rq.length >= 5 ? rq[rq.length - 5] : null;
+          const rwk = !!r5 && haversine(r5[2], r5[3], p.la, p.lo) >= 0.4 * (p.t - r5[1]) / 1000;
           const dzG = !!u.mv && (u.mv.numG || 0) >= 2 && !((u.mv.movG || 0) >= Math.max(1, 0.3 * u.mv.numG));
           const grew = !!u.mv && (u.mv.gN || 0) >= 2 && !dzG && !dwk && !rwk;
           // Keď GPS chôdzu od miesta, kde stál, neukázala, GPS asi len pláva – len úprimné upozornenie (ako po jazde),
@@ -1082,10 +1092,12 @@ export function initSimple(A) {
           // alebo čerstvá (do 30 s) sa nepohla o vyše 40 m od chvíle, keď GPS ešte ukazovala to miesto (alebo keď
           // bola GPS o vyše 60 m inde ako teraz), alebo je od polohy z GPS ďalej než 120 m (nezhodujú sa).
           const nwA = !!u.nw && p.t - u.nw[0] <= 90000, nwF = !!u.nw && p.t - u.nw[0] <= 30000;
-          const wit = !dwk && !rwk && nwA && (haversine(u.nw[1], u.nw[2], u.atP.la, u.atP.lo) <= 60 ||
+          // (keď GPS práve ukazuje chôdzu, platí len poloha zo siete pri mieste, kde stál)
+          const witN = nwA && haversine(u.nw[1], u.nw[2], u.atP.la, u.atP.lo) <= 60;
+          const wit = !dwk && (witN || (!rwk && nwA && (
             (nwF && !!u.nwRef && haversine(u.nw[1], u.nw[2], u.nwRef[1], u.nwRef[2]) <= 40) ||
             (nwF && haversine(u.nw[1], u.nw[2], p.la, p.lo) > 120) ||
-            (nwF && (u.nwH || []).some((h) => h[3] != null && p.t - h[0] <= 120000 && haversine(u.nw[1], u.nw[2], h[1], h[2]) <= 40 && haversine(h[3], h[4], p.la, p.lo) > 60)));
+            (nwF && (u.nwH || []).some((h) => h[3] != null && p.t - h[0] <= 120000 && haversine(u.nw[1], u.nw[2], h[1], h[2]) <= 40 && haversine(h[3], h[4], p.la, p.lo) > 60)))));
           if (gpsNow) u.offG = off;
           if (gpsNow) {
             const awayG = ds > 80 && off > 80 && !u.atVeh && p.acc <= 40 && spd <= 3 && early;
@@ -1110,7 +1122,7 @@ export function initSimple(A) {
               if (dzG && !dwk && !rwk) { u.atVeh = true; u.farAmb = true; u.leftAt = null; } else backToStop(u, d);
             }
           }
-        } else { u.atP = null; u.atVeh = false; u.farAmb = false; u.leftAt = null; u.farAt = null; u.far = null; u.farWas = false; u.mv = null; u.netFarAt = null; }
+        } else { u.atP = null; u.atVeh = false; u.farAmb = false; u.leftAt = null; u.farAt = null; u.far = null; u.farG = null; u.farWas = false; u.mv = null; u.netFarAt = null; }
         u.lf = [p.t, p.la, p.lo]; u.lfG = !net; // posledná presná poloha (pre medzeru bez polôh); nebola zo siete
         if (gpsFix) u.lgps = [p.t, p.la, p.lo]; // posledná poloha z GPS
         if (numSp) t.smGps = { la: p.la, lo: p.lo, t: p.t, acc: p.acc, sp: p.speed }; // posledná poloha z GPS s rýchlosťou
@@ -1128,7 +1140,7 @@ export function initSimple(A) {
   // ako opravu nástupišťa, tá by hlásila vzdialenosť medzi nástupišťami namiesto skutočnej
   const WALK_SAID = ['start', 'far', 'd100', 'd50', 'late', 'near'];
   function backToStop(u, d) {
-    Object.assign(u, { step: 'walk', ok: false, bad: false, atP: null, atVeh: false, farAmb: false, far: null, farAt: null, farWas: false, leftAt: null,
+    Object.assign(u, { step: 'walk', ok: false, bad: false, atP: null, atVeh: false, farAmb: false, far: null, farG: null, farAt: null, farWas: false, leftAt: null,
       fix: false, fixLa: null, fixLo: null, asked: false, minD: d, d0: d });
     for (const k of WALK_SAID) u.said[k] = false;
     const t = A.trip(); if (t) { t.smOkStop = null; t.smWaitStop = null; t.smWaitAt = null; t.smAtT = null; } // pri návrate sa nástupište overí znova
@@ -1401,7 +1413,7 @@ export function initSimple(A) {
     // po jazde iným vozidlom je ďaleko od zastávky: povedať a ponúknuť cestu späť (nič neprikázať – môže sedieť vo vozidle)
     // (len do pol minúty pred odchodom – potom môže sedieť v správnom spoji; platí aj bez novej polohy)
     // (do 40 m od zastávky sa upozornenie neukáže – to je už pri nej; po návrate GPS ho zruší, keď to potvrdí)
-    const far = u.far != null && u.far > NEAR_M && now < r.dep - 30 ? roundM(u.far) : null, sName = dot(clean(st.n));
+    const far = u.far != null && roundM(u.far) > NEAR_M && now < r.dep - 30 ? roundM(u.far) : null, sName = dot(clean(st.n));
     const farTxt = far == null ? '' : tx(`Telefón ukazuje, že si asi ${far} metrov od zastávky ${sName} Ak stojíš pri nej, čakaj ďalej. Ak si inde, ťukni „Veď ma k zastávke“ – keď sa vezieš, až po vystúpení. Ak už sedíš v ${V}e ${line}, ťukni „Som v ${V}e“.`,
       `Telefón ukazuje, že ste asi ${far} metrov od zastávky ${sName} Ak stojíte pri nej, čakajte ďalej. Ak ste inde, ťuknite „Veďte ma k zastávke“ – keď sa veziete, až po vystúpení. Ak už sedíte v ${V}e ${line}, ťuknite „Som v ${V}e“.`);
     // „✓ Si na správnej zastávke“ po upozornení už nie (nástupište oproti poloha nerozlíši)
@@ -1564,8 +1576,9 @@ export function initSimple(A) {
       if (busy <= 0 || pri === 'urgent' || Date.now() - tapAt < 500) { voiceOut(say); if (sayFar) u.farSaidAt = Date.now(); }
       else if (pri !== 'low') {
         clearTimeout(voiceLater);
-        const seq = ++voiceSeq, st = stepOf(t);
-        voiceLater = setTimeout(() => { if (A.trip() === t && voiceSeq === seq && stepOf(t) === st && !sheetOpen()) { voiceOut(say); if (sayFar && t.sm) t.sm.farSaidAt = Date.now(); } }, busy);
+        const seq = ++voiceSeq, st = stepOf(t), vk = v.vkey;
+        // (keď ju zahodí otvorený hárok, obrazovka sa povie po jeho zatvorení – ako keby sa zmenila pod ním)
+        voiceLater = setTimeout(() => { if (A.trip() === t && voiceSeq === seq && stepOf(t) === st) { if (!sheetOpen()) { voiceOut(say); if (sayFar && t.sm) t.sm.farSaidAt = Date.now(); } else if (vk && spoken === vk) spoken = ''; } }, busy);
       }
     } else if (fresh && ((again && /^wait/.test(v.vkey)) || !v.voice) && (v.read || v.voice)) {
       // čítačke obrazovky, nie nahlas (aj čakanie po zmiznutí upozornenia; nie pri každom preklopení
