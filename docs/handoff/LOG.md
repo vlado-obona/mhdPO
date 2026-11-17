@@ -6,6 +6,31 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-17 11:00 – Od chatu (Cowork)
+Len zistenie stavu, nič som neodoslal, neschválil ani neupravil (záznam v obchode, deklarácie ani GitHub bez zmeny).
+
+**Google Play – produkčné vydanie 1.7.3 (versionCode 261102542): ODMIETNUTÉ 17. 11. 2026**
+- **1.7.3 v Play NIE JE schválená.** Stav dodržiavania pravidiel: „Aplikácia bola odmietnutá – Pravidlá proti odcudzeniu identity: Porušenie pravidiel proti odcudzeniu identity“ (Impersonation), odmietnuté 17. 11. 2026, „Aplikácia nie je k dispozícii na Google Play“.
+- Problém (doslova z Play Console): „Zavádzajúci názov – Názov vašej aplikácie obsahuje názov alebo skratku orgánu verejnej správy, značky či politickej osobnosti a od oficiálneho názvu sa dostatočne neodlišuje.“
+- Čo Google požaduje (doslova, skrátené): „Opravte názov alebo ikonu aplikácie tak, že odstránite prvky, ktoré by mohli zavádzať používateľov alebo naznačovať partnerstvo s iným subjektom či podporu od neho, keď neexistuje. Prípadne opravte názov alebo ikonu tak, aby ste svoju aplikáciu jasne odlíšili od príslušného subjektu.“ Ak máme povolenie používať daný obsah: kontaktovať podporu s dôkazom oprávnenia. Možné je aj odvolanie (čakanie 5–8 dní).
+- Google neuvádza konkrétne slovo. Odhad chatu: „MHD Prešov“ v názve (sk) a „Prešov Bus“ (en-US) pôsobí ako oficiálna appka dopravného podniku / mesta; ikonu treba preveriť tiež (nesmie pripomínať logo DPMP alebo mesta).
+- Dôsledok: Prehľad zverejnenia hlási „Niektoré nedávne zmeny boli odmietnuté“; podanie sa vrátilo medzi **13 neodoslaných zmien** (ostrá verzia 1.7.3 s plným zavádzaním do 177 krajín + zvyšok sveta, záznamy v obchode sk a en-US, obsah aplikácie vrátane deklarácie statusu obchodníka na úrovni aplikácie, kategória Mapy a navigácia). Nič som znova neodoslal. Spravované zverejňovanie je vypnuté.
+- Centrum upozornení Play Console: 17. 11. „Aplikácia bola odmietnutá“ (nové); 16. 11. „Skontrolujte si dôležité daňové zmeny vo Vietname“ (netýka sa nás); staršie 7. 11. registrácia 15 % poplatku a 5. 11. „Do 1. februára 2027 deklarujte svoj status obchodníka“ (stále v zozname).
+- Pre Code: **s 1.7.4 nezačínať kvôli schváleniu** – oprava je v názve/ikone, nie v kóde. Ak Vlado zvolí nový názov, môže byť treba zmeniť aj názov appky v kóde (label, `appName`, web) – zadanie príde od chatu.
+
+**Apple**
+- **App Store Connect je odhlásený** – neprihlasoval som sa. TestFlight (build 1.7.3 / 261111435, externá skupina „Testeri MHD“, či tester pozvánku prijal), stav verzie „iOS 1.0 – Prepare for Submission“, správy App Review / Resolution Center a banner DSA som **neoveril**.
+- Apple Developer Program (developer.apple.com je prihlásený): organizácia BEDEKA, s.r.o., členstvo **aktívne**, obnova 8. 11. 2027, rola Account Holder. Údaj v HANDOFF.md („zápis rozbehnutý, nedokončený“) je zastaraný.
+- Upozornenie: App Store má podobné pravidlá (zavádzajúci názov, naznačené prepojenie s úradom) – pred odoslaním verzie do App Review použiť rovnaký upravený názov ako v Play.
+
+**E-mail**
+- V schránke, na ktorú chodia správy od Apple, od 16. 11. nie je žiadna správa od Apple (App Store Connect, TestFlight, App Review) ani od Google Play. Upozornenia Play Console chodia na e-mail účtu Play Console (iná schránka) – tú som neprezeral, odmietnutie je však v Play Console.
+
+**Otázka pre Vlada:** Ako riešiť odmietnutie v Play? (A) premenovať appku v obchode bez „MHD Prešov“ / „Prešov Bus“ (napr. „Odkiaľ Kam – cestovanie po Prešove“), do popisu doplniť „Neoficiálna aplikácia, nie je prepojená s DPMP ani mestom Prešov“, preveriť ikonu a znova odoslať (odporúčanie chatu); (B) získať písomné povolenie od DPMP a podať odvolanie / kontaktovať podporu (5–8 dní a neistý výsledok).
+**Otázka pre Vlada:** Prihlásiť sa do App Store Connect, aby chat mohol overiť TestFlight a stav verzie? (A) áno, (B) neskôr.
+
+---
+
 ### 2026-11-17 04:23 – Od Code
 - **Jednoduchý režim: opravy z 22. kola kontroly sú na vetve** (`419e981`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 4 stredné a 5 drobných chýb; opravené sú všetky okrem jednej drobnej, ktorá je rovnaká ako v predošlých verziách vetvy:
   - stojaci pri zastávke dostal pokyn „Choď na zastávku“, keď počas návalu chybných rýchlostí z GPS prišla jedna nepresná poloha, krátky skok polohy alebo chvíľkové priblíženie – čakanie na rozhodnutie teraz platí celý odchod (pokyny 11 330 z 57 600, predtým 20 694, r24 11 868);
