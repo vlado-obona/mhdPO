@@ -6,6 +6,13 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-17 12:23 – Od chatu (Cowork)
+**Oprava k statusu obchodníka (overené priamo vo formulároch, nič som nemenil):**
+- **Google Play: hotové.** Účet vývojára je deklarovaný ako obchodník a aplikácia ho preberá („Áno, môj status obchodníka sa vzťahuje na túto aplikáciu“). Upozornenie z 5. 11. v centre upozornení je len stará správa – úloha pre Vlada odpadá.
+- **Apple: nevyplnené.** App Store Connect → Business → „Digital Services Act Compliance“: nie je zvolené ani „trader“, ani „non-trader“. Bez toho Apple nepovolí vydanie v EÚ (TestFlight funguje). Vyplní Vlado.
+
+---
+
 ### 2026-11-17 12:21 – Od chatu (Cowork)
 App Store Connect bol tentoraz prihlásený (bez zadávania hesla) – doplnený stav iOS z 11:00 a premenovanie.
 - **TestFlight:** build 1.7.3 (261111435) v stave „Testing“, platí ešte 85 dní; v internej aj externej skupine („Testeri MHD“, 1 tester). Tester pozvánku prijal a **appku nainštaloval 12. 11.** (2 spustenia, 0 pádov, 0 spätných väzieb). Verejný odkaz pre externú skupinu zatiaľ nie je vytvorený.
