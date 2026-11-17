@@ -6,6 +6,18 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-17 13:15 – Od Code
+- **Jednoduchý režim: opravy z 23. kola kontroly sú na vetve** (`d406b5a`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 5 stredných a 3 drobné chyby; opravené alebo zmenšené sú všetky okrem jednej drobnej (pomalé plávanie polohy 0,4 m/s počas návalu – je v známych obmedzeniach):
+  - skok polohy, ktorý telefón rozloží na 3–5 polôh, a skok hneď po zamrznutí polohy sa rátali ako chôdza – stojaci pri zastávke dostal „Choď na zastávku“ (pokyny 167 zo 4800, predtým 1196, r24 559; po zamrznutí 387 z 10 800, predtým 3383, r24 1389);
+  - odchod, ktorý sa po nepresnej polohe v prvých 20 s začal znova, rozhodli počty rýchlostí nafúknuté návalom (7 z 2000, predtým 795, r24 817);
+  - kto počas výpadku GPS po dlhom čakaní odišiel, mal minúty „✓ Si na správnej zastávke“ – teraz priemerne 13–82 s (predtým 135–209 s) a upozornenie nakoniec vždy; ešte to nie je úplne odstránené, je to v známych obmedzeniach;
+  - drobné: dve odskočené polohy zo siete alebo šum počas výpadku GPS zmenšili vzdialenosť v upozornení (1751 zo 17 920 behov, predtým 3811, r26 740); „✓“ pred prvým rozhodnutím po dlhom čakaní (priemerne 15 s, predtým 31 s).
+- **Overenie:** 103 behov v prehliadači (prípady z 23., 22. a 21. kola; prípady z 23. kola aj s r28 – v 5 z 35 r28 poslala stojaceho „Choď na zastávku“, r29 len pravdivo upozorní); všetkých 175 skenov kontrolórov z 15.–23. kola a vlastné staršie sady – nikde viac pokynov stojacemu ani vo vozidle než r28; chodci nikde na „✓“ ani bez vedenia, kde ich r28 viedla, len upozornenie namiesto pokynu 28 zo 111 000 (po 5–10 min čakania, keď GPS celý čas ukazovala posun a chôdzu); služba na pozadí 3000 stojacich / 3000 chodcov / 1500 chodcov s GPS bez rýchlosti / 3000 vozidiel / 3000 návratov – 0 zlých výsledkov. Pred commitom päť nezávislých statických kontrol návrhu opravy – našli 3 vážne a niekoľko stredných chýb prvých verzií (napr. pokračovanie odchodu, ktoré dávalo pokyny vo vozidle), všetky opravené alebo nahradené. Jednosúborová verzia sa zostaví (v pracovnej kópii mimo repa), jednoduchý režim v nej beží bez chýb, `test-router.mjs` prechádza.
+- Daň (v PR): keď GPS pri chôdzi zaostáva a dobehne naraz, pokyn príde aj o 20–40 s neskôr; bežec, ktorému po dlhom čakaní GPS na 10–16 s zamrzne, dostane len upozornenie; kým appka rozhoduje, či odišiel, čakacia obrazovka ukazuje 🚏 namiesto „✓“.
+- Odmietnutie 1.7.3 v Play (názov) som si prečítal – kód vetvy ho nemení; nový názov / ikonu v appke urobím až podľa zadania od Vlada (1.7.4 nezačínam). Skúšobná APK sa zostaví sama pre `d406b5a`. Ďalej: 24. kolo nezávislej kontroly na `d406b5a`.
+
+---
+
 ### 2026-11-17 12:23 – Od chatu (Cowork)
 **Oprava k statusu obchodníka (overené priamo vo formulároch, nič som nemenil):**
 - **Google Play: hotové.** Účet vývojára je deklarovaný ako obchodník a aplikácia ho preberá („Áno, môj status obchodníka sa vzťahuje na túto aplikáciu“). Upozornenie z 5. 11. v centre upozornení je len stará správa – úloha pre Vlada odpadá.
