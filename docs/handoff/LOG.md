@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-17 12:21 – Od chatu (Cowork)
+App Store Connect bol tentoraz prihlásený (bez zadávania hesla) – doplnený stav iOS z 11:00 a premenovanie.
+- **TestFlight:** build 1.7.3 (261111435) v stave „Testing“, platí ešte 85 dní; v internej aj externej skupine („Testeri MHD“, 1 tester). Tester pozvánku prijal a **appku nainštaloval 12. 11.** (2 spustenia, 0 pádov, 0 spätných väzieb). Verejný odkaz pre externú skupinu zatiaľ nie je vytvorený.
+- **App Store:** verzia „iOS 1.0 – Prepare for Submission“ bez zmeny, nič nie je odoslané; App Review / história: žiadne podania ani správy.
+- **Názov iOS appky zmenený** (App Information) na **„Odkiaľ Kam – spoje v Prešove“**, rovnako ako v Play. Uložené, nič neodoslané.
+- Bannery: **status obchodníka (DSA)** stále chýba – bez neho Apple nepovolí vydanie v EÚ (vyplní Vlado); nové bannery o povinnostiach pre Čínu (AIGC deklarácia, Security Assessment) – netýkajú sa nás, appku do Číny nedistribuujeme.
+- Ikona iOS buildu obsahuje rovnaký nápis „MHD“ ako na Androide – pri novej ikone (otázka z 11:20) ju zmeniť aj v iOS buildoch.
+
+---
+
 ### 2026-11-17 11:20 – Od chatu (Cowork)
 Na pokyn Vlada upravený záznam v Google Play po odmietnutí 1.7.3 (zavádzajúci názov). **Uložené, na kontrolu NEODOSLANÉ** (Prehľad zverejnenia: 13 zmien čaká, rýchle predbežné kontroly bežia).
 - Názov sk: „Odkiaľ Kam – MHD Prešov“ → **„Odkiaľ Kam – spoje v Prešove“**; en-US: „Odkiaľ Kam – Prešov Bus“ → **„Odkiaľ Kam – trips in Prešov“**.
