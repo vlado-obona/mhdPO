@@ -1,27 +1,29 @@
 # Google Play – záznam v obchode a obsah aplikácie
 
-Všetko pripravené na vloženie do Play Console (aplikácia **Odkiaľ Kam – MHD Prešov**,
+Všetko pripravené na vloženie do Play Console (aplikácia **Odkiaľ Kam – spoje v Prešove**, do 17. 11. 2026 „Odkiaľ Kam – MHD Prešov“ – Play ho odmietol ako zavádzajúci názov;
 `sk.operatorsystem.mhdpresov`). Grafika je v tomto priečinku.
 
 ## 1. Hlavný záznam – slovenčina (sk-SK, predvolený jazyk)
 
-**Názov aplikácie** (max. 30): `Odkiaľ Kam – MHD Prešov`
+**Názov aplikácie** (max. 30): `Odkiaľ Kam – spoje v Prešove`
 
 **Krátky popis** (max. 80):
-`Ťukni na Domov a vieš, ktorým autobusom ísť. Upozorní ťa aj na výstup.`
+`MHD v Prešove jednoducho: ťukni na Domov a vieš, kde nastúpiť aj kedy vystúpiť.`
 
 **Úplný popis** (max. 4000):
 ```
-Odkiaľ Kam je jednoduchý plánovač mestskej hromadnej dopravy v Prešove. Navrhnutý je tak, aby ho zvládol každý – aj babka, aj školák.
+Odkiaľ Kam ti jednoducho povie, ako sa dostať po Prešove MHD – kde nastúpiť, ktorým spojom ísť a kedy vystúpiť. Je navrhnutá tak, aby s ňou jednoducho cestoval každý – aj babka, aj školák, aj návšteva mesta.
+
+Neoficiálna aplikácia – nie je prevádzkovaná Dopravným podnikom mesta Prešov ani mestom Prešov a nie je s nimi prepojená.
 
 ŤUKNEŠ A IDEŠ
-Nastav si tlačidlo „Domov“ alebo „Škola“. Jedným ťuknutím ti appka povie, ktorým autobusom ísť a kedy, navedie ťa na správnu zastávku a ukáže, ktorým smerom autobus odchádza.
+Nastav si tlačidlo „Domov“ alebo „Škola“. Jedným ťuknutím ti appka povie, ktorým spojom ísť a kedy, navedie ťa na správnu zastávku a ukáže, ktorým smerom spoj odchádza. Jednoduchšie to už nejde.
 
 UPOZORNÍ ŤA NA VÝSTUP
 Počas jazdy sleduje, kde si, a pred tvojou zastávkou ťa upozorní zvukom, vibráciou aj hlasom – aj pri zamknutom displeji a aj keď autobus mešká v zápche.
 
 NÁJDE ZASTÁVKU, MIESTO AJ ADRESU
-Napíš „NOVUM“, „Konkatedrála“, „Aquapark“ alebo „Hlavná 47“ – appka ukáže najbližšiu zastávku a spojenie s prestupmi.
+Napíš „NOVUM“, „Konkatedrála“, „Aquapark“ alebo „Hlavná 47“ – appka ukáže najbližšiu zastávku MHD a spojenie s prestupmi.
 
 FUNGUJE BEZ INTERNETU
 Cestovné poriadky, mapa aj vyhľadávanie sú priamo v telefóne. Žiadne reklamy, žiadna registrácia, žiadne sledovanie – poloha zostáva v telefóne.
@@ -29,36 +31,38 @@ Cestovné poriadky, mapa aj vyhľadávanie sú priamo v telefóne. Žiadne rekla
 ĎALŠIE
 • spojenia s prestupmi a „zostaň sedieť“, keď spoj pokračuje ako iná linka
 • mapa s linkami a zastávkami so šípkou smeru odchodu
-• ako kúpiť lístok: SMS, platba kartou vo vozidle, aplikácie
+• ako kúpiť lístok na MHD: SMS, platba kartou vo vozidle, aplikácie
 • navigácia na zastávku cez Google Maps jedným ťuknutím
 
 ODKIAĽ KAM PLUS (voliteľný jednorazový nákup)
 Základné funkcie sú zadarmo. Plus pridáva až 6 rýchlych cieľov, tmavý režim a widget „Najbližší autobus“ na plochu. Žiadne predplatné.
 
-Neoficiálna aplikácia. Nie je prevádzkovaná dopravným podnikom ani mestom. Údaje pochádzajú z verejne zverejnených cestovných poriadkov MHD Prešov; mapa, miesta a adresy © prispievatelia OpenStreetMap, licencia ODbL 1.0 – dáta na stiahnutie: github.com/vlado-obona/mhdPO/tree/main/data/osm-places. Cestovné poriadky aktualizujeme s novými verziami appky – pri výlukách sleduj aj oznámenia dopravcu.
+Údaje pochádzajú z verejne zverejnených cestovných poriadkov MHD v Prešove; mapa, miesta a adresy © prispievatelia OpenStreetMap, licencia ODbL 1.0 – dáta na stiahnutie: github.com/vlado-obona/mhdPO/tree/main/data/osm-places. Cestovné poriadky aktualizujeme s novými verziami appky – pri výlukách sleduj aj oznámenia dopravcu.
 
 Vyvinula BEDEKA, s.r.o., Prešov.
 ```
 
 ## 2. Preklad – angličtina (en-US)
 
-**Názov** (max. 30): `Odkiaľ Kam – Prešov Bus`
+**Názov** (max. 30): `Odkiaľ Kam – trips in Prešov`
 
 **Krátky popis** (max. 80):
-`Tap Home and see which bus to take. It even tells you when to get off.`
+`Prešov public transport made simple: tap Home, know where to board and get off.`
 
 **Úplný popis**:
 ```
-Odkiaľ Kam ("From where, to where") is a simple public transport planner for Prešov, Slovakia – designed so that anyone can use it, from grandparents to schoolkids and visitors.
+Odkiaľ Kam ("From where, to where") makes getting around Prešov, Slovakia by public transport simple – where to board, which line to take and when to get off. It is designed so that anyone can travel easily with it, from grandparents to schoolkids and visitors.
+
+Unofficial app – not operated by the Prešov public transport company or the City of Prešov and not affiliated with them.
 
 TAP AND GO
-Set a "Home" or "School" button. One tap tells you which bus to take and when, guides you to the right stop and shows which way the bus departs.
+Set a "Home" or "School" button. One tap tells you which line to take and when, guides you to the right stop and shows which way it departs. It doesn't get simpler than that.
 
 EXIT ALERT
 During the ride the app follows your position and alerts you before your stop with sound, vibration and voice – even with the screen locked and even when the bus is stuck in traffic.
 
 STOPS, PLACES AND ADDRESSES
-Search for a stop, a place (shopping centre, church, aquapark) or a street address and get the nearest stop and a connection with transfers.
+Search for a stop, a place (shopping centre, church, aquapark) or a street address and get the nearest public transport stop and a connection with transfers.
 
 WORKS OFFLINE
 Timetables, map and search are stored in your phone. No ads, no account, no tracking – your location stays on your device.
@@ -66,7 +70,7 @@ Timetables, map and search are stored in your phone. No ads, no account, no trac
 ODKIAĽ KAM PLUS (optional one-time purchase)
 The core features are free. Plus adds up to 6 quick destinations, dark mode and the "Next bus" home-screen widget. No subscription.
 
-Unofficial app, not operated by the transport company or the city. Data come from publicly available Prešov public transport timetables; map, places and addresses © OpenStreetMap contributors, licensed under ODbL 1.0 – data download: github.com/vlado-obona/mhdPO/tree/main/data/osm-places.
+Data come from publicly available Prešov public transport timetables; map, places and addresses © OpenStreetMap contributors, licensed under ODbL 1.0 – data download: github.com/vlado-obona/mhdPO/tree/main/data/osm-places.
 
 Developed by BEDEKA, s.r.o., Prešov, Slovakia.
 ```

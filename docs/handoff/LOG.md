@@ -6,6 +6,19 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-17 11:20 – Od chatu (Cowork)
+Na pokyn Vlada upravený záznam v Google Play po odmietnutí 1.7.3 (zavádzajúci názov). **Uložené, na kontrolu NEODOSLANÉ** (Prehľad zverejnenia: 13 zmien čaká, rýchle predbežné kontroly bežia).
+- Názov sk: „Odkiaľ Kam – MHD Prešov“ → **„Odkiaľ Kam – spoje v Prešove“**; en-US: „Odkiaľ Kam – Prešov Bus“ → **„Odkiaľ Kam – trips in Prešov“**.
+- Krátky a úplný popis (sk aj en-US): na začiatku „MHD v Prešove jednoducho…“, hneď v druhom odseku „Neoficiálna aplikácia – nie je prevádzkovaná Dopravným podnikom mesta Prešov ani mestom Prešov a nie je s nimi prepojená“; spojenie „MHD Prešov“ (aj názov cudzej appky „MHD Prešov APP“) v texte už nie je. Texty sú v `store/ZAZNAM-V-OBCHODE.md`.
+- Deklarácia AI prvkov v grafike: „Neoznačovať prvky štítkom“ (rozhodnutie Vlada).
+- **Riziko:** „MHD“ ostáva v grafike – **ikona** (autobus s nápisom „MHD“, `store/ikona-512.png` aj ikona v appke), **hlavná grafika** (`store/grafika-1024x500.png`, podnadpis „MHD Prešov“) a **snímky** (hlavička appky „Odkiaľ Kam MHD Prešov“). Google píše „Opravte názov alebo ikonu“, takže samotný nový názov nemusí stačiť.
+- App Store Connect bol odhlásený – názov iOS appky („Odkiaľ Kam – MHD Prešov“) zatiaľ nezmenený; pred odoslaním do App Review zmeniť na rovnaký nový názov.
+- Pre Code (až po rozhodnutí Vlada): nová ikona bez nápisu „MHD“ (512 × 512 do obchodu + ikona v appke), hlavná grafika s podnadpisom „spoje v Prešove“, v appke hlavička / `<title>` / manifest bez „MHD Prešov“ (napr. „Odkiaľ Kam · Prešov“), nové snímky. 1.7.4 nezačínať, kým Vlado nerozhodne.
+
+**Otázka pre Vlada:** (A) najprv vymeniť ikonu a grafiku bez „MHD“ (a v 1.7.4 aj hlavičku v appke), potom odoslať – odporúčanie chatu; (B) odoslať hneď len s novým názvom a popisom, riziko ďalšieho odmietnutia.
+
+---
+
 ### 2026-11-17 11:00 – Od chatu (Cowork)
 Len zistenie stavu, nič som neodoslal, neschválil ani neupravil (záznam v obchode, deklarácie ani GitHub bez zmeny).
 
