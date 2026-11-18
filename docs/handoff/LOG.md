@@ -6,6 +6,23 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 12:30 – Od Code
+- **Rozhodnutie Vlada (18. 11.): 1B, 2A.**
+- **Jednoduchý režim – kolá kontroly ukončené (1B).** Na vetve ostáva `d406b5a` (opravy 23. kola), PR #1 je bez zmeny kódu. Opravy 24. kola som necommitol: v simuláciách každá ďalšia úprava len presúvala chyby medzi stojacimi a chodcami a posledná nezávislá kontrola ukázala, že nie sú lepšie ako `d406b5a`. Nálezy 24. kola sú v PR #1 ako známe obmedzenia (komentár k PR). Ďalší krok je **skúška skúšobnej APK vonku na telefóne**: postáť pri zastávke, odísť pešo, odviezť sa – urobí Vlado.
+- **1.7.4 – nový názov a ikona bez „MHD“ (2A): PR #2 (`nazov-ikona-1.7.4`, koncept, nezlučujem).**
+  - Ikona: rovnaký autobus a farby, na tabuli je namiesto „MHD“ značka trasy odkiaľ → kam. Je v obchode (`store/ikona-512.png`, zdroj `store/ikona.svg`) aj v appke (`mhd-app/icons`, z nich ju pri zostavení berú Android aj iOS).
+  - Appka: hlavička a názov okna „Odkiaľ Kam – spoje v Prešove“, manifest, „Lístok na MHD v Prešove“.
+  - Obchod: nová hlavná grafika (podnadpis „spoje v Prešove“) a nové snímky 1 a 6 z appky 1.7.4. Snímky 2–5 „MHD“ neobsahujú a ostávajú.
+  - Ďalej nový názov v zásadách súkromia (aj s pôvodným), README a `docs/GOOGLE-PLAY.md`; `APP_VERSION` 1.7.4 a CHANGELOG. Funkcie a cestovné poriadky bez zmeny, jednoduchý režim v tejto verzii nie je.
+  - Overenie: `test-router.mjs` prechádza, appka v prehliadači aj appka v jednom súbore bežia bez chýb s novým názvom, ikona je čitateľná aj v malej veľkosti.
+- **Po zlúčení PR #2** sa spustí build 1.7.4 (AAB do interného testovania, job „produkcia“ čaká na schválenie) a nasadí sa web.
+- **Pre chat:**
+  - Play Console: nahrať novú ikonu, hlavnú grafiku a snímky 1 a 6 zo `store/`, do produkčného vydania dať 1.7.4 namiesto 1.7.3 a odoslať na kontrolu.
+  - App Store: nový build cez „iOS → TestFlight“ (spúšťa sa ručne z `main`) bude mať novú ikonu. DSA je už aktívne (zápis 12:19).
+- **Otázka pre Vlada:** Kto zlúči PR #2? (A) Vlado po pozretí ikony a grafiky v PR, (B) Code na Vladov pokyn v chate.
+
+---
+
 ### 2026-11-18 12:19 – Od chatu (Cowork)
 - **Apple – status obchodníka (DSA) vyplnený:** App Store Connect → Business → Compliance: „Digital Services Act – 27 krajín – Active“ (18. 11. 2026). BEDEKA je deklarovaná ako obchodník, kontakty overil Vlado kódom. Vydanie v EÚ už DSA neblokuje.
 - Ostáva pred odoslaním iOS verzie do App Review: nová ikona a grafika bez „MHD“ (otázka z 17. 11. 11:20) a podklady pre App Store (snímky, popis, zásady súkromia, hodnotenie obsahu).
