@@ -34,13 +34,18 @@ export function initSimple(A) {
     root.id = 'sm'; root.className = 'sm'; root.hidden = true;
     root.innerHTML = `
       <header class="sm-top">
-        <button type="button" class="sm-tbtn" id="smBack" data-a="back" hidden>← Späť</button>
+        <button type="button" class="sm-tbtn" id="smBack" data-a="back" hidden><span aria-hidden="true">←</span>Späť</button>
         <h1 id="smTitle" tabindex="-1"></h1>
-        <button type="button" class="sm-tbtn" id="smSpeak" data-a="speak" aria-label="Prečítať pokyn nahlas" hidden>🔊 Nahlas</button>
+        <button type="button" class="sm-tbtn" id="smSpeak" data-a="speak" aria-label="Prečítať pokyn nahlas" hidden><span aria-hidden="true">🔊</span>Nahlas</button>
         <div class="sm-clock" id="smClock" hidden></div>
       </header>
       <div class="sm-dots" id="smDots" aria-hidden="true" hidden></div>
       <div class="sm-body" id="smBody"></div>
+      <div class="sm-map" id="smMap" hidden>
+        <canvas id="smMapC" data-a="mapbig" aria-hidden="true"></canvas>
+        <button type="button" class="sm-mapbtn" id="smMapBtn" data-a="mapbig">🔍 Väčšia</button>
+        <span class="sm-mapattr">© OpenStreetMap</span>
+      </div>
       <div class="sm-morewrap"><button type="button" class="sm-more" data-a="more" tabindex="-1" aria-hidden="true">▼ ďalej nižšie</button></div>
       <div class="sm-sr" id="smSr" aria-live="polite"></div>
       <div class="sm-actions" id="smActions"></div>
@@ -53,10 +58,13 @@ export function initSimple(A) {
     root.addEventListener('click', (e) => {
       if (e.target === $('smVeil')) { closeSheet(); return; }
       const b = e.target.closest('[data-a]');
+      if (b && b.dataset.a === 'fpin') { pinTap(e); return; } // ťuknutie do mapy pri úprave cieľa: posunie bod
       if (b && !b.disabled) { tapAt = b.dataset.a === 'speak' ? 0 : Date.now(); act(b.dataset.a, b.dataset.v); } // „Nahlas“ nesmie prerušiť hneď ďalšia veta
     });
     $('smBody').addEventListener('scroll', more, { passive: true });
-    window.addEventListener('resize', () => { if (!root.hidden) more(); });
+    window.addEventListener('resize', () => { if (!root.hidden) { more(); if (mapNoRoom || root.classList.contains('sm-mapcompact')) { mapNoRoom = false; root.classList.remove('sm-mapcompact'); if (A.trip()) render(); } mapKick(); } });
+    // rodičovská časť sa zamkne, keď appka odíde do pozadia (dieťa ju potom neotvorí bez príkladu)
+    document.addEventListener('visibilitychange', () => { if (document.hidden && root && !root.hidden && (ADULT.has(screen) || (gate && gate.setnow))) { fe = null; home(); } });
   }
   function more() {
     const sc = $('smBody');
@@ -65,7 +73,11 @@ export function initSimple(A) {
   // prekreslí len to, čo sa zmenilo (obrazovka sa obnovuje každú sekundu aj pri každej polohe)
   function view(v) {
     const set = (key, val, fn) => { if (last[key] !== val) { last[key] = val; fn(val); } };
+    set('scr', screen, (x) => { root.dataset.scr = x; });
+    set('adult', !!v.adult, (x) => { root.classList.toggle('sm-adult', x); }); // rodičovská časť: bez lišty Kde som? / Zavolať
+    set('callhint', !!v.callHint, (x) => { root.classList.toggle('sm-callhint', x); }); // po 2. pripomienke opačného smeru
     set('title', v.title || '', (x) => { $('smTitle').textContent = x; });
+    set('tfull', v.titleFull || '', (x) => { if (x) $('smTitle').setAttribute('aria-label', x); else $('smTitle').removeAttribute('aria-label'); });
     set('back', !!v.back, (x) => { $('smBack').hidden = !x; });
     set('speak', !!v.speak, (x) => { $('smSpeak').hidden = !x; });
     set('clock', !!v.clock, (x) => { $('smClock').hidden = !x; if (x) tick(); });
@@ -79,6 +91,7 @@ export function initSimple(A) {
     if (!same) root.scrollTop = 0; // naležato sa roluje celá obrazovka
     set('act', v.act || '', (x) => { $('smActions').innerHTML = x; $('smActions').hidden = !x; });
     set('who', cfg().who || '', (x) => { $('smWho').textContent = x; });
+    mapShow(v.map || null);
     more();
     // tlačidlo, na ktoré človek ťukol, pri prekreslení zaniklo: fokus na nadpis novej obrazovky
     // (klávesnica a čítačka obrazovky nezostanú „nikde“)
@@ -132,6 +145,19 @@ export function initSimple(A) {
   const headOf = (r) => (r.head >= 0 ? A.D().heads[r.head] : (A.D().routes[r.route].l || ''));
   const norm180 = (a) => ((a + 540) % 360) - 180;
   const angDiff = (a, b) => Math.abs(norm180(a - b));
+  // krátky názov z dlhého (miesta z OpenStreetMap): po prvý oddeľovač „ - “, „, “, „ (“, ak pred ním ostane aspoň 6 znakov;
+  // bez skratiek a bez vynechávania slov („Spojená škola Ľudmily Podjavorinskej - SOŠ…“ → „Spojená škola Ľudmily Podjavorinskej“)
+  const shortName = (s) => { const x = clean(String(s || '')).trim(), m = x.match(/^(.{6,}?)(?: [-–—] |, | \()/); return m ? m[1].trim() : x; };
+  // Názov do hlavičky a na dlaždicu. Zastávky, adresy a ulice sa neskracujú (oddeľovač ich rozlišuje: „Severná - kostol“
+  // je iná zastávka ako „Severná“, „Hlavná 47 (Fintice)“ iná adresa ako „Hlavná 47“); miesta len keď sú dlhé (nad 28 znakov).
+  const keepWhole = (f) => !f || f.target.kind === 'group' || f.sub === 'adresa' || f.sub === 'ulica';
+  const labelOf = (f) => { const x = clean(f.name); return keepWhole(f) || x.length <= 28 ? x : shortName(x); };
+  // názov na dlaždicu: najviac 18 znakov, skrátený na celé slová
+  const tileName = (s, whole) => { const x = whole ? clean(String(s)) : shortName(s); if (x.length <= 18) return x; const w = x.slice(0, 19).split(' '); w.pop(); return (w.join(' ') || x.slice(0, 18)).trim(); };
+  // dlaždíc na úvode: v jednoduchom režime 4 zadarmo, s Plus všetky (najviac 6)
+  const tileCap = () => (A.isPlus() ? A.FAV_MAX : 4);
+  const tilesShown = () => Math.min(A.favs().length, tileCap());
+  const ADULT = new Set(['parents', 'fedit']); // obrazovky za overením
 
   // ── zapnutie, vypnutie ─────────────────────────────────────────────
   function apply() {
@@ -145,6 +171,7 @@ export function initSimple(A) {
   // každých 20 s: hodiny a náhľad plánu (počas náhľadu ešte nebeží časovač cesty)
   function beat() {
     tick();
+    if (adultIdle()) { fe = null; reorder = false; home(); return; } // rodičovská časť sa po 3 min bez ťuknutia zamkne sama
     const t = A.trip();
     if (!t || !t.simple || t.phase !== 'preview' || sheetOpen()) return;
     // čas odchodu zobrazeného spoja už prešiel → nový plán od teraz
@@ -155,10 +182,12 @@ export function initSimple(A) {
     A.stopNav(); // navigácia k zastávke z bežného režimu by bežala skrytá ďalej
     cfg().on = true; A.savePrefs(); apply();
     sheet(`<h2>Jednoduchý režim je zapnutý</h2>
-      <p>Na úvode sú veľké tlačidlá cieľov – tie isté ciele, ktoré sú nastavené v bežnej appke.</p>
-      <p>Telefónne číslo na tlačidlo <b>Zavolať</b>, oslovenie (tykať / vykať) a vypnutie režimu sú v <b>Nastaveniach</b> na úvode.</p>
+      <p>Na úvode sú veľké tlačidlá cieľov – tie isté ciele ako v bežnej appke.</p>
+      <p>Ciele a adresy, telefónne číslo na tlačidlo <b>Zavolať</b>, oslovenie (tykať / vykať) a vypnutie režimu sú v časti <b>⚙️ Pre rodičov</b> na úvode.</p>
       <div class="sm-stack">${btn('setnow', 'Nastaviť teraz', 'sm-primary')}${btn('close', 'Neskôr')}</div>`);
-    gate = { setnow: settings };
+    // dospelý práve zapol režim: bez príkladu – ale len chvíľu (hárok ponechaný otvorený neobíde príklad)
+    const onAt = Date.now();
+    gate = { setnow: () => { if (!document.hidden && Date.now() - onAt < 120000) { closeSheet(); parents(); } else openGate(); } };
   }
   function turnOff() {
     const t = A.trip();
@@ -170,20 +199,49 @@ export function initSimple(A) {
   // ── úvod: dlaždice cieľov ──────────────────────────────────────────
   function home() {
     screen = 'home';
-    const fs = A.favs(), n = A.favVisible();
+    closeSheet();
+    const fs = A.favs(), n = tilesShown();
     let tiles = '', k = 0;
     for (let i = 0; i < n; i++) {
       const f = fs[i];
       if (!f.target) continue;
-      tiles += `<button type="button" class="sm-tile sm-c${k++ % 6}" data-a="go" data-v="${i}"><span class="sm-tico" aria-hidden="true">${esc(f.icon)}</span><span class="sm-tname">${esc(f.label)}</span><span class="sm-tsub">${esc(clean(A.targetLabel(f.target)))}</span></button>`;
+      tiles += tileHtml(f, k++, `data-a="go" data-v="${i}"`);
     }
     if (k % 2) tiles = tiles.replace('class="sm-tile ', 'class="sm-tile sm-wide '); // nepárny počet: prvá cez celú šírku
-    const empty = tiles ? '' : `<div class="sm-next">${tx('Ciele ešte nie sú nastavené. Popros dospelého, nech ich nastaví.', 'Ciele ešte nie sú nastavené.')} Nastavujú sa v bežnej appke: Nastavenia → Vypnúť jednoduchý režim, potom podržať tlačidlo cieľa.</div>`;
+    const empty = tiles ? '' : `<div class="sm-next">${tx('Ciele ešte nie sú nastavené. Popros rodiča, nech ich nastaví v ⚙️ Pre rodičov.', 'Ciele ešte nie sú nastavené. Nastavíte ich v ⚙️ Nastavenia.')}</div>`;
     view({ title: tx('Kam ideš?', 'Kam idete?'), clock: true,
       body: `<div class="sm-tiles">${tiles}</div>${empty}
         <button type="button" class="sm-row" data-a="other"><span class="sm-ico" aria-hidden="true">🔎</span><span>Iné miesto<small>${tx('napíš, kam chceš ísť', 'napíšte, kam chcete ísť')}</small></span></button>
-        <button type="button" class="sm-row" data-a="gate"><span class="sm-ico" aria-hidden="true">⚙️</span><span>Nastavenia<small>${tx('pre dospelého alebo pomocníka', 'oslovenie, telefón, vypnutie režimu')}</small></span></button>`,
+        <button type="button" class="sm-row sm-row-q" data-a="gate"><span class="sm-ico" aria-hidden="true">⚙️</span><span>${tx('Pre rodičov', 'Nastavenia')}<small>${tx('ciele, adresy, telefón', 'pre pomocníka: ciele, adresy, telefón')}</small></span></button>`,
       act: '' });
+  }
+  // dlaždica cieľa (úvod aj náhľad v úprave cieľa): názov najviac na 2 riadky, láme sa len medzi slovami –
+  // dlhé slovo sa zmenší; adresa na 1 riadok s „…“
+  function tileHtml(f, k, attrs) {
+    const long = Math.max(0, ...String(f.label).split(/\s+/).map((w) => w.length));
+    const sz = long > 12 ? ' sm-tname-xs' : long > 10 ? ' sm-tname-s' : '';
+    const sub = f.target ? clean(A.targetLabel(f.target)) : '';
+    return `<button type="button" class="sm-tile sm-c${k % 6}" ${attrs}><span class="sm-tico" aria-hidden="true">${esc(f.icon)}</span><span class="sm-tname${sz}">${esc(f.label)}</span><span class="sm-tsub">${esc(sub)}</span></button>`;
+  }
+  // hľadanie cieľa bez internetu: zastávky, miesta a adresy (Iné miesto aj úprava cieľa)
+  let placesObj = null;
+  function findPlaces(qRaw) {
+    const s = A.norm(qRaw.trim()), out = [];
+    if (s.length < 2) return out;
+    const gs = A.groups();
+    for (const g of gs) if (g.norm.startsWith(s)) out.push({ ico: '🚏', name: g.name, sub: 'zastávka', target: { kind: 'group', name: g.name, lat: g.lat, lon: g.lon } });
+    for (const g of gs) if (!g.norm.startsWith(s) && g.norm.includes(s)) out.push({ ico: '🚏', name: g.name, sub: 'zastávka', target: { kind: 'group', name: g.name, lat: g.lat, lon: g.lon } });
+    out.splice(4);
+    for (const r of A.searchPlaces(qRaw, 4)) {
+      const cat = r.kind === 'place' && placesObj && placesObj.cats[r.c];
+      out.push({ ico: cat ? cat[1] : r.kind === 'street' ? '🛣️' : '📍', name: r.name, sub: r.kind === 'addr' ? 'adresa' : r.kind === 'street' ? 'ulica' : cat ? cat[0] : 'miesto', target: { kind: 'point', lat: r.la, lon: r.lo, label: r.name } });
+    }
+    return out;
+  }
+  // riadok výsledku: hlavná časť názvu tučne (najviac 2 riadky), zvyšok a druh menším písmom na 1 riadok
+  function placeRow(f, i, a) {
+    const full = clean(f.name), main = keepWhole(f) ? full : shortName(full), rest = full.length > main.length ? full.slice(main.length).replace(/^\s*[-–—,(]\s*/, '').replace(/\)$/, '') : '';
+    return `<button type="button" class="sm-row sm-res" data-a="${a}" data-v="${i}"><span class="sm-ico" aria-hidden="true">${f.ico}</span><span><span class="sm-res-n">${esc(main)}</span><small>${esc(rest ? `${rest} · ${f.sub}` : f.sub)}</small></span></button>`;
   }
 
   // ── iné miesto: zastávka, miesto alebo adresa ──────────────────────
@@ -196,21 +254,15 @@ export function initSimple(A) {
     let found = [];
     const run = () => {
       const s = A.norm(q.value.trim());
-      found = [];
-      if (s.length >= 2) {
-        const gs = A.groups();
-        for (const g of gs) if (g.norm.startsWith(s)) found.push({ ico: '🚏', name: g.name, sub: 'zastávka', target: { kind: 'group', name: g.name, lat: g.lat, lon: g.lon } });
-        for (const g of gs) if (!g.norm.startsWith(s) && g.norm.includes(s)) found.push({ ico: '🚏', name: g.name, sub: 'zastávka', target: { kind: 'group', name: g.name, lat: g.lat, lon: g.lon } });
-        found = found.slice(0, 4);
-        for (const r of A.searchPlaces(q.value, 4)) found.push({ ico: '📍', name: r.name, sub: r.kind === 'addr' ? 'adresa' : r.kind === 'street' ? 'ulica' : 'miesto', target: { kind: 'point', lat: r.la, lon: r.lo, label: r.name } });
-      }
-      $('smRes').innerHTML = (found.map((f, i) => `<button type="button" class="sm-row" data-a="pick" data-v="${i}"><span class="sm-ico" aria-hidden="true">${f.ico}</span><span>${esc(clean(f.name))}<small>${f.sub}</small></span></button>`).join('')
+      found = findPlaces(q.value);
+      $('smRes').innerHTML = (found.map((f, i) => placeRow(f, i, 'pick')).join('')
         + (found.some((f) => f.target.kind === 'point') ? OSM_NOTE : ''))
         || (s.length >= 2 ? `<p class="sm-note">${tx('Nič sa nenašlo. Skús to napísať inak.', 'Nič sa nenašlo. Skúste to napísať inak.')}</p>` : '');
     };
     q.addEventListener('input', run);
-    A.loadPlaces().then(run).catch(() => {});
-    gate = { pick: (i) => { const f = found[i]; if (f) { closeSheet(); A.startTrip(-1, { simple: true, fav: { icon: f.ico, label: clean(f.name), target: f.target } }); } } };
+    A.loadPlaces().then((P) => { placesObj = P; run(); }).catch(() => {});
+    // dlhý názov miesta: v hlavičke krátky, celý v karte „Cieľ“ a v aria-label
+    gate = { pick: (i) => { const f = found[i]; if (f) { closeSheet(); const full = clean(f.name); A.startTrip(-1, { simple: true, fav: { icon: f.ico, label: labelOf(f), full, target: f.target } }); } } };
   }
 
   // ── plán: jedna odpoveď podľa pravidiel jednoduchého režimu ────────
@@ -578,19 +630,23 @@ export function initSimple(A) {
 
   function previewView(t, title) {
     const now = A.tripNowSecs(); // hodiny cesty: po polnoci idú ďalej, časy plánu sú od dňa, keď vznikol
+    // celý názov cieľa (v hlavičke je najviac na 2 riadky): pri cieli z „Iné miesto“ celé meno miesta, pri dlaždici aj jej adresa
+    const gMain = t.fav.full || t.fav.label, gSub0 = t.fav.full ? '' : clean(A.targetLabel(t.dest)), gSub = gSub0 && gSub0 !== gMain ? gSub0 : '';
+    const goal = `<div class="sm-goal"><div class="sm-lbl">🏁 Cieľ</div><div class="sm-goal-n">${esc(gMain)}</div>${gSub ? `<div class="sm-goal-s">${esc(gSub)}</div>` : ''}</div>`;
+    const goalSay = `Cieľ: ${dot(t.fav.full || (gSub ? `${gMain}, ${gSub}` : gMain))}`;
     if (t.walkOnly) {
       const m = Math.max(1, Math.round(t.smWalk * DETOUR / SLOW / 60));
       return { title, back: true, vkey: 'pw',
-        body: t.smWalk <= WALK_ONLY_M
+        body: goal + (t.smWalk <= WALK_ONLY_M
           ? big('🚶', tx('Je to blízko. Pôjdeš pešo', 'Je to blízko. Pôjdete pešo'), `<p>${tx('Do cieľa to máš', 'Do cieľa to máte')} asi <b>${mins(m)}</b>.</p>`)
-          : big('🚶', tx('Pôjdeš pešo', 'Pôjdete pešo'), `<p>${tx('Do cieľa to máš', 'Do cieľa to máte')} asi <b>${mins(m)}</b>.</p><p>Autobusom ani trolejbusom by to teraz nebolo rýchlejšie.</p>`),
+          : big('🚶', tx('Pôjdeš pešo', 'Pôjdete pešo'), `<p>${tx('Do cieľa to máš', 'Do cieľa to máte')} asi <b>${mins(m)}</b>.</p><p>Autobusom ani trolejbusom by to teraz nebolo rýchlejšie.</p>`)),
         act: btn('start', tx('▶ Sprevádzaj ma', '▶ Sprevádzajte ma'), 'sm-primary') };
     }
     const j = t.journeys[t.jIdx], a = j.sm, r0 = a.rides[0], D = A.D();
     if (t.jIdx === 0 && night(j, now)) { // najbližší spoj ide až zajtra
       const wm = t.smDist <= WALK_FALLBACK_M ? Math.max(1, Math.round(t.smDist * DETOUR / SLOW / 60)) : 0;
       return { title, back: true, vkey: 'night', voice: `Dnes už nič nejde. Najbližší ${veh(r0)} ${lineOf(r0)} ide zajtra o ${fmtTime(r0.dep)}.`,
-        body: big('🌙', 'Dnes už nič nejde', `<p>Najbližší ${veh(r0)} ${badge(lineOf(r0))} ide <b>zajtra o ${fmtTime(r0.dep)}</b> zo zastávky ${esc(clean(D.stops[r0.from].n))}.</p><p>${tx('Zavolaj, nech po teba niekto príde.', 'Zavolajte, nech po vás niekto príde.')}</p>`),
+        body: goal + big('🌙', 'Dnes už nič nejde', `<p>Najbližší ${veh(r0)} ${badge(lineOf(r0))} ide <b>zajtra o ${fmtTime(r0.dep)}</b> zo zastávky ${esc(clean(D.stops[r0.from].n))}.</p><p>${tx('Zavolaj, nech po teba niekto príde.', 'Zavolajte, nech po vás niekto príde.')}</p>`),
         act: `${btn('call', '📞 Zavolať', 'sm-primary')}${wm ? btn('walkonly', `🚶 ${tx('Pôjdem', 'Pôjdem')} pešo (asi ${mins(wm)})`) : ''}` };
     }
     const inMin = Math.max(0, Math.round((a.leave - now) / 60));
@@ -612,12 +668,12 @@ export function initSimple(A) {
       steps.push(`<li><span class="sm-ico" aria-hidden="true">🔔</span><div><div class="sm-main">${tx('Vystúp', 'Vystúpte')} na zastávke ${esc(clean(D.stops[r.to].n))}</div><div class="sm-sub">Je to ${n}. zastávka · o ${fmtTime(r.arr)}${request(D.stops[r.to].n) ? ` · pred ňou <b>${tx('stlač', 'stlačte')} STOP</b>` : ''}</div></div></li>`);
     });
     if (a.fin > 45) steps.push(`<li><span class="sm-ico" aria-hidden="true">🚶</span><div><div class="sm-main">${tx('Dôjdi', 'Dôjdite')} pešo do cieľa</div><div class="sm-sub">${minsN(Math.max(1, Math.round(a.fin / 60)))} pešo, ${tx('dovediem ťa', 'dovediem vás')}</div></div></li>`);
-    steps.push(`<li><span class="sm-ico" aria-hidden="true">🏁</span><div><div class="sm-main">V cieli ${tx('budeš', 'budete')} o ${fmtTime(a.arr)}</div><div class="sm-sub">${esc(clean(A.targetLabel(t.dest)))}</div></div></li>`);
+    steps.push(`<li><span class="sm-ico" aria-hidden="true">🏁</span><div><div class="sm-main">V cieli ${tx('budeš', 'budete')} o ${fmtTime(a.arr)}</div><div class="sm-sub">${esc(t.fav.full || clean(A.targetLabel(t.dest)))}</div></div></li>`);
     const tags = `<span class="sm-tag">${a.changes === 1 ? tx('Raz presadneš', 'Raz presadnete') : a.changes ? `${a.changes}× ${tx('presadneš', 'presadnete')}` : 'Bez presadania'}</span>${a.changes && isFinite(a.slack) ? `<span class="sm-tag${a.slack < MIN_SLACK ? ' sm-tag-w' : ''}">na presadnutie ${tx('máš', 'máte')} ${a.slack < MIN_SLACK ? 'len ' : ''}${mins(Math.max(1, Math.floor(a.slack / 60)))}</span>` : ''}`;
     const prev = t.jIdx > 0 ? btn('earlier', 'Ísť skôr') : '';
     return { title, back: true, speak: true, vkey: `plan${t.jIdx}`,
-      read: `${tx('Vyraz o', 'Vyrazte o')} ${fmtTime(a.leave)}. ${Veh(r0)} ${lineOf(r0)} ide o ${fmtTime(r0.dep)} zo zastávky ${clean(D.stops[r0.from].n)}. ${a.changes === 1 ? tx('Raz presadneš.', 'Raz presadnete.') : a.changes ? `${a.changes}-krát ${tx('presadneš', 'presadnete')}.` : 'Bez presadania.'} V cieli ${tx('budeš', 'budete')} o ${fmtTime(a.arr)}.`,
-      body: `<div class="sm-leave"><div class="sm-lbl">${tx('Vyraz o', 'Vyrazte o')}</div><div class="sm-bignum">${fmtTime(a.leave)}</div><div class="sm-in">${inMin <= 0 ? 'to je hneď teraz' : `to je o ${mins(inMin)}`}</div>
+      read: `${goalSay} ${tx('Vyraz o', 'Vyrazte o')} ${fmtTime(a.leave)}. ${Veh(r0)} ${lineOf(r0)} ide o ${fmtTime(r0.dep)} zo zastávky ${clean(D.stops[r0.from].n)}. ${a.changes === 1 ? tx('Raz presadneš.', 'Raz presadnete.') : a.changes ? `${a.changes}-krát ${tx('presadneš', 'presadnete')}.` : 'Bez presadania.'} V cieli ${tx('budeš', 'budete')} o ${fmtTime(a.arr)}.`,
+      body: `${goal}<div class="sm-leave"><div class="sm-lbl">${tx('Vyraz o', 'Vyrazte o')}</div><div class="sm-bignum">${fmtTime(a.leave)}</div><div class="sm-in">${inMin <= 0 ? 'to je hneď teraz' : `to je o ${mins(inMin)}`}</div>
         <div class="sm-bus">${Veh(r0)} ${badge(lineOf(r0))} ide o <b>${fmtTime(r0.dep)}</b> zo zastávky <b>${esc(clean(D.stops[r0.from].n))}</b></div><div class="sm-tags">${tags}</div></div>
         <ol class="sm-steps">${steps.join('')}</ol>`,
       act: `${btn('start', tx('▶ Sprevádzaj ma', '▶ Sprevádzajte ma'), 'sm-primary')}${prev ? `<div class="sm-pair">${prev}${btn('later', 'Ísť neskôr')}</div>` : btn('later', 'Ísť neskôr')}` };
@@ -1222,7 +1278,7 @@ export function initSimple(A) {
         if (!dest && u.step === 'walk' && !u.riding && !(spd > 3) && d <= ARRIVE_M && p.acc <= 25 && moved) arrive(t, false);
       }
     }
-    return { d, brg, acc: p.acc };
+    return { d, brg, acc: p.acc, la: p.la, lo: p.lo, tla: la, tlo: lo }; // (poloha a cieľ aj pre mapu)
   }
   // odišiel od zastávky: znova ho k nej viesť ako pri prvom príchode (aj s otázkou pri nej) – nie
   // ako opravu nástupišťa, tá by hlásila vzdialenosť medzi nástupišťami namiesto skutočnej
@@ -1331,6 +1387,8 @@ export function initSimple(A) {
       if (late && p && !pNet && !u.atP && ['atstop', 'check', 'unsure', 'nofix'].includes(u.step)) { u.atP = { la: p.la, lo: p.lo }; u.lf = [p.t, p.la, p.lo]; u.lfG = true; }
     }
     const g = walkGeo(t, u); // môže zmeniť u.step (príchod podľa polohy) aj u.riding
+    // červené skončilo ťuknutím, príchodom k zastávke alebo jazdou: to nie je návrat na správny smer („✓ Teraz ideš dobre“)
+    if (u.riding || u.step !== 'walk') { u.badS = null; u.okAt = null; }
     if (!dest && u.step === 'atstop' && !u.riding) return waitView(t, title);
     const r = dest ? null : t.rides[t.ri], st = dest ? null : D.stops[r.from];
     const cue = dest ? { type: 'none' } : cueOf(t, u), geo = dest ? {} : geoOf(t, u);
@@ -1388,7 +1446,10 @@ export function initSimple(A) {
     const stopBtn = dest ? 'Som v cieli' : 'Som na zastávke';
     const lbl = u.fix ? tx('Prejdi na správnu zastávku', 'Prejdite na správnu zastávku') : dest ? tx('Choď do cieľa', 'Choďte do cieľa')
       : t.ri > 0 ? tx('Teraz choď na zastávku', 'Teraz choďte na zastávku') : tx('Choď na zastávku', 'Choďte na zastávku');
-    const plate = dest ? `<div class="sm-plate"><span aria-hidden="true">${esc(t.fav.icon)}</span>${esc(t.fav.label)}</div>` : `<div class="sm-plate"><span class="sm-pi" aria-hidden="true">${vico(r)}</span>${esc(name)}</div>`;
+    // tabuľa zastávky sa nikdy neskracuje (dieťa ju porovnáva so skutočnou): dlhší názov menším písmom, potom na 2 riadky
+    const pl = (s) => `sm-plate${String(s).length > 16 ? ' sm-plate-s' : ''}`;
+    const dName = t.fav.full && t.fav.full.length <= 40 ? t.fav.full : t.fav.label; // cieľ celým menom, keď nie je priveľmi dlhé
+    const plate = dest ? `<div class="${pl(dName)}"><span aria-hidden="true">${esc(t.fav.icon)}</span>${esc(dName)}</div>` : `<div class="${pl(name)}"><span class="sm-pi" aria-hidden="true">${vico(r)}</span>${esc(name)}</div>`;
     if (g.d == null) return { ...base, vkey: 'nopos', body: big('📍', tx('Hľadám, kde si…', 'Hľadám, kde ste…'), `<p>${tx('Postoj chvíľu vonku.', 'Postojte chvíľu vonku.')}</p>`), act: `${btn('here', stopBtn)}${END()}` };
     const head = headingOf(u), rel = head == null ? null : norm180(g.brg - head);
     const near = g.d <= NEAR_M, mm = roundM(g.d), now = A.tripNowSecs();
@@ -1412,6 +1473,33 @@ export function initSimple(A) {
     const safe = across ? '<p class="sm-safe"><span aria-hidden="true">⚠️</span> Zastávka je za cestou. Prejdi len po priechode.</p>'.replace('Prejdi', tx('Prejdi', 'Prejdite')) : SAFE();
     const where = dest ? `Cieľ: <b>${esc(clean(A.targetLabel(t.dest)))}</b>.` : `${Veh(r)} <b>${esc(line)}</b> ide o <b>${fmtTime(r.dep)}</b>.${geo.street ? ` Zastávka je na ulici <b>${esc(geo.street)}</b>. <span class="sm-osm">© OpenStreetMap</span>` : ''}`;
     let body, voice = '', vkey, readPre = '', readPost = '', readFix = ''; // „Nahlas“ prečíta aj varovanie a radu k tabuli
+    // Opačný smer (u.bad, pravidlo vo walkGeo sa nemení): najviac 2 pripomienky – aspoň 45 s od poslednej a aspoň
+    // o 20 m ďalej –, potom rada „ťukni Zavolať“ (appka nikdy nevolá sama). Po návrate na správny smer krátko
+    // „✓ Teraz ideš dobre“ (nahlas len vtedy, keď červené trvalo dlhšie než 10 s, najviac raz za minútu).
+    let badN = 0;
+    if (u.bad) {
+      // (vzdialenosť z vyhladeného maxima walkGeo – u.peak, len z GPS –, nie z jednej polohy: šum pri státí nepripomína)
+      const pk = u.peak ?? g.d;
+      if (!u.badS) u.badS = { t0: Date.now(), at: Date.now(), d: pk, n: 0 };
+      else if (u.badS.n < 2 && Date.now() - u.badS.at >= 45000 && pk >= u.badS.d + 20) { u.badS.n += 1; u.badS.at = Date.now(); u.badS.d = pk; A.buzz([200, 100, 200]); }
+      badN = u.badS.n;
+    } else if (u.badS) {
+      if (!near && Date.now() - u.badS.t0 > 10000) {
+        u.okAt = Date.now(); u.okSay = !(u.okSaidAt && Date.now() - u.okSaidAt < 60000);
+        if (u.okSay) { u.okSaidAt = Date.now(); A.buzz([60]); }
+        setTimeout(() => { if (A.trip() === t) render(); }, 3100);
+      }
+      u.badS = null;
+    }
+    const okBack = !u.bad && u.okAt != null && Date.now() - u.okAt < 3000;
+    const aside = asideOf(t, u, g, near);
+    const what = dest ? 'Cieľ' : 'Zastávka';
+    // mapa pod šípkou (pri chôdzi; do 40 m od zastávky ju nahradí obrázok tabule)
+    const mapObj = cfg().map !== false && !mapNoRoom && !near && !u.riding && g.la != null
+      ? { u: { la: g.la, lo: g.lo }, tg: { la: g.tla, lo: g.tlo }, head, acc: g.acc, vague: !!u.vague, state: u.bad ? 'bad' : aside ? 'aside' : 'ok', dest, name: dest ? dName : name, icon: dest ? t.fav.icon : vico(r) } : null;
+    // mapa je naozaj na obrazovke (podklad pripravený, nie naležato): dlhšia rada pod kartou je potom len v „Nahlas“
+    const mapOn = !!mapObj && !!mapB && !(window.matchMedia && window.matchMedia('(max-height: 480px)').matches);
+    const plain = (h) => h.replace(/<span class="sm-osm">[^<]*<\/span>/g, '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
     if (u.riding && dest) { // po poslednej jazde sa vzďaľuje rýchlosťou vozidla: nevystúpil, alebo vystúpil neskoro
       vkey = 'riding';
       voice = tx('Vyzerá to, že sa ešte vezieš. Vystúp na najbližšej zastávke a ťukni Som vonku. Potom ťa dovediem ďalej.', 'Vyzerá to, že sa ešte veziete. Vystúpte na najbližšej zastávke a ťuknite Som vonku. Potom vás dovediem ďalej.');
@@ -1424,12 +1512,15 @@ export function initSimple(A) {
       body = `<div class="sm-now"><div class="sm-bigico" aria-hidden="true">${vico(r)}</div><h2>${tx(`Si v ${V}e`, `Ste v ${V}e`)} ${badge(line)}?</h2><p>${tx('Vyzerá to, že sa vezieš.', 'Vyzerá to, že sa veziete.')}</p><p>Vpredu má mať napísané: <b>${esc(headOf(r))}</b></p></div>
         <div class="sm-next">Ak ${tx('si', 'ste')} v inom, nič sa nedeje: ${tx('vystúp', 'vystúpte')} na najbližšej zastávke a ${tx('ťukni', 'ťuknite')} „Som vonku“. ${tx('Dovediem ťa', 'Dovediem vás')} ďalej z miesta, kde ${tx('budeš', 'budete')}.</div>`;
     } else if (u.bad) {
-      const sayBad = tx('Ideš opačným smerom. Otoč sa.', 'Idete opačným smerom. Otočte sa.');
-      vkey = 'bad'; voice = u.badQuiet ? '' : sayBad; readPre = `${sayBad} `; // hlas najviac raz za 30 s
-      body = `<div class="sm-walk sm-bad"><p class="sm-wlbl">${lbl}</p>${plate}
+      const sayBad = tx('Ideš opačným smerom. Zastav sa a otoč sa.', 'Idete opačným smerom. Zastavte sa a otočte sa.');
+      const callTip = tx('Ak nevieš, kade ísť, ťukni Zavolať.', 'Ak neviete, kade ísť, ťuknite Zavolať.');
+      const sayMore = `${tx(`Stále sa vzďaľuješ od ${dest ? 'cieľa' : 'zastávky'}. Zastav sa a pozri na šípku.`, `Stále sa vzďaľujete od ${dest ? 'cieľa' : 'zastávky'}. Zastavte sa a pozrite na šípku.`)}${badN >= 2 ? ` ${callTip}` : ''}`;
+      // hlas pri vstupe najviac raz za 30 s (u.badQuiet), pripomienky vždy
+      vkey = badN ? `bad${badN}` : 'bad'; voice = badN ? sayMore : u.badQuiet ? '' : sayBad; readPre = `${badN ? sayMore : sayBad} `;
+      body = `<div class="sm-walk sm-bad"><div class="sm-banner sm-banner-bad" role="alert"><b>↩ ${tx('Ideš opačným smerom', 'Idete opačným smerom')}</b><span>${badN >= 2 ? callTip : tx('Nič sa nedeje. Nebež.', 'Nič sa nedeje. Neponáhľajte sa.')}</span></div>${plate}
         <div class="sm-wrow"><div class="sm-compass">${rel == null ? '<span class="sm-noarrow">?</span>' : arrow}</div><div class="sm-dist"><b>${mm} m</b><span>${tx('vzďaľuješ sa', 'vzďaľujete sa')}</span></div></div>
-        <p class="sm-say">${sayBad}</p></div>
-        <div class="sm-next">Nič sa nedeje. Stačí sa otočiť – šípka ${tx('ťa', 'vás')} povedie ďalej.</div>`;
+        <p class="sm-say">${tx('Zastav sa a otoč sa.', 'Zastavte sa a otočte sa.')}</p>${SAFE()}</div>
+        ${mapOn ? '' : `<div class="sm-next">Nič sa nedeje. Stačí sa otočiť – šípka ${tx('ťa', 'vás')} povedie ďalej.</div>`}`;
     } else if (near && !dest && !u.fix) {
       const byNum = cue.type === 'line' || cue.type === 'none', asks = (cue.type === 'line' || cue.type === 'dir') && cue.dist < ASK_M;
       const all = [...new Set((D.stopDirs[r.from] || []).map(([rt]) => D.routes[rt].s))].filter((l) => l !== line).slice(0, 3);
@@ -1472,24 +1563,61 @@ export function initSimple(A) {
       // oprava zastávky: vzdialenosť nástupíšť a smer ako na obrazovke (aj „cez cestu len po priechode“)
       if (u.fix && !dest) readFix = `${fixD != null && Number.isFinite(fixD) ? `Je to asi ${fixD} metrov.` : 'Zastávka je blízko.'} ${say}${across ? ` ${tx('Prejdi len po priechode pre chodcov.', 'Prejdite len po priechode pre chodcov.')}` : ''}`;
       const lateBox = late ? `<div class="sm-warn">${tx(`Tento ${V} asi nestihneš. Nič sa nedeje, nebež. Ťukni „Nájdi mi ďalší“.`, `Tento ${V} asi nestihnete. Nič sa nedeje, neponáhľajte sa. Ťuknite „Nájdite mi ďalší“.`)}</div>` : '';
-      body = `${note}<div class="sm-walk"><p class="sm-wlbl">${near && dest ? tx('Už si skoro v cieli', 'Už ste skoro v cieli') : lbl}</p>${plate}
+      // pás navrchu karty: návrat zo zlého smeru (zelený) alebo „bokom“ (žltý)
+      let banner = '';
+      if (okBack) {
+        banner = `<div class="sm-banner sm-banner-ok"><b>✓ ${tx('Teraz ideš dobre', 'Teraz idete dobre')}</b></div>`;
+        if (u.okSay && u.said.start) { vkey = 'okback'; voice = tx('Dobre. Teraz ideš správne.', 'Dobre. Teraz idete správne.'); }
+      } else if (aside) {
+        const L1 = aside.side === 'L' ? `${what} je viac vľavo` : aside.side === 'R' ? `${what} je viac vpravo` : `${what} sa nepribližuje`;
+        const L2 = aside.side === 'L' ? tx('Keď sa dá, zahni doľava.', 'Keď sa dá, zahnite doľava.') : aside.side === 'R' ? tx('Keď sa dá, zahni doprava.', 'Keď sa dá, zahnite doprava.') : tx('Pozri sa na šípku.', 'Pozrite sa na šípku.');
+        banner = `<div class="sm-banner sm-banner-aside" role="status"><b>${aside.side === 'L' ? '↰ ' : aside.side === 'R' ? '↱ ' : ''}${L1}</b><span>${L2}</span></div>`;
+        if (Date.now() - aside.at >= 120000 * (aside.n + 1)) aside.n += 1; // hlas najviac raz za 2 minúty
+        if (u.said.start) { vkey = `aside${aside.n}`; voice = `${L1}. ${L2}`; }
+        readPre = `${L1}. ${L2} `;
+      }
+      // linka a čas odchodu sú v karte (sú dôležité aj vtedy, keď je pod kartou mapa namiesto rady)
+      // (pri žltom páse sa riadok s linkou vynechá – karta by sa nezmestila; linka a čas sú v „Nahlas“)
+      const top = aside && !okBack ? '' : `<div class="sm-wtop"><p class="sm-wlbl">${near && dest ? tx('Už si skoro v cieli', 'Už ste skoro v cieli') : lbl}</p>${dest || u.fix ? '' : `<span class="sm-wbus">${badge(line, true)} o ${fmtTime(r.dep)}</span>`}</div>`;
+      body = `${note}<div class="sm-walk">${banner}${top}${plate}
         <div class="sm-wrow"><div class="sm-compass">${rel == null ? '<span class="sm-noarrow">?</span>' : arrow}</div><div class="sm-dist">${fixD != null ? `<b>asi ${fixD} m</b>` : `<b>${mm} m</b><span>asi ${minsN(Math.max(1, Math.round(g.d * DETOUR / SLOW / 60)))}</span>${status}`}</div></div>
         <p class="sm-say">${say}</p>${safe}</div>${lateBox}
-        <div class="sm-next">${tail}</div>`;
+        ${mapOn ? '' : `<div class="sm-next">${tail}</div>`}`;
+      if (mapOn) readPost += ` ${plain(tail)}`; // rada pod kartou (čas, ulica, „dom obíď po chodníku“) ostáva v „Nahlas“
     }
     // keď má spoj prísť (alebo už išiel), dá sa povedať „som v autobuse“ aj bez potvrdenia zastávky
     const due = !dest && now >= r.dep - 120;
     const findBtn = btn('missed', tx('Nájdi mi ďalší', 'Nájdite mi ďalší'));
     const act = u.riding && dest ? `${btn('offbus', 'Som vonku', 'sm-primary')}${END()}`
       : u.riding ? `${btn('board', `Áno, som v ${V}e`, 'sm-primary')}<div class="sm-pair">${btn('offbus', 'Som vonku')}${END()}</div>`
-      : u.bad ? `${btn('here', stopBtn)}${END()}`
+      : u.bad ? `<div class="sm-pair">${btn('here', stopBtn)}${END()}</div>`
         : due ? `${btn('here', stopBtn, near ? 'sm-primary' : 'sm-secondary')}<div class="sm-pair">${btn('board', `Som v ${V}e`)}${late ? findBtn : btn('missed', missBtn)}</div>${END()}`
           : near ? `${btn('here', stopBtn, 'sm-primary')}${dest || u.fix ? END() : `<div class="sm-pair">${btn('missed', missBtn)}${END()}</div>`}`
-            : `${btn('here', stopBtn)}${late ? `<div class="sm-pair">${findBtn}${END()}</div>` : END()}`;
+            : late ? `<div class="sm-pair">${btn('here', stopBtn)}${findBtn}</div>${END()}` : `<div class="sm-pair">${btn('here', stopBtn)}${END()}</div>`;
     // priorita hlasu: varovanie a otázka hneď; „ešte N metrov“ sa vynechá, kým znie iná veta
     const pri = u.bad || u.riding ? 'urgent' : vkey === 'd100' || vkey === 'd50' ? 'low' : 'normal';
-    return { ...base, body, act, voice, vkey, pri, once: !u.bad && !u.riding,
+    return { ...base, body, act, voice, vkey, pri, once: !u.bad && !u.riding, map: mapObj, callHint: !!u.bad && badN >= 2,
       read: u.riding ? voice : `${readPre}${dest ? `${lbl}.` : `${lbl} ${dot(name)}`} ${readFix || `${u.fix && !dest ? 'Zastávka je blízko.' : `Ešte ${mm} metrov.`} ${u.bad || u.fix ? '' : rel == null ? '' : turnText(rel, dest)}`}${readPost}${u.vague ? ' Poloha je teraz nepresná.' : ''}` };
+  }
+  // „Bokom“: ide (za 75 s sa posunul aspoň o 50 m), ale k cieľu sa nepriblížil ani o 15 m. Jemné žlté
+  // upozornenie, na ktorej strane je cieľ (voči smeru chôdze). Nie pri opačnom smere (to je červené),
+  // blízko cieľa (do 80 m), pri oprave nástupišťa ani z nepresnej polohy (nad 30 m); zruší sa, keď sa
+  // znova priblíži. Rozhoduje posun, nie súčet krokov (šum polohy pri státí by „chôdzu“ nasčítal).
+  function asideOf(t, u, g, near) {
+    const p = t.pos;
+    if (u.bad || near || u.fix || u.riding || g.d <= 80) { u.aside = null; return null; }
+    if (!p || p.acc > 30 || u.vague) return u.aside || null;
+    const Hs = (u.asd = u.asd || []);
+    if (!Hs.length || Hs[Hs.length - 1].t !== p.t) { Hs.push({ t: p.t, la: p.la, lo: p.lo, d: g.d }); while (Hs.length && p.t - Hs[0].t > 90000) Hs.shift(); }
+    const w = Hs.filter((x) => p.t - x.t <= 75000);
+    if (w.length < 4 || p.t - w[0].t < 40000) return u.aside || null;
+    const moved = haversine(w[0].la, w[0].lo, p.la, p.lo), gain = w[0].d - g.d;
+    if (gain >= 15) u.aside = null;
+    else if (!u.aside && moved >= 50) {
+      const rr = u.course == null ? null : norm180(g.brg - u.course);
+      u.aside = { at: Date.now(), n: 0, side: rr == null || Math.abs(rr) < 30 || Math.abs(rr) > 150 ? '' : rr < 0 ? 'L' : 'R' };
+    }
+    return u.aside || null;
   }
 
   function waitView(t, title) {
@@ -1602,6 +1730,274 @@ export function initSimple(A) {
       const bus = (u.geo && u.geo.bus != null) ? u.geo.bus : u.cue.bus;
       if (bus != null) { u.busRel = norm180(bus - A.compassHeading()); rot(b, 'b', u.busRel); }
     }
+    if (mapCur) { mapCur.head = headingOf(u); mapKick(); } // mapa sa otáča spolu so šípkou
+  }
+
+  // ── mapa pod šípkou: otočená podľa smeru, šípka TY je vždy hore ─────
+  // Kreslí sa z offline podkladu appky (ulice, chodníky, voda a parky z OpenStreetMap) do jedného canvasu –
+  // bez internetu, prstom sa neposúva. Smer je ten istý ako pri veľkej šípke (kompas telefónu, inak smer
+  // chôdze z GPS); bez neho je sever hore a namiesto šípky TY je bodka. Čiara k zastávke sa nekreslí –
+  // išla by cez domy a dieťa by ju bralo ako cestu.
+  const MAP_W = { m: 9, p: 8, s: 7.5, t: 7, r: 5.5, w: 4.5, v: 3.5 }; // šírka ulice v px pri 1,6 m/px
+  const MAP_O = 'vwrtspm'; // poradie kreslenia: hlavné cesty navrchu
+  const MAP_Y = 'mps'; // hlavné cesty žlté (ako v bežnej mape)
+  const MAP_COL = { ok: '#075c2b', bad: '#a3210f', aside: '#8a5a00' };
+  const MAP_AREA = new Set(['forest', 'grass', 'park', 'pitch', 'cemetery']);
+  let mapB = null, mapBusy = null, mapCur = null, mapH = null, mapRaf = 0, mapBig = false, mapS = null, mapUp = 0.72, mapKey = '', mapNoRoom = false;
+  // podklad pre okolie cesty v metroch od stredu (x na východ, y na sever) – raz na úsek, nie pri každej polohe
+  function mapPrep(M, la0, lo0, R) {
+    const kx = 111320 * Math.cos(la0 * Math.PI / 180), ky = 110540;
+    const conv = (p) => {
+      const o = new Float64Array(p.length * 2);
+      let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      for (let i = 0; i < p.length; i++) {
+        const x = (p[i][1] - lo0) * kx, y = (p[i][0] - la0) * ky;
+        o[2 * i] = x; o[2 * i + 1] = y;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+      }
+      return { o, bb: [x0, y0, x1, y1] };
+    };
+    const near = (bb) => bb[2] > -R && bb[0] < R && bb[3] > -R && bb[1] < R;
+    const roads = [], foot = [], water = [], areas = [];
+    for (const s of M.streets) { const c = conv(s.p); if (near(c.bb)) (s.c === 'f' ? foot : roads).push({ ...c, c: s.c, n: s.n }); }
+    for (const w of M.waters) { const c = conv(w.p); if (near(c.bb)) water.push(c); }
+    for (const a of M.areas) { if (!MAP_AREA.has(a.c)) continue; const rs = a.r.map(conv); if (rs.some((r) => near(r.bb))) areas.push(rs); }
+    roads.sort((a, b) => MAP_O.indexOf(a.c) - MAP_O.indexOf(b.c));
+    return { la0, lo0, kx, ky, R, roads, foot, water, areas };
+  }
+  // podklad pokrýva človeka aj cieľ (inak sa pripraví znova, kým sa mapa neukáže)
+  function mapReady(m) {
+    const B = mapB;
+    if (B && haversine(B.la0, B.lo0, m.u.la, m.u.lo) < B.R - 600 && haversine(B.la0, B.lo0, m.tg.la, m.tg.lo) < B.R - 150) return true;
+    if (!mapBusy) {
+      mapBusy = A.loadMapbase().then((M) => {
+        mapBusy = null;
+        const c = mapCur;
+        if (!M || !c) return;
+        const la0 = (c.u.la + c.tg.la) / 2, lo0 = (c.u.lo + c.tg.lo) / 2;
+        mapB = mapPrep(M, la0, lo0, Math.max(1500, haversine(c.u.la, c.u.lo, c.tg.la, c.tg.lo) / 2 + 1200));
+        // celá obrazovka nanovo (rada pod kartou ustúpi mape), potom sa zmeria, či sa mapa zmestí
+        if (mapCur) { if (A.trip()) render(); else mapShow(mapCur); }
+      }).catch(() => { mapBusy = null; });
+    }
+    return false;
+  }
+  // m = { u: {la,lo}, tg: {la,lo}, head, acc, vague, state: ok|bad|aside, dest, name, icon } alebo null (bez mapy)
+  function mapShow(m) {
+    const el = root && $('smMap');
+    if (!el) return;
+    const hide = () => { if (!el.hidden) { el.hidden = true; root.classList.remove('sm-mapon', 'sm-mapbig'); } };
+    if (!m || cfg().map === false) { mapCur = null; mapS = null; hide(); return; }
+    mapCur = m;
+    const key = `${m.tg.la.toFixed(5)},${m.tg.lo.toFixed(5)}`;
+    if (key !== mapKey) { mapKey = key; mapS = null; mapH = null; mapUp = 0.72; mapNoRoom = false; root.classList.remove('sm-mapcompact'); } // nový cieľ úseku: mierka, smer a miesto odznova
+    if (!mapReady(m)) { hide(); return; } // podklad sa ešte pripravuje (alebo v appke nie je): bez mapy
+    if (el.hidden) { el.hidden = false; root.classList.add('sm-mapon'); }
+    root.classList.toggle('sm-mapbig', mapBig);
+    el.className = `sm-map sm-map-${m.state || 'ok'}`;
+    const lb = mapBig ? '🔍 Menšia' : '🔍 Väčšia';
+    if ($('smMapBtn').textContent !== lb) $('smMapBtn').textContent = lb;
+    mapFit();
+    mapKick();
+  }
+  // Karta má prednosť: mapa dostane len miesto, ktoré pod ňou ostane. Keď je ho menej než 120 px, karta sa
+  // zúži (bez riadku s linkou a tabule – meno zastávky je na mape); keď ani to nestačí, je tento úsek bez mapy
+  // a pod kartou sa vráti rada. Na otočenie telefónu alebo nový úsek sa to rozhodne znova.
+  function mapFit() {
+    const el = $('smMap');
+    if (el.hidden || el.clientHeight >= 120) return;
+    if (!root.classList.contains('sm-mapcompact') && !mapBig) { root.classList.add('sm-mapcompact'); if (el.clientHeight >= 120) return; }
+    if (mapBig) return; // väčšia mapa: karta je už zúžená na šípku
+    mapNoRoom = true; mapCur = null; el.hidden = true;
+    root.classList.remove('sm-mapon', 'sm-mapbig', 'sm-mapcompact');
+    setTimeout(() => { if (A.trip()) render(); }, 0);
+  }
+  // prekreslenie najviac ~15× za sekundu (kompas posiela udalosti aj 60× za sekundu – batéria)
+  let mapLast = 0, mapWait = 0;
+  function mapKick() {
+    if (mapRaf || mapWait || !mapCur || !root || $('smMap').hidden) return;
+    const dt = Date.now() - mapLast;
+    if (dt >= 66) mapRaf = requestAnimationFrame(mapFrame);
+    else mapWait = setTimeout(() => { mapWait = 0; mapKick(); }, 66 - dt);
+  }
+  const calm = () => !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // otáčanie sa vyhladí (kompas pri trolejových drôtoch poskakuje); bez animácie, keď to telefón nechce
+  function mapFrame() {
+    mapRaf = 0;
+    const m = mapCur, cv = $('smMapC');
+    if (!m || !cv || $('smMap').hidden || !mapB) return;
+    const h = m.head;
+    if (h == null) mapH = null;
+    else if (mapH == null || calm()) mapH = h;
+    else { const dl = norm180(h - mapH); mapH = Math.abs(dl) < 0.8 ? h : (mapH + dl * 0.3 + 360) % 360; }
+    mapDraw(cv, m, mapH); mapLast = Date.now();
+    if (h != null && mapH != null && angDiff(h, mapH) > 0.8) mapKick();
+  }
+  function rrect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  // podklad mapy (plochy, voda, chodníky, ulice a najviac 3 názvy ulíc) v mierke s m/px, otočený o h°;
+  // bod (ue, un) v metroch je na obrazovke v (ux, uy); názvy sa vyhnú bodom excl [[x, y, r]…]
+  function drawBase(ctx, B, W, H, dpr, s, h, ue, un, ux, uy, excl) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = '#eceee8'; ctx.fillRect(0, 0, W, H);
+    const hr = (h || 0) * Math.PI / 180, ch = Math.cos(hr), sh = Math.sin(hr), k = Math.max(0.5, Math.min(1.25, 1.6 / s));
+    const a = ch / s, b = -sh / s, c = -sh / s, e = -ch / s, E = ux - a * ue - c * un, F = uy - b * ue - e * un;
+    const scr = (x, y) => [a * x + c * y + E, b * x + e * y + F];
+    const Rv = Math.hypot(W, H) * s, vis = (bb) => bb[2] > ue - Rv && bb[0] < ue + Rv && bb[3] > un - Rv && bb[1] < un + Rv;
+    ctx.setTransform(a * dpr, b * dpr, c * dpr, e * dpr, E * dpr, F * dpr);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const line = (o) => { ctx.moveTo(o[0], o[1]); for (let i = 2; i < o.length; i += 2) ctx.lineTo(o[i], o[i + 1]); };
+    ctx.fillStyle = '#cfe5c0';
+    for (const rs of B.areas) { if (!rs.some((r) => vis(r.bb))) continue; ctx.beginPath(); for (const r of rs) { line(r.o); ctx.closePath(); } ctx.fill('evenodd'); }
+    ctx.strokeStyle = '#9ccbe0'; ctx.lineWidth = 4 * s; ctx.beginPath();
+    for (const w of B.water) if (vis(w.bb)) line(w.o);
+    ctx.stroke();
+    ctx.strokeStyle = '#b39a86'; ctx.lineWidth = 2 * s; ctx.setLineDash([4 * s, 4 * s]); ctx.beginPath();
+    for (const f of B.foot) if (vis(f.bb)) line(f.o);
+    ctx.stroke(); ctx.setLineDash([]);
+    const shown = B.roads.filter((r) => vis(r.bb));
+    for (const pass of [0, 1]) {
+      let cur = null;
+      for (const r of shown) {
+        if (r.c !== cur) { if (cur) ctx.stroke(); cur = r.c; ctx.beginPath(); ctx.strokeStyle = pass ? (MAP_Y.includes(cur) ? '#f3cf5e' : '#ffffff') : '#9aa59d'; ctx.lineWidth = ((MAP_W[cur] || 5) * k + (pass ? 0 : 2.5)) * s; }
+        line(r.o);
+      }
+      if (cur) ctx.stroke();
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // názvy ulíc: najviac 3, ulica pri bode (ue, un) prvá; nie cez človeka ani cieľ
+    ctx.font = '800 14px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const labs = [], cand = new Map();
+    let here = null, hereD = 25;
+    for (const r of shown) {
+      if (!r.n || !'mpstr'.includes(r.c)) continue;
+      for (let i = 2; i < r.o.length; i += 2) {
+        const vx = r.o[i] - r.o[i - 2], vy = r.o[i + 1] - r.o[i - 1], L2 = vx * vx + vy * vy;
+        const q = L2 ? Math.max(0, Math.min(1, ((ue - r.o[i - 2]) * vx + (un - r.o[i - 1]) * vy) / L2)) : 0;
+        const dd = Math.hypot(r.o[i - 2] + q * vx - ue, r.o[i - 1] + q * vy - un);
+        if (dd < hereD) { hereD = dd; here = r.n; }
+        const [x1, y1] = scr(r.o[i - 2], r.o[i - 1]), [x2, y2] = scr(r.o[i], r.o[i + 1]);
+        if (Math.min(x1, x2) < 14 || Math.max(x1, x2) > W - 14 || Math.min(y1, y2) < 14 || Math.max(y1, y2) > H - 14) continue;
+        const L = Math.hypot(x2 - x1, y2 - y1), mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+        if (L < 56 || excl.some(([ex, ey, er]) => Math.hypot(mx - ex, my - ey) < er)) continue;
+        const best = cand.get(r.n);
+        if (!best || best.L < L) cand.set(r.n, { n: r.n, L, mx, my, ang: Math.atan2(y2 - y1, x2 - x1) });
+      }
+    }
+    const order = [...cand.values()].sort((p, q) => (q.n === here) - (p.n === here) || q.L - p.L);
+    for (const lb of order) {
+      if (labs.length >= 3) break;
+      if (ctx.measureText(lb.n).width > lb.L * 1.15 || labs.some((x) => Math.hypot(x.mx - lb.mx, x.my - lb.my) < 70)) continue;
+      labs.push(lb);
+      let an = lb.ang; if (an > Math.PI / 2) an -= Math.PI; if (an < -Math.PI / 2) an += Math.PI;
+      ctx.save(); ctx.translate(lb.mx, lb.my); ctx.rotate(an);
+      ctx.lineWidth = 4; ctx.strokeStyle = '#ffffff'; ctx.strokeText(lb.n, 0, 0); ctx.fillStyle = '#2b3530'; ctx.fillText(lb.n, 0, 0);
+      ctx.restore();
+    }
+  }
+  function mapDraw(cv, m, h) {
+    const W = cv.clientWidth, H = cv.clientHeight, B = mapB;
+    if (!W || !H || !B) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    const ctx = cv.getContext('2d');
+    const col = MAP_COL[m.state] || MAP_COL.ok;
+    const ue = (m.u.lo - B.lo0) * B.kx, un = (m.u.la - B.la0) * B.ky, te = (m.tg.lo - B.lo0) * B.kx, tn = (m.tg.la - B.la0) * B.ky;
+    const hr = (h || 0) * Math.PI / 180, ch = Math.cos(hr), sh = Math.sin(hr);
+    const de = te - ue, dn = tn - un, d = Math.hypot(de, dn);
+    const rx = de * ch - dn * sh, ry = dn * ch + de * sh; // cieľ voči obrazovke: rx doprava, ry hore (m)
+    // človek dole, keď je cieľ pred ním; hore, keď je za ním (s rezervou, aby neskákal)
+    if (ry < -0.4 * d) mapUp = 0.3; else if (ry > -0.1 * d) mapUp = 0.72;
+    // tlačidlo „Väčšia“ vpravo dole je vyhradené: človek je vždy nad ním (cieľ vpravo v jeho výške nesmie byť pod tlačidlom)
+    const bt = $('smMapBtn'), bR = bt ? [bt.offsetLeft - 8, bt.offsetTop - 8, bt.offsetLeft + bt.offsetWidth + 8, bt.offsetTop + bt.offsetHeight + 8] : [W, H, W, H];
+    // (len keď je cieľ skôr vpravo než vpredu: v jeho smere vtedy leží tlačidlo; inak ostáva miesto pred človekom)
+    const side = rx > 0 && Math.abs(ry) < rx * 1.2;
+    const ux = W / 2, uy = side ? Math.max(52, Math.min(H * mapUp, bR[1] - 28)) : Math.max(52, H * mapUp), pad = 34;
+    // mierka: cieľ sa zmestí do mapy, ale ulice ostanú čitateľné (0,9–3,2 m na bod); mení sa len vo väčších krokoch
+    let need = 0.9;
+    if (rx > 0) need = Math.max(need, rx / (W - pad - ux)); else if (rx < 0) need = Math.max(need, -rx / (ux - pad));
+    if (ry > 0) need = Math.max(need, ry / (uy - pad)); else if (ry < 0) need = Math.max(need, -ry / (H - pad - uy));
+    const want = Math.min(3.2, need * 1.08);
+    if (mapS == null || Math.abs(Math.log(want / mapS)) > 0.12) mapS = want;
+    const s = mapS;
+    // cieľ na obrazovke (nie pod tlačidlom „Väčšia“), alebo štítok na okraji v jeho smere
+    const tx0 = ux + rx / s, ty0 = uy - ry / s;
+    const underBtn = tx0 > bR[0] - 18 && tx0 < bR[2] + 18 && ty0 > bR[1] - 18 && ty0 < bR[3] + 18;
+    const inView = tx0 > 18 && tx0 < W - 18 && ty0 > 18 && ty0 < H - 18 && !underBtn;
+    // meno cieľa sa zmestí do mapy (celé slová a „…“); štítok nikdy nezakryje človeka ani tlačidlo
+    const FONT = '800 15px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+    ctx.font = FONT;
+    const fit = (txt, budget) => {
+      if (ctx.measureText(txt).width <= budget) return txt;
+      const w = txt.split(' ');
+      while (w.length > 1) { w.pop(); const x = `${w.join(' ')}…`; if (ctx.measureText(x).width <= budget) return x; }
+      let x = txt; while (x.length > 1 && ctx.measureText(`${x}…`).width > budget) x = x.slice(0, -1);
+      return `${x}…`;
+    };
+    const tname0 = m.dest ? m.name : String(m.name).toUpperCase();
+    const hit = (x, y, w, hh) => Math.hypot(Math.max(x, Math.min(ux, x + w)) - ux, Math.max(y, Math.min(uy, y + hh)) - uy) < 30 || (x < bR[2] && x + w > bR[0] && y < bR[3] && y + hh > bR[1]) || (x < 52 && y < 52);
+    let lab = null;
+    if (inView) {
+      for (const side of ['r', 'l', 'u', 'd']) {
+        const budget = side === 'r' ? W - 4 - (tx0 + 24) - 16 : side === 'l' ? tx0 - 24 - 4 - 16 : W - 24;
+        if (budget < 60) continue;
+        const txt = fit(tname0, budget), w = ctx.measureText(txt).width + 16;
+        const x = side === 'r' ? tx0 + 24 : side === 'l' ? tx0 - 24 - w : Math.max(4, Math.min(W - w - 4, tx0 - w / 2)), y = side === 'u' ? ty0 - 52 : side === 'd' ? ty0 + 24 : ty0 - 13;
+        if (y < 4 || y + 26 > H - 4 || hit(x, y, w, 26)) continue;
+        lab = { txt, x, y, w }; break;
+      }
+    }
+    drawBase(ctx, B, W, H, dpr, s, h, ue, un, ux, uy, inView ? [[ux, uy, 48], [tx0, ty0, 44], ...(lab ? [[lab.x + lab.w / 2, lab.y + 13, lab.w / 2 + 12]] : [])] : [[ux, uy, 48]]);
+    // presnosť polohy, človek (šípka TY hore), cieľ
+    if (m.acc > 20) { ctx.beginPath(); ctx.arc(ux, uy, Math.min(90, m.acc / s), 0, 2 * Math.PI); ctx.fillStyle = 'rgba(7,92,43,0.12)'; ctx.fill(); }
+    const pill = (x, y, txt, bg, fg, bd) => {
+      ctx.font = '800 15px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+      const w = Math.min(W - 8, Math.ceil(ctx.measureText(txt).width) + 16), hh = 26, X = Math.max(4, Math.min(W - w - 4, x)), Y = Math.max(4, Math.min(H - hh - 4, y));
+      rrect(ctx, X, Y, w, hh, 7); ctx.fillStyle = bg; ctx.fill();
+      if (bd) { ctx.lineWidth = 2; ctx.strokeStyle = bd; ctx.stroke(); }
+      ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, X + w / 2, Y + hh / 2 + 1);
+      return w;
+    };
+    if (inView) {
+      ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff';
+      if (m.dest) { ctx.beginPath(); ctx.arc(tx0, ty0, 19, 0, 2 * Math.PI); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = MAP_COL.ok; ctx.stroke(); }
+      else { rrect(ctx, tx0 - 17, ty0 - 17, 34, 34, 8); ctx.fillStyle = '#0b4a8f'; ctx.fill(); ctx.stroke(); }
+      ctx.font = '19px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#14181a';
+      ctx.fillText(m.icon, tx0, ty0 + 1);
+      if (lab) pill(lab.x, lab.y, lab.txt, '#ffffff', '#14181a', '#14181a');
+    } else {
+      // štítok na okraji: kde lúč od človeka k cieľu pretne okraj mapy (s okrajom 22 px)
+      // (dole nad tlačidlom „Väčšia“, hore pod krúžkom severu; lúč vždy začína vnútri tohto rámu, takže štítok
+      // nikdy neskončí na opačnej strane)
+      const vx = rx, vy = -ry, mg = 22, mgB = Math.max(40, H - bR[1] + 6), mgT = 56;
+      const y0 = Math.min(Math.max(uy, mgT), Math.max(mgT, H - mgB));
+      let tt = Infinity;
+      if (vx > 0) tt = Math.min(tt, (W - mg - ux) / vx); else if (vx < 0) tt = Math.min(tt, (mg - ux) / vx);
+      if (vy > 0) tt = Math.min(tt, (H - mgB - y0) / vy); else if (vy < 0) tt = Math.min(tt, (mgT - y0) / vy);
+      tt = Math.max(0, isFinite(tt) ? tt : 0);
+      const ax = Math.abs(vx) > Math.abs(vy), ar = ax ? (vx > 0 ? '▶' : '◀') : vy > 0 ? '▼' : '▲'; // šípka von z mapy, k cieľu
+      ctx.font = FONT;
+      const nm = fit(tname0, W - 8 - 16 - ctx.measureText(`${m.icon}  ${ar}`).width);
+      const ex = Math.max(mg, Math.min(W - mg, ux + vx * tt)), ey = y0 + vy * tt, txt = ax && vx < 0 ? `${ar} ${m.icon} ${nm}` : `${m.icon} ${nm} ${ar}`;
+      const w = Math.min(W - 8, ctx.measureText(txt).width + 16);
+      pill(ex - w / 2, ey - 14, txt, '#0b4a8f', '#ffffff', '#ffffff');
+    }
+    if (h == null || m.vague) { // bez smeru (alebo nepresná poloha): bodka namiesto šípky
+      ctx.beginPath(); ctx.arc(ux, uy, 11, 0, 2 * Math.PI);
+      ctx.fillStyle = m.vague ? '#ffffff' : col; ctx.fill(); ctx.lineWidth = m.vague ? 4 : 3; ctx.strokeStyle = m.vague ? col : '#ffffff'; ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.moveTo(ux, uy - 18); ctx.lineTo(ux + 13, uy + 13); ctx.lineTo(ux, uy + 6); ctx.lineTo(ux - 13, uy + 13); ctx.closePath();
+      ctx.fillStyle = col; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+    }
+    pill(ux + 18, uy - 13, cfg().formal ? 'VY' : 'TY', col, '#ffffff', null);
+    // sever: ihla v krúžku vľavo hore
+    const nr = -(h || 0) * Math.PI / 180, cx0 = 26, cy0 = 26;
+    ctx.beginPath(); ctx.arc(cx0, cy0, 18, 0, 2 * Math.PI); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#14181a'; ctx.stroke();
+    ctx.save(); ctx.translate(cx0, cy0); ctx.rotate(nr);
+    ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(4, 1); ctx.lineTo(-4, 1); ctx.closePath(); ctx.fillStyle = '#a3210f'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(4, 1); ctx.lineTo(-4, 1); ctx.closePath(); ctx.fillStyle = '#9aa59d'; ctx.fill();
+    ctx.restore();
+    ctx.font = '800 11px system-ui, sans-serif'; ctx.fillStyle = '#14181a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('S', cx0 + 12 * Math.sin(nr), cy0 - 12 * Math.cos(nr));
   }
   // Po odchode spoja sa človek vzďaľuje od zastávky, ale poloha je nepresná alebo sa hýbe po trase
   // rýchlosťou vozidla: jadro vtedy „spoj ušiel“ nevyhlási (app.js, t.smOnBus) a tu sa opýtame.
@@ -1636,6 +2032,7 @@ export function initSimple(A) {
     if (!t || !t.simple) { if (screen === 'trip') home(); return; }
     screen = 'trip';
     const v = tripView(t); // spracuje aj novú polohu (príchod, „vezie sa“)
+    v.titleFull = t.fav.full ? `${t.fav.icon} ${t.fav.full}` : ''; // celý názov pre čítačku obrazovky (nadpis je skrátený)
     askOnBus(t);
     view(v);
     applyArrows();
@@ -1693,6 +2090,9 @@ export function initSimple(A) {
   // ── tlačidlá ───────────────────────────────────────────────────────
   function act(a, v) {
     const t = A.trip(), u = t && t.simple ? uiOf(t) : null;
+    // rodičovská časť po 3 minútach bez ťuknutia: zamknúť (späť na úvod)
+    if (adultIdle()) { fe = null; home(); return; }
+    if (ADULT.has(screen)) adultAt = Date.now();
     if (gate && gate[a]) return gate[a](v);
     switch (a) {
       case 'close': closeSheet(); break;
@@ -1737,6 +2137,31 @@ export function initSimple(A) {
       case 'call': call(); break;
       case 'callyes': closeSheet(); dial(); break;
       case 'gate': openGate(); break;
+      case 'mapbig': mapBig = !mapBig; if (mapCur) mapShow(mapCur); more(); break; // ťuknutie na mapu: väčšia / menšia
+      case 'wheresay': if (whereSay) { A.unlockAudio(); voiceOut(whereSay); } break;
+      // pre rodičov
+      case 'pardone': fe = null; reorder = false; home(); break;
+      case 'setoff': offAsk(); break;
+      case 'fedit': reorder = false; fedit(Number(v)); break;
+      case 'fadd': favAdd(false); break;
+      case 'fhome': favAdd(true); break;
+      case 'freorder': reorder = !reorder; parents(); break;
+      case 'fup': favMove(Number(v), -1); break;
+      case 'fdown': favMove(Number(v), 1); break;
+      case 'fpick': { const f = feFound[Number(v)]; if (f && fe) {
+        fe.hereTok = (fe.hereTok || 0) + 1; // čakajúca poloha z „Tu, kde je telefón“ sa už nepoužije
+        fe.target = { ...f.target }; fe.full = clean(f.name); fe.kind = f.sub; fe.orig = { lat: f.target.lat, lon: f.target.lon }; fe.moved = false;
+        if (!fe.label || /^Cieľ \d+$/.test(fe.label)) fe.label = tileName(f.name, keepWhole(f));
+        fe.mode = 'pick'; fe.dirty = true; feView();
+      } break; }
+      case 'fhere': feHere(); break;
+      case 'fchange': if (fe) { fe.hereTok = (fe.hereTok || 0) + 1; fe.mode = 'search'; feView(); } break;
+      case 'fzin': pinS = Math.max(0.35, pinS / 1.5); pinDraw(); break;
+      case 'fzout': pinS = Math.min(4, pinS * 1.5); pinDraw(); break;
+      case 'funmove': if (fe && fe.orig && fe.target) { fe.target.lat = fe.orig.lat; fe.target.lon = fe.orig.lon; fe.moved = false; pinMsg(); pinDraw(); } break;
+      case 'ficon': if (fe) { fe.icon = v; fe.dirty = true; feView(); } break;
+      case 'fsave': feSave(); break;
+      case 'fdel': feDelete(); break;
       default: break;
     }
   }
@@ -1771,69 +2196,339 @@ export function initSimple(A) {
   }
   function call() {
     const c = cfg();
-    if (!c.phone) return sheet(`<h2>📞 Číslo nie je nastavené</h2><p>${tx('Telefónne číslo nastaví dospelý v Nastaveniach na úvodnej obrazovke.', 'Telefónne číslo sa nastavuje v Nastaveniach na úvodnej obrazovke.')}</p><div class="sm-stack">${btn('close', 'Dobre', 'sm-primary')}</div>`);
+    if (!c.phone) return sheet(`<h2>📞 Číslo nie je nastavené</h2><p>${tx('Telefónne číslo nastaví rodič v časti ⚙️ Pre rodičov na úvodnej obrazovke.', 'Telefónne číslo sa nastavuje v časti ⚙️ Nastavenia na úvodnej obrazovke.')}</p><div class="sm-stack">${btn('close', 'Dobre', 'sm-primary')}</div>`);
     sheet(`<h2>📞 Zavolať${c.who ? ` ${esc(c.who)}` : ''}?</h2><p class="sm-tel">${esc(c.phone)}</p>
       <div class="sm-stack">${btn('callyes', 'Áno, zavolať', 'sm-primary')}${btn('close', 'Nie')}</div>`);
   }
-  async function where() {
-    const t = A.trip(), fs = A.favs();
-    // cesta domov jedným ťuknutím (dlaždica s domčekom alebo s názvom Domov), ak tam človek práve nejde
-    let hi = -1;
-    for (let i = 0; i < A.favVisible(); i++) if (fs[i].target && (fs[i].icon === '🏠' || /^domov$/i.test(String(fs[i].label).trim()))) { hi = i; break; }
-    const running = !!(t && t.simple && t.sm && t.sm.started && t.phase !== 'done'); // rozbehnutá cesta inam
-    const homeBtn = hi >= 0 && !(t && t.simple && t.fav === fs[hi]) ? btn('gohome', '🏠 Chcem ísť domov', running ? 'sm-secondary' : 'sm-primary') : '';
-    sheet(`<h2>📍 ${tx('Tu si', 'Tu ste')}</h2><p id="smWhereTxt">${tx('Hľadám, kde si…', 'Hľadám, kde ste…')}</p><div class="sm-stack">${homeBtn}${btn('call', `📞 Zavolať${cfg().who ? ` ${esc(cfg().who)}` : ''}`)}${btn('close', 'Zavrieť', homeBtn && !running ? 'sm-secondary' : 'sm-primary')}</div><p class="sm-note">Poloha zostáva v telefóne. Nikam sa neposiela.</p>${OSM_NOTE}`);
-    const goHome = () => { closeSheet(); A.unlockAudio(); A.startTrip(hi, { simple: true }); };
-    gate = !homeBtn ? null : { gohome: () => {
-      if (!running) return goHome();
-      // rozbehnutú cestu jedno ťuknutie neukončí – najprv otázka
-      sheet(`<h2>Ísť domov?</h2><p>${tx('Prestanem ťa sprevádzať', 'Prestanem vás sprevádzať')} do cieľa <b>${esc(t.fav.label)}</b> a nájdem cestu domov.</p>
-        <div class="sm-stack">${btn('close', 'Nie, pokračovať v ceste', 'sm-primary')}${btn('gohomeyes', 'Áno, chcem ísť domov')}</div>`);
-      gate = { gohomeyes: goHome };
-    } };
-    let p = t && t.pos && Date.now() - t.pos.t < 30000 ? t.pos : null;
-    if (!p) { try { p = await A.getPositionFull(); } catch { p = null; } }
-    const el = $('smWhereTxt');
-    if (!el) return;
-    if (!p) { el.textContent = tx('Polohu sa nepodarilo zistiť. Choď von, kde je lepší signál.', 'Polohu sa nepodarilo zistiť. Choďte von, kde je lepší signál.'); return; }
-    const ns = A.nearestStop(p.la, p.lo);
-    el.innerHTML = `Najbližšia zastávka: <b>${esc(clean(ns.name))}</b> (${roundM(ns.d)} m).`;
-    const M = await A.loadMapbase().catch(() => null);
-    if (!M || !$('smWhereTxt')) return;
-    const kx = 111320 * Math.cos(p.la * Math.PI / 180), ky = 110540; let best = null;
+  // Orientačné body pre „Kde som?“: len miesta, ktoré dieťa pozná a vie ukázať (námestie, kostol, škola, obchodné
+  // centrum, park, ihrisko, stanica…), do 250 m. Bežné obchody, bary, reštaurácie, firmy a budovy nie (je ich
+  // najviac a nič nehovoria); nevhodné názvy (herne, stávkové kancelárie, erotické podniky…) nikdy. Pamätné
+  // tabule a podobné body majú nižšiu prednosť a len s krátkym názvom.
+  const LM_T1 = new Set(['námestie', 'kostol', 'synagóga', 'nemocnica', 'škola', 'vysoká škola', 'úrad', 'pošta', 'knižnica', 'divadlo', 'kino', 'múzeum', 'obchodné centrum', 'železničná stanica', 'autobusová stanica', 'park', 'kúpalisko', 'čerpacia stanica', 'polícia', 'hasiči', 'trhovisko', 'cintorín']);
+  const LM_T2 = new Set(['materská škola', 'ihrisko', 'lekáreň', 'šport', 'potraviny']);
+  const LM_T3 = new Set(['pamiatka', 'zaujímavosť']);
+  const LM_BAD = /erot|sex|porn|strip|night ?club|nocny klub|herna|kasin|casino|tipos|tipsport|fortuna|doxx|synot|\bnike\b|stavk|betting|automat|nonstop|\bbar\b|\bpub\b|krcm|pivar|pivnic|vinar|vinote|tabak|vape|smoke|shisha|hookah|cbd|konop|zalozn|zastavar|swing|privat/;
+  function landmarks(P, la, lo) {
+    const kx = 111320 * Math.cos(la * Math.PI / 180), ky = 110540, out = [];
+    for (const it of P.items) {
+      const dx = (it.lo - lo) * kx, dy = (it.la - la) * ky;
+      if (Math.abs(dx) > 250 || Math.abs(dy) > 250) continue;
+      const d = Math.hypot(dx, dy), cat = P.cats[it.c] ? P.cats[it.c][0] : '';
+      const f = LM_T1.has(cat) ? 1 : LM_T2.has(cat) ? 1.5 : LM_T3.has(cat) && it.name.length <= 30 ? 2.5 : 0;
+      if (d > 250 || !f || it.name.length > 60 || LM_BAD.test(it.norm) || LM_BAD.test(it.alt || '')) continue;
+      out.push({ name: shortName(it.name), cat, ico: P.cats[it.c][1], d, s: d * f });
+    }
+    out.sort((a, b) => a.s - b.s);
+    const pick = [];
+    for (const x of out) { if (pick.length >= 2) break; if (!pick.some((y) => y.cat === x.cat || y.name === x.name)) pick.push(x); }
+    return pick;
+  }
+  // najbližšia pomenovaná ulica (z offline mapy appky) a vzdialenosť k nej v metroch
+  function streetAt(M, la, lo) {
+    const kx = 111320 * Math.cos(la * Math.PI / 180), ky = 110540;
+    let best = null;
     for (const st of M.streets) {
       if (!st.n) continue;
       for (let k = 1; k < st.p.length; k++) {
-        const ax = (st.p[k - 1][1] - p.lo) * kx, ay = (st.p[k - 1][0] - p.la) * ky, dx = (st.p[k][1] - st.p[k - 1][1]) * kx, dy = (st.p[k][0] - st.p[k - 1][0]) * ky, L2 = dx * dx + dy * dy;
+        const ax = (st.p[k - 1][1] - lo) * kx, ay = (st.p[k - 1][0] - la) * ky, dx = (st.p[k][1] - st.p[k - 1][1]) * kx, dy = (st.p[k][0] - st.p[k - 1][0]) * ky, L2 = dx * dx + dy * dy;
         let q = L2 ? (-ax * dx - ay * dy) / L2 : 0; q = Math.max(0, Math.min(1, q));
         const dd = Math.hypot(ax + q * dx, ay + q * dy);
         if (!best || dd < best.d) best = { d: dd, n: st.n };
       }
     }
-    if (best && best.d <= 40) $('smWhereTxt').innerHTML += `<br>${tx('Si', 'Ste')} pri ulici <b>${esc(best.n)}</b>, Prešov.`;
+    return best;
+  }
+  let whereSay = '';
+  async function where() {
+    const t = A.trip(), fs = A.favs();
+    // cesta domov jedným ťuknutím (dlaždica s domčekom alebo s názvom Domov), ak tam človek práve nejde
+    let hi = -1;
+    for (let i = 0; i < tilesShown(); i++) if (fs[i].target && (fs[i].icon === '🏠' || /^domov$/i.test(String(fs[i].label).trim()))) { hi = i; break; }
+    const running = !!(t && t.simple && t.sm && t.sm.started && t.phase !== 'done'); // rozbehnutá cesta inam
+    const homeBtn = hi >= 0 && !(t && t.simple && t.fav === fs[hi]) ? btn('gohome', '🏠 Chcem ísť domov', running ? 'sm-secondary' : 'sm-primary') : '';
+    whereSay = '';
+    sheet(`<h2>📍 ${tx('Tu si', 'Tu ste')}</h2><div id="smWhereTxt"><p>${tx('Hľadám, kde si…', 'Hľadám, kde ste…')}</p></div><div class="sm-stack">${homeBtn}${btn('call', `📞 Zavolať${cfg().who ? ` ${esc(cfg().who)}` : ''}`)}${btn('close', 'Zavrieť', homeBtn && !running ? 'sm-secondary' : 'sm-primary')}</div><p class="sm-note">Poloha zostáva v telefóne. Nikam sa neposiela.</p>${OSM_NOTE}`);
+    const goHome = () => { closeSheet(); A.unlockAudio(); A.startTrip(hi, { simple: true }); };
+    gate = { wheresay: () => { if (whereSay) { A.unlockAudio(); voiceOut(whereSay); } } };
+    if (homeBtn) gate.gohome = () => {
+      if (!running) return goHome();
+      // rozbehnutú cestu jedno ťuknutie neukončí – najprv otázka
+      sheet(`<h2>Ísť domov?</h2><p>${tx('Prestanem ťa sprevádzať', 'Prestanem vás sprevádzať')} do cieľa <b>${esc(t.fav.label)}</b> a nájdem cestu domov.</p>
+        <div class="sm-stack">${btn('close', 'Nie, pokračovať v ceste', 'sm-primary')}${btn('gohomeyes', 'Áno, chcem ísť domov')}</div>`);
+      gate = { gohomeyes: goHome };
+    };
+    let p = t && t.pos && Date.now() - t.pos.t < 30000 ? t.pos : null;
+    if (!p) { try { p = await A.getPositionFull(); } catch { p = null; } }
+    if (!$('smWhereTxt')) return;
+    if (!p) { $('smWhereTxt').innerHTML = `<p>${tx('Polohu sa nepodarilo zistiť. Choď von, kde je lepší signál.', 'Polohu sa nepodarilo zistiť. Choďte von, kde je lepší signál.')}</p>`; return; }
+    const info = { stop: A.nearestStop(p.la, p.lo), street: null, lms: [] };
+    const draw = () => {
+      const el = $('smWhereTxt');
+      if (!el) return;
+      const row = (ico, lbl, val) => `<li><span class="sm-ico" aria-hidden="true">${ico}</span><span><small>${lbl}</small><b>${esc(val)}</b></span></li>`;
+      const st = clean(info.stop.name);
+      let rows = '';
+      if (info.street) rows += row('🛣️', 'Ulica', `${info.street}, Prešov`);
+      for (const l of info.lms) rows += row(l.ico, `Blízko je · ${roundM(l.d)} m`, l.name);
+      rows += row('🚏', `Najbližšia zastávka · ${roundM(info.stop.d)} m`, st);
+      // veta, ktorú dieťa povie do telefónu (mená v 1. páde – appka ich nevie skloňovať)
+      const lm = info.lms[0];
+      const say = info.street ? `Som na ulici ${info.street}. ${lm ? `Blízko je ${dot(lm.name)}` : `Najbližšia zastávka je ${dot(st)}`}`
+        : `Najbližšia zastávka je ${dot(st)}${lm ? ` Blízko je ${dot(lm.name)}` : ''}`;
+      whereSay = say;
+      el.innerHTML = `<ul class="sm-where">${rows}</ul><div class="sm-saybox"><p><b>${tx('Keď voláš, povedz:', 'Keď voláte, povedzte:')}</b> „${esc(say)}“</p>${btn('wheresay', '<span aria-hidden="true">🔊</span>Nahlas', 'sm-saybtn')}</div>`;
+    };
+    draw();
+    const [M, P] = await Promise.all([A.loadMapbase().catch(() => null), A.loadPlaces().catch(() => null)]);
+    if (!$('smWhereTxt')) return;
+    if (M) { const best = streetAt(M, p.la, p.lo); if (best && best.d <= 40) info.street = best.n; }
+    if (P) { placesObj = P; info.lms = landmarks(P, p.la, p.lo); }
+    draw();
   }
 
-  // ── chránené nastavenia ────────────────────────────────────────────
+  // ── za overením: pre rodičov ───────────────────────────────────────
+  // Príklad z násobenia (12–19 × 3–9), ktorý malé dieťa nevypočíta naspamäť. Po zlej odpovedi nový príklad,
+  // po 3 zlých za sebou pauza 30 s.
+  let gateFail = 0, gateLock = 0;
   function openGate() {
-    const a = 6 + Math.floor(Math.random() * 4), b = 6 + Math.floor(Math.random() * 4);
-    sheet(`<h2>⚙️ ${tx('Len pre dospelých', 'Nastavenia')}</h2><p>Koľko je <b>${a} × ${b}</b>?</p>
-      <label class="sm-field">Výsledok<input id="smGate" inputmode="numeric" autocomplete="off"></label>
-      <p class="sm-note" id="smGateMsg">${tx('Nastavenia sú chránené, aby ich dieťa nezmenilo omylom.', 'Nastavenia sú chránené, aby sa nezmenili omylom.')}</p>
+    if (Date.now() < gateLock) {
+      sheet(`<h2>⚙️ ${tx('Pre rodičov', 'Nastavenia')}</h2><p>Skúste to znova o ${Math.ceil((gateLock - Date.now()) / 1000)} sekúnd.</p><div class="sm-stack">${btn('close', 'Dobre', 'sm-primary')}</div>`);
+      return;
+    }
+    const a = 12 + Math.floor(Math.random() * 8), b = 3 + Math.floor(Math.random() * 7);
+    sheet(`<h2>⚙️ ${tx('Pre rodičov', 'Nastavenia')}</h2><p class="sm-gq">Koľko je <b>${a} × ${b}</b>?</p>
+      <label class="sm-field">Výsledok<input id="smGate" inputmode="numeric" autocomplete="off" enterkeyhint="go"></label>
+      <p class="sm-note" id="smGateMsg">${tx('Toto je pre rodičov. Chráni ciele a telefónne číslo pred zmenou omylom.', 'Chráni ciele a telefónne číslo pred zmenou omylom.')}</p>
       <div class="sm-stack">${btn('gateok', 'Pokračovať', 'sm-primary')}${btn('close', 'Späť')}</div>`);
-    gate = { gateok: () => { if ($('smGate').value.trim() === String(a * b)) settings(); else $('smGateMsg').textContent = 'To nie je správne. Skúste to znova.'; } };
-  }
-  function settings() {
-    const c = cfg();
-    sheet(`<h2>Nastavenia jednoduchého režimu</h2>
-      <label class="sm-field">Oslovenie<select id="smFormal"><option value="0"${c.formal ? '' : ' selected'}>Tykať (deti)</option><option value="1"${c.formal ? ' selected' : ''}>Vykať (dospelí a seniori)</option></select></label>
-      <label class="sm-field">Telefón na tlačidlo „Zavolať“<input id="smPhone" type="tel" autocomplete="off" placeholder="číslo rodiča alebo opatrovateľa" value="${esc(c.phone || '')}"></label>
-      <label class="sm-field">Komu sa volá (text na tlačidle)<input id="smWhoIn" type="text" autocomplete="off" placeholder="napr. mame, dcére, synovi" value="${esc(c.who || '')}"></label>
-      <p class="sm-note">Ciele (dlaždice) sú obľúbené ciele z bežnej appky. Upravia sa tam: vypnite jednoduchý režim a podržte tlačidlo cieľa.</p>
-      <div class="sm-stack">${btn('setsave', 'Uložiť', 'sm-primary')}${btn('setoff', 'Vypnúť jednoduchý režim')}</div>`);
-    gate = {
-      setsave: () => { c.formal = $('smFormal').value === '1'; c.phone = $('smPhone').value.trim(); c.who = $('smWhoIn').value.trim(); A.savePrefs(); closeSheet(); last = {}; if (A.trip()?.simple) render(); else home(); },
-      setoff: turnOff,
+    const ok = () => {
+      if ($('smGate').value.trim() === String(a * b)) { gateFail = 0; closeSheet(); parents(); return; }
+      gateFail += 1;
+      if (gateFail >= 3) { gateFail = 0; gateLock = Date.now() + 30000; openGate(); return; }
+      openGate();
+      $('smGateMsg').innerHTML = '<span class="sm-errline">To nie je správne. Tu je iný príklad.</span>';
     };
+    gate = { gateok: ok };
+    $('smGate').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); ok(); } });
+  }
+  // Rodičovská časť je celá obrazovka bez lišty Kde som? / Zavolať. Ukladá sa hneď; zamkne ju Hotovo, Späť,
+  // odchod appky do pozadia alebo 3 minúty bez ťuknutia. Ciele sú tie isté ako v bežnej appke (spoločné úložisko).
+  let reorder = false, adultAt = 0;
+  const adultIdle = () => ADULT.has(screen) && !sheetOpen() && Date.now() - adultAt > 180000;
+  const isHome = (f) => !!f.target && (f.icon === '🏠' || /^domov$/i.test(String(f.label).trim()));
+  function parents(msg) {
+    screen = 'parents'; adultAt = Date.now();
+    const c = cfg(), fs = A.favs(), cap = tileCap(), plus = A.isPlus();
+    let rows = '';
+    fs.forEach((f, i) => {
+      const sub = f.target ? clean(A.targetLabel(f.target)) : 'Nenastavené – ťuknite a vyberte miesto';
+      const sq = `<span class="sm-fsq sm-c${i % 6}" aria-hidden="true">${esc(f.icon)}</span>`;
+      const txt = `<span class="sm-ftxt"><span class="sm-fname">${esc(f.label)}</span><small class="${f.target ? '' : 'sm-unset'}">${i >= cap ? '🔒 Bez Plus sa na úvode neukáže · ' : f.target ? '' : '⚠️ '}${esc(sub)}</small>${isHome(f) ? '<em class="sm-ftag">aj pre „Chcem ísť domov“</em>' : ''}</span>`;
+      rows += reorder
+        ? `<div class="sm-frow">${sq}${txt}<span class="sm-fud">${i > 0 ? `<button type="button" class="sm-ud" data-a="fup" data-v="${i}" aria-label="${esc(f.label)} vyššie">▲</button>` : '<span></span>'}${i < fs.length - 1 ? `<button type="button" class="sm-ud" data-a="fdown" data-v="${i}" aria-label="${esc(f.label)} nižšie">▼</button>` : '<span></span>'}</span></div>`
+        : `<button type="button" class="sm-frow" data-a="fedit" data-v="${i}">${sq}${txt}<span class="sm-fgo">Upraviť ›</span></button>`;
+    });
+    const noHome = !fs.some(isHome);
+    const shown = fs.slice(0, cap).filter((f) => f.target).length;
+    view({ title: tx('⚙️ Pre rodičov', '⚙️ Nastavenia'), back: true, adult: true, vkey: `par${reorder ? 'r' : ''}`,
+      body: `<div class="sm-sec"><h2>${reorder ? 'Poradie: ťukajte na šípky' : 'Ciele na úvode'}</h2><span>${shown} z ${cap}</span></div>
+        ${plus ? '' : '<p class="sm-note">Bez Odkiaľ Kam Plus sú v jednoduchom režime na úvode prvé 4 ciele (s Plus až 6).</p>'}
+        ${noHome && !reorder ? btn('fhome', '🏠 Adresa domov nie je nastavená · <u>Nastaviť</u>', 'sm-row sm-row-warn') : ''}
+        <div class="sm-flist">${rows}</div>
+        <div class="sm-pair">${reorder ? '' : btn('fadd', '+ Pridať cieľ', 'sm-secondary sm-dashed')}${btn('freorder', reorder ? '✓ Poradie hotové' : '↕ Zmeniť poradie')}</div>
+        <h2 class="sm-h">Tlačidlo Zavolať</h2>
+        <label class="sm-field">Telefónne číslo<input id="smPhone" type="tel" autocomplete="off" placeholder="číslo rodiča alebo opatrovateľa" value="${esc(c.phone || '')}"></label>
+        <label class="sm-field">Komu sa volá (text na tlačidle)<input id="smWhoIn" type="text" autocomplete="off" maxlength="14" placeholder="napr. Mame, dcére, synovi" value="${esc(c.who || '')}"></label>
+        <h2 class="sm-h">Oslovenie</h2>
+        <label class="sm-field">Ako appka hovorí<select id="smFormal"><option value="0"${c.formal ? '' : ' selected'}>Tykať – pre deti</option><option value="1"${c.formal ? ' selected' : ''}>Vykať – pre dospelých a seniorov</option></select></label>
+        <h2 class="sm-h">Pri chôdzi</h2>
+        <label class="sm-check"><input type="checkbox" id="smMapChk"${c.map !== false ? ' checked' : ''}><span>Ukazovať mapu pod šípkou</span></label>
+        <p class="sm-note">Mapa ukazuje ulice, zastávku a kde je dieťa. Otáča sa podľa smeru, šípka je na nej vždy hore.</p>
+        <div class="sm-stack">${btn('setoff', 'Vypnúť jednoduchý režim', 'sm-secondary sm-danger')}</div>
+        ${OSM_NOTE}`,
+      act: `<p class="sm-saved" id="smSaved" aria-live="polite">${msg ? esc(msg) : ''}</p>${btn('pardone', '✓ Hotovo', 'sm-primary')}` });
+    // polia sa ukladajú hneď pri zmene (onchange: pri prekreslení sa poslucháči nezdvojia)
+    const keep = (fn) => () => { if (adultIdle()) { home(); return; } fn(); A.savePrefs(); adultAt = Date.now(); last.who = null; const el = $('smSaved'); if (el) el.textContent = 'Uložené ✓'; };
+    const bump = () => { if (adultIdle()) home(); else adultAt = Date.now(); };
+    $('smPhone').onchange = keep(() => { c.phone = $('smPhone').value.trim(); });
+    $('smWhoIn').onchange = keep(() => { c.who = $('smWhoIn').value.trim(); });
+    $('smFormal').onchange = keep(() => { c.formal = $('smFormal').value === '1'; parents('Uložené ✓'); });
+    $('smMapChk').onchange = keep(() => { c.map = $('smMapChk').checked; });
+    $('smPhone').oninput = bump; $('smWhoIn').oninput = bump;
+  }
+  function favMove(i, d) {
+    const fs = A.favs(), j = i + d;
+    if (j < 0 || j >= fs.length) return;
+    [fs[i], fs[j]] = [fs[j], fs[i]];
+    A.favMoved(i, j); // widget ostane na tom istom cieli
+    A.saveFavs(); parents('Uložené ✓');
+  }
+  function favAdd(home) {
+    const fs = A.favs();
+    if (home) { const e = fs.findIndex((f) => !f.target); if (e >= 0) return fedit(e, { icon: '🏠', label: 'Domov' }); }
+    if (fs.length < tileCap()) return fedit(-1, home ? { icon: '🏠', label: 'Domov' } : null);
+    if (!A.isPlus() && fs.length < A.FAV_MAX) return sheet(`<h2>Viac cieľov</h2><p>Viac cieľov (až 6) odomkne <b>Odkiaľ Kam Plus</b> v bežnej appke.</p><div class="sm-stack">${btn('close', 'Dobre', 'sm-primary')}</div>`);
+    sheet(`<h2>Viac cieľov sa nedá</h2><p>Na úvode môže byť najviac ${A.FAV_MAX} cieľov. Niektorý upravte alebo vymažte.</p><div class="sm-stack">${btn('close', 'Dobre', 'sm-primary')}</div>`);
+  }
+
+  // úprava cieľa: kam vedie (hľadanie bez internetu alebo poloha telefónu), kontrola bodu na mape, názov, obrázok
+  let fe = null, feFound = [], pinB = null, pinS = 1.2;
+  function fedit(i, preset) {
+    const fs = A.favs(), f = i >= 0 ? fs[i] : null;
+    fe = { i, icon: (preset && preset.icon) || (f ? f.icon : A.FAV_ICONS[fs.length % A.FAV_ICONS.length]), label: (preset && preset.label) || (f ? f.label : ''),
+      target: f && f.target ? { ...f.target } : null, had: !!(f && f.target), q: '', dirty: !!preset, mode: f && f.target ? 'pick' : 'search' };
+    fe.orig = fe.target ? { lat: fe.target.lat, lon: fe.target.lon } : null;
+    pinS = 1.2; pinB = null;
+    feView();
+  }
+  function feView() {
+    screen = 'fedit'; adultAt = Date.now();
+    if (fe.mode === 'search') {
+      view({ title: 'Kam cieľ vedie?', back: true, adult: true, vkey: 'fes',
+        body: `<label class="sm-field">Adresa, miesto alebo zastávka<input id="smFq" type="text" autocomplete="off" enterkeyhint="search" value="${esc(fe.q)}"></label>
+          ${btn('fhere', '📍 Tu, kde je telefón teraz', 'sm-secondary sm-bluebtn')}
+          <p class="sm-note" id="smFmsg"></p>
+          <div class="sm-stack" id="smFres"></div>`,
+        act: '' });
+      const q = $('smFq');
+      const run = () => {
+        if (adultIdle()) { fe = null; home(); return; }
+        fe.q = q.value; adultAt = Date.now();
+        feFound = findPlaces(q.value);
+        $('smFres').innerHTML = (feFound.map((f, i) => placeRow(f, i, 'fpick')).join('') + (feFound.some((f) => f.target.kind === 'point') ? OSM_NOTE : ''))
+          || (A.norm(q.value.trim()).length >= 2 ? '<p class="sm-note">Nič sa nenašlo. Skúste napísať len ulicu a číslo, alebo použite „Tu, kde je telefón teraz“.</p>' : '');
+      };
+      q.oninput = run;
+      A.loadPlaces().then((P) => { placesObj = P; if (screen === 'fedit' && fe && fe.mode === 'search') run(); }).catch(() => {});
+      run();
+      setTimeout(() => { if ($('smFq') === q) q.focus(); }, 60);
+      return;
+    }
+    const tg = fe.target, grp = tg.kind === 'group', full = fe.full || (grp ? tg.name : clean(tg.label || 'uložené miesto'));
+    const ns = A.nearestStop(tg.lat, tg.lon), kind = grp ? 'zastávka' : (fe.kind || 'miesto');
+    const words = String(fe.label).split(/\s+/), longW = words.find((w) => w.length > 11);
+    view({ title: fe.i >= 0 ? 'Upraviť cieľ' : 'Nový cieľ', back: true, adult: true, vkey: 'fep',
+      body: `<h2 class="sm-h sm-h0">Kam vedie</h2>
+        <div class="sm-fpick"><div><b>✓ ${esc(full)}</b><small>${esc(grp ? kind : `${kind} · ${roundM(ns.d)} m od zastávky ${clean(ns.name)}`)}</small></div>${btn('fchange', 'Zmeniť', 'sm-secondary sm-small')}</div>
+        <h2 class="sm-h">Je bod na správnom mieste?</h2>
+        <div class="sm-pinmap"><canvas id="smPinC" data-a="fpin" aria-label="Mapa s bodom cieľa"></canvas>
+          <div class="sm-pinz">${btn('fzin', '+', 'sm-zbtn')}${btn('fzout', '−', 'sm-zbtn')}</div><span class="sm-mapattr">© OpenStreetMap</span></div>
+        <p class="sm-note" id="smPinMsg"></p>
+        <label class="sm-field"><span class="sm-flab">Názov na dlaždici <em id="smFcnt">${fe.label.length} / 18</em></span><input id="smFname" type="text" maxlength="18" autocomplete="off" value="${esc(fe.label)}"></label>
+        <p class="sm-note sm-errline" id="smFlong">${longW ? `Slovo „${esc(longW)}“ je na dlaždicu dlhé – skráťte ho.` : ''}</p>
+        <h2 class="sm-h">Obrázok</h2>
+        <div class="sm-icons">${A.FAV_ICONS.map((ic) => `<button type="button" data-a="ficon" data-v="${esc(ic)}" aria-pressed="${ic === fe.icon}" class="${ic === fe.icon ? 'on' : ''}">${esc(ic)}</button>`).join('')}</div>
+        <p class="sm-lbl2">Takto ho uvidí na úvode:</p>
+        <div class="sm-tiles sm-prev" id="smFprev" aria-hidden="true"></div>
+        ${fe.i >= 0 && fe.had ? `<div class="sm-stack">${btn('fdel', '🗑 Vymazať cieľ', 'sm-secondary sm-danger')}</div>` : ''}`,
+      act: btn('fsave', 'Uložiť cieľ', 'sm-primary') });
+    const prev = () => { $('smFprev').innerHTML = tileHtml({ icon: fe.icon, label: fe.label || 'Cieľ', target: fe.target }, Math.max(0, fe.i < 0 ? A.favs().length : fe.i), 'tabindex="-1" disabled'); };
+    prev(); pinMsg();
+    $('smFname').oninput = () => {
+      if (adultIdle()) { fe = null; home(); return; }
+      fe.label = $('smFname').value; fe.dirty = true; adultAt = Date.now();
+      $('smFcnt').textContent = `${fe.label.length} / 18`;
+      const w = fe.label.split(/\s+/).find((x) => x.length > 11);
+      $('smFlong').textContent = w ? `Slovo „${w}“ je na dlaždicu dlhé – skráťte ho.` : '';
+      prev();
+    };
+    pinDraw();
+  }
+  function pinMsg() {
+    const el = $('smPinMsg');
+    if (!el || !fe || !fe.target) return;
+    if (fe.target.kind === 'group') el.textContent = `Zastávka ${clean(fe.target.name)} – správnu stranu cesty vyberie appka sama.`;
+    else if (fe.moved) el.innerHTML = `Bod je posunutý. ${btn('funmove', 'Vrátiť', 'sm-secondary sm-small')}`;
+    else el.textContent = 'Ak nie, ťuknite na mape tam, kde je vchod.';
+  }
+  // mapa na kontrolu bodu: sever hore, ťuknutím sa bod posunie (pri zastávke nie)
+  function pinDraw() {
+    const cv = $('smPinC');
+    if (!cv || !fe || !fe.target) return;
+    const tg = fe.target;
+    if (!pinB || haversine(pinB.la0, pinB.lo0, tg.lat, tg.lon) > 500) {
+      A.loadMapbase().then((M) => { if (M && fe && fe.target) { pinB = mapPrep(M, fe.target.lat, fe.target.lon, 1200); pinDraw(); } }).catch(() => {});
+      if (!pinB) return;
+    }
+    const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(window.devicePixelRatio || 1, 3);
+    if (!W || !H) return;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    const ctx = cv.getContext('2d'), B = pinB;
+    const ue = (tg.lon - B.lo0) * B.kx, un = (tg.lat - B.la0) * B.ky;
+    drawBase(ctx, B, W, H, dpr, pinS, 0, ue, un, W / 2, H / 2, []);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const x = W / 2, y = H / 2;
+    if (tg.kind === 'group') {
+      // nástupištia zastávky ako malé modré štvorce
+      const g = A.groups().find((q) => q.name === tg.name), D = A.D();
+      for (const si of (g ? g.stops : [])) {
+        const s = D.stops[si], sx = x + ((s.lo - tg.lon) * B.kx) / pinS, sy = y - ((s.la - tg.lat) * B.ky) / pinS;
+        rrect(ctx, sx - 8, sy - 8, 16, 16, 4); ctx.fillStyle = '#0b4a8f'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+      }
+    } else {
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.bezierCurveTo(x - 7, y - 12, x - 15, y - 19, x - 15, y - 29); ctx.arc(x, y - 29, 15, Math.PI, 0); ctx.bezierCurveTo(x + 15, y - 19, x + 7, y - 12, x, y); ctx.closePath();
+      ctx.fillStyle = '#a3210f'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, y - 29, 5.5, 0, 2 * Math.PI); ctx.fillStyle = '#ffffff'; ctx.fill();
+    }
+  }
+  function pinTap(e) {
+    const cv = $('smPinC');
+    if (!cv || !fe || !fe.target || fe.target.kind === 'group' || !pinB) return;
+    if (adultIdle()) { fe = null; home(); return; }
+    const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    if (!(x >= 0 && y >= 0 && x <= r.width && y <= r.height)) return;
+    const tg = fe.target;
+    tg.lon += ((x - r.width / 2) * pinS) / pinB.kx;
+    tg.lat -= ((y - r.height / 2) * pinS) / pinB.ky;
+    fe.moved = true; fe.dirty = true; adultAt = Date.now();
+    pinMsg(); pinDraw();
+  }
+  async function feHere() {
+    // poloha môže prísť až o 15 s: použije sa, len keď je to stále tá istá úprava a medzitým sa nič nevybralo
+    const my = fe; if (!my) return;
+    const tok = my.hereTok = (my.hereTok || 0) + 1, stale = () => fe !== my || screen !== 'fedit' || my.mode !== 'search' || my.hereTok !== tok;
+    const el = $('smFmsg');
+    if (el) el.textContent = 'Zisťujem polohu…';
+    let p = null;
+    try { p = await A.getPositionFull(); } catch { p = null; }
+    if (stale()) return;
+    if (!p) { if ($('smFmsg')) $('smFmsg').textContent = 'Polohu sa nepodarilo zistiť. Skúste vonku alebo napíšte adresu.'; return; }
+    const M = await A.loadMapbase().catch(() => null), st = M ? streetAt(M, p.la, p.lo) : null;
+    if (stale()) return;
+    fe.moved = false;
+    const label = st && st.d <= 40 ? `pri ulici ${st.n}` : 'uložená poloha';
+    fe.target = { kind: 'point', lat: p.la, lon: p.lo, label }; fe.full = label; fe.kind = 'poloha telefónu'; fe.orig = { lat: p.la, lon: p.lo };
+    if (!fe.label || /^Cieľ \d+$/.test(fe.label)) fe.label = fe.i >= 0 ? A.favs()[fe.i].label : 'Cieľ';
+    fe.mode = 'pick'; fe.dirty = true; feView();
+  }
+  function feSave() {
+    if (!fe || !fe.target) return;
+    const fs = A.favs(), label = (fe.label || '').trim().slice(0, 18) || (fe.i >= 0 ? fs[fe.i].label : `Cieľ ${fs.length + 1}`);
+    const tg = fe.target.kind === 'group' ? { kind: 'group', name: fe.target.name, lat: fe.target.lat, lon: fe.target.lon } : { kind: 'point', lat: fe.target.lat, lon: fe.target.lon, label: fe.target.label || 'uložené miesto' };
+    const entry = { icon: fe.icon, label, target: tg };
+    if (fe.i >= 0) fs[fe.i] = entry; else fs.push(entry);
+    fe = null; A.saveFavs(); parents('Uložené ✓');
+  }
+  function feBack() {
+    if (!fe) return parents();
+    if (fe.mode === 'search' && fe.target) { fe.mode = 'pick'; return feView(); } // „Zmeniť“ a späť: cieľ ostáva
+    if (!fe.dirty) { fe = null; return parents(); }
+    sheet(`<h2>Zahodiť zmeny?</h2><p>Cieľ sa neuloží.</p><div class="sm-stack">${btn('close', 'Nie, pokračovať v úprave', 'sm-primary')}${btn('fdrop', 'Áno, zahodiť')}</div>`);
+    gate = { fdrop: () => { closeSheet(); fe = null; parents(); } };
+  }
+  function feDelete() {
+    if (!fe || fe.i < 0) return;
+    const fs = A.favs(), f = fs[fe.i];
+    sheet(`<h2>Vymazať cieľ ${esc(f.label)}?</h2><p>Zmizne z úvodu aj z bežnej appky.</p><div class="sm-stack">${btn('close', 'Nie, nechať', 'sm-primary')}${btn('fdelyes', 'Áno, vymazať', 'sm-secondary sm-danger')}</div>`);
+    gate = { fdelyes: () => {
+      closeSheet();
+      if (fe.i < A.FAV_FREE) fs[fe.i] = { ...fs[fe.i], target: null }; // prvé dva ostávajú (prázdne), ďalšie zmiznú celé
+      else { A.favRemoved(fe.i); fs.splice(fe.i, 1); }
+      fe = null; A.saveFavs(); parents('Vymazané');
+    } };
+  }
+  function offAsk() {
+    sheet(`<h2>Vypnúť jednoduchý režim?</h2><p>Appka sa vráti do bežného zobrazenia.</p><div class="sm-stack">${btn('close', 'Nie, nechať zapnutý', 'sm-primary')}${btn('setoffyes', 'Áno, vypnúť')}</div>`);
+    gate = { setoffyes: turnOff };
   }
 
   // ── háčiky pre app.js ──────────────────────────────────────────────
@@ -1842,6 +2537,8 @@ export function initSimple(A) {
   function back(popped) {
     if (!cfg().on || !root) return false;
     if (sheetOpen()) { closeSheet(); return true; }
+    if (screen === 'fedit') { feBack(); return true; } // úprava cieľa → zoznam cieľov
+    if (screen === 'parents') { if (reorder) { reorder = false; parents(); } else home(); return true; }
     const t = A.trip();
     if (!t || !t.simple) return false;
     if (!t.sm || !t.sm.started || t.phase === 'done') A.endTrip(!!popped);
@@ -1878,6 +2575,6 @@ export function initSimple(A) {
     // pohyb rýchlosťou vozidla podľa rýchlosti z GPS (Doppler) alebo presunu za 8–15 s – nie zo šumu polohy
     moving: (t) => { const u = t && t.sm; if (!u || u.spd == null) return t.speedAvg > 2.5; return (u.dopOk && u.dopAvg > 2.5) || u.spd > 3; },
     tripOpened() { mount(); spoken = ''; lastVoice = ''; last = {}; screen = 'trip'; closeSheet(); },
-    tripEnded() { spoken = ''; if (cfg().on) { last = {}; home(); } },
+    tripEnded() { spoken = ''; mapBig = false; if (cfg().on) { last = {}; home(); } },
   };
 }

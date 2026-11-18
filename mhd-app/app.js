@@ -1459,6 +1459,9 @@ async function quietPosition() {
   } catch { return null; }
 }
 function saveWidgetCfg() { try { localStorage.setItem(WIDGET_KEY, JSON.stringify(widgetCfg)); } catch {} }
+// ciele sa vymenili / jeden zmizol: widget ostane na tom istom cieli (pamätá si ho poradím); volať pred saveFavs()
+function favMoved(i, j) { if (widgetCfg.fav === i) widgetCfg.fav = j; else if (widgetCfg.fav === j) widgetCfg.fav = i; else return; saveWidgetCfg(); }
+function favRemoved(i) { if (widgetCfg.fav > i) widgetCfg.fav -= 1; else if (widgetCfg.fav === i) widgetCfg.fav = 0; else return; saveWidgetCfg(); }
 
 // epoch (ms) pre čas cestovného poriadku: dátum prevádzkového dňa + sekundy od polnoci v SR
 function skOffsetMin(utcMs) {
@@ -3012,6 +3015,8 @@ async function main() {
     D: () => D, raptor: () => raptor, favs: () => favs, prefs: () => prefs, trip: () => trip, groups: () => groups,
     compassHeading: () => compassHeading,
     favVisible, resolveTarget, targetLabel, savePrefs,
+    // ciele z obrazovky „Pre rodičov“: uložiť (aj bežné tlačidlá a widget) a koľko ich smie byť
+    saveFavs: () => { saveFavs(); renderFavs(); }, isPlus: () => plus, FAV_ICONS, FAV_FREE, FAV_MAX, favMoved, favRemoved,
     startTrip, endTrip, useJourney, boardRide, alight, arrived, beginTrip, renderTrip,
     replan: replanTrip, cancelTripNotifs,
     stopSetFor, destStopsFor, planWithPrefs, planReserve, walkStraight, destDistance, destPoint, tripNowSecs, goodFix,
@@ -3034,7 +3039,7 @@ async function main() {
   $('favCancel').addEventListener('click', () => closeFavDlg());
   $('favDel').addEventListener('click', () => {
     if (!favEdit) return;
-    if (favEdit.i >= FAV_FREE) favs.splice(favEdit.i, 1); // ďalšie tlačidlá (Plus) sa odstránia celé
+    if (favEdit.i >= FAV_FREE) { favRemoved(favEdit.i); favs.splice(favEdit.i, 1); } // ďalšie tlačidlá (Plus) sa odstránia celé
     else favs[favEdit.i] = { ...favs[favEdit.i], target: null };
     saveFavs(); renderFavs(); closeFavDlg();
   });
