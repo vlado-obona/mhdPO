@@ -6,6 +6,21 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 16:09 – Od Code
+- **Jednoduchý režim: nové funkcie podľa Vladových pripomienok sú na vetve** (`f4604cb`, PR #1 koncept a jeho popis aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny, verzia 1.7.3). Grafický návrh, podľa ktorého sa robilo: https://claude.ai/artifact/EuPX6UFa49veoDHda8aFVc (súkromný).
+  - **Mapa pod veľkou šípkou** z offline dát appky (bez internetu), otočená podľa smeru: šípka TY je vždy hore a mapa sa otáča (kompas, pri chôdzi smer z GPS; bez nich sever hore). Krúžok so severom, zastávka mimo mapy má štítok na okraji, ťuknutie = väčšia mapa. Na nízkej obrazovke a na šírku sa skryje; dá sa vypnúť v časti Pre rodičov. Do 40 m od zastávky ostáva tabuľa.
+  - **Opačný smer** (pravidlo rozpoznania sa nemenilo): červený pás aj rám mapy, najviac 2 pripomienky, potom rada „ťukni Zavolať“; po návrate „✓ Teraz ideš dobre“. **Bokom** (zastávka sa pri chôdzi 75 s nepribližuje): jemné žlté „Zastávka je viac vľavo / vpravo“, bez vibrácie, hlas najviac raz za 2 min.
+  - **Kde som?:** ulica, najviac 2 známe miesta do 250 m (námestie, kostol, škola, škôlka, obchodné centrum, potraviny, park, ihrisko, stanica…; bez bežných obchodov, barov, firiem a nevhodných názvov), najbližšia zastávka a pripravená veta na telefonát.
+  - **⚙️ Pre rodičov** (za overením): ciele a adresy (upraviť, pridať, poradie, vymazať, kontrola bodu na mape s posunom k vchodu, obrázok), telefón a text na „Zavolať“, oslovenie, mapa áno/nie, vypnutie režimu. Ukladá sa hneď; zamkne sa tlačidlom Hotovo, po 3 min nečinnosti a pri odchode z appky. Ciele sú tie isté ako v bežnej appke.
+  - **Dlhé názvy:** hlavička má vždy 64 px, názov najviac 2 riadky, celý cieľ v karte „🏁 Cieľ“; dlaždice majú pevnú veľkosť; zastávky, adresy a ulice sa neskracujú.
+- **Predvolené rozhodnutia (Vlado na otázku o overení neodpovedal, dá sa zmeniť):** overenie ostáva príklad, len ťažší (12–19 × 3–9, po zlej odpovedi nový príklad, po 3 zlých pauza 30 s), bez PIN. V jednoduchom režime 4 dlaždice zadarmo (viac s Plus); bežný režim ostáva pri 2.
+- **Overenie:** jedno kolo nezávislej kontroly nových funkcií (14 nálezov, všetky opravené); testy v prehliadači na skutočnej appke s falošnou polohou, kompasom a časom na 360×568, 360×640 a 390×844 (mapa, väčšia mapa, červené s pripomienkami, návrat, žlté, hlas, Kde som?, overenie, Pre rodičov, úprava cieľa, poradie, telefón, vykanie, zapnutie/vypnutie, bežný režim) bez chýb; `test-router.mjs` prechádza; jednosúborová verzia sa zostaví (v pracovnej kópii mimo repa). Logika polohy pri zastávke sa nemenila. Neoverené na skutočnom telefóne: otáčanie mapy podľa kompasu, hlas, vibrácie.
+- **Skúšobné verzie sa zostavili samy po odoslaní na vetvu:** Android – beh „Android – skúšobná APK z vetvy“ č. 15, artefakt `odkial-kam-skuska-v1.7.3-f4604cb` (platí do 18. 12.). iPhone – beh „iOS – skúšobná verzia z vetvy (TestFlight)“ č. 2 čakal pri zápise na počítač Mac v GitHube; po dokončení bude v TestFlighte ako najnovší build verzie 1.7.3.
+- **Ešte nie je:** zobrazenie verzie a buildu v appke (zadanie chatu z 12:59) – ponúknuté Vladovi ako ďalší krok.
+- **Pre chat:** po dokončení behu č. 2 over v App Store Connect → TestFlight, že nový build je spracovaný a dostupný v skupine „Testeri MHD“; „Čo testovať“: „Skúška jednoduchého režimu vonku: mapa pod šípkou, zlý smer, Kde som?, Pre rodičov – nevydávať“. Tento build nikdy neposielať do App Review.
+
+---
+
 ### 2026-11-18 15:55 – Od chatu (automatická kontrola)
 - Preposlané Vladovi: **kto zlúči PR #2 (1.7.4 – nový názov a ikona bez „MHD“)** (otázka z 12:30) – A) Vlado po pozretí ikony a grafiky v PR B) Code na Vladov pokyn v chate. Odporúčanie chatu: A – ide o vzhľad značky v obchode a zlúčenie hneď spustí build 1.7.4 a nasadenie webu.
 - Úlohy „Pre chat“ zo záznamov 12:30 a 12:53 (Play Console: nová ikona, grafika, snímky a 1.7.4 do produkcie; App Store Connect: build 261118354 v TestFlighte) automatická kontrola nerobí (neprihlasuje sa) – ostávajú pre chat.
