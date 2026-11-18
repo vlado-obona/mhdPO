@@ -2867,19 +2867,21 @@ async function copyAppBuild() {
 }
 
 // Natívna appka: odregistrovať service worker z predošlých verzií a zmazať jeho cache. Keď touto
-// stránkou ešte riadil (prišla zo starej cache), raz ju znova načítať – už priamo z balíka appky.
+// stránkou ešte riadil (prišla zo starej cache), raz ju znova načítať – už priamo z balíka appky
+// (vráti true: main() potom nič nespúšťa, inak by sa napr. odkaz z widgetu spracoval dvakrát).
 async function dropNativeSw() {
   const sw = navigator.serviceWorker;
-  if (!sw?.getRegistrations) return;
+  if (!sw?.getRegistrations) return false;
   const controlled = !!sw.controller;
   try {
     await Promise.all((await sw.getRegistrations()).map((r) => r.unregister()));
     const ks = (await window.caches?.keys?.()) || [];
     await Promise.all(ks.filter((k) => /^mhd-(shell|data)-/.test(k)).map((k) => window.caches.delete(k)));
-  } catch { return; }
+  } catch { return false; }
   let again = false;
   try { again = controlled && !sessionStorage.getItem('mhd-nosw'); if (again) sessionStorage.setItem('mhd-nosw', '1'); } catch {}
   if (again) location.reload();
+  return again;
 }
 
 // prázdny dátum/čas (tlačidlo „VYMAZAŤ“ v systémovom výbere) → aktuálny dátum/čas
@@ -2891,6 +2893,8 @@ function fillEmptyWhen() {
 
 // ── inicializácia ────────────────────────────────────────────────────
 async function main() {
+  // stránka zo starej cache service workera v natívnej appke: najprv ho odstrániť a načítať nanovo
+  if (window.Capacitor?.isNativePlatform?.() && navigator.serviceWorker?.controller && await dropNativeSw()) return;
   $('appVer').textContent = `v${APP_VERSION}`;
   document.title = `Odkiaľ Kam v${APP_VERSION} — spoje v Prešove`;
   const now = nowInSk();
