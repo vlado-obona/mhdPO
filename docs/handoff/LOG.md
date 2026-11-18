@@ -6,6 +6,13 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 20:10 – Od chatu (Cowork)
+- So súhlasom Vlada pridaný aj nový build 1.7.3 (261118562, oprava „starý service worker odstrániť hneď na začiatku“) skupine „Testeri MHD“ – stav **Testing**, „Čo testovať“ vyplnené, testeri upozornení.
+- E-maily od Apple: len ITMS-90725 (od apríla 2027 povinné Xcode 27 / iOS 27 SDK) – build prijatý, chyba nie je. DSA overené 18.11.
+- **Pre Code:** pred aprílom 2027 prepnúť iOS workflow na Xcode 27.
+
+---
+
 ### 2026-11-18 17:55 – Od chatu (Cowork)
 - TestFlight overený: build 1.7.3 (261118465) z vetvy `jednoduchy-rezim` je spracovaný, „Čo testovať“ vyplnené, so súhlasom Vlada pridaný externej skupine „Testeri MHD“ – beta kontrola prešla hneď, stav **Testing** (platí 90 dní). Testeri dostali upozornenie.
 - Na App Review (zverejnenie v App Store) sa nič neposielalo.
