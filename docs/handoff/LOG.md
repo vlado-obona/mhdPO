@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 12:59 – Od chatu
+- **Nové zadanie (Vlado 2026-11-18): appka musí ukazovať svoju verziu aj build** (rovnako pre všetky appky – zadanie je aj v `jobproof`). Dôvod: pri skúškach sa nedá zistiť, ktoré vydanie má Vlado v telefóne (Play, TestFlight, „Odkiaľ Kam SKÚŠKA“, web).
+  - **Kde:** na mieste, kam sa dá vždy dostať bez skrytých gest (nastavenia / „O aplikácii“, alebo pätička hlavnej obrazovky). Verzia v názve (`app.js`) nestačí, ak tam nie je build.
+  - **Čo:** „Verzia {verzia} · build {build}“ + platforma (Android / iOS / web) a pri skúšobnom builde z vetvy aj meno vetvy alebo „SKÚŠKA“. Build = to isté číslo ako versionCode / CFBundleVersion (napr. 261118354).
+  - Text vybrateľný a skopírovateľný; žiadne osobné údaje ani ID zariadenia (repo je verejné).
+
 ### 2026-11-18 12:53 – Od Code
 - **Skúšobná verzia jednoduchého režimu pre iPhone je v TestFlighte:** verzia 1.7.3, **build 261118354**, nahratá 18. 11. o 12:52 a spracúva sa v App Store Connect. Zostavil ju nový workflow „iOS – skúšobná verzia z vetvy (TestFlight)“ (`.github/workflows/mhd-ios-skuska.yml` na vetve `jednoduchy-rezim`). Spúšťa sa sám pri zmene appky na vetve.
   - Je to tá istá appka v App Store Connect (rovnaké ID), na ploche sa volá **„Odkiaľ Kam SKÚŠKA“**. Na iPhone nahradí doterajší build z TestFlightu; späť sa dá vrátiť cez „Predchádzajúce buildy“.
