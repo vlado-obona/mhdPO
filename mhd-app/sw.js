@@ -5,7 +5,7 @@ const DATA = 'mhd-data-v1';
 const SHELL_FILES = [
   './', 'index.html', 'app.css', 'app.js', 'raptor.js', 'simple.css', 'simple.js',
   'vendor/leaflet.js', 'vendor/leaflet.css', 'manifest.webmanifest',
-  'icons/icon-192.png', 'icons/icon-512.png',
+  'icons/icon-192.png', 'icons/icon-512.png', 'build-info.js',
 ];
 
 self.addEventListener('install', (e) => {

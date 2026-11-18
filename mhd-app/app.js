@@ -2933,6 +2933,58 @@ async function exitApp() {
   CapApp.exitApp().catch(() => {});
 }
 
+// ── verzia a build (pätička) ─────────────────────────────────────────
+// Pri skúškach musí byť vidno, ktoré vydanie je v telefóne (Google Play, TestFlight,
+// „Odkiaľ Kam SKÚŠKA“, web). Build = versionCode (Android) / CFBundleVersion (iOS)
+// z nainštalovanej appky (@capacitor/app getInfo). Web a skúšobné buildy dostanú
+// build, vetvu a commit z build-info.js, ktorý prepíše workflow (v repe je prázdny).
+let appBuildLine = '';
+function appBuildText(info) {
+  const B = window.__BUILD__ || {};
+  const C = window.Capacitor;
+  const plat = C?.isNativePlatform?.() ? C.getPlatform?.() : 'web';
+  const nv = /^\d+\.\d+\.\d+/.exec(info?.version || '');
+  const parts = [`Verzia ${nv ? nv[0] : APP_VERSION}`];
+  const build = String(info?.build || B.build || '');
+  if (build) parts.push(`build ${build}`);
+  parts.push(plat === 'android' ? 'Android' : plat === 'ios' ? 'iOS' : location.protocol === 'file:' ? 'web (súbor)' : 'web');
+  // skúšobný build: podľa build-info.js, inak podľa ID (Android .skuska) alebo názvu appky
+  if (B.channel === 'skuska' || /\.skuska$/.test(info?.id || '') || /SKÚŠKA/i.test(info?.name || '')) {
+    parts.push(['SKÚŠKA', B.branch, B.commit ? `(${B.commit})` : ''].filter(Boolean).join(' '));
+  }
+  return parts.join(' · ');
+}
+async function renderAppBuild() {
+  const show = () => { if ($('appBuild')) $('appBuild').textContent = appBuildLine; };
+  appBuildLine = appBuildText(null);
+  show();
+  const CapApp = window.Capacitor?.Plugins?.App;
+  if (CapApp?.getInfo) {
+    try { appBuildLine = appBuildText(await CapApp.getInfo()); show(); } catch {}
+  }
+  return appBuildLine;
+}
+// „Kopírovať“: do schránky; keď to WebView nedovolí, aspoň označí text (podržaním sa skopíruje)
+let appBuildCopyT = 0;
+async function copyAppBuild() {
+  const btn = $('appBuildCopy');
+  let ok = false;
+  try { await navigator.clipboard.writeText(appBuildLine); ok = true; } catch {}
+  if (!ok) {
+    try {
+      const r = document.createRange();
+      r.selectNodeContents($('appBuild'));
+      const sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      ok = document.execCommand('copy');
+    } catch {}
+  }
+  btn.textContent = ok ? 'Skopírované ✓' : 'Označené – podrž a skopíruj';
+  clearTimeout(appBuildCopyT);
+  appBuildCopyT = setTimeout(() => { btn.textContent = 'Kopírovať'; }, 2500);
+}
+
 // prázdny dátum/čas (tlačidlo „VYMAZAŤ“ v systémovom výbere) → aktuálny dátum/čas
 function fillEmptyWhen() {
   const n = nowInSk();
@@ -2947,6 +2999,8 @@ async function main() {
   const now = nowInSk();
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;
+  renderAppBuild();
+  $('appBuildCopy').addEventListener('click', copyAppBuild);
 
   for (const id of ['dateInput', 'timeInput']) $(id).addEventListener('change', fillEmptyWhen);
   if (canExitApp()) {
