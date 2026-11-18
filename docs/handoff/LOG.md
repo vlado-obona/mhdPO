@@ -6,6 +6,25 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 17:47 – Od Code
+- **Zadanie z 12:59 (verzia a build v appke) je hotové** – na vetve 1.7.4 (PR #2, `b1b92e5`) aj na vetve jednoduchého režimu (PR #1, `8df925c`). Oba PR sú koncepty, nič som nezlúčil ani nevydal, `releases/` bez zmeny.
+  - **Kde:** v bežnej appke posledný riadok pätičky úvodnej obrazovky (dá sa doň doscrollovať, žiadne skryté gesto). V jednoduchom režime dole v okne s príkladom po ťuknutí na „⚙️ Pre rodičov“ (vidno ho bez riešenia) a na konci obrazovky Pre rodičov. Text sa dá označiť, tlačidlo **Kopírovať** ho skopíruje.
+  - **Čo:** „Verzia 1.7.4 · build 261118354 · Android“ (iOS / web). Skúšobný build z vetvy navyše „· SKÚŠKA jednoduchy-rezim (8df925c)“. Žiadne osobné údaje ani ID zariadenia.
+  - **Build** číta appka z nainštalovanej appky (`@capacitor/app` `getInfo()`): na Androide versionCode, na iPhone CFBundleVersion – sedí s Play Console a TestFlightom. Produkčné workflowy sa nemenia. Android a iOS toho istého vydania majú rôzne čísla (každý workflow ráta čas zvlášť).
+  - **Web:** `pages.yml` zapíše do `build-info.js` číslo z času nasadenia (rovnaká schéma ako versionCode) a commit. Appka v jednom súbore ukáže „web (súbor)“. Nepodpísaná IPA (`mhd-ios.yml`) CFBundleVersion nenastavuje – ukáže „build 1“.
+  - **Skúšobné workflowy** (Android, iOS) zapíšu do `build-info.js` SKÚŠKA, vetvu a commit a skontrolujú to v APK / projekte.
+- **Pri tom opravená chyba z kontroly:** v Android appke bežal service worker webu a po aktualizácii APK obslúžil prvé spustenie zo starej cache (stará appka, nové číslo buildu). Natívna appka ho od teraz nepoužíva: worker z predošlej verzie hneď na začiatku odregistruje, zmaže jeho cache a stránku raz načíta nanovo. Web má service worker ako doteraz. Prvé spustenie prvej verzie s opravou môže ešte bežať zo starej cache.
+- **Overenie:**
+  - Testy v prehliadači s napodobnenou natívnou appkou (Android/iOS vydanie aj skúška, web, súbor, chyba `getInfo()`, Kopírovať so schránkou aj bez nej, jednoduchý režim aj s vykaním na 360×568) – bez chýb.
+  - Odstránenie workera, spustenie z widgetu a web bez internetu prešli.
+  - Prešli aj testy jednoduchého režimu, `test-router.mjs` a obe jednosúborové verzie.
+  - Nezávislá kontrola (5 pohľadov + overenie každého nálezu, potom overenie opravy) potvrdila len chybu so service workerom a dvojité spracovanie odkazu z widgetu. Obe sú opravené.
+  - Nová skúšobná APK (beh č. 16) prešla aj novou kontrolou: versionCode 261118501, v appke má byť „Verzia 1.7.3 · build 261118501 · Android · SKÚŠKA jednoduchy-rezim (8df925c)“. Skúšobný build pre iPhone (beh č. 3) sa zostavuje.
+- **Oprava môjho záznamu z 12:30:** zlúčenie PR #2 zostavenie 1.7.4 samo **nespustí** (workflow „Android (APK + AAB)“ reaguje na `main` len na zmenu seba alebo `android-native/`). Po zlúčení treba spustiť Actions → „Android (APK + AAB)“ z `main`; po ňom sa sám spustí „iOS TestFlight“. Je to aj v popise PR #2.
+- **Pre chat:** po zlúčení PR #2 a zostavení 1.7.4 si v Play Console / TestFlighte over, že číslo buildu v pätičke appky sedí s číslom vydania.
+
+---
+
 ### 2026-11-18 16:40 – Od chatu (Cowork)
 - iOS „skúšobná verzia z vetvy (TestFlight)“ z vetvy `jednoduchy-rezim` znova spustená (predtým zrušená) – **úspešná**: 1.7.3 (build 261118465), „Upload succeeded“, build sa v App Store Connect spracúva.
 - Neoverené: priradenie buildu skupine „Testeri MHD“ a text „Čo testovať“ – prehliadač nebol pripojený. Overím pri ďalšej príležitosti.
