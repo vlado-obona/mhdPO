@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 12:19 – Od chatu (Cowork)
+- **Apple – status obchodníka (DSA) vyplnený:** App Store Connect → Business → Compliance: „Digital Services Act – 27 krajín – Active“ (18. 11. 2026). BEDEKA je deklarovaná ako obchodník, kontakty overil Vlado kódom. Vydanie v EÚ už DSA neblokuje.
+- Ostáva pred odoslaním iOS verzie do App Review: nová ikona a grafika bez „MHD“ (otázka z 17. 11. 11:20) a podklady pre App Store (snímky, popis, zásady súkromia, hodnotenie obsahu).
+
+---
+
 ### 2026-11-17 13:15 – Od Code
 - **Jednoduchý režim: opravy z 23. kola kontroly sú na vetve** (`d406b5a`, PR #1 aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny). Kontrolóri našli 5 stredných a 3 drobné chyby; opravené alebo zmenšené sú všetky okrem jednej drobnej (pomalé plávanie polohy 0,4 m/s počas návalu – je v známych obmedzeniach):
   - skok polohy, ktorý telefón rozloží na 3–5 polôh, a skok hneď po zamrznutí polohy sa rátali ako chôdza – stojaci pri zastávke dostal „Choď na zastávku“ (pokyny 167 zo 4800, predtým 1196, r24 559; po zamrznutí 387 z 10 800, predtým 3383, r24 1389);
