@@ -1,9 +1,9 @@
-// MHD Prešov — plánovač spojení nad oficiálnymi GTFS dátami DPMP.
+// Odkiaľ Kam — plánovač spojení MHD v Prešove nad oficiálnymi GTFS dátami DPMP.
 import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.7.3';
+const APP_VERSION = '1.7.4';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -1972,9 +1972,9 @@ function planFromHere(reason) {
   } else {
     t.phase = 'error';
     t.error = !fromStops.size
-      ? 'V okolí 1,5 km nie je žiadna zastávka MHD Prešov.'
+      ? 'V okolí 1,5 km nie je žiadna zastávka MHD v Prešove.'
       : !toStops.size
-        ? 'Pri cieli (do 1,5 km) nie je žiadna zastávka MHD Prešov.'
+        ? 'Pri cieli (do 1,5 km) nie je žiadna zastávka MHD v Prešove.'
         : 'Na dnes sa už nenašlo žiadne spojenie do cieľa. Skús neskôr alebo iný cieľ.';
   }
   drawTripJourney();
@@ -2821,7 +2821,7 @@ function fillEmptyWhen() {
 // ── inicializácia ────────────────────────────────────────────────────
 async function main() {
   $('appVer').textContent = `v${APP_VERSION}`;
-  document.title = `Odkiaľ Kam v${APP_VERSION} — MHD Prešov`;
+  document.title = `Odkiaľ Kam v${APP_VERSION} — spoje v Prešove`;
   const now = nowInSk();
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;

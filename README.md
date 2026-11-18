@@ -1,4 +1,4 @@
-# Odkiaľ Kam – MHD Prešov
+# Odkiaľ Kam – spoje v Prešove
 
 Neoficiálny plánovač spojení mestskej hromadnej dopravy v Prešove pre
 Android, iOS a web. Hľadá spojenia s prestupmi podľa verejných cestovných

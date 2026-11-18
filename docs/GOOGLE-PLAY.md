@@ -6,7 +6,7 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 | Položka | Hodnota |
 |---|---|
 | Vývojár | BEDEKA, s.r.o. (developer ID 9184503168027888643) |
-| Aplikácia | Odkiaľ Kam – MHD Prešov (app ID 4973310957021774926) |
+| Aplikácia | Odkiaľ Kam – spoje v Prešove, do 17. 11. 2026 „Odkiaľ Kam – MHD Prešov“ (app ID 4973310957021774926) |
 | Balíček | `sk.operatorsystem.mhdpresov` (nemeniteľný) |
 | Play App Signing | zapnuté – podpisový kľúč spravuje Google; náš keystore (secrets `ANDROID_KEYSTORE_*`) je **upload kľúč** |
 | Interné testovanie | aktívne od 1.6.1; posledná 1.7.3 = 261102542 (automaticky 2. 11. 2026; 1.7.2 = 261014405, 1.7.1 = 261014345 a 1.7.0 = 261014304 14. 10.; 1.6.9 8. 10.), zoznam „Interní testeri“ |

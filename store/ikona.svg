@@ -1,0 +1,10 @@
+<!-- Ikona Odkiaľ Kam (od 1.7.4): autobus spredu, na tabuli značka trasy odkiaľ → kam, pod ním ukazovateľ polohy. V appke (mhd-app/icons) rovnaký autobus zmenšený na 0,895, ikona so zaoblenými rohmi r = 96. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" fill="#0b7a3b"/><g >
+  <rect x="100" y="77" width="312" height="279" rx="30" fill="#fff"/>
+  <rect x="138" y="320" width="48" height="104" rx="12" fill="#fff"/>
+  <rect x="326" y="320" width="48" height="104" rx="12" fill="#fff"/>
+  <rect x="133" y="115" width="246" height="111" rx="13" fill="#0b7a3b"/>
+  <circle cx="184" cy="170.5" r="21" fill="#fff"/><rect x="184" y="160.5" width="100" height="20" fill="#fff"/><path d="M272 130 L340 170.5 L272 211 Z" fill="#fff"/>
+  <circle cx="166.5" cy="300" r="28.5" fill="#0b7a3b"/>
+  <circle cx="345.5" cy="300" r="28.5" fill="#0b7a3b"/>
+  <path d="M256 371 L315.5 471 L196.5 471 Z" fill="#fff"/></g></svg>

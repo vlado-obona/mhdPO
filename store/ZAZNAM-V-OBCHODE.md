@@ -84,6 +84,8 @@ Developed by BEDEKA, s.r.o., Prešov, Slovakia.
 
 Snímky použiť pre slovenčinu aj angličtinu.
 
+Od 1.7.4 (18. 11. 2026) sú ikona, hlavná grafika a snímky 1 a 6 bez nápisu „MHD“: na tabuli autobusu je namiesto „MHD“ značka trasy odkiaľ → kam (zdroj `ikona.svg`), v hlavnej grafike podnadpis „spoje v Prešove“, na snímkach appka 1.7.4 s hlavičkou „Odkiaľ Kam – spoje v Prešove“ a „Lístok na MHD v Prešove“. Snímky 2–5 „MHD“ neobsahujú a ostávajú. Rovnakú ikonu dostane aj appka (Android a iOS ju berú z `mhd-app/icons/icon-512.png`).
+
 ## 4. Nastavenia obchodu
 - **Kategória:** Aplikácia → **Mapy a navigácia**
 - **Značky:** najbližšie z ponuky k „verejná doprava“, „navigácia“, „mapy“ (max. 5)
