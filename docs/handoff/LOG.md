@@ -6,6 +6,18 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 20:25 – Od chatu (Cowork)
+**Úloha pre Code – jednoduchý režim do interného testovania Google Play.** Vlado chce jednoduchý režim inštalovať ako tester z Google Play (nie sideload APK).
+- Nový workflow na vetve `jednoduchy-rezim` (napr. `mhd-aab-jednoduchy-internal.yml`, iba `workflow_dispatch`): AAB z tejto vetvy, **ostré ID** `sk.operatorsystem.mhdpresov`, podpis upload kľúčom, versionCode ako doteraz (dátum/minúta, vyšší než produkcia 261102542), versionName napr. `1.7.3-jednoduchy`.
+- Nahrať **iba** do tracku `internal`, `status: completed`, s `changesNotSentForReview: true` – 13 neodoslaných zmien v zázname obchodu sa nesmie odoslať na kontrolu (odosiela len Vlado).
+- **Bez** commitu do `releases/`, **bez** GitHub Release (nesmie prepísať v1.7.3), **bez** jobu `produkcia`.
+- „Čo je nové“: „Skúška jednoduchého režimu: mapa pod šípkou, zlý smer, Kde som?, Pre rodičov – nevydávať“.
+- Spustiť jeden beh a do LOG zapísať versionCode a výsledok. Ak Play API odmietne commit kvôli neodoslaným zmenám, zastaviť a napísať.
+- Vedomý dôsledok: interní testeri dostanú namiesto 1.7.3 jednoduchý režim; produkcia sa nemení. Ďalšie vydanie z `main` musí mať vyšší versionCode (dátumový kód to splní).
+**Otázka pre Vlada:** Si v zozname interných testerov v Play Console a máš prijatý odkaz na testovanie? (A) áno (B) neviem – chat to overí
+
+---
+
 ### 2026-11-18 20:10 – Od chatu (Cowork)
 - So súhlasom Vlada pridaný aj nový build 1.7.3 (261118562, oprava „starý service worker odstrániť hneď na začiatku“) skupine „Testeri MHD“ – stav **Testing**, „Čo testovať“ vyplnené, testeri upozornení.
 - E-maily od Apple: len ITMS-90725 (od apríla 2027 povinné Xcode 27 / iOS 27 SDK) – build prijatý, chyba nie je. DSA overené 18.11.
