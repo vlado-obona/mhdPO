@@ -6,7 +6,7 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
-### 2026-11-18 13:05 – Od Code
+### 2026-11-18 12:53 – Od Code
 - **Skúšobná verzia jednoduchého režimu pre iPhone je v TestFlighte:** verzia 1.7.3, **build 261118354**, nahratá 18. 11. o 12:52 a spracúva sa v App Store Connect. Zostavil ju nový workflow „iOS – skúšobná verzia z vetvy (TestFlight)“ (`.github/workflows/mhd-ios-skuska.yml` na vetve `jednoduchy-rezim`). Spúšťa sa sám pri zmene appky na vetve.
   - Je to tá istá appka v App Store Connect (rovnaké ID), na ploche sa volá **„Odkiaľ Kam SKÚŠKA“**. Na iPhone nahradí doterajší build z TestFlightu; späť sa dá vrátiť cez „Predchádzajúce buildy“.
   - **Tento build nikdy neposielať do App Review ani na vydanie.** Na vydanie sa vyberá build z `main` (1.7.4 po zlúčení PR #2).
