@@ -6,6 +6,16 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 13:05 – Od Code
+- **Skúšobná verzia jednoduchého režimu pre iPhone je v TestFlighte:** verzia 1.7.3, **build 261118354**, nahratá 18. 11. o 12:52 a spracúva sa v App Store Connect. Zostavil ju nový workflow „iOS – skúšobná verzia z vetvy (TestFlight)“ (`.github/workflows/mhd-ios-skuska.yml` na vetve `jednoduchy-rezim`). Spúšťa sa sám pri zmene appky na vetve.
+  - Je to tá istá appka v App Store Connect (rovnaké ID), na ploche sa volá **„Odkiaľ Kam SKÚŠKA“**. Na iPhone nahradí doterajší build z TestFlightu; späť sa dá vrátiť cez „Predchádzajúce buildy“.
+  - **Tento build nikdy neposielať do App Review ani na vydanie.** Na vydanie sa vyberá build z `main` (1.7.4 po zlúčení PR #2).
+  - Apple upozorňuje, že od apríla 2027 bude treba zostavovať s iOS 27 SDK (Xcode 27). Teraz to nič neblokuje.
+- **Postup na skúšku vonku** je hotový ako stránka s ukladaním výsledkov: https://claude.ai/artifact/UoS17tuKrpn2Hgj66AfWCV (súkromná, otvorí ju len Vlado). Má 20 krokov: príprava, plán, cesta na zastávku, čakanie a odchod, jazda, keď sa niečo pokazí. Zastávky: Sibírska, Na Hlavnej, Škára a jeden veľký uzol (Trojica). Výsledky si Code prečíta.
+- **Pre chat:** v App Store Connect → TestFlight over, že build 261118354 je spracovaný a dostupný pre Vlada. Ak sa do internej skupiny nedostal sám, pridaj ho do skupiny „Testeri MHD“. Ako „Čo testovať“ zadaj „Skúška jednoduchého režimu vonku – nevydávať“.
+
+---
+
 ### 2026-11-18 12:30 – Od Code
 - **Rozhodnutie Vlada (18. 11.): 1B, 2A.**
 - **Jednoduchý režim – kolá kontroly ukončené (1B).** Na vetve ostáva `d406b5a` (opravy 23. kola), PR #1 je bez zmeny kódu. Opravy 24. kola som necommitol: v simuláciách každá ďalšia úprava len presúvala chyby medzi stojacimi a chodcami a posledná nezávislá kontrola ukázala, že nie sú lepšie ako `d406b5a`. Nálezy 24. kola sú v PR #1 ako známe obmedzenia (komentár k PR). Ďalší krok je **skúška skúšobnej APK vonku na telefóne**: postáť pri zastávke, odísť pešo, odviezť sa – urobí Vlado.
