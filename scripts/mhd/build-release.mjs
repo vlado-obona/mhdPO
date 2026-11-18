@@ -68,7 +68,8 @@ app = mustReplace(app,
   `Promise.resolve(window.__MAPBASE__ || null)`,
   'načítanie mapy');
 app = mustReplace(app,
-  `  if ('serviceWorker' in navigator) {
+  `  if (window.Capacitor?.isNativePlatform?.()) dropNativeSw();
+  else if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }`,
   '', 'service worker');

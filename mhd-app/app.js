@@ -2824,11 +2824,14 @@ function appBuildText(info) {
   const nv = /^\d+\.\d+\.\d+/.exec(info?.version || '');
   const parts = [`Verzia ${nv ? nv[0] : APP_VERSION}`];
   const build = String(info?.build || B.build || '');
+  // commit skúšky na Androide z nainštalovanej appky (versionName „1.7.3-skuska.<commit>“), inak z build-info.js
+  const sk = /-skuska\.([0-9a-f]{7,40})$/.exec(info?.version || '');
+  const commit = sk ? sk[1] : B.commit;
   if (build) parts.push(`build ${build}`);
   parts.push(plat === 'android' ? 'Android' : plat === 'ios' ? 'iOS' : location.protocol === 'file:' ? 'web (súbor)' : 'web');
   // skúšobný build: podľa build-info.js, inak podľa ID (Android .skuska) alebo názvu appky
   if (B.channel === 'skuska' || /\.skuska$/.test(info?.id || '') || /SKÚŠKA/i.test(info?.name || '')) {
-    parts.push(['SKÚŠKA', B.branch, B.commit ? `(${B.commit})` : ''].filter(Boolean).join(' '));
+    parts.push(['SKÚŠKA', B.branch, commit ? `(${commit})` : ''].filter(Boolean).join(' '));
   }
   return parts.join(' · ');
 }
@@ -2863,6 +2866,22 @@ async function copyAppBuild() {
   appBuildCopyT = setTimeout(() => { btn.textContent = 'Kopírovať'; }, 2500);
 }
 
+// Natívna appka: odregistrovať service worker z predošlých verzií a zmazať jeho cache. Keď touto
+// stránkou ešte riadil (prišla zo starej cache), raz ju znova načítať – už priamo z balíka appky.
+async function dropNativeSw() {
+  const sw = navigator.serviceWorker;
+  if (!sw?.getRegistrations) return;
+  const controlled = !!sw.controller;
+  try {
+    await Promise.all((await sw.getRegistrations()).map((r) => r.unregister()));
+    const ks = (await window.caches?.keys?.()) || [];
+    await Promise.all(ks.filter((k) => /^mhd-(shell|data)-/.test(k)).map((k) => window.caches.delete(k)));
+  } catch { return; }
+  let again = false;
+  try { again = controlled && !sessionStorage.getItem('mhd-nosw'); if (again) sessionStorage.setItem('mhd-nosw', '1'); } catch {}
+  if (again) location.reload();
+}
+
 // prázdny dátum/čas (tlačidlo „VYMAZAŤ“ v systémovom výbere) → aktuálny dátum/čas
 function fillEmptyWhen() {
   const n = nowInSk();
@@ -2878,7 +2897,7 @@ async function main() {
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;
   renderAppBuild();
-  $('appBuildCopy').addEventListener('click', copyAppBuild);
+  $('appBuildCopy')?.addEventListener('click', copyAppBuild); // ?. – stará index.html z cache tlačidlo nemá
 
   for (const id of ['dateInput', 'timeInput']) $(id).addEventListener('change', fillEmptyWhen);
   if (canExitApp()) {
@@ -3094,7 +3113,10 @@ async function main() {
     }).catch?.(() => {});
   }
 
-  if ('serviceWorker' in navigator) {
+  // Service worker len na webe. Natívna appka (Capacitor) má všetky súbory v balíku; worker z predošlej
+  // verzie by po aktualizácii obslúžil spustenie zo starej cache (stará appka s novým číslom buildu).
+  if (window.Capacitor?.isNativePlatform?.()) dropNativeSw();
+  else if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 }
