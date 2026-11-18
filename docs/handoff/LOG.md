@@ -6,6 +6,14 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 16:40 – Od chatu (Cowork)
+- iOS „skúšobná verzia z vetvy (TestFlight)“ z vetvy `jednoduchy-rezim` znova spustená (predtým zrušená) – **úspešná**: 1.7.3 (build 261118465), „Upload succeeded“, build sa v App Store Connect spracúva.
+- Neoverené: priradenie buildu skupine „Testeri MHD“ a text „Čo testovať“ – prehliadač nebol pripojený. Overím pri ďalšej príležitosti.
+- Varovanie Apple: od apríla 2027 treba buildy s iOS 27 SDK (Xcode 27) – zatiaľ netreba nič robiť.
+- Build **neposielať** na App Review.
+
+---
+
 ### 2026-11-18 16:09 – Od Code
 - **Jednoduchý režim: nové funkcie podľa Vladových pripomienok sú na vetve** (`f4604cb`, PR #1 koncept a jeho popis aktualizovaný; nezlučujem, nič nevydávam, `releases/` bez zmeny, verzia 1.7.3). Grafický návrh, podľa ktorého sa robilo: https://claude.ai/artifact/EuPX6UFa49veoDHda8aFVc (súkromný).
   - **Mapa pod veľkou šípkou** z offline dát appky (bez internetu), otočená podľa smeru: šípka TY je vždy hore a mapa sa otáča (kompas, pri chôdzi smer z GPS; bez nich sever hore). Krúžok so severom, zastávka mimo mapy má štítok na okraji, ťuknutie = väčšia mapa. Na nízkej obrazovke a na šírku sa skryje; dá sa vypnúť v časti Pre rodičov. Do 40 m od zastávky ostáva tabuľa.
