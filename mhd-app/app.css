@@ -176,6 +176,9 @@ button.ghost {
 .leg ul { margin: .2rem 0 0; padding-left: 1.1rem; font-size: .82rem; color: var(--muted); }
 .foot { max-width: 640px; margin: 1rem auto 2rem; padding: 0 1rem; font-size: .75rem; color: var(--muted); }
 .foot a { color: var(--green); }
+/* verzia a build v pätičke: dá sa označiť a skopírovať */
+.app-build { font-variant-numeric: tabular-nums; }
+#appBuild { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 
 .marker-label { font-size: .7rem; font-weight: 600; text-shadow: 0 0 3px #fff; }
 

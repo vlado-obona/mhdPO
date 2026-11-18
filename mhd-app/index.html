@@ -16,6 +16,7 @@
   <meta name="apple-mobile-web-app-title" content="Odkiaľ Kam">
   <link rel="stylesheet" href="vendor/leaflet.css">
   <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="simple.css">
   <meta name="robots" content="noindex">
 </head>
 <body>
@@ -30,6 +31,7 @@
   <main>
     <section id="favs" class="favs" aria-label="Rýchle ciele"></section>
     <p class="fav-hint">Ťuknutím ťa appka navedie do cieľa · podržaním nastavíš cieľ a názov</p>
+    <button id="simpleLink" class="simple-link" type="button">🧭 Jednoduchý režim <span>veľké tlačidlá a sprevádzanie krok za krokom – pre seniorov a začiatočníkov</span></button>
     <button id="tktBtn" class="tkt-btn" type="button">🎫 Kúpiť lístok <span>SMS · karta · aplikácia</span></button>
 
     <section class="planner" id="planner">
@@ -243,9 +245,11 @@
     <p>Mapa, miesta a adresy: © prispievatelia <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL).</p>
     <p><button id="plusLink" class="link-btn" type="button">⭐ Odkiaľ Kam Plus</button></p>
     <p><a href="https://vlado-obona.github.io/mhdPO/sukromie/" target="_blank" rel="noopener">Ochrana súkromia</a> · appka nezbiera žiadne osobné údaje, poloha zostáva v telefóne.</p>
+    <p class="app-build"><span id="appBuild" translate="no"></span> · <button id="appBuildCopy" class="link-btn" type="button">Kopírovať</button></p>
   </footer>
 
   <script src="vendor/leaflet.js"></script>
+  <script src="build-info.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

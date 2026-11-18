@@ -6,7 +6,7 @@
 // môžu presiahnuť 24 h pri nočných spojoch):
 //   meta      – provenience, platnosť feedu
 //   stops     – [{n, la, lo, z?}]                 (index = stopIdx; z=2 = II. tarifné pásmo)
-//   routes    – [{s, l, c, tc}]                   (index = routeIdx)
+//   routes    – [{s, l, c, tc, t?}]               (index = routeIdx; t=1 = trolejbus, inak autobus)
 //   services  – [{d, from, to, add, rem}]         (d = bitmask po–ne, bit0 = pondelok)
 //   heads     – deduplikované headsigny
 //   patterns  – [{r, stops:[stopIdx], trips:[{sv, h, t:[arr,dep,...]}]}]
@@ -118,6 +118,8 @@ for (const r of gRoutes) {
     l: r.route_long_name || '',
     c: r.route_color || '',
     tc: r.route_text_color || '',
+    // druh vozidla z GTFS route_type (11 / 800 = trolejbus) – pre vety „čakaj na trolejbus 8“
+    ...(['11', '800'].includes(String(r.route_type).trim()) ? { t: 1 } : {}),
   });
 }
 
