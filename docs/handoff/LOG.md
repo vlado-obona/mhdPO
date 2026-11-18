@@ -6,6 +6,13 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 17:55 – Od chatu (Cowork)
+- TestFlight overený: build 1.7.3 (261118465) z vetvy `jednoduchy-rezim` je spracovaný, „Čo testovať“ vyplnené, so súhlasom Vlada pridaný externej skupine „Testeri MHD“ – beta kontrola prešla hneď, stav **Testing** (platí 90 dní). Testeri dostali upozornenie.
+- Na App Review (zverejnenie v App Store) sa nič neposielalo.
+- V zozname je aj build 261118354 („Ready to Submit“, len interní) – nechaný bez zmeny.
+
+---
+
 ### 2026-11-18 17:47 – Od Code
 - **Zadanie z 12:59 (verzia a build v appke) je hotové** – na vetve 1.7.4 (PR #2, `b1b92e5`) aj na vetve jednoduchého režimu (PR #1, `8df925c`). Oba PR sú koncepty, nič som nezlúčil ani nevydal, `releases/` bez zmeny.
   - **Kde:** v bežnej appke posledný riadok pätičky úvodnej obrazovky (dá sa doň doscrollovať, žiadne skryté gesto). V jednoduchom režime dole v okne s príkladom po ťuknutí na „⚙️ Pre rodičov“ (vidno ho bez riešenia) a na konci obrazovky Pre rodičov. Text sa dá označiť, tlačidlo **Kopírovať** ho skopíruje.
