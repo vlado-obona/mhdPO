@@ -71,8 +71,13 @@ jobs:
           EOF
           cp -r ../mhd-app www
           grep -q "APP_VERSION = '$VERSION'" www/app.js || { echo "::error::APP_VERSION v app.js nesedí s $VERSION"; exit 1; }
+          # riadok „Verzia … · build … · iOS · SKÚŠKA vetva (commit)“ v appke (build číta appka sama)
+          BR=$(printf %s "$GITHUB_REF_NAME" | tr -c 'A-Za-z0-9._-' '-')
+          printf 'window.__BUILD__ = {"channel":"skuska","branch":"%s","commit":"%s"};\n' "$BR" "${GITHUB_SHA::7}" > www/build-info.js
+          cat www/build-info.js
           npx cap add ios
           npx cap sync ios
+          grep -q '"channel":"skuska"' ios/App/App/public/build-info.js || { echo "::error::build-info.js skúšky nie je v ios/App/App/public"; exit 1; }
 
       - name: Info.plist
         working-directory: cap-build

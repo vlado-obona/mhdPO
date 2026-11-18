@@ -2142,6 +2142,7 @@ export function initSimple(A) {
       // pre rodičov
       case 'pardone': fe = null; reorder = false; home(); break;
       case 'setoff': offAsk(); break;
+      case 'vercopy': verCopy(); break;
       case 'fedit': reorder = false; fedit(Number(v)); break;
       case 'fadd': favAdd(false); break;
       case 'fhome': favAdd(true); break;
@@ -2290,6 +2291,30 @@ export function initSimple(A) {
   // Príklad z násobenia (12–19 × 3–9), ktorý malé dieťa nevypočíta naspamäť. Po zlej odpovedi nový príklad,
   // po 3 zlých za sebou pauza 30 s.
   let gateFail = 0, gateLock = 0;
+  // Verzia · build · platforma (pri skúškach: ktoré vydanie je v telefóne) – dá sa označiť; v časti
+  // Pre rodičov aj s tlačidlom Kopírovať. Text skladá app.js (A.buildText), po načítaní buildu ho obnoví ver().
+  // (overenie je v hárku, ktorý po zatvorení ostáva v DOM – preto iné id než v Pre rodičov)
+  const verLine = (copy) => `<p class="sm-ver"><span id="${copy ? 'smVer' : 'smVerG'}" translate="no">${esc(A.buildText ? A.buildText() : '')}</span>${copy ? ' <button type="button" class="sm-verbtn" id="smVerCopy" data-a="vercopy">Kopírovať</button>' : ''}</p>`;
+  let verT = 0;
+  async function verCopy() {
+    const t = A.buildText ? A.buildText() : '', b = $('smVerCopy');
+    let ok = false;
+    try { await navigator.clipboard.writeText(t); ok = true; } catch {}
+    if (!ok) {
+      try {
+        const r = document.createRange();
+        r.selectNodeContents($('smVer'));
+        const sel = getSelection();
+        sel.removeAllRanges();
+        sel.addRange(r);
+        ok = document.execCommand('copy');
+      } catch {}
+    }
+    if (!b) return;
+    b.textContent = ok ? 'Skopírované ✓' : 'Označené – podržte a skopírujte';
+    clearTimeout(verT);
+    verT = setTimeout(() => { if ($('smVerCopy')) $('smVerCopy').textContent = 'Kopírovať'; }, 2500);
+  }
   function openGate() {
     if (Date.now() < gateLock) {
       sheet(`<h2>⚙️ ${tx('Pre rodičov', 'Nastavenia')}</h2><p>Skúste to znova o ${Math.ceil((gateLock - Date.now()) / 1000)} sekúnd.</p><div class="sm-stack">${btn('close', 'Dobre', 'sm-primary')}</div>`);
@@ -2299,7 +2324,7 @@ export function initSimple(A) {
     sheet(`<h2>⚙️ ${tx('Pre rodičov', 'Nastavenia')}</h2><p class="sm-gq">Koľko je <b>${a} × ${b}</b>?</p>
       <label class="sm-field">Výsledok<input id="smGate" inputmode="numeric" autocomplete="off" enterkeyhint="go"></label>
       <p class="sm-note" id="smGateMsg">${tx('Toto je pre rodičov. Chráni ciele a telefónne číslo pred zmenou omylom.', 'Chráni ciele a telefónne číslo pred zmenou omylom.')}</p>
-      <div class="sm-stack">${btn('gateok', 'Pokračovať', 'sm-primary')}${btn('close', 'Späť')}</div>`);
+      <div class="sm-stack">${btn('gateok', 'Pokračovať', 'sm-primary')}${btn('close', 'Späť')}</div>${verLine(false)}`);
     const ok = () => {
       if ($('smGate').value.trim() === String(a * b)) { gateFail = 0; closeSheet(); parents(); return; }
       gateFail += 1;
@@ -2344,7 +2369,8 @@ export function initSimple(A) {
         <label class="sm-check"><input type="checkbox" id="smMapChk"${c.map !== false ? ' checked' : ''}><span>Ukazovať mapu pod šípkou</span></label>
         <p class="sm-note">Mapa ukazuje ulice, zastávku a kde je dieťa. Otáča sa podľa smeru, šípka je na nej vždy hore.</p>
         <div class="sm-stack">${btn('setoff', 'Vypnúť jednoduchý režim', 'sm-secondary sm-danger')}</div>
-        ${OSM_NOTE}`,
+        ${OSM_NOTE}
+        ${verLine(true)}`,
       act: `<p class="sm-saved" id="smSaved" aria-live="polite">${msg ? esc(msg) : ''}</p>${btn('pardone', '✓ Hotovo', 'sm-primary')}` });
     // polia sa ukladajú hneď pri zmene (onchange: pri prekreslení sa poslucháči nezdvojia)
     const keep = (fn) => () => { if (adultIdle()) { home(); return; } fn(); A.savePrefs(); adultAt = Date.now(); last.who = null; const el = $('smSaved'); if (el) el.textContent = 'Uložené ✓'; };
@@ -2576,5 +2602,7 @@ export function initSimple(A) {
     moving: (t) => { const u = t && t.sm; if (!u || u.spd == null) return t.speedAvg > 2.5; return (u.dopOk && u.dopAvg > 2.5) || u.spd > 3; },
     tripOpened() { mount(); spoken = ''; lastVoice = ''; last = {}; screen = 'trip'; closeSheet(); },
     tripEnded() { spoken = ''; mapBig = false; if (cfg().on) { last = {}; home(); } },
+    // číslo buildu z nainštalovanej appky prišlo neskôr: obnoviť riadok verzie, ak je práve na obrazovke
+    ver(t) { for (const id of ['smVer', 'smVerG']) { const el = $(id); if (el) el.textContent = t; } },
   };
 }

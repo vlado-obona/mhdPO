@@ -2999,7 +2999,7 @@ async function main() {
   const now = nowInSk();
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;
-  renderAppBuild();
+  const appBuildP = renderAppBuild();
   $('appBuildCopy').addEventListener('click', copyAppBuild);
 
   for (const id of ['dateInput', 'timeInput']) $(id).addEventListener('change', fillEmptyWhen);
@@ -3077,8 +3077,10 @@ async function main() {
     tailWalk, stopNav,
     speak, buzz, unlockAudio, nearestStop, loadMapbase, loadPlaces, searchPlaces, getPositionFull,
     refreshMain: () => { if (map) setTimeout(() => map.invalidateSize(), 60); },
+    buildText: () => appBuildLine, // „Verzia … · build … · platforma“ (overenie a Pre rodičov)
   });
   simple.init();
+  appBuildP.then((t) => simple.ver(t));
   $('simpleLink')?.addEventListener('click', () => simple.turnOn()); // ?. – stará index.html z cache tlačidlo nemá
   // „Bez prestupu“ (uložené v telefóne, platí aj pre rýchle ciele)
   $('directChk').checked = !!prefs.direct;

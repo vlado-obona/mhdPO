@@ -232,6 +232,10 @@ body.simple-on { overflow: hidden; }
 .sm-osm { font-size: .85rem !important; color: var(--mut); font-weight: 400; white-space: nowrap; }
 p.sm-osm { white-space: normal; margin-top: .5rem !important; }
 .sm-osm a { color: inherit; }
+/* verzia · build · platforma: dá sa označiť a skopírovať */
+.sm-ver { margin: .9rem 0 0 !important; font-size: .85rem !important; line-height: 1.35; color: var(--mut); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+#smVer, #smVerG { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+.sm-verbtn { border: 0; background: none; padding: 0 .2rem; min-height: 44px; font: inherit; color: var(--g); text-decoration: underline; cursor: pointer; }
 .sm-tel { font-size: 1.8rem !important; font-weight: 800; letter-spacing: .03em; }
 .sm-bigmsg { text-align: center; padding: 1.2rem .5rem; }
 .sm-bigmsg h2 { font-size: 2rem; line-height: 1.15; margin: .4rem 0; }

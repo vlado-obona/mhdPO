@@ -77,6 +77,10 @@ jobs:
           }
           EOF
           cp -r ../mhd-app www
+          # riadok „Verzia … · build … · Android · SKÚŠKA vetva (commit)“ v appke (build číta appka sama)
+          BR=$(printf %s "$GITHUB_REF_NAME" | tr -c 'A-Za-z0-9._-' '-')
+          printf 'window.__BUILD__ = {"channel":"skuska","branch":"%s","commit":"%s"};\n' "$BR" "$SHA" > www/build-info.js
+          cat www/build-info.js
           npx cap add android
           npx cap sync android
           M=android/app/src/main/AndroidManifest.xml
@@ -137,6 +141,8 @@ jobs:
           "$BT/aapt2" dump badging "$APK" | grep -E "^package:|application-label:" | tee badging.txt
           grep -q "name='sk.operatorsystem.mhdpresov.skuska'" badging.txt || { echo "::error::APK nemá skúšobné ID appky"; exit 1; }
           grep -q "SKÚŠKA" badging.txt || { echo "::error::APK nemá v názve SKÚŠKA"; exit 1; }
+          unzip -p "$APK" assets/public/build-info.js | tee build-info.txt
+          grep -q '"channel":"skuska"' build-info.txt && grep -q "\"commit\":\"$SHA\"" build-info.txt || { echo "::error::APK nemá build-info.js skúšky"; exit 1; }
           # odtlačok podpisu – musí byť rovnaký pri každom behu (inak treba skúšobnú appku odinštalovať)
           "$BT/apksigner" verify --print-certs "$APK" | tee certs.txt
           K1=$(keytool -list -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey | sed -n 's/.*SHA256: *//p' | tr -d ':' | tr 'A-F' 'a-f')
