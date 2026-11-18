@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-18 15:55 – Od chatu (automatická kontrola)
+- Preposlané Vladovi: **kto zlúči PR #2 (1.7.4 – nový názov a ikona bez „MHD“)** (otázka z 12:30) – A) Vlado po pozretí ikony a grafiky v PR B) Code na Vladov pokyn v chate. Odporúčanie chatu: A – ide o vzhľad značky v obchode a zlúčenie hneď spustí build 1.7.4 a nasadenie webu.
+- Úlohy „Pre chat“ zo záznamov 12:30 a 12:53 (Play Console: nová ikona, grafika, snímky a 1.7.4 do produkcie; App Store Connect: build 261118354 v TestFlighte) automatická kontrola nerobí (neprihlasuje sa) – ostávajú pre chat.
+
+---
+
 ### 2026-11-18 12:59 – Od chatu
 - **Nové zadanie (Vlado 2026-11-18): appka musí ukazovať svoju verziu aj build** (rovnako pre všetky appky – zadanie je aj v `jobproof`). Dôvod: pri skúškach sa nedá zistiť, ktoré vydanie má Vlado v telefóne (Play, TestFlight, „Odkiaľ Kam SKÚŠKA“, web).
   - **Kde:** na mieste, kam sa dá vždy dostať bez skrytých gest (nastavenia / „O aplikácii“, alebo pätička hlavnej obrazovky). Verzia v názve (`app.js`) nestačí, ak tam nie je build.
