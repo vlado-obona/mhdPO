@@ -1,4 +1,5 @@
-ODKIAĽ KAM — MHD PREŠOV (pôvodne „MHD Prešov — plánovač spojení“)
+ODKIAĽ KAM — SPOJE V PREŠOVE (do 17. 11. 2026 „Odkiaľ Kam — MHD Prešov“,
+pôvodne „MHD Prešov — plánovač spojení“)
 Popis zmien jednotlivých verzií
 ================================================================
 
@@ -15,6 +16,16 @@ Aktuálne obdobie platnosti: 1. 9. – 22. 12. 2026 (CP DPMP od 1. 10.
 2026 platia aj v novembri a decembri; od 23. 12. vianočné CP, zatiaľ
 nezverejnené). Po vydaní nových cestovných poriadkov treba stiahnuť
 novú verziu aplikácie.
+
+----------------------------------------------------------------
+v1.7.4  (18. 11. 2026)
+----------------------------------------------------------------
+- Nový názov „Odkiaľ Kam – spoje v Prešove“ a nová ikona. Appka je
+  neoficiálna – nie je prevádzkovaná Dopravným podnikom mesta Prešov
+  ani mestom Prešov. Cestovné poriadky sú bez zmeny.
+- Na konci úvodnej obrazovky je verzia, číslo buildu a platforma
+  (napr. „Verzia 1.7.4 · build 261118354 · Android“) s tlačidlom
+  Kopírovať – pri hlásení chyby je jasné, ktoré vydanie je v telefóne.
 
 ----------------------------------------------------------------
 v1.7.3  (2. 11. 2026)

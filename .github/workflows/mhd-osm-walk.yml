@@ -1,0 +1,84 @@
+name: Pešia sieť (OpenStreetMap) – meranie
+
+# Krok 1 návrhu „navádzanie po chodníkoch“ (docs/analyza-2026-11/CHODNIKY.md):
+# stiahne z OpenStreetMap chodníky, cestičky, schody, pešie zóny, cesty a
+# priechody v okolí MHD Prešov a vypíše čísla (dĺžky, priechody, nástupištia
+# pri sieti, súvislosť, nájdené trasy adresa → zastávka, veľkosť súboru).
+# Len MERANIE: nič sa necommituje, appka ani dáta appky sa nemenia (dnešný
+# workflow „Miesta a adresy“ ostáva bez zmeny). Výsledok je v súhrne behu a
+# v artefakte osm-walk-meranie (results.json, walk-graph.json, surové dáta).
+# Dáta © prispievatelia OpenStreetMap, licencia ODbL 1.0.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/mhd-osm-walk.yml'
+      - 'scripts/mhd/osm-walk-measure.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Stiahnut pesiu siet z Overpass API
+        run: |
+          set -e
+          # rovnaký výrez ako „Miesta a adresy“ (zastávky 48.942–49.066, 21.165–21.349 + okraj)
+          BB="48.925,21.145,49.085,21.37"
+          cat > walk.ql <<EOF
+          [out:json][timeout:900][maxsize:1073741824];
+          (
+            way["highway"~"^(footway|path|pedestrian|steps|corridor|living_street|residential|service|services|unclassified|road|tertiary|tertiary_link|secondary|secondary_link|primary|primary_link|track|cycleway|platform|bridleway)$"](${BB});
+            way["area:highway"](${BB});
+          )->.w;
+          .w out body qt;
+          .w > ->.wn;
+          .wn out skel qt;
+          (
+            node["highway"="crossing"](${BB});
+            node["crossing"](${BB});
+            node["railway"~"^(crossing|level_crossing)$"](${BB});
+            node["barrier"](${BB});
+          )->.c;
+          .c out body qt;
+          EOF
+          ok=""
+          for n in 1 2 3 4; do
+            for u in https://overpass-api.de/api/interpreter https://overpass.private.coffee/api/interpreter https://overpass.kumi.systems/api/interpreter; do
+              if curl -sS --fail --max-time 1000 -A "mhd-presov-planner (GitHub Actions)" --data-urlencode "data@walk.ql" "$u" -o walk.json.tmp \
+                 && jq -e '(.elements | length) > 1000' walk.json.tmp >/dev/null; then
+                mv walk.json.tmp walk.json; ok=1
+                echo "walk.ql <- $u: $(jq '.elements|length' walk.json) prvkov, stav OSM $(jq -r '.osm3s.timestamp_osm_base' walk.json)"
+                break 2
+              fi
+              echo "  $u zlyhal (pokus $n)" >&2; sleep $((n*15))
+            done
+          done
+          [ -n "$ok" ] || { echo "::error::Overpass API nedostupné"; exit 1; }
+          ls -la walk.json
+
+      - name: Meranie
+        run: |
+          set -o pipefail
+          mkdir -p osm-walk-out
+          node scripts/mhd/osm-walk-measure.mjs walk.json mhd-app/data/dataset.json data/osm-places/addresses.json osm-walk-out | tee osm-walk-out/summary.md
+          cat osm-walk-out/summary.md >> "$GITHUB_STEP_SUMMARY"
+          cat osm-walk-out/results.json
+          gzip -9c walk.json > osm-walk-out/walk-overpass.json.gz
+          ls -la osm-walk-out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: osm-walk-meranie
+          path: osm-walk-out/
+          retention-days: 30
+          if-no-files-found: error

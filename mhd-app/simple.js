@@ -1680,8 +1680,8 @@ export function initSimple(A) {
     const M = {
       pos: ['📍', tx('Neviem, kde si', 'Neviem, kde ste'), `${tx('Povoľ', 'Povoľte')} appke polohu a ${tx('choď', 'choďte')} von, kde je lepší signál.`],
       valid: ['📅', 'Cestovný poriadok je starý', tx('Popros dospelého, nech aktualizuje aplikáciu.', 'Treba aktualizovať aplikáciu.')],
-      nostop: ['🚏', 'Nablízku nie je zastávka', 'V okolí 1,5 km nie je žiadna zastávka MHD Prešov.'],
-      nodest: ['🚏', 'Pri cieli nie je zastávka', 'Do 1,5 km od cieľa nie je žiadna zastávka MHD Prešov.'],
+      nostop: ['🚏', 'Nablízku nie je zastávka', 'V okolí 1,5 km nie je žiadna zastávka MHD v Prešove.'],
+      nodest: ['🚏', 'Pri cieli nie je zastávka', 'Do 1,5 km od cieľa nie je žiadna zastávka MHD v Prešove.'],
       none: ['🌙', 'Teraz tam nič nejde', tx('Skús to neskôr alebo zavolaj.', 'Skúste to neskôr alebo zavolajte.')],
     }[e];
     return { title, back: true, vkey: `err${e}`, voice: `${M[1]}. ${M[2]}`,

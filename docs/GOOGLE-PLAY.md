@@ -6,7 +6,7 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 | Položka | Hodnota |
 |---|---|
 | Vývojár | BEDEKA, s.r.o. (developer ID 9184503168027888643) |
-| Aplikácia | Odkiaľ Kam – MHD Prešov (app ID 4973310957021774926) |
+| Aplikácia | Odkiaľ Kam – spoje v Prešove, do 17. 11. 2026 „Odkiaľ Kam – MHD Prešov“ (app ID 4973310957021774926) |
 | Balíček | `sk.operatorsystem.mhdpresov` (nemeniteľný) |
 | Play App Signing | zapnuté – podpisový kľúč spravuje Google; náš keystore (secrets `ANDROID_KEYSTORE_*`) je **upload kľúč** |
 | Interné testovanie | aktívne od 1.6.1; posledná 1.7.3 = 261102542 (automaticky 2. 11. 2026; 1.7.2 = 261014405, 1.7.1 = 261014345 a 1.7.0 = 261014304 14. 10.; 1.6.9 8. 10.), zoznam „Interní testeri“ |
@@ -46,6 +46,7 @@ Stav k 5. 10. 2026 14:50 (súhrn z Play Console). Neobsahuje žiadne heslá ani 
 
 ## Pravidlá pre build
 - **versionCode** = `YYMMDD·1000 + (minúta dňa / 2)`, 9 číslic, vždy rastie (posledný nahratý 261102542 = 1.7.3, limit 2 100 000 000).
+- **Verzia a build v appke** (od 1.7.4): posledný riadok pätičky „Verzia X · build N · Android / iOS / web“. Build číta appka z nainštalovanej appky (`@capacitor/app` `getInfo()`: Android versionCode, iOS CFBundleVersion), takže sedí s číslom v Play Console a TestFlighte. Android a iOS toho istého vydania majú rôzne čísla (každý workflow ráta čas zvlášť). Web dostane číslo z času nasadenia (`pages.yml` prepíše `build-info.js`), skúšobné buildy z vetvy „SKÚŠKA vetva (commit)“. Nepodpísaná IPA (`mhd-ios.yml`) CFBundleVersion nenastavuje – ukáže „build 1“. Natívna appka od 1.7.4 nepoužíva service worker (všetko má v balíku): worker z predošlej verzie odregistruje, zmaže jeho cache a stránku raz načíta nanovo – inak by prvé spustenie po aktualizácii bežalo zo starej cache s novým číslom buildu.
 - **Poznámky k vydaniu** („Čo je nové“): jazykový tag **`sk`** (Play odmieta `sk-SK`), max. 500 znakov – workflow ich berie z `releases/CHANGELOG.txt`.
 - Android workflow po builde nahrá AAB do **interného testovania** cez servisný účet (secret `PLAY_SERVICE_ACCOUNT_JSON`). Bez secretu sa krok preskočí.
 - Do produkcie: po schválení v GitHube automaticky (pozri vyššie), alebo ručne Play Console → Interné testovanie → Propagovať vydanie.
