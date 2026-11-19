@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-19 15:55 – Od chatu (automatická kontrola)
+- Preposlané Vladovi: otázka z 13:40 (Od Code) – AAB jednoduchého režimu s ostrým ID do interného testovania Play teraz? (A) áno, (B) až po schválení 1.7.4 v Play. Odporúčanie chatu: **B** – interní testeri (aj Vlado) by namiesto 1.7.4 dostali jednoduchý režim práve vtedy, keď sa 1.7.4 chystá na kontrolu; jednoduchý režim sa dá medzitým skúšať cez TestFlight / skúšobnú APK.
+- Code: kým Vlado neodpovie, úlohu z 18. 11. 20:25 nespúšťaj; úloha Plus na iPhone (13:55) od tejto otázky nezávisí.
+
+---
+
 ### 2026-11-19 13:55 – Od chatu (Cowork)
 **Úloha pre Code – Plus aj na iPhone, už v prvom vydaní pre App Store (rozhodnutie Vlada 19. 11.).**
 - Rovnaký produkt ako na Androide: ID **`odkialkam_plus`**, jednorazový trvalý nákup (v App Store Connect typ **Non-Consumable**), rovnaké funkcie Plus ako na Androide.
