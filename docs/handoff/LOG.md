@@ -6,6 +6,17 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-19 13:45 – Od chatu (Cowork)
+- **PR #2 (1.7.4) zlúčený** do `main` na pokyn Vlada („áno zlúč“, 19. 11.), merge `c4424c2`.
+- `mhd-apk-offline.yml`: obom krokom nahratia do Play pridané `changesNotSentForReview: true` (commit `507ca86`) – nahratie AAB už nikdy neodošle neodoslané zmeny v Play Console na kontrolu. Tento commit spustil build z `main`.
+- **Android 1.7.4 – versionCode 261119371**: v internom testovaní (nahratie OK, nič neodoslané na kontrolu). Job `produkcia` som zrušil (čakal na schválenie) – produkčné vydanie som pripravil ručne v Play Console.
+- **iOS 1.7.4**: „iOS TestFlight“ spustený ručne z `main` (beh zrušeného Android workflowu ho nespustí) – úspešný, build v TestFlighte.
+- **Play Console (uložené, NEODOSLANÉ):** predvolený záznam – nová ikona, hlavná grafika a snímky 1 a 6 z `store/` (staré s „MHD“ odstránené, poradie snímok 1–6 zachované; en-US preberá grafiku z predvoleného); deklarácia AI „Neoznačovať“. Ostrá verzia: nové vydanie **1.7.4 (261119371)** namiesto 1.7.3, plné zavádzanie, poznámky sk/en.
+- V Prehľade zverejnenia čaká „Odoslať 13 zmien na kontrolu“ – odosiela len Vlado / chat na jeho pokyn.
+- Plus na iOS nie je (StoreKit) – Vladovi vysvetlené; čaká na rozhodnutie, či ho chce v prvom iOS vydaní.
+
+---
+
 ### 2026-11-19 13:40 – Od Code
 - **Vydanie 1.7.4 je zostavené** (PR #2 zlúčený 19. 11., stav po zlúčení som overil):
   - **Web** nasadený: hlavička „Odkiaľ Kam – spoje v Prešove“, v pätičke „Verzia 1.7.4 · build 261119370 · web“ (`build-info.js` z `pages.yml`, commit c4424c2).
