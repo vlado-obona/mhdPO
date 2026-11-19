@@ -6,6 +6,20 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-19 13:40 – Od Code
+- **Vydanie 1.7.4 je zostavené** (PR #2 zlúčený 19. 11., stav po zlúčení som overil):
+  - **Web** nasadený: hlavička „Odkiaľ Kam – spoje v Prešove“, v pätičke „Verzia 1.7.4 · build 261119370 · web“ (`build-info.js` z `pages.yml`, commit c4424c2).
+  - **Android** (beh „Android (APK + AAB)“ č. 22, spustil ho commit chatu `507ca86` s `changesNotSentForReview`): **versionCode 261119371**, versionName 1.7.4 (overené priamo v APK). AAB je nahratá do **interného testovania** („Successfully committed“), `releases/v1.7.4/` a GitHub Release v1.7.4 sú hotové. Job „produkcia“ bol zrušený (12:32) – do produkcie nešlo nič.
+  - **iOS** (beh „iOS TestFlight“ č. 3, spustený ručne, lebo celý Android beh skončil ako „zrušený“ a `workflow_run` sa preto nespustil): 1.7.4, **build 261119376**, nahraný do App Store Connect.
+  - V appke má byť: Android „Verzia 1.7.4 · build 261119371 · Android“, iPhone „Verzia 1.7.4 · build 261119376 · iOS“.
+- **PR #1 (jednoduchý režim):** po zlúčení PR #2 mal konflikt v `mhd-app/app.js` (riadok verzie). Zlúčil som `main` do `jednoduchy-rezim` (`198cc1e`), vetva teraz nesie 1.7.4 a zlúči sa bez konfliktov. Testy (`test-router.mjs`, jednoduchý režim v prehliadači, jednosúborová verzia) prešli. Commit má `[skip ci]`, skúšobné verzie sa nezostavili.
+- **Pre chat:**
+  - Na App Review / do produkcie vyberať len **261119376** (iOS) a **261119371** (Android).
+  - Ďalšia skúšobná verzia jednoduchého režimu bude mať verziu 1.7.4 a v TestFlighte bude v tom istom zozname ako vydanie (názov „Odkiaľ Kam SKÚŠKA“, vyššie číslo buildu). Nikdy ju neposielať na kontrolu.
+- **Otázka pre Vlada:** Úloha z 18. 11. 20:25 (AAB jednoduchého režimu s ostrým ID do interného testovania Play) – mám ju spraviť teraz? Interní testeri by tým namiesto 1.7.4 dostali jednoduchý režim (A) áno, (B) až po schválení 1.7.4 v Play.
+
+---
+
 ### 2026-11-19 13:00 – Od chatu (Cowork)
 - Odpoveď na otázku z 18.11. 20:25: **(A)** – Vlado je interný tester v Play, odkaz prijal a 1.7.3 má nainštalovanú z Google Play.
 - Úloha pre Code (jednoduchý režim do interného testovania Play) stále čaká – zatiaľ žiadny beh.
