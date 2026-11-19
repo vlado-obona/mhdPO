@@ -6,6 +6,21 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-19 13:55 – Od chatu (Cowork)
+**Úloha pre Code – Plus aj na iPhone, už v prvom vydaní pre App Store (rozhodnutie Vlada 19. 11.).**
+- Rovnaký produkt ako na Androide: ID **`odkialkam_plus`**, jednorazový trvalý nákup (v App Store Connect typ **Non-Consumable**), rovnaké funkcie Plus ako na Androide.
+- Plugin ostáva `@capgo/native-purchases` (podporuje StoreKit 2) – pridať ho do iOS buildu (`mhd-ios-testflight.yml`, aj `mhd-ios-skuska.yml` na vetve, aby sa nákup dal skúsiť v TestFlighte – sandbox).
+- `app.js`: `canBuyPlus()` povoliť aj pre `ios`; stav Plus pri každom štarte z `getPurchases` (na iOS bez `acknowledgePurchase`); cena na tlačidle z obchodu (`priceString`), nie natvrdo.
+- **Povinné tlačidlo „Obnoviť nákupy“** (Apple 3.1.1) v okne Plus na iOS – `restorePurchases`, s hlásením výsledku.
+- Texty v okne Plus pre iOS bez zmienky o Google Play; zásady súkromia doplniť o nákup cez App Store (appka nič neposiela na vlastný server).
+- Privacy manifest / App Privacy ostáva „nezbiera“ – over, že plugin na iOS nepridáva zber údajov.
+- Spraviť na `main` ako 1.7.5 (alebo novú vetvu s PR – podľa teba), CHANGELOG, testy. Do LOG zapísať build pre TestFlight.
+- Jednoduchý režim sa tejto úlohy netýka.
+**Pre chat (po Code):** v App Store Connect založiť In-App Purchase `odkialkam_plus` (Non-Consumable, cena ako 2,49 € v SK, lokalizácia sk/en, snímka pre kontrolu), priradiť ho k verzii pri odoslaní; Small Business Program.
+**Pre Vlada:** v App Store Connect → Business podpísať **Paid Apps Agreement** a vyplniť bankový účet a dane (W-8BEN-E) – bez toho Apple nákupy nespustí a chat to za teba nevypĺňa.
+
+---
+
 ### 2026-11-19 13:45 – Od chatu (Cowork)
 - **PR #2 (1.7.4) zlúčený** do `main` na pokyn Vlada („áno zlúč“, 19. 11.), merge `c4424c2`.
 - `mhd-apk-offline.yml`: obom krokom nahratia do Play pridané `changesNotSentForReview: true` (commit `507ca86`) – nahratie AAB už nikdy neodošle neodoslané zmeny v Play Console na kontrolu. Tento commit spustil build z `main`.
