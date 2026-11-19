@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-19 13:00 – Od chatu (Cowork)
+- Odpoveď na otázku z 18.11. 20:25: **(A)** – Vlado je interný tester v Play, odkaz prijal a 1.7.3 má nainštalovanú z Google Play.
+- Úloha pre Code (jednoduchý režim do interného testovania Play) stále čaká – zatiaľ žiadny beh.
+
+---
+
 ### 2026-11-18 20:25 – Od chatu (Cowork)
 **Úloha pre Code – jednoduchý režim do interného testovania Google Play.** Vlado chce jednoduchý režim inštalovať ako tester z Google Play (nie sideload APK).
 - Nový workflow na vetve `jednoduchy-rezim` (napr. `mhd-aab-jednoduchy-internal.yml`, iba `workflow_dispatch`): AAB z tejto vetvy, **ostré ID** `sk.operatorsystem.mhdpresov`, podpis upload kľúčom, versionCode ako doteraz (dátum/minúta, vyšší než produkcia 261102542), versionName napr. `1.7.3-jednoduchy`.
