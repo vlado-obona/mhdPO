@@ -256,6 +256,8 @@ jobs:
           track: ${{ steps.play.outputs.track }}
           status: completed
           whatsNewDirectory: whatsnew
+          # neodoslané zmeny v Play Console (záznam v obchode) odosiela na kontrolu len Vlado ručne
+          changesNotSentForReview: true
 
       # appka, ktorá ešte nemá žiadne zverejnené vydanie, prijme len koncept
       - name: Google Play – nahratie ako koncept
@@ -269,6 +271,8 @@ jobs:
           track: ${{ steps.play.outputs.track }}
           status: draft
           whatsNewDirectory: whatsnew
+          # neodoslané zmeny v Play Console (záznam v obchode) odosiela na kontrolu len Vlado ručne
+          changesNotSentForReview: true
 
   # ── Google Play: produkcia až po schválení ─────────────────────────
   # Po úspešnom nahratí do interného testovania čaká na schválenie v prostredí
