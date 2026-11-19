@@ -36,6 +36,11 @@ jobs:
           mkdir _site
           cp -r mhd-app/. _site/
           cp -r web/. _site/
+          # číslo buildu webu (rovnaká schéma ako Android versionCode: YYMMDD·1000 +
+          # minúta dňa/2) a commit – appka ich ukáže v pätičke („Verzia … · build … · web“)
+          D=$(date -u +%y%m%d); HM=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
+          printf 'window.__BUILD__ = {"build":"%s","commit":"%s"};\n' "$(( 10#$D * 1000 + HM / 2 ))" "${GITHUB_SHA::7}" > _site/build-info.js
+          cat _site/build-info.js
           touch _site/.nojekyll
           ls -la _site _site/sukromie
       - uses: actions/configure-pages@v5

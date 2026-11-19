@@ -1,9 +1,9 @@
-// MHD Prešov — plánovač spojení nad oficiálnymi GTFS dátami DPMP.
+// Odkiaľ Kam — plánovač spojení MHD v Prešove nad oficiálnymi GTFS dátami DPMP.
 import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './raptor.js';
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.7.3';
+const APP_VERSION = '1.7.4';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -1972,9 +1972,9 @@ function planFromHere(reason) {
   } else {
     t.phase = 'error';
     t.error = !fromStops.size
-      ? 'V okolí 1,5 km nie je žiadna zastávka MHD Prešov.'
+      ? 'V okolí 1,5 km nie je žiadna zastávka MHD v Prešove.'
       : !toStops.size
-        ? 'Pri cieli (do 1,5 km) nie je žiadna zastávka MHD Prešov.'
+        ? 'Pri cieli (do 1,5 km) nie je žiadna zastávka MHD v Prešove.'
         : 'Na dnes sa už nenašlo žiadne spojenie do cieľa. Skús neskôr alebo iný cieľ.';
   }
   drawTripJourney();
@@ -2811,6 +2811,79 @@ async function exitApp() {
   CapApp.exitApp().catch(() => {});
 }
 
+// ── verzia a build (pätička) ─────────────────────────────────────────
+// Pri skúškach musí byť vidno, ktoré vydanie je v telefóne (Google Play, TestFlight,
+// „Odkiaľ Kam SKÚŠKA“, web). Build = versionCode (Android) / CFBundleVersion (iOS)
+// z nainštalovanej appky (@capacitor/app getInfo). Web a skúšobné buildy dostanú
+// build, vetvu a commit z build-info.js, ktorý prepíše workflow (v repe je prázdny).
+let appBuildLine = '';
+function appBuildText(info) {
+  const B = window.__BUILD__ || {};
+  const C = window.Capacitor;
+  const plat = C?.isNativePlatform?.() ? C.getPlatform?.() : 'web';
+  const nv = /^\d+\.\d+\.\d+/.exec(info?.version || '');
+  const parts = [`Verzia ${nv ? nv[0] : APP_VERSION}`];
+  const build = String(info?.build || B.build || '');
+  // commit skúšky na Androide z nainštalovanej appky (versionName „1.7.3-skuska.<commit>“), inak z build-info.js
+  const sk = /-skuska\.([0-9a-f]{7,40})$/.exec(info?.version || '');
+  const commit = sk ? sk[1] : B.commit;
+  if (build) parts.push(`build ${build}`);
+  parts.push(plat === 'android' ? 'Android' : plat === 'ios' ? 'iOS' : location.protocol === 'file:' ? 'web (súbor)' : 'web');
+  // skúšobný build: podľa build-info.js, inak podľa ID (Android .skuska) alebo názvu appky
+  if (B.channel === 'skuska' || /\.skuska$/.test(info?.id || '') || /SKÚŠKA/i.test(info?.name || '')) {
+    parts.push(['SKÚŠKA', B.branch, commit ? `(${commit})` : ''].filter(Boolean).join(' '));
+  }
+  return parts.join(' · ');
+}
+async function renderAppBuild() {
+  const show = () => { if ($('appBuild')) $('appBuild').textContent = appBuildLine; };
+  appBuildLine = appBuildText(null);
+  show();
+  const CapApp = window.Capacitor?.Plugins?.App;
+  if (CapApp?.getInfo) {
+    try { appBuildLine = appBuildText(await CapApp.getInfo()); show(); } catch {}
+  }
+  return appBuildLine;
+}
+// „Kopírovať“: do schránky; keď to WebView nedovolí, aspoň označí text (podržaním sa skopíruje)
+let appBuildCopyT = 0;
+async function copyAppBuild() {
+  const btn = $('appBuildCopy');
+  let ok = false;
+  try { await navigator.clipboard.writeText(appBuildLine); ok = true; } catch {}
+  if (!ok) {
+    try {
+      const r = document.createRange();
+      r.selectNodeContents($('appBuild'));
+      const sel = getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      ok = document.execCommand('copy');
+    } catch {}
+  }
+  btn.textContent = ok ? 'Skopírované ✓' : 'Označené – podrž a skopíruj';
+  clearTimeout(appBuildCopyT);
+  appBuildCopyT = setTimeout(() => { btn.textContent = 'Kopírovať'; }, 2500);
+}
+
+// Natívna appka: odregistrovať service worker z predošlých verzií a zmazať jeho cache. Keď touto
+// stránkou ešte riadil (prišla zo starej cache), raz ju znova načítať – už priamo z balíka appky
+// (vráti true: main() potom nič nespúšťa, inak by sa napr. odkaz z widgetu spracoval dvakrát).
+async function dropNativeSw() {
+  const sw = navigator.serviceWorker;
+  if (!sw?.getRegistrations) return false;
+  const controlled = !!sw.controller;
+  try {
+    await Promise.all((await sw.getRegistrations()).map((r) => r.unregister()));
+    const ks = (await window.caches?.keys?.()) || [];
+    await Promise.all(ks.filter((k) => /^mhd-(shell|data)-/.test(k)).map((k) => window.caches.delete(k)));
+  } catch { return false; }
+  let again = false;
+  try { again = controlled && !sessionStorage.getItem('mhd-nosw'); if (again) sessionStorage.setItem('mhd-nosw', '1'); } catch {}
+  if (again) location.reload();
+  return again;
+}
+
 // prázdny dátum/čas (tlačidlo „VYMAZAŤ“ v systémovom výbere) → aktuálny dátum/čas
 function fillEmptyWhen() {
   const n = nowInSk();
@@ -2820,11 +2893,15 @@ function fillEmptyWhen() {
 
 // ── inicializácia ────────────────────────────────────────────────────
 async function main() {
+  // stránka zo starej cache service workera v natívnej appke: najprv ho odstrániť a načítať nanovo
+  if (window.Capacitor?.isNativePlatform?.() && navigator.serviceWorker?.controller && await dropNativeSw()) return;
   $('appVer').textContent = `v${APP_VERSION}`;
-  document.title = `Odkiaľ Kam v${APP_VERSION} — MHD Prešov`;
+  document.title = `Odkiaľ Kam v${APP_VERSION} — spoje v Prešove`;
   const now = nowInSk();
   $('dateInput').value = now.date;
   $('timeInput').value = now.time;
+  renderAppBuild();
+  $('appBuildCopy')?.addEventListener('click', copyAppBuild); // ?. – stará index.html z cache tlačidlo nemá
 
   for (const id of ['dateInput', 'timeInput']) $(id).addEventListener('change', fillEmptyWhen);
   if (canExitApp()) {
@@ -3040,7 +3117,10 @@ async function main() {
     }).catch?.(() => {});
   }
 
-  if ('serviceWorker' in navigator) {
+  // Service worker len na webe. Natívna appka (Capacitor) má všetky súbory v balíku; worker z predošlej
+  // verzie by po aktualizácii obslúžil spustenie zo starej cache (stará appka s novým číslom buildu).
+  if (window.Capacitor?.isNativePlatform?.()) dropNativeSw();
+  else if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 }

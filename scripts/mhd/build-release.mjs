@@ -68,7 +68,8 @@ app = mustReplace(app,
   `Promise.resolve(window.__MAPBASE__ || null)`,
   'načítanie mapy');
 app = mustReplace(app,
-  `  if ('serviceWorker' in navigator) {
+  `  if (window.Capacitor?.isNativePlatform?.()) dropNativeSw();
+  else if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }`,
   '', 'service worker');
@@ -84,7 +85,7 @@ const out = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Odkiaľ Kam — MHD Prešov (v${version})</title>
+<title>Odkiaľ Kam — spoje v Prešove (v${version})</title>
 <style>
 ${leafletCss}
 ${appCss}
@@ -113,7 +114,7 @@ ${app}
 
 mkdirSync(OUT, { recursive: true });
 writeFileSync(join(OUT, `mhd-presov-v${version}.html`), out);
-writeFileSync(join(OUT, 'RELEASE.md'), `# Odkiaľ Kam – MHD Prešov v${version}
+writeFileSync(join(OUT, 'RELEASE.md'), `# Odkiaľ Kam – spoje v Prešove v${version}
 
 - vytvorené: ${new Date().toISOString()}
 - cestovné poriadky: ${meta.validFrom}–${meta.validTo} (${meta.agency})
