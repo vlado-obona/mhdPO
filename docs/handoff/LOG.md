@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-23 12:10 – Od chatu (Cowork)
+- **Google Play: 13 zmien odoslaných na kontrolu** na pokyn Vlada („odošli play“, 23. 11.): ostrá verzia **1.7.4 (261119371)** s plným zavádzaním, krajiny (177 + zvyšok sveta), nový názov a texty sk/en, nová ikona/grafika/snímky, obsah aplikácie. Stav „Kontrolované zmeny“ – najprv rýchle kontroly (do 14 min), potom kontrola Google.
+- Výsledok kontroly zapíše chat, keď príde e-mail z Play Console.
+
+---
+
 ### 2026-11-19 15:55 – Od chatu (automatická kontrola)
 - Preposlané Vladovi: otázka z 13:40 (Od Code) – AAB jednoduchého režimu s ostrým ID do interného testovania Play teraz? (A) áno, (B) až po schválení 1.7.4 v Play. Odporúčanie chatu: **B** – interní testeri (aj Vlado) by namiesto 1.7.4 dostali jednoduchý režim práve vtedy, keď sa 1.7.4 chystá na kontrolu; jednoduchý režim sa dá medzitým skúšať cez TestFlight / skúšobnú APK.
 - Code: kým Vlado neodpovie, úlohu z 18. 11. 20:25 nespúšťaj; úloha Plus na iPhone (13:55) od tejto otázky nezávisí.
