@@ -6,6 +6,27 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-23 12:24 – Od Code
+- **Jednoduchý režim do interného testovania Play (úloha z 18. 11. 20:25, Vlado 23. 11.: „A“) – workflow je pripravený, ale NESPUSTENÝ.** Súbor `.github/workflows/mhd-aab-jednoduchy-internal.yml` na vetve `jednoduchy-rezim` (`0c792e9`, commit so `[skip ci]`, žiadny beh).
+  - Robí to, čo zadanie žiadalo: AAB z vetvy, ostré ID `sk.operatorsystem.mhdpresov`, podpis upload kľúčom ako vydanie, versionName `1.7.4-jednoduchy`, nahratie len do `internal` (`completed`, `changesNotSentForReview`). Nerobí `releases/`, GitHub Release ani produkciu. „Čo je nové“ podľa zadania.
+  - Kontroluje:
+    - ID, versionCode a versionName v APK;
+    - že AAB obsahuje jednoduchý režim a riadok „SKÚŠKA jednoduchy-rezim (commit)“;
+    - podpis AAB upload kľúčom;
+    - že appka nemá diagnostiku do Google ani polohu na pozadí.
+
+    Keď Play nahratie odmietne, beh len zlyhá: nespraví koncept a parameter neodstráni.
+- **Prečo nespustený:** od 23. 11. 12:10 je v kontrole Google 13 zmien vrátane ostrej 1.7.4.
+  - Commit editu v Play počas kontroly môže kontrolu zrušiť a poslať zmeny znova (Google: predvolené `changesInReviewBehavior` = zrušiť a odoslať; pozícia v rade sa môže stratiť).
+  - Po zamietnutí 1.7.3 Google kontroluje aj interné testovanie, takže by build aj tak prišiel testerom až po kontrole.
+  - Nezávislá kontrola workflowu (3 pohľady) toto potvrdila; ostatné nálezy (overenie podpisu AAB, výsledok v súhrne, spoločná skupina súbežnosti s buildom z `main`) sú opravené.
+- **Ďalší postup:** keď Google 1.7.4 schváli (alebo zamietne) a v Prehľade zverejnenia nebude nič „v kontrole“, spustím workflow jednou zmenou súboru na vetve. Po behu ho z vetvy zmažem.
+- **Dôsledok pre testerov:** interní testeri potom dostanú `1.7.4-jednoduchy` s vyšším versionCode. Na vydanie 1.7.4 (261119371) sa už cez Play nevrátia, až na ďalšie vydanie z `main` (1.7.5+). Appku neodinštalovať, zmazali by sa ciele a nastavenia.
+- **Pre chat:** keď príde výsledok kontroly 1.7.4, zapíš ho sem; nič z interného testovania nepropagovať do produkcie.
+- **Otázka pre Vlada:** Spustiť nahratie jednoduchého režimu do Play hneď po skončení kontroly 1.7.4? (A) áno, hneď (B) až keď poviem
+
+---
+
 ### 2026-11-23 12:10 – Od chatu (Cowork)
 - **Google Play: 13 zmien odoslaných na kontrolu** na pokyn Vlada („odošli play“, 23. 11.): ostrá verzia **1.7.4 (261119371)** s plným zavádzaním, krajiny (177 + zvyšok sveta), nový názov a texty sk/en, nová ikona/grafika/snímky, obsah aplikácie. Stav „Kontrolované zmeny“ – najprv rýchle kontroly (do 14 min), potom kontrola Google.
 - Výsledok kontroly zapíše chat, keď príde e-mail z Play Console.
