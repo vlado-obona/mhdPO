@@ -1,0 +1,212 @@
+name: Android – jednoduchý režim do interného testovania (Play)
+
+# Jednoduchý režim (vetva jednoduchy-rezim) ako AAB s OSTRÝM ID
+# sk.operatorsystem.mhdpresov, podpísaný upload kľúčom (rovnako ako vydanie
+# z workflowu „Android (APK + AAB)“), nahratý LEN do tracku „internal“
+# v Google Play – Vlado ho inštaluje ako interný tester priamo z Google Play
+# (zadanie chatu z 18. 11. 2026, súhlas Vlada 23. 11. 2026).
+# - changesNotSentForReview: neodoslané zmeny v Play Console (záznam v obchode,
+#   pripravené produkčné vydanie) sa NEodošlú na kontrolu – odosiela len Vlado.
+# - nič sa necommitne do releases/, žiadny GitHub Release, žiadna produkcia.
+# - versionName <APP_VERSION>-jednoduchy, versionCode ako vydanie
+#   (YYMMDD·1000 + minúta dňa/2) – vždy vyšší než doterajšie nahratia.
+# - v appke riadok „Verzia … · build … · Android · SKÚŠKA jednoduchy-rezim (commit)“.
+# POZOR:
+# - Spúšťať len keď v Play Console → Prehľad zverejnenia nie je nič „v kontrole“
+#   (commit editu počas kontroly ju môže zrušiť a poslať znova). Po zamietnutí
+#   vydania Google kontroluje aj interné testovanie – build príde až po kontrole.
+# - Keď Play odmietne parameter changesNotSentForReview, beh len zlyhá: NIKDY ho
+#   neodstraňovať ani nespúšťať ako koncept (odoslali by sa všetky čakajúce zmeny).
+# - Interní testeri dostanú tento build namiesto vydania z main a pre vyšší
+#   versionCode sa na vydanie 1.7.4 (261119371) nevrátia – až na ďalšie vydanie
+#   z main (1.7.5+). Appku neodinštalovať (zmazali by sa ciele a nastavenia).
+# - Do produkcie ho NIKDY nepropagovať („Propagovať vydanie“ z interného
+#   testovania) – produkčné vydanie má vlastné AAB z main.
+# Jednorazové: spustí sa pri zmene tohto súboru na vetve jednoduchy-rezim
+# (commit BEZ [skip ci]); po behu sa súbor z vetvy zmaže.
+on:
+  push:
+    branches: [jednoduchy-rezim]
+    paths:
+      - '.github/workflows/mhd-aab-jednoduchy-internal.yml'
+
+permissions:
+  contents: read
+
+# rovnaká skupina ako build vydania z main – dve nahratia do Play naraz nikdy
+concurrency:
+  group: mhd-apk-offline-refs/heads/main
+  cancel-in-progress: false
+
+jobs:
+  internal:
+    # len kód z vetvy jednoduchého režimu – nikdy nie z inej vetvy
+    if: github.ref == 'refs/heads/jednoduchy-rezim'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verzia
+        run: |
+          V=$(sed -n "s/^const APP_VERSION = '\([0-9.]*\)';/\1/p" mhd-app/app.js)
+          [ -n "$V" ] || { echo "::error::APP_VERSION v mhd-app/app.js sa nenašla"; exit 1; }
+          SHA=$(git rev-parse --short=7 HEAD)
+          echo "VERSION=$V" >> "$GITHUB_ENV"; echo "SHA=$SHA" >> "$GITHUB_ENV"
+          echo "VNAME=$V-jednoduchy" >> "$GITHUB_ENV"
+          echo "verzia $V-jednoduchy, commit $SHA, vetva $GITHUB_REF_NAME"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # rovnaký projekt ako vydanie (mhd-apk-offline.yml), len web je z tejto vetvy
+      - name: Capacitor projekt
+        run: |
+          mkdir cap-build && cd cap-build
+          npm init -y >/dev/null
+          npm i --no-audit --no-fund @capacitor/core@8.5.2 @capacitor/cli@8.5.2 @capacitor/android@8.5.2 @capacitor/geolocation@8.2.2 @capacitor/local-notifications@8.3.1 @capacitor/haptics@8.0.2 @capacitor/app@8.1.2 @capacitor-community/keep-awake@8.0.1 @capacitor-community/text-to-speech@8.0.2 @capgo/native-purchases@8.8.1 >/dev/null
+          cat > capacitor.config.json <<EOF
+          {
+            "appId": "sk.operatorsystem.mhdpresov",
+            "appName": "Odkiaľ Kam v$VERSION",
+            "webDir": "www",
+            "android": { "allowMixedContent": false }
+          }
+          EOF
+          cp -r ../mhd-app www
+          grep -q "APP_VERSION = '$VERSION'" www/app.js || { echo "::error::APP_VERSION v app.js nesedí s $VERSION"; exit 1; }
+          grep -q "initSimple" www/app.js || { echo "::error::www/app.js nie je z vetvy jednoduchého režimu"; exit 1; }
+          # riadok „Verzia … · build … · Android · SKÚŠKA jednoduchy-rezim (commit)“ v appke (build číta appka sama)
+          BR=$(printf %s "$GITHUB_REF_NAME" | tr -c 'A-Za-z0-9._-' '-')
+          printf 'window.__BUILD__ = {"channel":"skuska","branch":"%s","commit":"%s"};\n' "$BR" "$SHA" > www/build-info.js
+          cat www/build-info.js
+          npx cap add android
+          npx cap sync android
+          grep -E 'targetSdkVersion|compileSdkVersion' android/variables.gradle
+          grep -q 'targetSdkVersion = 36' android/variables.gradle || { echo "::error::targetSdk nie je 36 (Google Play)"; exit 1; }
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-feature android:name="android.hardware.location.gps" android:required="false" />\n    <uses-permission android:name="com.android.vending.BILLING" />\n</manifest>#' "$M"
+          grep -c LOCATION "$M"
+          cp -r ../android-native/app/src/main/. android/app/src/main/
+          sed -i 's#</application>#    <receiver android:name=".NextBusWidget" android:exported="false" android:label="@string/widget_label">\n            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>\n            <meta-data android:name="android.appwidget.provider" android:resource="@xml/next_bus_widget_info" />\n        </receiver>\n    </application>#' "$M"
+          grep -q 'NextBusWidget' "$M" || { echo "::error::widget nie je v AndroidManifest"; exit 1; }
+          grep -q 'xmlns:tools=' "$M" || sed -i 's#<manifest #<manifest xmlns:tools="http://schemas.android.com/tools" #' "$M"
+          sed -i 's#</application>#    <service android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery" tools:node="remove" />\n    </application>#' "$M"
+          grep -q 'TransportBackendDiscovery' "$M" || { echo "::error::odstránenie diagnostiky nie je v AndroidManifest"; exit 1; }
+          grep -q 'registerPlugin(WidgetBridgePlugin.class)' android/app/src/main/java/sk/operatorsystem/mhdpresov/MainActivity.java || { echo "::error::MainActivity bez WidgetBridge"; exit 1; }
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />\n    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />\n</manifest>#' "$M"
+          sed -i 's#</application>#    <service android:name=".TripTrackerService" android:exported="false" android:foregroundServiceType="location" />\n    </application>#' "$M"
+          grep -q 'TripTrackerService' "$M" && grep -q 'FOREGROUND_SERVICE_LOCATION' "$M" || { echo "::error::sledovanie cesty nie je v AndroidManifest"; exit 1; }
+          grep -q 'registerPlugin(TripTrackerPlugin.class)' android/app/src/main/java/sk/operatorsystem/mhdpresov/MainActivity.java || { echo "::error::MainActivity bez TripTracker"; exit 1; }
+          ! grep -q 'ACCESS_BACKGROUND_LOCATION' "$M" || { echo "::error::ACCESS_BACKGROUND_LOCATION nechceme"; exit 1; }
+
+      - name: Ikony aplikacie
+        working-directory: cap-build
+        run: |
+          npm i --no-audit --no-fund -D @capacitor/assets sharp >/dev/null
+          mkdir -p assets
+          node -e "const s=require('sharp'); s('../mhd-app/icons/icon-512.png').resize(1024,1024).png().toFile('assets/logo.png').then(()=>console.log('logo ok'))"
+          npx capacitor-assets generate --android || echo "generovanie ikon zlyhalo — ostane predvolena"
+
+      - name: Verzia aplikacie
+        working-directory: cap-build/android
+        run: |
+          # rovnaká schéma ako vydanie; musí byť vyšší než doterajšie nahratia (1.7.4 = 261119371)
+          D=$(date -u +%y%m%d); HM=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
+          CODE=$(( 10#$D * 1000 + HM / 2 ))
+          [ "$CODE" -gt 261119371 ] || { echo "::error::versionCode $CODE nie je vyšší než 261119371"; exit 1; }
+          echo "CODE=$CODE" >> "$GITHUB_ENV"
+          sed -i "s/versionCode 1$/versionCode $CODE/" app/build.gradle
+          sed -i "s/versionName \"1.0\"$/versionName \"$VNAME\"/" app/build.gradle
+          grep -E 'versionCode|versionName' app/build.gradle
+          grep -q "versionCode $CODE$" app/build.gradle && grep -q "versionName \"$VNAME\"$" app/build.gradle || { echo "::error::versionCode/versionName sa nezapísali"; exit 1; }
+
+      - name: Build release APK + AAB
+        working-directory: cap-build/android
+        run: ./gradlew --no-daemon assembleRelease bundleRelease
+
+      # podpis upload kľúčom ako vydanie; APK sa podpíše len na kontrolu obsahu (nikam sa nenahrá)
+      - name: Podpis a kontrola
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+          KS_PASS_SECRET: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          cd cap-build
+          if [ -z "$KS_B64" ] || [ -z "$KS_PASS_SECRET" ]; then
+            echo "::error::Chýbajú secrets ANDROID_KEYSTORE_B64 / ANDROID_KEYSTORE_PASSWORD — bez stáleho kľúča sa nepodpisuje."
+            exit 1
+          fi
+          echo "$KS_B64" | base64 -d > android.keystore
+          KS_PASS="$KS_PASS_SECRET"
+          echo "::add-mask::$KS_PASS"
+          keytool -list -v -keystore android.keystore -storepass "$KS_PASS" -alias android | grep -E 'SHA256:|Valid'
+          BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          "$BT/zipalign" -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
+          "$BT/apksigner" sign --ks android.keystore --ks-key-alias android \
+            --ks-pass "pass:$KS_PASS" --key-pass "pass:$KS_PASS" \
+            --out kontrola.apk aligned.apk
+          "$BT/apksigner" verify kontrola.apk
+          echo "APK podpis OK"
+          "$BT/aapt2" dump badging kontrola.apk | grep -E "^package:|application-label:" | tee badging.txt
+          grep -q "name='sk.operatorsystem.mhdpresov' versionCode='$CODE' versionName='$VNAME'" badging.txt || { echo "::error::ID, versionCode alebo versionName nesedí"; exit 1; }
+          if "$BT/aapt2" dump xmltree --file AndroidManifest.xml kontrola.apk | grep -qE 'TransportBackendDiscovery|CctBackendFactory'; then
+            echo "::error::APK obsahuje datatransport backend (diagnostika do Google)"; exit 1
+          fi
+          "$BT/aapt2" dump permissions kontrola.apk | tee perms.txt
+          ! grep -q 'ACCESS_BACKGROUND_LOCATION' perms.txt || { echo "::error::APK žiada polohu na pozadí"; exit 1; }
+          grep -q 'FOREGROUND_SERVICE_LOCATION' perms.txt || { echo "::error::APK bez FOREGROUND_SERVICE_LOCATION"; exit 1; }
+          cp android/app/build/outputs/bundle/release/app-release.aab mhd-presov-jednoduchy.aab
+          unzip -p mhd-presov-jednoduchy.aab base/assets/public/build-info.js | tee build-info.txt
+          grep -q '"channel":"skuska"' build-info.txt && grep -q "\"commit\":\"$SHA\"" build-info.txt || { echo "::error::AAB nemá build-info.js jednoduchého režimu"; exit 1; }
+          unzip -p mhd-presov-jednoduchy.aab base/assets/public/app.js | grep -q 'initSimple' || { echo "::error::AAB nemá jednoduchý režim"; exit 1; }
+          jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore android.keystore \
+            -storepass "$KS_PASS" -keypass "$KS_PASS" mhd-presov-jednoduchy.aab android
+          jarsigner -verify mhd-presov-jednoduchy.aab > jv.txt 2>&1 || true
+          grep -q '^jar verified' jv.txt || { cat jv.txt; echo "::error::AAB nie je podpísaná"; exit 1; }
+          KS_SHA=$(keytool -list -v -keystore android.keystore -storepass "$KS_PASS" -alias android | sed -n 's/.*SHA256: *//p' | head -1)
+          [ -n "$KS_SHA" ] && keytool -printcert -jarfile mhd-presov-jednoduchy.aab | grep -qF "$KS_SHA" || { echo "::error::AAB nie je podpísaná upload kľúčom"; exit 1; }
+          echo "AAB podpísaná upload kľúčom ($KS_SHA)"
+          rm -f android.keystore aligned.apk kontrola.apk perms.txt jv.txt
+
+      - name: Google Play – príprava
+        env:
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          [ -n "$PLAY_JSON" ] || { echo "::error::Secret PLAY_SERVICE_ACCOUNT_JSON nie je nastavený – nič sa nenahrá."; exit 1; }
+          mkdir -p whatsnew
+          printf '%s' 'Skúška jednoduchého režimu: mapa pod šípkou, zlý smer, Kde som?, Pre rodičov – nevydávať' > whatsnew/whatsnew-sk
+          cat whatsnew/whatsnew-sk; echo
+
+      # len interné testovanie; bez náhradného konceptu – keď Play nahratie odmietne, beh zlyhá
+      # a nič ďalšie sa nedeje. changesNotSentForReview nikdy neodstraňovať (pozri hlavičku).
+      - name: Google Play – nahratie (interné testovanie)
+        id: upload
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: sk.operatorsystem.mhdpresov
+          releaseFiles: cap-build/mhd-presov-jednoduchy.aab
+          releaseName: ${{ env.VNAME }} (${{ env.CODE }})
+          track: internal
+          status: completed
+          whatsNewDirectory: whatsnew
+          # neodoslané zmeny v Play Console odosiela na kontrolu len Vlado ručne
+          changesNotSentForReview: true
+
+      - name: Súhrn
+        if: always()
+        run: |
+          {
+            echo "### Jednoduchý režim → Google Play, interné testovanie"
+            echo ""
+            echo "- výsledok: beh **${{ job.status }}**, nahratie do Play **${{ steps.upload.outcome || 'nespustené' }}**"
+            echo "- verzia **$VNAME**, versionCode **${CODE:-?}**, commit $SHA (vetva $GITHUB_REF_NAME)"
+            echo "- ostré ID sk.operatorsystem.mhdpresov, podpis upload kľúčom, track internal, changesNotSentForReview"
+            echo "- nič v releases/, GitHub Release ani produkcii; do produkcie tento build nikdy nepropagovať"
+          } >> "$GITHUB_STEP_SUMMARY"
