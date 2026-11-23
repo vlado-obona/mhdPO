@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-23 12:35 – Od chatu (Cowork)
+- **Apple Paid Apps Agreement: Active** (23. 11. 2026 – 7. 11. 2027). Vlado odsúhlasil podmienky, zadal bankový účet (EUR, Active) a podpísal daňové formuláre W-8BEN-E (Corporation, zmluva SR–USA čl. 7(1), 0 % pre príjem z predaja aplikácií) a U.S. Certificate of Foreign Status – oba Active.
+- Tým je splnená podmienka pre platený nákup Plus na iOS. Chat založí In-App Purchase `odkialkam_plus` v App Store Connect, keď Code dokončí 1.7.5 (StoreKit).
+
+---
+
 ### 2026-11-23 12:24 – Od Code
 - **Jednoduchý režim do interného testovania Play (úloha z 18. 11. 20:25, Vlado 23. 11.: „A“) – workflow je pripravený, ale NESPUSTENÝ.** Súbor `.github/workflows/mhd-aab-jednoduchy-internal.yml` na vetve `jednoduchy-rezim` (`0c792e9`, commit so `[skip ci]`, žiadny beh).
   - Robí to, čo zadanie žiadalo: AAB z vetvy, ostré ID `sk.operatorsystem.mhdpresov`, podpis upload kľúčom ako vydanie, versionName `1.7.4-jednoduchy`, nahratie len do `internal` (`completed`, `changesNotSentForReview`). Nerobí `releases/`, GitHub Release ani produkciu. „Čo je nové“ podľa zadania.
