@@ -1,0 +1,343 @@
+/* Jednoduchý režim – vlastná obrazovka nad bežnou appkou (pozri simple.js).
+   Všetky triedy majú predponu sm-, aby sa nebili so štýlmi v app.css.
+   Farby sú zámerne vlastné a vždy svetlé: veľký kontrast, bez tmavého režimu. */
+.sm {
+  --g: #075c2b;          /* zelená: biely text 8,3 : 1 */
+  --g-soft: #e6f3ea;
+  --ink: #14181a;
+  --mut: #454c50;        /* 8,6 : 1 na bielej */
+  --bg: #f2f5f2;
+  --card: #fff;
+  --ln: #7d887f;
+  --ln2: #c9d2cb;
+  --warn-bg: #fff3d6;
+  --warn-ink: #5a3d00;
+  --red: #a3210f;
+  --blue: #0b4a8f;
+  --r: 18px;
+  position: fixed; inset: 0; z-index: 1900;
+  display: flex; flex-direction: column;
+  background: var(--bg); color: var(--ink); color-scheme: light;
+  font: 1.125rem/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+body.simple-on > header, body.simple-on > main, body.simple-on > footer, body.simple-on #navBar { display: none; }
+body.simple-on { overflow: hidden; }
+.sm *, .sm *::before, .sm *::after { box-sizing: border-box; }
+/* :where drží váhu selektora nízko, aby triedy tlačidiel nižšie mohli meniť písmo aj farbu */
+.sm :where(button) { font: inherit; color: inherit; cursor: pointer; margin: 0; -webkit-tap-highlight-color: transparent; }
+.sm button:focus-visible, .sm a:focus-visible, .sm input:focus-visible, .sm select:focus-visible { outline: 4px solid #ffbf00; outline-offset: 3px; }
+.sm h1, .sm h2, .sm p { margin: 0; }
+.sm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* horná lišta */
+/* Lišta má vždy rovnakú výšku (64 px): dlhý názov cieľa ju nesmie natiahnuť a vytlačiť tlačidlá
+   a spodnú lištu pomoci z obrazovky. Názov najviac na 2 riadky, láme sa medzi slovami (slovo len
+   vtedy, keď sa celé nezmestí ani na samostatný riadok); celý názov je v karte „Cieľ“. */
+.sm-top {
+  flex: none; background: var(--g); color: #fff; display: flex; align-items: center; gap: 8px;
+  box-sizing: border-box; height: calc(64px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 1rem 0;
+}
+.sm-top h1 {
+  flex: 1; min-width: 0; font-size: 1.25rem; line-height: 22px; font-weight: 800; overflow-wrap: break-word; hyphens: manual;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+}
+.sm[data-scr="home"] .sm-top h1 { font-size: 1.625rem; line-height: 1.1; }
+.sm-top h1:focus { outline: none; }
+.sm-clock { font-size: 1.375rem; font-weight: 700; }
+/* Späť a Nahlas: ikona nad slovom, aby názvu ostalo dosť miesta */
+.sm-tbtn { flex: none; width: 72px; height: 52px; padding: 0; border-radius: 14px; border: 2px solid #fff; background: transparent; color: #fff;
+  font-size: 1rem; font-weight: 800; line-height: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; white-space: nowrap; }
+.sm-tbtn[hidden] { display: none; }
+.sm-tbtn span { font-size: 1.25rem; line-height: 1; }
+.sm-dots { flex: none; display: flex; gap: 6px; padding: .6rem 1rem 0; }
+.sm-dots span { flex: 1; height: 10px; border-radius: 5px; background: #c3cdc5; }
+.sm-dots span.on { background: var(--g); }
+
+.sm-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 1rem 1rem 1.25rem; overscroll-behavior: contain; }
+.sm-actions { flex: none; position: relative; padding: 12px 1rem; background: var(--card); border-top: 2px solid var(--ln2); display: flex; flex-direction: column; gap: 10px; }
+/* „ďalej nižšie“: vlastný pásik pod rolovanou časťou (neprekrýva text), aj keď obrazovka nemá tlačidlá (úvod) */
+.sm-morewrap { flex: none; display: none; justify-content: center; background: var(--card); border-top: 2px solid var(--ln2); padding-top: 3px; }
+.sm.sm-has-more .sm-morewrap { display: flex; }
+.sm.sm-has-more .sm-actions { border-top: 0; padding-top: 6px; }
+.sm-more { border: 0; background: var(--ink); color: #fff; border-radius: 999px; padding: 0 1rem; font-size: 1rem; line-height: 1.6; font-weight: 700; white-space: nowrap; }
+
+/* tlačidlá */
+.sm-primary { min-height: 72px; border: 0; border-radius: 18px; background: var(--g); color: #fff; font-size: 1.5rem; font-weight: 800; width: 100%; padding: .3rem .75rem; line-height: 1.15; box-shadow: 0 3px 0 rgb(0 0 0 / 25%); }
+.sm-primary:active { background: #05421f; }
+.sm-secondary { min-height: 60px; border-radius: 16px; border: 2px solid var(--g); background: var(--card); color: var(--g); font-size: 1.2rem; font-weight: 700; width: 100%; padding: .3rem .6rem; line-height: 1.2; }
+.sm-secondary:active { background: var(--g-soft); }
+.sm-danger { color: var(--red); border-color: var(--red); }
+.sm-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sm-pair .sm-secondary { font-size: 1.08rem; }
+.sm-pair-big .sm-secondary { min-height: 72px; font-size: 1.35rem; font-weight: 800; }
+
+/* spodná lišta pomoci – vždy viditeľná */
+.sm-help { flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 12px 1rem calc(12px + env(safe-area-inset-bottom)); background: var(--card); border-top: 2px solid var(--ln2); }
+.sm-help button { min-width: 0; overflow-wrap: anywhere; min-height: 64px; border-radius: 16px; border: 2px solid var(--g); background: var(--card); color: var(--g); font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; gap: .5rem; padding: .4rem .5rem; line-height: 1.15; text-align: left; }
+.sm-help .sm-ico { font-size: 1.6rem; flex: none; }
+.sm-help small { display: block; font-size: 1rem; font-weight: 600; }
+.sm-help small:empty { display: none; }
+.sm-help .sm-call { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+/* úvod: dlaždice cieľov */
+.sm-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* dlaždica má pevnú výšku: dlhý názov ani adresa mriežku nerozhodia */
+.sm-tile { height: 144px; overflow: hidden; border: 0; border-radius: var(--r); color: #fff; padding: .75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem; box-shadow: 0 3px 0 rgb(0 0 0 / 22%); text-align: center; min-width: 0; }
+.sm-tico { font-size: 2.5rem; line-height: 1; flex-shrink: 0; }
+.sm-tname { flex-shrink: 0; max-width: 100%; font-size: 1.5rem; font-weight: 800; line-height: 1.1; overflow-wrap: break-word;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.sm-tname-s { font-size: 1.25rem; }
+.sm-tname-xs { font-size: 1.05rem; }
+.sm-tsub { max-width: 100%; font-size: 1rem; font-weight: 600; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-tsub:empty { display: none; }
+.sm-tile.sm-wide { grid-column: 1 / -1; height: 104px; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 1rem; text-align: left; align-content: center; justify-content: start; }
+.sm-wide .sm-tico { grid-row: 1 / 3; align-self: center; }
+.sm-wide .sm-tname { -webkit-line-clamp: 1; line-clamp: 1; }
+.sm-c0 { background: #075c2b; } .sm-c1 { background: #0b4a8f; } .sm-c2 { background: #8a1c3c; }
+.sm-c3 { background: #6a3d00; } .sm-c4 { background: #4b2a80; } .sm-c5 { background: #1f4e5a; }
+.sm-row { width: 100%; min-height: 64px; margin-top: 12px; border-radius: var(--r); border: 2px solid var(--ln); background: var(--card); font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: .75rem; padding: .6rem 1rem; text-align: left; line-height: 1.25; }
+.sm-row .sm-ico { font-size: 1.7rem; flex: none; }
+.sm-row small { display: block; font-weight: 500; font-size: 1rem; color: var(--mut); }
+.sm-row > span:last-child { min-width: 0; }
+.sm-row-q { border-color: var(--ln2); min-height: 56px; font-size: 1.125rem; }
+/* výsledok hľadania: hlavná časť názvu najviac na 2 riadky, zvyšok na 1 riadok */
+.sm-res-n { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.sm-res small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* plán: celý názov cieľa (v hlavičke je skrátený) */
+.sm-goal { background: var(--card); border: 2px solid var(--ln2); border-radius: 16px; padding: .6rem .9rem; margin-bottom: 10px; }
+.sm-goal .sm-lbl { font-size: 1rem; }
+.sm-goal-n { font-size: 1.125rem; line-height: 1.3; font-weight: 700; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+.sm-goal-s { font-size: 1rem; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* plán – jedna odpoveď */
+.sm-leave { background: var(--card); border-radius: var(--r); padding: 1rem; border: 2px solid var(--ln2); }
+.sm-lbl { font-size: 1.15rem; font-weight: 700; color: var(--mut); }
+.sm-bignum { font-size: 3rem; font-weight: 800; line-height: 1.05; }
+.sm-in { font-size: 1.25rem; font-weight: 700; color: var(--g); }
+.sm-bus { font-size: 1.2rem; margin-top: .5rem; line-height: 1.5; }
+.sm-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: .75rem; }
+.sm-tag { background: var(--g-soft); color: var(--g); font-weight: 700; border-radius: 999px; padding: .3rem .8rem; font-size: 1.05rem; }
+.sm-tag-w { background: var(--warn-bg); color: var(--warn-ink); }
+.sm-steps { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.sm-steps li { background: var(--card); border-radius: var(--r); padding: .85rem 1rem; display: flex; gap: .85rem; align-items: flex-start; border: 2px solid var(--ln2); }
+.sm-steps .sm-ico { font-size: 2rem; line-height: 1.1; width: 2.4rem; text-align: center; flex: none; }
+.sm-main { font-size: 1.3rem; font-weight: 700; line-height: 1.25; }
+.sm-sub { font-size: 1.1rem; color: var(--mut); }
+.sm-badge { display: inline-block; min-width: 2.6rem; text-align: center; background: var(--g); color: #fff; font-weight: 800; border-radius: 10px; padding: .05rem .5rem; font-size: 1.5rem; line-height: 1.3; vertical-align: baseline; }
+.sm-badge-s { font-size: 1.1rem; min-width: 1.9rem; padding: 0 .35rem; border-radius: 7px; }
+
+/* sprevádzanie */
+.sm-now { background: var(--card); border-radius: var(--r); padding: 1.1rem 1rem; border: 3px solid var(--g); text-align: center; }
+.sm-bigico { font-size: 3.4rem; line-height: 1; }
+.sm-now h2 { font-size: 1.9rem; line-height: 1.15; margin: .4rem 0 .3rem; }
+.sm-now p { margin: .2rem 0; font-size: 1.3rem; }
+.sm-now .sm-ok { color: var(--g); font-weight: 800; }
+.sm-now .sm-pre { margin: 0 0 .15rem; font-size: 1.2rem; font-weight: 700; color: var(--mut); }
+.sm-now .sm-q { font-size: 1.5rem; font-weight: 700; }
+.sm-count { font-size: 3.2rem !important; font-weight: 800; line-height: 1; }
+.sm-next { margin-top: 12px; background: #e9eeea; border-radius: var(--r); padding: .8rem 1rem; font-size: 1.1rem; color: var(--mut); }
+.sm-next b { color: var(--ink); }
+.sm-warn { margin: 0 0 10px; background: var(--warn-bg); color: var(--warn-ink); border-radius: 14px; padding: .6rem .9rem; font-size: 1.1rem; font-weight: 600; border: 2px solid #b98a1e; line-height: 1.35; }
+.sm-walk + .sm-warn, .sm-now + .sm-warn, .sm-now .sm-warn { margin: 10px 0 0; }
+.sm-safe { margin: .45rem 0 0 !important; font-size: 1rem !important; font-weight: 700; line-height: 1.3; color: var(--warn-ink); background: var(--warn-bg); border-radius: 10px; padding: .25rem .6rem; }
+.sm-now .sm-safe { text-align: left; font-size: 1.1rem !important; }
+
+/* navádzanie pešo */
+.sm-walk { background: var(--card); border-radius: var(--r); padding: .7rem .9rem .85rem; border: 3px solid var(--g); }
+.sm-walk.sm-bad { border-color: var(--red); background: #fff4f1; }
+.sm-wlbl { font-size: 1.15rem; font-weight: 700; color: var(--mut); }
+.sm-plate { display: inline-flex; align-items: center; gap: .5rem; margin-top: .25rem; padding: .15rem .7rem .15rem .35rem; border: 3px solid var(--ink); border-radius: 10px; background: #fff; font-weight: 800; font-size: 1.5rem; letter-spacing: .02em; text-transform: uppercase; line-height: 1.2; overflow-wrap: break-word; max-width: 100%; box-sizing: border-box; }
+.sm-plate-s { font-size: 1.25rem; } /* dlhý názov zastávky: menšie písmo, nikdy nie „…“ */
+.sm-pi { background: var(--blue); border-radius: 6px; padding: 0 .25rem; font-size: 1.3rem; }
+.sm-wrow { display: flex; align-items: center; gap: 1rem; margin-top: .65rem; }
+.sm-compass { flex: none; width: 104px; height: 104px; border-radius: 50%; border: 5px solid var(--g); background: var(--g-soft); display: grid; place-items: center; }
+.sm-compass svg { width: 72px; height: 72px; transition: transform .4s ease; fill: var(--g); }
+.sm-compass-s { width: 64px; height: 64px; border-width: 4px; }
+.sm-compass-s svg { width: 44px; height: 44px; }
+.sm-noarrow { font-size: 3rem; font-weight: 800; color: var(--g); line-height: 1; }
+.sm-compass-s .sm-noarrow { font-size: 2rem; }
+.sm-bad .sm-compass { border-color: var(--red); background: #ffe1d9; }
+.sm-bad .sm-compass svg { fill: var(--red); }
+.sm-bad .sm-noarrow { color: var(--red); }
+.sm-dist { min-width: 0; }
+.sm-dist b { display: block; font-size: 2.7rem; line-height: 1; font-weight: 800; white-space: nowrap; }
+.sm-dist > span { display: block; margin-top: .2rem; font-size: 1.2rem; font-weight: 600; color: var(--mut); }
+.sm-dist > span.sm-ok { color: var(--g); font-weight: 800; }
+.sm-dist > span.sm-tight { color: var(--warn-ink); font-weight: 800; }
+.sm-say { margin: .6rem 0 0 !important; font-size: 1.3rem; font-weight: 800; line-height: 1.25; }
+.sm-bad .sm-say { color: var(--red); }
+.sm-whead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .3rem .75rem; }
+.sm-whead > :first-child { flex: 1 1 8rem; min-width: 0; }
+.sm-whead b { display: block; font-size: 2rem; line-height: 1.05; font-weight: 800; }
+.sm-sign { border: 3px solid var(--ink); border-radius: 12px; overflow: hidden; margin-top: .35rem; background: #fff; }
+.sm-sign-top { background: var(--blue); color: #fff; padding: .3rem .7rem; font-weight: 800; font-size: 1.4rem; text-transform: uppercase; letter-spacing: .02em; display: flex; gap: .5rem; align-items: center; line-height: 1.2; overflow-wrap: break-word; }
+.sm-sign-lines { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: .3rem .5rem; }
+.sm-sign-lines span { min-width: 2.3rem; text-align: center; border: 2px solid var(--ln); border-radius: 8px; font-weight: 700; padding: 0 .3rem; font-size: 1.05rem; color: var(--mut); }
+.sm-sign-lines em { font-style: normal; font-weight: 600; font-size: 1rem; color: var(--mut); }
+.sm-sign-lines span.on { background: var(--g); color: #fff; border-color: var(--g); font-size: 1.6rem; font-weight: 800; min-width: 2.9rem; }
+.sm-busdir { width: 108px; height: 108px; margin: .6rem auto .4rem; border-radius: 50%; border: 4px dashed var(--ink); background: #fff; display: grid; place-items: center; }
+.sm-busdir svg { width: 78px; height: 78px; fill: var(--ink); transition: transform .4s ease; }
+
+/* karta chôdze: horný riadok (čo robiť + linka a čas), pás upozornenia */
+.sm-wtop { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.sm-wtop .sm-wlbl { min-width: 0; }
+.sm-wbus { flex: none; display: flex; align-items: center; gap: .35rem; font-size: 1.2rem; font-weight: 700; white-space: nowrap; }
+.sm-banner { display: flex; flex-direction: column; justify-content: center; min-height: 58px; box-sizing: border-box; border-radius: 12px; padding: .35rem .8rem; margin-bottom: .5rem; line-height: 1.2; }
+.sm-banner b { font-size: 1.35rem; font-weight: 800; }
+.sm-banner span { font-size: 1.05rem; font-weight: 700; }
+.sm-banner-bad { background: var(--red); color: #fff; }
+.sm-banner-ok { background: var(--g); color: #fff; }
+.sm-banner-aside { background: var(--warn-bg); color: var(--warn-ink); border: 3px solid #b98a1e; }
+.sm-bad .sm-say, .sm-bad .sm-dist b { color: var(--red); }
+/* po 2. pripomienke opačného smeru: Zavolať zvýraznené (nebliká) */
+.sm.sm-callhint .sm-help .sm-call { outline: 4px solid #ffbf00; outline-offset: 2px; }
+
+/* mapa pod šípkou: dostane len miesto, ktoré ostane pod kartou (karta má prednosť; pod 120 px sa karta zúži
+   alebo je úsek bez mapy – rozhoduje mapFit v simple.js) */
+.sm-map { flex: 1 1 0; min-height: 0; max-height: 340px; position: relative; margin: 0 1rem 10px; border: 3px solid var(--g); border-radius: 16px; overflow: hidden; background: #eceee8; }
+.sm-map[hidden] { display: none; }
+.sm-map canvas { display: block; width: 100%; height: 100%; cursor: pointer; touch-action: none; }
+.sm-map-bad { border: 4px solid var(--red); }
+.sm-map-aside { border-color: #8a5a00; }
+.sm-mapbtn { position: absolute; right: 8px; bottom: 8px; min-height: 52px; padding: 0 .75rem; border-radius: 12px; border: 2px solid var(--g); background: #fff; color: var(--g); font-size: 1rem; font-weight: 800; }
+.sm-mapattr { position: absolute; left: 6px; bottom: 3px; font-size: .7rem; color: var(--mut); pointer-events: none; }
+.sm.sm-mapon .sm-body { flex: 0 1 auto; padding-bottom: 10px; }
+/* väčšia mapa: karta sa zúži na šípku, vzdialenosť a pokyn (naležato je mapa skrytá – karta ostáva celá) */
+@media (min-height: 481px) {
+  .sm.sm-mapbig .sm-map { max-height: none; }
+  .sm.sm-mapbig .sm-walk .sm-plate, .sm.sm-mapbig .sm-walk .sm-safe, .sm.sm-mapbig .sm-walk .sm-wtop { display: none; }
+  .sm.sm-mapbig .sm-walk .sm-compass { width: 76px; height: 76px; border-width: 4px; }
+  .sm.sm-mapbig .sm-walk .sm-compass svg { width: 52px; height: 52px; }
+  .sm.sm-mapbig .sm-walk .sm-wrow { margin-top: 0; }
+  .sm.sm-mapbig .sm-walk .sm-dist b { font-size: 2.1rem; }
+  /* zúžená karta, keď by sa mapa inak nezmestila: bez riadku s linkou a tabule (meno zastávky je na mape) */
+  .sm.sm-mapcompact .sm-walk .sm-plate, .sm.sm-mapcompact .sm-walk .sm-wtop { display: none; }
+  .sm.sm-mapcompact .sm-walk .sm-compass { width: 96px; height: 96px; border-width: 5px; }
+  .sm.sm-mapcompact .sm-walk .sm-compass svg { width: 66px; height: 66px; }
+  .sm.sm-mapcompact .sm-walk .sm-wrow { margin-top: 0; }
+}
+
+/* hárky */
+.sm-veil { position: absolute; inset: 0; background: rgb(0 0 0 / 55%); z-index: 30; display: flex; align-items: flex-end; }
+.sm-sheet { background: var(--card); width: 100%; border-radius: 24px 24px 0 0; padding: 1.25rem 1rem calc(1rem + env(safe-area-inset-bottom)); max-height: 92%; overflow-y: auto; }
+.sm-sheet h2 { font-size: 1.7rem; margin: 0 0 .5rem; line-height: 1.2; }
+.sm-sheet p { font-size: 1.25rem; margin: .4rem 0; }
+.sm-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 1rem; }
+.sm-stack:empty { display: none; }
+.sm-stack .sm-row { margin-top: 0; }
+.sm-field { display: flex; flex-direction: column; gap: 6px; margin-top: .9rem; font-weight: 700; }
+.sm-field select, .sm-field input { min-height: 56px; font: inherit; font-weight: 500; color: var(--ink); border-radius: 12px; border: 2px solid var(--ln); padding: .4rem .7rem; background: #fff; width: 100%; }
+.sm-note { font-size: 1rem !important; color: var(--mut); margin-top: .9rem !important; }
+.sm-osm { font-size: .85rem !important; color: var(--mut); font-weight: 400; white-space: nowrap; }
+p.sm-osm { white-space: normal; margin-top: .5rem !important; }
+.sm-osm a { color: inherit; }
+/* verzia · build · platforma: dá sa označiť a skopírovať */
+.sm-ver { margin: .9rem 0 0 !important; font-size: .85rem !important; line-height: 1.35; color: var(--mut); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+#smVer, #smVerG { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+.sm-verbtn { border: 0; background: none; padding: 0 .2rem; min-height: 44px; font: inherit; color: var(--g); text-decoration: underline; cursor: pointer; }
+.sm-tel { font-size: 1.8rem !important; font-weight: 800; letter-spacing: .03em; }
+.sm-bigmsg { text-align: center; padding: 1.2rem .5rem; }
+.sm-bigmsg h2 { font-size: 2rem; line-height: 1.15; margin: .4rem 0; }
+.sm-bigmsg p { font-size: 1.35rem; margin: .4rem 0; }
+
+/* Kde som?: ulica, známe miesta, zastávka a veta pre telefonát */
+.sm-where { list-style: none; margin: .5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.sm-where li { display: flex; gap: .75rem; align-items: center; background: var(--bg); border-radius: 14px; padding: .5rem .75rem; }
+.sm-where .sm-ico { font-size: 1.6rem; width: 2rem; text-align: center; flex: none; }
+.sm-where small { display: block; font-size: 1rem; font-weight: 600; color: var(--mut); }
+.sm-where b { font-size: 1.25rem; line-height: 1.2; }
+.sm-saybox { margin-top: 10px; display: flex; gap: 10px; align-items: center; background: var(--g-soft); border: 2px solid var(--g); border-radius: 14px; padding: .6rem .75rem; }
+.sm-saybox p { flex: 1; min-width: 0; margin: 0 !important; font-size: 1.1rem !important; line-height: 1.3; }
+.sm-saybtn { flex: none; width: 64px; min-height: 58px; border-radius: 14px; border: 2px solid var(--g); background: #fff; color: var(--g); font-size: .85rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; }
+.sm-saybtn span { font-size: 1.4rem; }
+
+/* za overením: pre rodičov (celá obrazovka, bez lišty pomoci) */
+.sm.sm-adult .sm-help { display: none; }
+.sm-gq { font-size: 2rem !important; font-weight: 800; text-align: center; }
+.sm-errline { color: var(--red) !important; font-weight: 700; }
+.sm-sec { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
+.sm-sec h2 { font-size: 1.375rem; font-weight: 800; margin: 0; }
+.sm-sec span { font-size: 1rem; font-weight: 600; color: var(--mut); }
+.sm-h { font-size: 1.375rem; font-weight: 800; margin: 1.5rem 0 0; }
+.sm-h0 { margin-top: 0; }
+.sm-flist { display: flex; flex-direction: column; gap: 8px; margin-top: .6rem; }
+.sm-frow { width: 100%; min-height: 76px; box-sizing: border-box; display: flex; align-items: center; gap: .75rem; padding: .4rem .75rem; border: 2px solid var(--ln2); border-radius: 16px; background: var(--card); text-align: left; }
+.sm-fsq { flex: none; width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; font-size: 1.8rem; }
+.sm-ftxt { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sm-fname { font-size: 1.25rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-ftag { align-self: flex-start; font-style: normal; font-size: .85rem; font-weight: 700; background: var(--g-soft); color: var(--g); border-radius: 999px; padding: 0 .5rem; margin-top: 2px; }
+.sm-ftxt small { font-size: 1rem; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-ftxt small.sm-unset { color: var(--red); font-weight: 700; }
+.sm-fgo { flex: none; font-size: 1.1rem; font-weight: 700; color: var(--g); }
+.sm-fud { flex: none; display: flex; gap: 6px; }
+.sm-fud > * { width: 52px; height: 52px; }
+.sm-ud { border-radius: 12px; border: 2px solid var(--g); background: #fff; color: var(--g); font-size: 1.3rem; font-weight: 800; padding: 0; }
+.sm-dashed { border-style: dashed; font-weight: 800; }
+.sm-row-warn { border-color: var(--red); color: var(--red); margin-top: .6rem; }
+.sm-flist + .sm-pair { margin-top: 10px; }
+.sm-check { display: flex; align-items: center; gap: .75rem; min-height: 60px; margin-top: .6rem; padding: 0 .9rem; border: 2px solid var(--ln); border-radius: 14px; background: #fff; font-size: 1.15rem; font-weight: 700; }
+.sm-check input { width: 28px; height: 28px; accent-color: var(--g); flex: none; }
+.sm-saved { margin: 0 0 -2px; min-height: 1.2em; text-align: center; font-size: 1rem; font-weight: 700; color: var(--g); }
+.sm-saved:empty { display: none; }
+/* úprava cieľa */
+.sm-fpick { margin-top: .5rem; display: flex; gap: .6rem; align-items: center; background: var(--g-soft); border: 2px solid var(--g); border-radius: 14px; padding: .5rem .6rem .5rem .8rem; }
+.sm-fpick > div { flex: 1; min-width: 0; }
+.sm-fpick b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-size: 1.1rem; line-height: 1.3; }
+.sm-fpick small { display: block; font-size: 1rem; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sm-small { width: auto !important; min-height: 52px; padding: 0 .8rem !important; font-size: 1.05rem !important; flex: none; }
+.sm-pinmap { position: relative; height: 180px; margin-top: .5rem; border: 2px solid var(--ln2); border-radius: 14px; overflow: hidden; background: #eceee8; }
+.sm-pinmap canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+.sm-pinz { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 6px; }
+.sm-zbtn { width: 52px; height: 52px; border-radius: 12px; border: 2px solid var(--ink); background: #fff; font-size: 1.6rem; font-weight: 800; padding: 0; line-height: 1; }
+.sm-flab { display: flex; justify-content: space-between; align-items: baseline; }
+.sm-flab em { font-style: normal; font-weight: 600; color: var(--mut); font-size: 1rem; }
+.sm-icons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: .5rem; }
+.sm-icons button { height: 52px; border-radius: 12px; border: 2px solid var(--ln2); background: #fff; font-size: 1.6rem; padding: 0; }
+.sm-icons button.on { border: 3px solid var(--g); background: var(--g-soft); }
+.sm-lbl2 { margin-top: 1rem !important; font-size: 1rem; font-weight: 700; }
+.sm-prev { margin-top: .5rem; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.sm-prev .sm-tile { cursor: default; }
+.sm-bluebtn { border-color: var(--blue) !important; color: var(--blue) !important; margin-top: .75rem; }
+
+/* prepínač v bežnej appke */
+.simple-link { display: block; width: 100%; margin: .5rem 0 0; padding: .6rem .8rem; min-height: 48px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); color: var(--ink); font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+.simple-link span { display: block; font-weight: 400; font-size: .82rem; color: var(--muted); }
+
+/* úzke displeje: menšie tlačidlá v hlavičke, aby sa názov cieľa nelámal po písmenách */
+@media (max-width: 359px) {
+  .sm-top { gap: 6px; padding-left: .6rem; padding-right: .6rem; }
+  .sm-top h1 { font-size: 1.125rem; line-height: 20px; }
+  .sm-tbtn { width: 62px; font-size: .95rem; }
+}
+/* nízke displeje */
+@media (max-height: 700px) {
+  .sm-top { height: calc(60px + env(safe-area-inset-top)); }
+  .sm-tbtn { height: 48px; }
+  .sm-tile { height: 128px; padding: .5rem .75rem; } .sm-tico { font-size: 2rem; } .sm-tname { font-size: 1.35rem; } .sm-tname-s { font-size: 1.15rem; } .sm-tname-xs { font-size: 1rem; }
+  .sm-tile.sm-wide { height: 80px; }
+  .sm-now { padding: .8rem .75rem; } .sm-bigico { font-size: 2.4rem; } .sm-now h2 { font-size: 1.6rem; }
+  .sm-walk { padding: .55rem .75rem .7rem; } .sm-compass { width: 96px; height: 96px; } .sm-compass svg { width: 66px; height: 66px; }
+  .sm-compass-s { width: 60px; height: 60px; } .sm-compass-s svg { width: 40px; height: 40px; }
+  .sm-dist b { font-size: 2.3rem; } .sm-wrow { margin-top: .5rem; gap: .8rem; } .sm-plate { font-size: 1.3rem; } .sm-plate-s { font-size: 1.15rem; } .sm-say { font-size: 1.2rem; margin-top: .45rem !important; }
+  .sm-dots { padding-top: .4rem; } .sm-wlbl { font-size: 1.05rem; } .sm-busdir { width: 92px; height: 92px; } .sm-busdir svg { width: 64px; height: 64px; }
+  .sm-primary { min-height: 64px; font-size: 1.35rem; } .sm-actions { padding: 10px .75rem; gap: 8px; }
+  .sm-help { padding: 8px .75rem calc(8px + env(safe-area-inset-bottom)); } .sm-help button { min-height: 60px; }
+  .sm-body { padding: .75rem .75rem 1rem; }
+  .sm-bignum { font-size: 2.6rem; }
+}
+/* veľmi nízka obrazovka (telefón naležato): roluje sa celá obrazovka, aby nič nezostalo odrezané */
+@media (max-height: 480px) {
+  .sm { display: block; overflow-y: auto; }
+  .sm-body { overflow: visible; }
+  .sm.sm-has-more .sm-morewrap { display: none; }
+  .sm-veil { position: fixed; }
+  .sm-dots { display: none; }
+  .sm-map { display: none !important; } /* naležato bez mapy (šípka a vzdialenosť stačia) */
+}
+@media (prefers-reduced-motion: reduce) { .sm-compass svg, .sm-busdir svg { transition: none; } }
+
+/* upozornenie pred výstupom (spoločné s bežným režimom) – v jednoduchom režime väčšie */
+body.simple-on .trip-alert .ta-title { font-size: 2.3rem; line-height: 1.1; }
+body.simple-on .trip-alert .ta-sub { font-size: 1.5rem; font-weight: 700; line-height: 1.3; }
+body.simple-on .trip-alert .ta-ok { min-height: 76px; min-width: 240px; border-radius: 18px; font-size: 1.5rem; font-weight: 800; }
