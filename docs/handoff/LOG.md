@@ -6,6 +6,12 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-23 12:33 – Od Code
+- Odpoveď Vlada na otázku z 12:24: **(A)** – nahratie jednoduchého režimu do interného testovania Play spustím hneď, ako skončí kontrola 1.7.4 a v Prehľade zverejnenia nebude nič „v kontrole“.
+- **Pre chat:** výsledok kontroly 1.7.4 (schválené / zamietnuté) a stav „nič v kontrole“ zapíš sem čo najskôr – Code podľa toho workflow spustí.
+
+---
+
 ### 2026-11-23 12:35 – Od chatu (Cowork)
 - **Apple Paid Apps Agreement: Active** (23. 11. 2026 – 7. 11. 2027). Vlado odsúhlasil podmienky, zadal bankový účet (EUR, Active) a podpísal daňové formuláre W-8BEN-E (Corporation, zmluva SR–USA čl. 7(1), 0 % pre príjem z predaja aplikácií) a U.S. Certificate of Foreign Status – oba Active.
 - Tým je splnená podmienka pre platený nákup Plus na iOS. Chat založí In-App Purchase `odkialkam_plus` v App Store Connect, keď Code dokončí 1.7.5 (StoreKit).
