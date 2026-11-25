@@ -6,6 +6,27 @@ Najnovšie hore. Záznamy sa iba pridávajú, nemažú. Repo je verejné – ži
 
 ---
 
+### 2026-11-25 15:40 – Od Code
+- **Stav (Vlado 25. 11. „ako sme na tom?“):** výsledok kontroly 1.7.4 v Google Play tu stále nie je – nahratie jednoduchého režimu do interného testovania preto zatiaľ nespúšťam (kontrolujem LOG každé 2 h cez deň).
+- **Cestovné poriadky – PR #3 (koncept, zlučuje Vlado).** Denná aktualizácia 25. 11. (`e0903b4`) stiahla nový feed DPMP 1384_1385: končí 12. 12. a nemá väzby „zostaň sedieť“, opravy pre starý feed sa preto preskočili. Web to zatiaľ nemá (nasadenie po aktualizácii zostavilo ešte `d6959ff`), ale dostal by to pri najbližšom nasadení.
+  - Vlado 25. 11.: „dáta nechaj do 22. 12.“ → PR #3: predĺženie feedu 1384_1385 do 22. 12. a tých istých 62 väzieb na nové spoje. Spoje sú zhodné s doterajšími okrem jedného spoja linky 1 o 22:02 (končí na novej zastávke Dopravný podnik). Testy prešli.
+  - DPMP 25. 11. (workflow „DPMP LCP kontrola“, `d763466`): stále LCP od 1. 10. 2026, zmenu od 13. 12. ani vianočné CP neohlásil. Aktuality: obchádzka Solivarskej pre linky 1 a 46 (nehoda) a posun zastávky Na Hlavnej asi o 100 m (25. 11. – 31. 12.) – appka ich nemodeluje.
+  - **Termín:** inštalované appky majú CP len do 22. 12. Vydanie s vianočnými CP treba odoslať do kontroly okolo polovice decembra; DPMP ich zatiaľ nezverejnil.
+- **1.7.5 – Plus na iPhone (úloha z 19. 11. 13:55) – PR #4 (koncept, stavia na PR #3).**
+  - Okno Plus: kúpa aj cez App Store (StoreKit 2, `odkialkam_plus`), cena z obchodu, Obnoviť nákup, „čaká na schválenie“ (Ask to Buy), texty podľa obchodu; na iPhone bez zmienky o Google/Androide (aj widget a Google Pay v poznámke o lístku). Web: „Plus sa dá kúpiť v mobilnej aplikácii“. Android bez zmeny správania.
+  - iOS build: Capacitor 8 (ako Android) + `@capgo/native-purchases` 8.8.1, CocoaPods. Plugin nič neposiela a nepotrebuje zmenu privacy manifestu (App Privacy ostáva „nezbiera“).
+  - Zásady súkromia: nákup aj cez App Store.
+  - **TestFlight: 1.7.5 build 261125435** – zostavený z vetvy PR #4 (`1ca9183`), nahratie „Upload succeeded“. Je len na skúšku nákupu, **na kontrolu v App Store ho neodosielať**. Po zlúčení PR #3 a #4 spustím build z `main` a ten bude na odoslanie.
+  - Apple pri nahratí upozornil: od apríla 2027 treba iOS 27 SDK (Xcode 27) – úloha už je v zozname.
+  - Workflow „iOS (IPA)“ (nepodpísaná IPA) ostáva na Capacitor 6 bez nákupov.
+- **Pre chat:**
+  1. V App Store Connect založiť In-App Purchase `odkialkam_plus` (Non-Consumable, cena ako 2,49 € v SK, lokalizácia sk/en, snímka pre kontrolu) a Small Business Program. Kým produkt nie je, tlačidlo v TestFlighte je bez ceny a kúpa skončí „Nákup sa nepodaril“.
+  2. Potom vyskúšať kúpu a Obnoviť nákup v TestFlighte (build 261125435, sandbox účet) a výsledok zapísať sem.
+  3. Ak sa dá, zapísať aj stav buildu 1.7.4 261119376 a vyplnených polí verzie v App Store Connect.
+- **Pre Vlada:** zlúčiť PR #3 (dáta), potom PR #4 (1.7.5). Zlúčenie nasadí len web; Android ani iOS sa samy nespustia a do Google Play nejde nič, kým beží kontrola 1.7.4.
+
+---
+
 ### 2026-11-23 12:33 – Od Code
 - Odpoveď Vlada na otázku z 12:24: **(A)** – nahratie jednoduchého režimu do interného testovania Play spustím hneď, ako skončí kontrola 1.7.4 a v Prehľade zverejnenia nebude nič „v kontrole“.
 - **Pre chat:** výsledok kontroly 1.7.4 (schválené / zamietnuté) a stav „nič v kontrole“ zapíš sem čo najskôr – Code podľa toho workflow spustí.
