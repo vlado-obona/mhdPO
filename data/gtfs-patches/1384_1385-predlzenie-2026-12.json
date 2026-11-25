@@ -1,0 +1,43 @@
+{
+  "id": "dpmp-2026-12-predlzenie",
+  "baseFeedVersion": "1384_1385",
+  "title": "CP DPMP od 1. 10. 2026 platia aj od 13. do 22. 12. 2026",
+  "validFrom": 20261213,
+  "validTo": 20261222,
+  "sources": [
+    "GTFS feed 1384_1385 (data/gtfs-presov/, stiahnutý 25. 11. 2026): služby 1385 platia 31. 10. – 12. 12. 2026; pracovné dni, soboty aj nedele majú presne tie isté spoje ako služby 1384 (CP od 1. 10. 2026), okrem jedného spoja linky 1 o 22:02, ktorý končí na novej zastávke Dopravný podnik.",
+    "https://www.dpmp.sk/cestovne-poriadky (25. 11. 2026, data/dpmp-lcp/current/) — stále „Linkový cestovný poriadok: LCP 2026-10-01.pdf“, iná zmena CP ohlásená nie je; aktuality: len mimoriadna obchádzka Solivarskej (linky 1, 46) a posun zastávky Na Hlavnej 25. 11. – 31. 12. 2026",
+    "https://www.minedu.sk/priloha-1-terminy-skolskych-prazdnin-20262027-a-20272028/ — posledný deň vyučovania pred vianočnými prázdninami 22. 12. 2026, prázdniny 23. 12. 2026 – 7. 1. 2027"
+  ],
+  "notes": [
+    "Rovnaké predĺženie ako 1382_1384-predlzenie-2026-11.json (v1.7.3), len pre nový feed: feed 1384_1385 končí 12. 12. 2026 len technicky, CP DPMP platia „od“ dátumu bez konca. Dni 13. – 22. 12. sa len pridávajú do služieb 1385 (žiadne nové spoje).",
+    "Pracovné dni → 1385_PD (školský), soboty → 1385_SO, nedele → 1385_NE — rovnaké priradenie, aké má feed 1384_1385 pre 2. 11. – 12. 12. Do 22. 12. nie sú školské prázdniny → 1385_PR sa nepoužije.",
+    "Od 23. 12. platia vianočné a novoročné prázdniny a DPMP zavádza „odlišnú organizáciu dopravy podľa špeciálne upravených cestovných poriadkov“ — tie zatiaľ nie sú zverejnené, preto platnosť končí 22. 12. 2026.",
+    "Dočasné zmeny z aktualít DPMP (obchádzka Solivarskej, posun zastávky Na Hlavnej asi o 100 m) appka nemodeluje."
+  ],
+  "calendar": {
+    "addDates": {
+      "1385_PD": [
+        "20261214",
+        "20261215",
+        "20261216",
+        "20261217",
+        "20261218",
+        "20261221",
+        "20261222"
+      ],
+      "1385_SO": [
+        "20261219"
+      ],
+      "1385_NE": [
+        "20261213",
+        "20261220"
+      ]
+    }
+  },
+  "summary": [
+    "1385_PD: 7 dní (20261214 – 20261222)",
+    "1385_SO: 1 deň (20261219)",
+    "1385_NE: 2 dni (20261213, 20261220)"
+  ]
+}
