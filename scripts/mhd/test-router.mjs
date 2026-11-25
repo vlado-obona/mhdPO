@@ -511,6 +511,26 @@ if (D.meta.patches?.some((p) => p.id === 'dpmp-2026-11-predlzenie')) {
   if (!bad) ok('CP od 1. 10. platí 1. 11. – 22. 12. 2026 (pracovné dni, soboty, nedele; 17. 11. pracovný deň), od 23. 12. nič');
 }
 
+// ── 4i: predĺženie feedu 1384_1385 (do 12. 12.) do 22. 12. 2026 ──
+// Každý deň 2. 11. – 22. 12. má presne tie isté spoje ako ten istý deň v týždni
+// 30. 11. – 6. 12. (z feedu DPMP), 13. – 22. 12. teda ako feed, po 22. 12. nič.
+if (D.meta.patches?.some((p) => p.id === 'dpmp-2026-12-predlzenie')) {
+  const active = (s) => {
+    const { num, weekday } = dateInfoFor(s), ids = [];
+    D.patterns.forEach((p, pi) => p.trips.forEach((t, ti) => { if (raptor.serviceActive(t.sv, num, weekday)) ids.push(pi * 1e4 + ti); }));
+    return ids.join(',');
+  };
+  const ref = ['2026-11-30', '2026-12-01', '2026-12-02', '2026-12-03', '2026-12-04', '2026-12-05', '2026-12-06'].map(active);
+  let bad = 0;
+  if (ref.some((r) => !r)) { bad++; fail('referenčný týždeň 30. 11. – 6. 12. bez spojov'); }
+  for (let t = Date.UTC(2026, 10, 2); t <= Date.UTC(2026, 11, 31); t += 864e5) {
+    const s = new Date(t).toISOString().slice(0, 10), { num, weekday } = dateInfoFor(s), got = active(s);
+    if (num <= 20261222 ? got !== ref[weekday] : got !== '') { bad++; fail(`${s}: spoje nesedia s CP z feedu (${got.split(',').filter(Boolean).length})`); }
+  }
+  if (D.meta.validTo !== 20261222) { bad++; fail(`platnosť datasetu do ${D.meta.validTo}, čakám 20261222`); }
+  if (!bad) ok('CP z feedu 1384_1385 platí 2. 11. – 22. 12. 2026 (pracovné dni, soboty, nedele; 17. 11. pracovný deň), od 23. 12. nič');
+}
+
 // ── 5: nočné spoje cez polnoc ───────────────────────────────────────
 const nightPat = D.patterns.filter((p) => ['N1', 'N2'].includes(D.routes[p.r].s));
 if (nightPat.length) {

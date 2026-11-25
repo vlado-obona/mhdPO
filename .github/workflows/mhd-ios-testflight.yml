@@ -10,6 +10,11 @@ name: iOS TestFlight
 # verejného repa NEcommituje (nepodpísanú IPA robí workflow „iOS (IPA)“).
 # Číslo buildu (CFBundleVersion) = rovnaká 9-ciferná schéma ako Android
 # versionCode (YYMMDD*1000 + minúta dňa/2) → vždy rastie.
+# Po Android builde a pri ručnom spustení z main sa zostaví main; ručné
+# spustenie z inej vetvy (napr. PR pred zlúčením) zostaví tú vetvu —
+# taký build sa na kontrolu v App Store neodosiela (po zlúčení nový z main).
+# Od 1.7.5 Capacitor 8 (ako Android) a nákup Plus cez StoreKit
+# (@capgo/native-purchases, produkt odkialkam_plus, Non-Consumable).
 on:
   workflow_dispatch:
     inputs:
@@ -42,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || 'main' }}
 
       - name: Verzia a číslo buildu
         run: |
@@ -64,13 +69,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Capacitor iOS projekt
         run: |
           mkdir cap-build && cd cap-build
           npm init -y >/dev/null
-          npm i --no-audit --no-fund @capacitor/core@6 @capacitor/cli@6 @capacitor/ios@6 @capacitor/geolocation@6 @capacitor/local-notifications@6.1.3 @capacitor/haptics@6.0.3 @capacitor/app@6.0.3 @capacitor-community/keep-awake@5.0.1 @capacitor-community/text-to-speech@4.1.1 >/dev/null
+          # rovnaké verzie ako Android (mhd-apk-offline.yml); nákup Plus cez StoreKit 2
+          npm i --no-audit --no-fund @capacitor/core@8.5.2 @capacitor/cli@8.5.2 @capacitor/ios@8.5.2 @capacitor/geolocation@8.2.2 @capacitor/local-notifications@8.3.1 @capacitor/haptics@8.0.2 @capacitor/app@8.1.2 @capacitor-community/keep-awake@8.0.1 @capacitor-community/text-to-speech@8.0.2 @capgo/native-purchases@8.8.1 >/dev/null
           cat > capacitor.config.json <<EOF
           {
             "appId": "$BUNDLE_ID",
@@ -80,8 +86,14 @@ jobs:
           EOF
           cp -r ../mhd-app www
           grep -q "APP_VERSION = '$VERSION'" www/app.js || { echo "::error::APP_VERSION v app.js nesedí s $VERSION"; exit 1; }
-          npx cap add ios
+          # Capacitor 8 predvolene používa Swift Package Manager; build ďalej ide
+          # cez CocoaPods (App.xcworkspace) ako pri Capacitor 6
+          npx cap add ios --packagemanager CocoaPods
           npx cap sync ios
+          xcodebuild -version
+          grep -q 'CapgoNativePurchases' ios/App/Podfile.lock || { echo "::error::plugin nákupov (CapgoNativePurchases) nie je v iOS projekte"; exit 1; }
+          grep -q 'NativePurchasesPlugin' ios/App/App/capacitor.config.json || { echo "::error::NativePurchasesPlugin nie je zaregistrovaný"; exit 1; }
+          grep -o '"packageClassList": *\[[^]]*\]' ios/App/App/capacitor.config.json || true
 
       - name: Info.plist
         working-directory: cap-build
@@ -89,6 +101,9 @@ jobs:
           P=ios/App/App/Info.plist
           setp() { /usr/libexec/PlistBuddy -c "Set :$1 $3" "$P" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :$1 $2 $3" "$P"; }
           setp NSLocationWhenInUseUsageDescription string "'Poloha sa používa na nájdenie najbližšej zastávky a na upozornenie pred výstupom počas cesty. Nikam sa neposiela.'"
+          # @capacitor/geolocation 8 (IONGeolocationLib) obsahuje aj kód pre polohu „vždy“ —
+          # App Store Connect potom chce aj tento text; appka o polohu na pozadí nežiada
+          setp NSLocationAlwaysAndWhenInUseUsageDescription string "'Poloha sa používa len pri otvorenej appke na nájdenie najbližšej zastávky a na upozornenie pred výstupom. Nikam sa neposiela.'"
           setp CFBundleShortVersionString string "$VERSION"
           setp CFBundleVersion string "$BUILD_NUMBER"
           setp CFBundleDisplayName string "'Odkiaľ Kam'"
