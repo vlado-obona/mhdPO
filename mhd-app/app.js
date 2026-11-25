@@ -3,7 +3,7 @@ import { Raptor, planJourneys, leaveTime, totalWalk, walkOnlySecs } from './rapt
 
 // Verzia aplikácie — zobrazuje sa v názve; build-release.mjs a workflowy
 // ju kontrolujú, takže nová verzia = zmeniť tu + zavolať build s tým istým číslom.
-const APP_VERSION = '1.7.4';
+const APP_VERSION = '1.7.5';
 
 const $ = (id) => document.getElementById(id);
 const statusEl = $('status');
@@ -1268,11 +1268,12 @@ function saveFavDlg() {
 }
 
 // ── Odkiaľ Kam Plus ─────────────────────────────────────────────────
-// Jednorazový nákup cez Google Play Billing (plugin NativePurchases).
+// Jednorazový nákup (plugin NativePurchases): na Androide cez Google Play
+// Billing, na iPhone cez App Store (StoreKit 2, typ Non-Consumable).
 // Jadro appky (vyhľadávanie, navigácia, upozornenie na výstup) je zadarmo;
-// Plus odomyká pohodlie navyše. Stav sa overuje priamo v Google Play pri
+// Plus odomyká pohodlie navyše. Stav sa overuje priamo v obchode pri
 // každom spustení — appka nič neposiela na žiadny vlastný server. Na webe
-// a v iOS (zatiaľ bez App Store) sa Plus kúpiť nedá.
+// sa Plus kúpiť nedá.
 const PLUS_ID = 'odkialkam_plus';
 const PLUS_KEY = 'mhd-presov.plus.v1';
 const PREFS_KEY = 'mhd-presov.prefs.v1';
@@ -1280,8 +1281,17 @@ let plus = false;
 let plusProduct = null;
 let prefs = { dark: false };
 const purchasesApi = () => window.Capacitor?.Plugins?.NativePurchases;
-const canBuyPlus = () => !!window.Capacitor?.isNativePlatform?.() && window.Capacitor.getPlatform() === 'android' && !!purchasesApi();
-const isPlusPurchase = (p) => p && p.productIdentifier === PLUS_ID && (p.purchaseState === 'PURCHASED' || p.purchaseState === '1');
+const plusPlatform = () => (window.Capacitor?.isNativePlatform?.() ? window.Capacitor.getPlatform() : 'web');
+const canBuyPlus = () => ['android', 'ios'].includes(plusPlatform()) && !!purchasesApi();
+// texty podľa obchodu — v appke pre iPhone sa nespomína Google ani Android (App Store 2.3.10)
+const plusStore = () => (plusPlatform() === 'ios'
+  ? { name: 'App Store', acct: 'Apple účet' }
+  : { name: 'Google Play', acct: 'Google účet' });
+// Android: stav nákupu z Google Play; iOS: aktuálne nároky zo StoreKit (bez stavu,
+// vrátený nákup má revocationDate)
+const isPlusPurchase = (p) => p && p.productIdentifier === PLUS_ID && (plusPlatform() === 'ios'
+  ? !p.revocationDate
+  : (p.purchaseState === 'PURCHASED' || p.purchaseState === '1'));
 
 function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch {} }
 function setPlus(v) {
@@ -1304,33 +1314,40 @@ function renderPlusDlg() {
   const buy = $('plusBuy'), restore = $('plusRestore');
   buy.hidden = plus;
   restore.hidden = plus || !canBuyPlus();
+  // widget je len na Androide (appka pre iPhone ho nespomína); účet podľa obchodu.
+  // ?. — stará index.html z cache webu tieto prvky nemá
+  const wli = $('plusWidgetLi'), acct = $('plusAcct');
+  if (wli) wli.hidden = plusPlatform() === 'ios';
+  if (acct) acct.textContent = canBuyPlus() ? ` Platí natrvalo pre tvoj ${plusStore().acct}.` : '';
   if (!canBuyPlus()) {
     buy.disabled = true;
     buy.textContent = 'Kúpiť Plus';
-    if (!plus) $('plusMsg').textContent = 'Plus sa dá kúpiť v Android aplikácii Odkiaľ Kam z Google Play.';
+    if (!plus) $('plusMsg').textContent = 'Plus sa dá kúpiť v mobilnej aplikácii Odkiaľ Kam.';
   } else {
     buy.disabled = false;
     buy.textContent = plusProduct?.priceString ? `Kúpiť Plus · ${plusProduct.priceString}` : 'Kúpiť Plus';
   }
 }
-// overenie nákupu v Google Play (funguje aj bez internetu z vyrovnávacej pamäte Play)
+// overenie nákupu v obchode (funguje aj bez internetu z vyrovnávacej pamäte Play / StoreKit)
 async function refreshPlus() {
   const P = purchasesApi();
   if (!canBuyPlus()) return;
   try {
     const { isBillingSupported } = await P.isBillingSupported();
     if (!isBillingSupported) return;
-    const { purchases } = await P.getPurchases({ productType: 'inapp' });
+    const { purchases } = await P.getPurchases(plusPlatform() === 'ios'
+      ? { productType: 'inapp', onlyCurrentEntitlements: true }
+      : { productType: 'inapp' });
     const own = (purchases || []).filter(isPlusPurchase);
     setPlus(own.length > 0);
-    // nákup dokončený mimo appky (napr. odložená platba) treba potvrdiť do 3 dní,
-    // inak ho Google Play automaticky vráti
-    for (const p of own) {
+    // Android: nákup dokončený mimo appky (napr. odložená platba) treba potvrdiť
+    // do 3 dní, inak ho Google Play automaticky vráti (iOS dokončí plugin sám)
+    for (const p of plusPlatform() === 'android' ? own : []) {
       if (p.isAcknowledged === false && p.purchaseToken) {
         try { await P.acknowledgePurchase({ purchaseToken: p.purchaseToken }); } catch {}
       }
     }
-  } catch { /* Play nedostupný — ostáva posledný známy stav */ }
+  } catch { /* obchod nedostupný — ostáva posledný známy stav */ }
   try {
     const { products } = await P.getProducts({ productIdentifiers: [PLUS_ID], productType: 'inapp' });
     plusProduct = (products || []).find((p) => p.identifier === PLUS_ID) || null;
@@ -1342,19 +1359,20 @@ async function buyPlus() {
   if (!canBuyPlus()) return;
   const msg = $('plusMsg');
   msg.classList.remove('err');
-  msg.textContent = 'Otváram Google Play…';
+  msg.textContent = `Otváram ${plusStore().name}…`;
   $('plusBuy').disabled = true;
   try {
     const t = await P.purchaseProduct({ productIdentifier: PLUS_ID, productType: 'inapp' });
     if (isPlusPurchase(t) || t?.purchaseState == null) await refreshPlus();
     if (plus) { msg.textContent = 'Hotovo — Plus je aktivovaný. Ďakujeme!'; buzz([30, 60, 30]); }
-    else if (t?.purchaseState === 'PENDING' || t?.purchaseState === '2') msg.textContent = 'Platba čaká na dokončenie. Plus sa zapne, keď ju Google Play potvrdí.';
+    else if (t?.purchaseState === 'PENDING' || t?.purchaseState === '2') msg.textContent = `Platba čaká na dokončenie. Plus sa zapne, keď ju ${plusStore().name} potvrdí.`;
     else msg.textContent = '';
   } catch (e) {
     const s = String(e?.message || e || '');
-    // zrušenie používateľom nie je chyba
-    msg.textContent = /cancel/i.test(s) ? '' : 'Nákup sa nepodaril. Skús to znova neskôr.';
-    msg.classList.toggle('err', !/cancel/i.test(s));
+    // zrušenie používateľom nie je chyba; iOS: „Ask to Buy“ / odložená platba → pending
+    if (/pending/i.test(s)) msg.textContent = `Nákup čaká na schválenie. Plus sa zapne, keď ho ${plusStore().name} potvrdí.`;
+    else msg.textContent = /cancel/i.test(s) ? '' : 'Nákup sa nepodaril. Skús to znova neskôr.';
+    msg.classList.toggle('err', !/cancel|pending/i.test(s));
   } finally {
     renderPlusDlg();
   }
@@ -1364,10 +1382,10 @@ async function restorePlus() {
   if (!canBuyPlus()) return;
   const msg = $('plusMsg');
   msg.classList.remove('err');
-  msg.textContent = 'Overujem nákup v Google Play…';
+  msg.textContent = `Overujem nákup v ${plusStore().name}…`;
   try { await P.restorePurchases(); } catch {}
   await refreshPlus();
-  msg.textContent = plus ? 'Plus je obnovený.' : 'Pre tento Google účet sme nákup Plus nenašli.';
+  msg.textContent = plus ? 'Plus je obnovený.' : `Pre tento ${plusStore().acct} sme nákup Plus nenašli.`;
 }
 function openPlusDlg() {
   $('plusMsg').textContent = '';
@@ -1385,10 +1403,16 @@ function closePlusDlg(fromHistory = false) {
   if (!fromHistory) { try { if (history.state && history.state.plus) { popSilently++; history.back(); } } catch {} }
 }
 function initPlus() {
+  // appka pre iPhone nespomína iné mobilné platformy (App Store 2.3.10)
+  if (plusPlatform() === 'ios') document.querySelectorAll('.not-ios').forEach((e) => e.remove());
   try { plus = JSON.parse(localStorage.getItem(PLUS_KEY) || 'null')?.owned === true; } catch {}
   try { prefs = { ...prefs, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') }; } catch {}
-  // mimo Androidu sa Plus neoveruje ani nepredáva — uložený stav by tam nebol overený
+  // mimo Androidu a iPhonu sa Plus neoveruje ani nepredáva — uložený stav by tam nebol overený
   if (!canBuyPlus()) plus = false;
+  // iOS: nákup schválený neskôr („Ask to Buy“) alebo vrátený príde ako transakcia mimo nákupu
+  if (canBuyPlus() && plusPlatform() === 'ios') {
+    try { Promise.resolve(purchasesApi().addListener?.('transactionUpdated', () => refreshPlus())).catch(() => {}); } catch {}
+  }
   $('plusBuy').addEventListener('click', buyPlus);
   $('plusRestore').addEventListener('click', restorePlus);
   $('plusClose').addEventListener('click', () => closePlusDlg());
