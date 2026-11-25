@@ -630,6 +630,40 @@ Kontakt
  
 
  
+ 
+
+
+ 
+ 
+ 
+
+
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+
+ 
+ 
+ 
+
+
+
+ 
+
+ 
+ 
+
+ 
+
+ 
 
 
 
@@ -917,7 +951,7 @@ K Surdoku
 
 Pracovný deň
 
-Pracovný deň - prázdniny
+Prázdniny - Pracovný deň
 
 Sobota, nedeľa, sviatok
 
@@ -1000,6 +1034,22 @@ Aktuálne informácie
 
 
 
+25. 11. 2026
+Mimoriadne obojsmerne neprejazdná Solivarská ulica pre linky 1 a 46.
+
+
+
+
+
+
+17. 11. 2026
+Posun zastávky Na Hlavnej Na Hlavnej (smer Železničná stanica) od 25.11.-31.12.2026
+
+
+
+
+
+
 24. 9. 2026
 Zmeny v cestovných poriadkoch 23 spojov MHD – od 1. októbra 2026!
 
@@ -1010,14 +1060,6 @@ Zmeny v cestovných poriadkoch 23 spojov MHD – od 1. októbra 2026!
 
 30. 8. 2026
 Neobsluhovaná zastávka Ihrisko od 1.9.2026
-
-
-
-
-
-
-3. 6. 2026
-PREDAJŇA CL NA NOVOM MIESTE Stanica SAD – Košická 2 už otvorená!
 
 
 
@@ -1037,10 +1079,10 @@ Uzavretý most Jána Pavla II. od 13.10.2025
 
 
 
+Stiahnite si mobilnú aplikáciu
 
 
-Stiahnite si
-mobilnú aplikáciu
+
 
 
 
@@ -1174,6 +1216,40 @@ Všetky správy
 
 
  
+
+
+
+
+DPMP po prvýkrát ukázal Vianočný bus
+
+Dopravný podnik mesta Prešov vypravil v nedeľu 15. novembra 2026 do prešovských ulíc historicky prvý Vianočný bus. Sviatočne vyzdobený trolejbus bude premávať na linkách č. 4, 8 a 38 až do 17. januára 2027. Na jazdu stačí bežný cestovný lístok, keďže vo Vianočnom buse platí štandardná tarifa MHD v Prešove.
+
+
+
+ čítať viac 
+
+
+
+
+
+
+
+
+
+
+Lacnejšie cestovanie v prešovskej MHD pokračuje aj v novembri. Znížené ceny budú platiť do konca mesiaca
+
+Cestujúci v prešovskej mestskej hromadnej doprave budú môcť aj v druhej polovici novembra využívať znížené cestovné. Mesto Prešov sa rozhodlo predĺžiť dočasnú úpravu cien na základe uznesenia vlády SR č. 474/2026. Od 11. do 30. novembra 2026 tak zostane základné cestovné na úrovni zľavneného cestovného. Ceny lístkov sa oproti predchádzajúcej úprave nemenia.
+
+
+
+ čítať viac 
+
+
+
+
+
+
 
 
 
@@ -1470,40 +1546,6 @@ Dopravný podnik mesta Prešov rozširuje svoj vozový park. Od spoločnosti MAN
 Voňavé jazdy s karafiátmi v MHD spríjemnili dámam cestovanie počas MDŽ
 
 Dopravný podnik mesta Prešov pripravil pri príležitosti Medzinárodného dňa žien voňavé prekvapenie pre dámy. V nedeľu 8. 3. 2026 mohli cestujúci na vybraných linkách MHD stretnúť džentlmena vo fraku, ktorý ženám rozdával karafiáty.
-
-
-
- čítať viac 
-
-
-
-
-
-
-
-
-
-
-Začína sa druhá etapa výmeny prístreškov MHD
-
-V meste Prešov bude od 2.3.2026 pokračovať postupná výmena zastávkových prístreškov MHD. Cieľom je zlepšiť komfort, bezpečnosť a celkové podmienky pre cestujúcich, ktorí využívajú MHD. Historicky najrozsiahlejšia výmena prístreškov na zastávkach MHD v Prešove odštartovala ešte v roku 2025, pričom v prvej fáze ich mesto vymenilo 33. V prvej polovici roka 2026 pribudne ďalších 26 nových prístreškov. 
-
-
-
- čítať viac 
-
-
-
-
-
-
-
-
-
-
-Cestovné poriadky MHD v Prešove sú dostupné už aj na Mapách Google
-
-Dopravný podnik mesta Prešov integroval cestovné poriadky do globálne využívanej platformy. Cestujúci odteraz môžu pohodlne vyhľadávať spoje jednotlivých liniek a jednoducho plánovať svoje cesty prostredníctvom mestskej hromadnej dopravy priamo v aplikácii Mapy Google (Google Maps).
 
 
 
@@ -1968,6 +2010,7 @@ UT, ŠT
 
 Stiahnite si
 mobilnú aplikáciu
+
 
 
 
